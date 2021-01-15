@@ -67,22 +67,4 @@ public class BaseController {
         }
     }
 
-    /**
-     * 输出日历格式
-     *
-     * @param response
-     * @param result
-     */
-    public void outputToCalendarString(HttpServletResponse response, String result) {
-        response.setContentType("text/calendar;charset=UTF-8");
-        try {
-            if (null != result) {
-                response.getWriter().write(result);
-            }
-            response.flushBuffer();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
 }
