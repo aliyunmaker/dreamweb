@@ -1,8 +1,8 @@
 # 环境准备
 
 ### 数据库
-database: dreamdb
-create sql: src/main/resources/mysql/database_dreamdb.sql
+database: dreamweb
+create sql: src/main/resources/mysql/database_dreamweb.sql
 
 ### 单点登录证书生成
 
