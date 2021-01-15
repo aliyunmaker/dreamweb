@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.UserRoleDao">
+
+    <insert id="addUserRole"
+            parameterType="cc.landingzone.dreamweb.model.UserRole"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into user_role
+        (user_group_id,
+         role_name,
+         role_value,
+         role_type,
+         gmt_create)
+        values (#{userGroupId},
+                #{roleName},
+                #{roleValue},
+                #{roleType},
+                now())
+    </insert>
+
+    <update id="updateUserRole"
+            parameterType="cc.landingzone.dreamweb.model.UserRole">
+        update user_role
+        set user_group_id = #{userGroupId},
+            role_name     = #{roleName},
+            role_value    = #{roleValue},
+            role_type     = #{roleType}
+        where id = #{id}
+    </update>
+
+
+    <select id="getUserRolesByGroupId"
+            resultType="cc.landingzone.dreamweb.model.UserRole">
+        select *
+        from user_role
+        where user_group_id =
+              #{userGroupId}
+    </select>
+
+
+    <select id="getUserRolesByUserId"
+            resultType="cc.landingzone.dreamweb.model.UserRole">
+        select *
+        from user_role
+        where user_group_id in (
+            select user_group_id
+            from user_group_associate
+            where user_id = #{userId}
+        )
+    </select>
+
+    <delete id="deleteUserRole" parameterType="int">
+        delete
+        from user_role
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteUserRoleByUserGroupId" parameterType="int">
+        delete
+        from user_role
+        where user_group_id = #{userGroupId}
+    </delete>
+
+</mapper>
