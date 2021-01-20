@@ -11,6 +11,7 @@ import java.util.jar.Manifest;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.WebResult;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -63,6 +64,9 @@ public class SystemController extends BaseController implements InitializingBean
                 InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
                 Manifest manifest = new Manifest(inputStream);
                 String version = manifest.getMainAttributes().getValue("Version");
+                if(StringUtils.isNotBlank(version)){
+                    version = "online version";
+                }
                 logoDiv = "<div align=\"center\"><i style=\"font-size:30px;margin-top:5px;color:#CFDEEF;animation-duration: 20s;\" class=\"fa fa-sun-o fa-spin\" aria-hidden=\"true\"></i></div><div align='center' style='background-color:#FF594C;margin-top:5px;font-size: 12px;'><font "
                         + "style='color: white;'>" + username + "<br>" + version + "</font></div>";
             } else {
