@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -61,8 +64,16 @@ public class SystemController extends BaseController implements InitializingBean
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             String logoDiv = null;
             if (CommonConstants.ENV_ONLINE) {
-                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
-                Manifest manifest = new Manifest(inputStream);
+
+                String jarFilePath = ClassUtils.getDefaultClassLoader().getResource("").getPath().replace("!/BOOT-INF/classes!/", "");
+                if (jarFilePath.startsWith("file")) {
+                    jarFilePath = jarFilePath.substring(5);
+                }
+                logger.info("jarFilePath:" + jarFilePath);
+                JarFile jarFile = new JarFile(jarFilePath);
+                JarEntry entry = jarFile.getJarEntry("META-INF/MANIFEST.MF");
+//                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+                Manifest manifest = new Manifest(jarFile.getManifest());
                 String version = manifest.getMainAttributes().getValue("Version");
                 if(StringUtils.isBlank(version)){
                     version = "online version";
