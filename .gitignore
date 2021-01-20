@@ -7,6 +7,10 @@ dreamweb.iml
 dreamweb.properties
 application-*.properties
 
+config/
+!**/src/main/**/config/
+!**/src/test/**/config/
+
 ### cert ###
 *.crt
 *.pem

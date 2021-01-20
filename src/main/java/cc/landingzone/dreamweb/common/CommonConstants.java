@@ -22,15 +22,15 @@ public class CommonConstants {
 
     static {
         Properties properties = loadProperties();
-        ENV_ONLINE = Boolean.parseBoolean(properties.getProperty("env_online"));
-        Aliyun_AccessKeyId = properties.getProperty("aliyun_accesskeyid");
-        Aliyun_AccessKeySecret = properties.getProperty("aliyun_accesskeysecret");
+        ENV_ONLINE = Boolean.parseBoolean(properties.getProperty("dreamweb.env_online"));
+        Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
+        Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
     }
 
     public static Properties loadProperties() {
         Properties properties = new Properties();
         try {
-            InputStream ins = CommonConstants.class.getResourceAsStream("/dreamweb.properties");
+            InputStream ins = CommonConstants.class.getResourceAsStream("/application.properties");
             properties.load(ins);
             ins.close();
         } catch (Exception e) {

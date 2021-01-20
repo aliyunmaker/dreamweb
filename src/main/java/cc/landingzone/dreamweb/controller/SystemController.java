@@ -41,8 +41,7 @@ public class SystemController extends BaseController implements InitializingBean
     public void getStartInfo(HttpServletRequest request, HttpServletResponse response) {
         String result = new String();
         try {
-            ServletContext application = request.getServletContext();
-            InputStream inputStream = application.getResourceAsStream("/META-INF/MANIFEST.MF");
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
             Manifest manifest = new Manifest(inputStream);
             // String manifest = FileUtils.readFileToString(new File(url.getFile()));
             result = "Start: " + startTime.format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmm")) + "<br/>Version: "
@@ -60,18 +59,14 @@ public class SystemController extends BaseController implements InitializingBean
         try {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             String logoDiv = null;
-            ServletContext application = request.getServletContext();
-//            InputStream inputStream = application.getResourceAsStream("/META-INF/MANIFEST.MF");
-//            Manifest manifest = new Manifest(inputStream);
-//            String version = manifest.getMainAttributes().getValue("Version");
-            String version = "test";
-            if (null == version) {
-                version = "test version";
-            }
             if (CommonConstants.ENV_ONLINE) {
+                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+                Manifest manifest = new Manifest(inputStream);
+                String version = manifest.getMainAttributes().getValue("Version");
                 logoDiv = "<div align=\"center\"><i style=\"font-size:30px;margin-top:5px;color:#CFDEEF;animation-duration: 20s;\" class=\"fa fa-sun-o fa-spin\" aria-hidden=\"true\"></i></div><div align='center' style='background-color:#FF594C;margin-top:5px;font-size: 12px;'><font "
                         + "style='color: white;'>" + username + "<br>" + version + "</font></div>";
             } else {
+                String version = "test version";
                 logoDiv = "<div align=\"center\"><i style=\"font-size:30px;margin-top:5px;color:#CFDEEF;animation-duration: 1s;\" class=\"fa fa-sun-o fa-spin\" aria-hidden=\"true\"></i></div><div align='center' style='background-color:rgb(93,168,48);margin-top:5px;font-size: 12px;"
                         + "'><font style='color: white;'>" + username + "<br>" + version + "</font></div>";
             }

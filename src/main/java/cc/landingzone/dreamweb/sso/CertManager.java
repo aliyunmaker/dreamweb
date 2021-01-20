@@ -12,6 +12,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 import io.jsonwebtoken.lang.Assert;
 import org.opensaml.xml.security.x509.BasicX509Credential;
+import org.springframework.util.FileCopyUtils;
 
 /**
  * CertManager
@@ -25,26 +26,22 @@ public class CertManager {
 
     public static void initSigningCredential() throws Exception {
 
-        URL publicKeyURL = CertManager.class.getResource(SSOConstants.PUBLIC_KEY_PATH);
-        URL privateKeyURL = CertManager.class.getResource(SSOConstants.PRIVATE_KEY_PATH);
-        Assert.notNull(publicKeyURL, "can not find publicKey:" + SSOConstants.PUBLIC_KEY_PATH);
-        Assert.notNull(privateKeyURL, "can not find privateKey:" + SSOConstants.PRIVATE_KEY_PATH);
 
-        String publicKeyLocation = publicKeyURL.getFile();
-        String privateKeyLocation = privateKeyURL.getFile();
-
-        InputStream inStream = new FileInputStream(publicKeyLocation);
+        InputStream inStream = CertManager.class.getResourceAsStream(SSOConstants.PUBLIC_KEY_PATH);
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         X509Certificate publicKey = (X509Certificate) cf.generateCertificate(inStream);
         inStream.close();
 
-        // create private key
-        RandomAccessFile raf = new RandomAccessFile(privateKeyLocation, "r");
-        byte[] buf = new byte[(int) raf.length()];
-        raf.readFully(buf);
-        raf.close();
+        InputStream keyInStream = CertManager.class.getResourceAsStream(SSOConstants.PRIVATE_KEY_PATH);
+        byte[] keyBuf = FileCopyUtils.copyToByteArray(keyInStream);
 
-        PKCS8EncodedKeySpec kspec = new PKCS8EncodedKeySpec(buf);
+        // create private key
+//        RandomAccessFile raf = new RandomAccessFile(privateKeyLocation, "r");
+//        byte[] buf = new byte[(int) raf.length()];
+//        raf.readFully(buf);
+//        raf.close();
+
+        PKCS8EncodedKeySpec kspec = new PKCS8EncodedKeySpec(keyBuf);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = kf.generatePrivate(kspec);
 
