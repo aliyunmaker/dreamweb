@@ -64,7 +64,7 @@ public class SystemController extends BaseController implements InitializingBean
                 InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
                 Manifest manifest = new Manifest(inputStream);
                 String version = manifest.getMainAttributes().getValue("Version");
-                if(StringUtils.isNotBlank(version)){
+                if(StringUtils.isBlank(version)){
                     version = "online version";
                 }
                 logoDiv = "<div align=\"center\"><i style=\"font-size:30px;margin-top:5px;color:#CFDEEF;animation-duration: 20s;\" class=\"fa fa-sun-o fa-spin\" aria-hidden=\"true\"></i></div><div align='center' style='background-color:#FF594C;margin-top:5px;font-size: 12px;'><font "
