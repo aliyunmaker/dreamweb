@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
-@ServletComponentScan("cc.landingzone.dreamweb.controller")
+@ServletComponentScan("cc.landingzone.dreamweb")
 @MapperScan("cc.landingzone.dreamweb.dao")
 public class DreamwebApplication {
 
