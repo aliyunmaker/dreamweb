@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
     </properties>
 
     <dependencies>
@@ -185,6 +186,7 @@
                         <!-- custom manifest,usage: mvn clean package -Dmyversion=20210118 -->
                         <manifestEntries>
                             <Version>${myversion}</Version>
+                            <!--<Version>${maven.build.timestamp}</Version>-->
                         </manifestEntries>
                     </archive>
                 </configuration>
