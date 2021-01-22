@@ -286,6 +286,12 @@ Ext.onReady(function () {
         fields: ['id', 'loginName', 'name']
       }),
       displayField: 'loginName',
+      // template for the content inside text field
+      displayTpl: Ext.create('Ext.XTemplate',
+          '<tpl for=".">',
+          '{loginName}[{name}]',
+          '</tpl>'
+      ),
       valueField: 'id',
       name: 'userId',
       listConfig: {

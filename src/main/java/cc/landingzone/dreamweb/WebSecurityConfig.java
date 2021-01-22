@@ -26,7 +26,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.anonymous();
         http
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/system/**").permitAll()
+                .antMatchers("/", "/weixin/**").permitAll()
+                .antMatchers("/welcome/*", "/user/getUserInfo.do", "/sso/*").hasAnyRole("GUEST", "ADMIN")
+                .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
