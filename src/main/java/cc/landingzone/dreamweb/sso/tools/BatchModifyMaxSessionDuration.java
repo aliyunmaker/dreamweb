@@ -24,25 +24,26 @@ import com.aliyuncs.ram.model.v20150501.ListRolesResponse;
 public class BatchModifyMaxSessionDuration {
 
 
-    public static final String Aliyun_AccessKeyId = "LTAI4GE8oLW1akw6nHcdyfoq";
-    public static final String Aliyun_AccessKeySecret = "cvOX2knEzodrqpkNtwISSSCZf7ncO9";
-
-    //这个功能跟region没有关系,可以不用修改
-    public static final DefaultProfile AliyunProfile = DefaultProfile.getProfile("cn-hangzhou");
-
-    public static final BasicCredentials BasicCredentials = new BasicCredentials(Aliyun_AccessKeyId, Aliyun_AccessKeySecret);
-
-
     public static void main(String[] args) throws Exception {
-        List<String> accountList = listAccounts();
+        BasicCredentials basicCredentials = new BasicCredentials("", "");
+        String uid = "";
+        DefaultProfile AliyunProfile = DefaultProfile.getProfile("cn-hangzhou");
+        IAcsClient masterClient = new DefaultAcsClient(AliyunProfile, basicCredentials);
+
+        STSAssumeRoleSessionCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(basicCredentials, "acs:ram::" + uid + ":role/resourcedirectoryaccountaccessrole", AliyunProfile);
+        //这个功能跟region没有关系,可以不用修改
+        IAcsClient subClient = new DefaultAcsClient(AliyunProfile, provider);
+
+
+        List<String> accountList = listAccounts(masterClient);
         for (String accountUid : accountList) {
-            List<ListRolesResponse.Role> roleList = getRoleNameListByUid(accountUid);
+            List<ListRolesResponse.Role> roleList = getRoleNameListByUid(accountUid, subClient);
             System.out.println("=================accountUid: " + accountUid);
             for (ListRolesResponse.Role role : roleList) {
                 System.out.println("role: " + role.getRoleName());
                 // 这里可以按照uid和role的组合条件来过滤
                 if ("1668299748235410".equalsIgnoreCase(accountUid) && "resourcedirectoryaccountaccessrole".equalsIgnoreCase(role.getRoleName())) {
-                    String updateresult = updateRoleByName(accountUid, role.getRoleName(), 4123);
+                    String updateresult = updateRoleByName(accountUid, role.getRoleName(), 4096, subClient);
                     System.out.println("update bingo:" + updateresult);
                 }
             }
@@ -59,9 +60,7 @@ public class BatchModifyMaxSessionDuration {
      * @param maxSessionDurationSeconds 过期时长,单位:秒
      * @throws Exception
      */
-    public static String updateRoleByName(String uid, String roleName, int maxSessionDurationSeconds) throws Exception {
-        STSAssumeRoleSessionCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(BasicCredentials, "acs:ram::" + uid + ":role/resourcedirectoryaccountaccessrole", AliyunProfile);
-        DefaultAcsClient client = new DefaultAcsClient(AliyunProfile, provider);
+    public static String updateRoleByName(String uid, String roleName, int maxSessionDurationSeconds, IAcsClient client) throws Exception {
         CommonRequest request = new CommonRequest();
         request.setSysDomain("ram.aliyuncs.com");
         request.setSysVersion("2015-05-01");
@@ -81,9 +80,7 @@ public class BatchModifyMaxSessionDuration {
      * @return
      * @throws Exception
      */
-    public static List<ListRolesResponse.Role> getRoleNameListByUid(String uid) throws Exception {
-        STSAssumeRoleSessionCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(BasicCredentials, "acs:ram::" + uid + ":role/resourcedirectoryaccountaccessrole", AliyunProfile);
-        DefaultAcsClient client = new DefaultAcsClient(AliyunProfile, provider);
+    public static List<ListRolesResponse.Role> getRoleNameListByUid(String uid, IAcsClient client) throws Exception {
         ListRolesRequest request = new ListRolesRequest();
         ListRolesResponse response = client.getAcsResponse(request);
         return response.getRoles();
@@ -96,8 +93,7 @@ public class BatchModifyMaxSessionDuration {
      * @return
      * @throws Exception
      */
-    public static List<String> listAccounts() throws Exception {
-        IAcsClient client = new DefaultAcsClient(AliyunProfile, BasicCredentials);
+    public static List<String> listAccounts(IAcsClient client) throws Exception {
         CommonRequest request = new CommonRequest();
         request.setSysDomain("resourcemanager.aliyuncs.com");
         request.setSysVersion("2020-03-31");
