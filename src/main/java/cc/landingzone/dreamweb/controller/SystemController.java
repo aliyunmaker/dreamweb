@@ -1,12 +1,11 @@
 package cc.landingzone.dreamweb.controller;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.InetAddress;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -45,11 +44,7 @@ public class SystemController extends BaseController implements InitializingBean
     public void getStartInfo(HttpServletRequest request, HttpServletResponse response) {
         String result = new String();
         try {
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
-            Manifest manifest = new Manifest(inputStream);
-            // String manifest = FileUtils.readFileToString(new File(url.getFile()));
-            result = "Start: " + startTime.format(DateTimeFormatter.ofPattern("YYYYMMdd_HHmm")) + "<br/>Version: "
-                    + manifest.getMainAttributes().getValue("Version");
+            result = "hostname: " + InetAddress.getLocalHost().getHostName() + " \n " + new Date();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();
@@ -75,7 +70,7 @@ public class SystemController extends BaseController implements InitializingBean
 //                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
                 Manifest manifest = new Manifest(jarFile.getManifest());
                 String version = manifest.getMainAttributes().getValue("Version");
-                if(StringUtils.isBlank(version)){
+                if (StringUtils.isBlank(version)) {
                     version = "online version";
                 }
                 logoDiv = "<div align=\"center\"><i style=\"font-size:30px;margin-top:5px;color:#CFDEEF;animation-duration: 20s;\" class=\"fa fa-sun-o fa-spin\" aria-hidden=\"true\"></i></div><div align='center' style='background-color:#FF594C;margin-top:5px;font-size: 12px;'><font "
