@@ -34,17 +34,6 @@ public class ResourceDirectoryAccountFactory {
 
     public static final Logger logger = LoggerFactory.getLogger(ResourceDirectoryAccountFactory.class);
 
-    public static void main(String[] args) throws Exception {
-        DefaultProfile AliyunProfile = DefaultProfile.getProfile("cn-hangzhou");
-        IAcsClient client = new DefaultAcsClient(AliyunProfile, new BasicCredentials("LTAI4GDFfDaQcKVGX17Hqcvs", "ci0hVlIMqmon90oQQAc6lgQVB6Z3mD"));
-//        String result = CreateFolder(client, "Core");
-        String createFolderResult = CreateFolder(client, "Applications");
-        String applicationsFolderId = JSON.parseObject(createFolderResult).getJSONObject("Folder").getString("FolderId");
-        //8.2 将邀请的账号move到新文件夹
-        String result = MoveAccount(client, "1269809911162968", applicationsFolderId);
-        System.out.println(result);
-    }
-
     public static void loggerInfo(String msg) {
         logger.info(msg);
         String traceId = ctx.get();
@@ -186,14 +175,14 @@ public class ResourceDirectoryAccountFactory {
 
 
             //9. 配置账号的role base sso
-            loggerInfo("9. 配置账号的role base sso");
-            loggerInfo("*******************************************************************");
-            String roleExpression = initSP(newAccountRamUserClient, "chengchaoIDP", "mycloudadmin");
-            String ssoRandomSuffix = RandomStringUtils.randomAlphanumeric(5);
-            String subAccountRoleExpression = initSP(masterClient, "chengchaoIDP" + ssoRandomSuffix, "mycloudadmin" + ssoRandomSuffix);
+//            loggerInfo("9. 配置账号的role base sso");
+//            loggerInfo("*******************************************************************");
+//            String roleExpression = initSP(newAccountRamUserClient, "chengchaoIDP", "mycloudadmin");
+//            String ssoRandomSuffix = RandomStringUtils.randomAlphanumeric(5);
+//            String subAccountRoleExpression = initSP(masterClient, "chengchaoIDP" + ssoRandomSuffix, "mycloudadmin" + ssoRandomSuffix);
 
-            //10. 清理新账号的ram user,由于循环问题不删除user,只清理改user的policy 和 ak
-            loggerInfo("10. 清理新账号的ram user的policy和ak");
+            //9. 清理新账号的ram user,由于循环问题不删除user,只清理改user的policy 和 ak
+            loggerInfo("9. 清理新账号的ram user的policy和ak");
             loggerInfo("*******************************************************************");
             DeleteUser(newAccountRamUserClient, subRamUserName, subRamUserAKMap.get("AccessKeyId"), false);
             loggerInfo("**************************************************************************************************************************************");
@@ -204,11 +193,11 @@ public class ResourceDirectoryAccountFactory {
             loggerInfo("ram user passowrd: " + subRamUserPassword);
             loggerInfo("ram user login url: ");
             loggerInfo("https://signin.aliyun.com/" + accountId + ".onaliyun.com/login.htm?callback=https%3A%2F%2Fhomenew.console.aliyun.com%2F#/login");
-            loggerInfo("-------------------------------------------------------------------");
-            loggerInfo("sso roleExpression(master):" + accountId);
-            loggerInfo(roleExpression);
-            loggerInfo("sso roleExpression(sub):" + masterAccountId);
-            loggerInfo(subAccountRoleExpression);
+//            loggerInfo("-------------------------------------------------------------------");
+//            loggerInfo("sso roleExpression(master):" + accountId);
+//            loggerInfo(roleExpression);
+//            loggerInfo("sso roleExpression(sub):" + masterAccountId);
+//            loggerInfo(subAccountRoleExpression);
             loggerInfo("**************************************************************************************************************************************");
             loggerInfo("__done__");
         } catch (Exception e) {
