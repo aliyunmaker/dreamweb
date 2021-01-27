@@ -25,7 +25,7 @@ public class AliyunToolsController extends BaseController {
             final String accessKeyId = request.getParameter("accessKeyId");
             final String accessKeySecret = request.getParameter("accessKeySecret");
             final String email = request.getParameter("email");
-            final String id = UUIDUtils.generateUUID();
+            final String id = "aliyuntool_new_account_" + UUIDUtils.generateUUID();
             resourceDirectoryAccountFactory.putLogToRedis(id, "=================start: " + id + "==================");
 //            ResourceDirectoryAccountFactory.logMap.put(id, new StringBuilder());
             new Thread(new Runnable() {
