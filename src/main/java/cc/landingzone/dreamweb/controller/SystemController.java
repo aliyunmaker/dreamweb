@@ -2,6 +2,7 @@ package cc.landingzone.dreamweb.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Controller
 @RequestMapping("/system")
@@ -33,6 +36,25 @@ public class SystemController extends BaseController implements InitializingBean
     public void afterPropertiesSet() throws Exception {
         startTime = LocalDateTime.now();
     }
+
+    public static HttpSession getSession() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true); // true == allow create
+    }
+
+
+    @RequestMapping("/getSession.do")
+    public void getSession(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            HttpSession session = getSession();
+            result.setData(session);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        outputToJSON(response, result);
+    }
+
 
     /**
      * 开放权限
