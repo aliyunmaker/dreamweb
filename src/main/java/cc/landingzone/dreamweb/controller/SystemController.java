@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -17,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
@@ -32,10 +35,15 @@ public class SystemController extends BaseController implements InitializingBean
 
     private LocalDateTime startTime;
 
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         startTime = LocalDateTime.now();
     }
+
 
     public static HttpSession getSession() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
@@ -62,11 +70,12 @@ public class SystemController extends BaseController implements InitializingBean
      * @param request
      * @param response
      */
-    @RequestMapping("/getStartInfo")
+    @RequestMapping("/getStartInfo.do")
     public void getStartInfo(HttpServletRequest request, HttpServletResponse response) {
         String result = new String();
         try {
-            result = "hostname: " + InetAddress.getLocalHost().getHostName() + " \n " + new Date();
+            result = "hostname: " + InetAddress.getLocalHost().getHostName() + " \n " + new Date() + stringRedisTemplate;
+            stringRedisTemplate.opsForValue().set("dreamwebname", "charlesttest" + new Date(), 60, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();

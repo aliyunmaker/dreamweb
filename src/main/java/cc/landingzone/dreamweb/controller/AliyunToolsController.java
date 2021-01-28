@@ -6,12 +6,16 @@ import javax.servlet.http.HttpServletResponse;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.sso.tools.ResourceDirectoryAccountFactory;
 import cc.landingzone.dreamweb.utils.UUIDUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/aliyunTools")
 public class AliyunToolsController extends BaseController {
+
+    @Autowired
+    ResourceDirectoryAccountFactory resourceDirectoryAccountFactory;
 
 
     @RequestMapping("/createAccount.do")
@@ -21,8 +25,9 @@ public class AliyunToolsController extends BaseController {
             final String accessKeyId = request.getParameter("accessKeyId");
             final String accessKeySecret = request.getParameter("accessKeySecret");
             final String email = request.getParameter("email");
-            final String id = UUIDUtils.generateUUID();
-            ResourceDirectoryAccountFactory.logMap.put(id, new StringBuilder());
+            final String id = "aliyuntool_new_account_" + UUIDUtils.generateUUID();
+            resourceDirectoryAccountFactory.putLogToRedis(id, "=================start: " + id + "==================");
+//            ResourceDirectoryAccountFactory.logMap.put(id, new StringBuilder());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -47,10 +52,10 @@ public class AliyunToolsController extends BaseController {
         WebResult result = new WebResult();
         try {
             String id = request.getParameter("id");
-            if (null == ResourceDirectoryAccountFactory.logMap.get(id)) {
+            if (null == ResourceDirectoryAccountFactory.getLogFromRedis(id)) {
                 result.setData("can not find log,id:" + id);
             } else {
-                String log = ResourceDirectoryAccountFactory.logMap.get(id).toString();
+                String log = ResourceDirectoryAccountFactory.getLogFromRedis(id);
                 result.setData(log);
             }
         } catch (Exception e) {
