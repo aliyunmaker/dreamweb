@@ -21,6 +21,7 @@ import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleResponse;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityRequest;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,7 +166,7 @@ public class ResourceDirectoryAccountFactory {
             CreateLoginProfile(assumeRoleClient, subRamUserName, subRamUserPassword);
             IAcsClient newAccountRamUserClient = new DefaultAcsClient(AliyunProfile, new BasicCredentials(subRamUserAKMap.get("AccessKeyId"), subRamUserAKMap.get("AccessKeySecret")));
 
-            if (!"".equals(masterRamUserName)) {
+            if (!StringUtils.isEmpty(masterRamUserName)) {
                 //4.3 清理主账号的ram user
                 loggerInfo("4.3 清理主账号的ram user");
                 DeleteUser(masterClient, masterRamUserName, assumeRoleAccessKeyId, true);
