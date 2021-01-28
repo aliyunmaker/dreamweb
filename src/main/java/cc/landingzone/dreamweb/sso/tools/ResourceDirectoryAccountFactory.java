@@ -2,6 +2,7 @@ package cc.landingzone.dreamweb.sso.tools;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import cc.landingzone.dreamweb.sso.SamlGenerator;
 import cc.landingzone.dreamweb.utils.UUIDUtils;
@@ -22,27 +23,44 @@ import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 
 /**
  * 利用已认证主体的账号生成新账号,并且开通RD,成为新RD的Master,并把原来账号邀请进来
  */
+
+@Component
 public class ResourceDirectoryAccountFactory {
 
-    public static final Map<String, StringBuilder> logMap = new HashMap<>();
+
+    private static StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    public void setStringRedisTemplate(StringRedisTemplate stringRedisTemplate) {
+        ResourceDirectoryAccountFactory.stringRedisTemplate = stringRedisTemplate;
+    }
 
     public static final ThreadLocal<String> ctx = new ThreadLocal<>();
 
     public static final Logger logger = LoggerFactory.getLogger(ResourceDirectoryAccountFactory.class);
 
+    public static void putLogToRedis(String traceid, String msg) {
+        stringRedisTemplate.opsForValue().set(traceid, msg, 60, TimeUnit.MINUTES);
+    }
+
+    public static String getLogFromRedis(String traceid) {
+        return stringRedisTemplate.opsForValue().get(traceid);
+    }
+
     public static void loggerInfo(String msg) {
         logger.info(msg);
         String traceId = ctx.get();
-        StringBuilder sb = logMap.get(traceId);
-        if (null == sb) {
+        if (null == traceId) {
             return;
         }
-        sb.append("<br/>");
-        sb.append(msg);
+        stringRedisTemplate.opsForValue().append(traceId, "<br>" + msg);
     }
 
     public static void buildNewRD(String masterAccountAccessKeyId, String masterAccountAccessKeySecret, String email, String traceId) {
