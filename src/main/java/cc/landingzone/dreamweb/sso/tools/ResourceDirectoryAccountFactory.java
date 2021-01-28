@@ -52,10 +52,12 @@ public class ResourceDirectoryAccountFactory {
             IAcsClient masterClient = new DefaultAcsClient(AliyunProfile, new BasicCredentials(masterAccountAccessKeyId, masterAccountAccessKeySecret));
             String callerIdentity = GetCallerIdentity(masterClient);
             String masterAccountId = JSON.parseObject(callerIdentity).getString("AccountId");
+            String masterIdentityType = JSON.parseObject(callerIdentity).getString("IdentityType");
             //0. 打印当前AK账号的信息
             loggerInfo("*******************************************************************");
             loggerInfo("当前账号信息:");
             loggerInfo("AccountId: " + masterAccountId);
+            loggerInfo("IdentityType: " + masterIdentityType);
             loggerInfo("Arn: " + JSON.parseObject(callerIdentity).getString("Arn"));
             loggerInfo("*******************************************************************");
 
@@ -121,12 +123,20 @@ public class ResourceDirectoryAccountFactory {
             loggerInfo("4. 获取新账号的ram user的AK");
             loggerInfo("*******************************************************************");
             //4.1 先换出master账号的ram user 的AK
-            loggerInfo("4.1 先换出master账号的ram user 的AK");
-//            String callerIdentity = GetCallerIdentity(masterClient);
-//            String masterAccountId = JSON.parseObject(callerIdentity).getString("AccountId");
-            String masterRamUserName = "landingzone_master_" + UUIDUtils.generateUUID();
-            Map<String, String> masterRamUserAKMap = CreateRamUserAccessKey(masterClient, masterAccountId, masterRamUserName);
-            STSAssumeRoleSessionCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(new BasicCredentials(masterRamUserAKMap.get("AccessKeyId"), masterRamUserAKMap.get("AccessKeySecret")), "acs:ram::" + accountId + ":role/resourcedirectoryaccountaccessrole", AliyunProfile);
+            String assumeRoleAccessKeyId = masterAccountAccessKeyId;
+            String assumeRoleAccessKeySecret = masterAccountAccessKeySecret;
+            String masterRamUserName = "";
+            if ("Account".equals(masterIdentityType)) {
+                loggerInfo("4.1 先换出master账号的ram user 的AK");
+                masterRamUserName = "landingzone_master_" + UUIDUtils.generateUUID();
+                Map<String, String> masterRamUserAKMap = CreateRamUserAccessKey(masterClient, masterAccountId,
+                    masterRamUserName);
+                assumeRoleAccessKeyId = masterRamUserAKMap.get("AccessKeyId");
+                assumeRoleAccessKeySecret = masterRamUserAKMap.get("AccessKeySecret");
+            } else {
+                loggerInfo("4.1 当前账号满足需求，无须创建子账号");
+            }
+            STSAssumeRoleSessionCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(new BasicCredentials(assumeRoleAccessKeyId, assumeRoleAccessKeySecret), "acs:ram::" + accountId + ":role/resourcedirectoryaccountaccessrole", AliyunProfile);
             DefaultAcsClient assumeRoleClient = new DefaultAcsClient(AliyunProfile, provider);
 
             //4.2 换取目标账户ram user的AK
@@ -137,9 +147,11 @@ public class ResourceDirectoryAccountFactory {
             CreateLoginProfile(assumeRoleClient, subRamUserName, subRamUserPassword);
             IAcsClient newAccountRamUserClient = new DefaultAcsClient(AliyunProfile, new BasicCredentials(subRamUserAKMap.get("AccessKeyId"), subRamUserAKMap.get("AccessKeySecret")));
 
-            //4.3 清理主账号的ram user
-            loggerInfo("4.3 清理主账号的ram user");
-            DeleteUser(masterClient, masterRamUserName, masterRamUserAKMap.get("AccessKeyId"), true);
+            if (!"".equals(masterRamUserName)) {
+                //4.3 清理主账号的ram user
+                loggerInfo("4.3 清理主账号的ram user");
+                DeleteUser(masterClient, masterRamUserName, assumeRoleAccessKeyId, true);
+            }
 
             //5. 解绑账号
             loggerInfo("5. 解绑账号");
@@ -188,9 +200,10 @@ public class ResourceDirectoryAccountFactory {
             loggerInfo("**************************************************************************************************************************************");
             loggerInfo("master account: " + email);
             loggerInfo("accountId: " + accountId);
+            loggerInfo("请通过邮箱找回密码的方式登录新创建的主账号");
             loggerInfo("-------------------------------------------------------------------");
             loggerInfo("ram user name: " + subRamUserName);
-            loggerInfo("ram user passowrd: " + subRamUserPassword);
+            loggerInfo("ram user password: " + subRamUserPassword);
             loggerInfo("ram user login url: ");
             loggerInfo("https://signin.aliyun.com/" + accountId + ".onaliyun.com/login.htm?callback=https%3A%2F%2Fhomenew.console.aliyun.com%2F#/login");
 //            loggerInfo("-------------------------------------------------------------------");
