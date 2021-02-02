@@ -96,6 +96,25 @@ CREATE TABLE `user_role` (
 
 
 
+# Dump of table api_user
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `api_user`;
+
+CREATE TABLE `api_user` (
+                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                        `accessKeyId` varchar(100) DEFAULT NULL,
+                        `accessKeySecret` varchar(100) DEFAULT NULL,
+                        `comment` varchar(1000) DEFAULT NULL,
+                        `valid` tinyint(1) DEFAULT NULL COMMENT '是否生效',
+                        `gmt_create` datetime DEFAULT NULL,
+                        `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                        PRIMARY KEY (`id`),
+                        UNIQUE KEY `accessKeyId` (`accessKeyId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
