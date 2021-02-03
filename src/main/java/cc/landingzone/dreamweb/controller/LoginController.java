@@ -1,7 +1,9 @@
 package cc.landingzone.dreamweb.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -225,5 +227,45 @@ public class LoginController extends BaseController {
 
     private static void checkTimestamp(long now, String timestamp) {
         Assert.isTrue(Math.abs(now - Long.parseLong(timestamp)) <= THIRTY_MINUTES, "签名已经过期!");
+    }
+
+    /**
+     * 生成API登录需要的参数
+     */
+    private static void generateApiLoginParams() {
+        // 创建参数表
+        Map<String, String> params = new HashMap<>();
+        // Access Key ID
+        params.put("accessKeyId", CommonConstants.TEST_API_ACCESS_KEY_ID);
+        // 13位时间戳
+        params.put("timestamp", String.valueOf(System.currentTimeMillis()));
+        // 自定义参数
+        params.put("nameId", "admin");
+
+        // 按照参数名称的字典顺序对请求中所有参数(不包括signature参数本身)进行排序
+        String[] keyArray = params.keySet().toArray(new String[0]);
+        Arrays.sort(keyArray);
+
+        // 将参数名称和值用"="进行连接,得到形如"key=value"的字符串
+        // 将"="连接得到的参数组合按顺序依次用"&"进行连接,得到形如"key1=value1&key2=value2..."的字符串
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean isFirst = true;
+        for (String key : keyArray) {
+            if (!isFirst) {
+                stringBuilder.append("&");
+            } else {
+                isFirst = false;
+            }
+            stringBuilder.append(key).append("=").append(params.get(key));
+        }
+        String needSignature = stringBuilder.toString();
+
+        // 生成签名
+        String signature = generateSignature(needSignature, CommonConstants.TEST_API_ACCESS_KEY_SECRET);
+        System.out.println(needSignature + "&signature=" + signature);
+    }
+
+    public static void main(String[] args) {
+        generateApiLoginParams();
     }
 }
