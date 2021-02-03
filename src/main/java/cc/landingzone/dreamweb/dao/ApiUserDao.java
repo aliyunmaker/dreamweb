@@ -18,6 +18,8 @@ public interface ApiUserDao {
 
     ApiUser getApiUserById(Integer id);
 
+    ApiUser getApiUserByAccessKeyId(String accessKeyId);
+
     List<ApiUser> getAllApiUsers();
 
     void deleteApiUser(Integer id);
