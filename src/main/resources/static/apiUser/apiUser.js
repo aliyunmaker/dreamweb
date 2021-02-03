@@ -12,7 +12,7 @@ Ext.onReady(function () {
     dataUrl: '../apiUser/getAllApiUsers.do',
     rootFlag: 'data',
     pageSize: 200,
-    fields: ['id', 'accessKeyId', 'accessKeySecret', 'accessKeyId', 'comment', 'valid', 'gmtCreate']
+    fields: ['id', 'accessKeyId', 'accessKeySecret', 'accessKeyId', 'comment', {name: 'valid', type: 'string'}, 'gmtCreate']
   });
 
   var apiUserGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -44,7 +44,7 @@ Ext.onReady(function () {
       header: '生效开关',
       flex: 1.5,
       renderer: function (value) {
-        if (value) {
+        if (value === "true") {
           return '<img src="' + oss + 'user_admin.png"' + alignStyle + "/> 已生效";
         } else {
           return '<img src="' + oss + 'user_guest.png"' + alignStyle + "/> 未生效";
@@ -95,20 +95,34 @@ Ext.onReady(function () {
   var apiUserFormWindow = new MyExt.Component.FormWindow({
     title: '操作',
     width: 400,
-    height: 320,
+    height: 120,
     formItems: [{
       name: 'id',
       hidden: true
     }, {
       fieldLabel: '备注',
+      labelWidth: 40,
       name: 'comment',
       allowBlank: false,
       emptyText: '备注'
     }, {
-      fieldLabel: '是否生效',
-      name: 'valid',
+      fieldLabel: '生效',
+      labelWidth: 40,
+      xtype: 'radiogroup',
       allowBlank: false,
-      emptyText: 'true或false'
+      columns: 2,
+      items: [{
+        boxLabel: "是",
+        id: 'valid0',
+        name: "valid",
+        inputValue: "true",
+        checked: true
+      }, {
+        boxLabel: "否",
+        id: 'valid1',
+        name: "valid",
+        inputValue: "false"
+      }]
     }],
     submitBtnFn: function () {
       var form = apiUserFormWindow.getFormPanel().getForm();
