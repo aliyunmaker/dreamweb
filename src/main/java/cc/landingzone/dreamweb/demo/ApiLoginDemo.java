@@ -7,7 +7,14 @@ import java.util.Map;
 import cc.landingzone.dreamweb.utils.SignatureUtils;
 
 /**
- * Demo: 客户平台跳转到dreamWeb, 通过API实现免登
+ * Demo: 客户平台跳转到dreamWeb, 通过API实现免登<br/>
+ *
+ * <br/>
+ * <p>
+ *     本样例中通过代码生成 API登录所需的URI(以下称URI)<br/>
+ *     然后按照以下格式拼接成实际的地址：<br/>
+ *     scheme://主机名[:端口号]+URI，例如: http://localhost:8080/apiLogin?key1=value1&key2=value2...
+ * </p>
  *
  * @author merc-bottle
  * @date 2021/02/03
