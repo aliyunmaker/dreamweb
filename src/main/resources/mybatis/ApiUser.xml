@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ApiUserDao">
+    <insert id="addApiUser"
+            parameterType="cc.landingzone.dreamweb.model.ApiUser" useGeneratedKeys="true" keyProperty="id">
+        insert into api_user
+        (accessKeyId,
+         accessKeySecret,
+         comment,
+         valid,
+         gmt_create)
+        values (#{accessKeyId},
+                #{accessKeySecret},
+                #{comment},
+                #{valid},
+                now())
+    </insert>
+
+    <update id="updateApiUser" parameterType="cc.landingzone.dreamweb.model.ApiUser">
+        update api_user
+        set comment = #{comment},
+            valid   = #{valid}
+            where id = #{id}
+    </update>
+
+    <select id="getApiUserById" resultType="cc.landingzone.dreamweb.model.ApiUser">
+        select *
+        from api_user
+        where id = #{id}
+    </select>
+
+    <select id="getApiUserByAccessKeyId" resultType="cc.landingzone.dreamweb.model.ApiUser">
+        select *
+        from api_user
+        where accessKeyId = #{accessKeyId}
+    </select>
+
+    <select id="getAllApiUsers" resultType="cc.landingzone.dreamweb.model.ApiUser">
+        select *
+        from api_user
+    </select>
+
+    <delete id="deleteApiUser" parameterType="int">
+        delete
+        from api_user
+        where id = #{id}
+    </delete>
+</mapper>
