@@ -82,8 +82,8 @@ public class LoginController extends BaseController {
             // String signatureNonce = request.getParameter("signatureNonce");
             // Assert.hasText(signatureNonce, "signatureNonce must not be empty");
 
-            String nameId = request.getParameter("nameId");
-            Assert.hasText(nameId, "nameId不能为空!");
+            String loginName = request.getParameter("loginName");
+            Assert.hasText(loginName, "loginName不能为空!");
 
             ApiUser apiUser = apiUserService.getApiUserByAccessKeyId(accessKeyId);
             Assert.notNull(apiUser, "API账号不存在!");
@@ -104,8 +104,14 @@ public class LoginController extends BaseController {
             checkTimestamp(now, timestamp);
 
             // 查询用户信息
-            User user = userService.getUserByLoginName(nameId);
-            Assert.notNull(user, "用户不存在!");
+            User user = userService.getUserByLoginName(loginName);
+            if (null == user) {
+                user = new User();
+                user.setLoginName(loginName);
+                user.setName(loginName);
+                user.setRole("ROLE_GUEST");
+                userService.addUser(user);
+            }
 
             // 给用户授权
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
@@ -240,7 +246,7 @@ public class LoginController extends BaseController {
         // 13位时间戳
         params.put("timestamp", String.valueOf(System.currentTimeMillis()));
         // 自定义参数
-        params.put("nameId", "admin");
+        params.put("loginName", CommonConstants.TEST_LOGIN_NAME);
 
         // 按照参数名称的字典顺序对请求中所有参数(不包括signature参数本身)进行排序
         String[] keyArray = params.keySet().toArray(new String[0]);
