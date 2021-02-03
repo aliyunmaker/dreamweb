@@ -19,6 +19,13 @@ public class CommonConstants {
     public static final String WEB_LANDINGZONE_ID;
     public static final String WEB_LANDINGZONE_SECRET;
 
+    public static final String API_LOGOUT_URL = "/apiLogout";
+    public static final String API_LOGOUT_SUCCESS_URL;
+
+    public static final String TEST_API_ACCESS_KEY_ID;
+    public static final String TEST_API_ACCESS_KEY_SECRET;
+    public static final String TEST_LOGIN_NAME;
+
     // 是否线上环境
     public static final boolean ENV_ONLINE;
 
@@ -29,6 +36,12 @@ public class CommonConstants {
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         WEB_LANDINGZONE_ID = properties.getProperty("dreamweb.weixin.landingzone.id");
         WEB_LANDINGZONE_SECRET = properties.getProperty("dreamweb.weixin.landingzone.secret");
+        API_LOGOUT_SUCCESS_URL = properties.getProperty("dreamweb.api_logout_success_url");
+
+        // 测试使用
+        TEST_API_ACCESS_KEY_ID = properties.getProperty("dreamweb.test.api_accesskeyid");
+        TEST_API_ACCESS_KEY_SECRET = properties.getProperty("dreamweb.test.api_accesskeysecret");
+        TEST_LOGIN_NAME = properties.getProperty("dreamweb.test.login_name");
     }
 
     public static Properties loadProperties() {

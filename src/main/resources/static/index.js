@@ -25,6 +25,11 @@ Ext
                         href: 'userGroup/userGroupManage.html',
                         hrefTarget: 'mainFrame'
                     }, {
+                      text: "API账号管理",
+                      leaf: true,
+                      href: 'apiUser/apiUser.html',
+                      hrefTarget: 'mainFrame'
+                    }, {
                         text: "注销",
                         leaf: true,
                         iconCls: 'MyExt-logout',
