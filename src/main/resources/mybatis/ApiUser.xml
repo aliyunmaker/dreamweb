@@ -31,6 +31,12 @@
         where id = #{id}
     </select>
 
+    <select id="getApiUserByAccessKeyId" resultType="cc.landingzone.dreamweb.model.ApiUser">
+        select *
+        from api_user
+        where accessKeyId = #{accessKeyId}
+    </select>
+
     <select id="getAllApiUsers" resultType="cc.landingzone.dreamweb.model.ApiUser">
         select *
         from api_user

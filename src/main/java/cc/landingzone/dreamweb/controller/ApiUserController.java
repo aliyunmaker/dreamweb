@@ -56,7 +56,7 @@ public class ApiUserController extends BaseController {
             Integer id = Integer.valueOf(idStr);
 
             ApiUser apiUser = apiUserService.getApiUserById(id);
-            Assert.notNull(apiUser, "API用户不存在!");
+            Assert.notNull(apiUser, "API账号不存在!");
 
             String comment = request.getParameter("comment");
             boolean valid = Boolean.parseBoolean(request.getParameter("valid"));

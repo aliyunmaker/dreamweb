@@ -60,6 +60,17 @@ public class ApiUserService {
     }
 
     /**
+     * 根据AK获取API账号
+     *
+     * @param accessKeyId
+     * @return
+     */
+    public ApiUser getApiUserByAccessKeyId(String accessKeyId) {
+        Assert.hasText(accessKeyId, "accessKeyId不能为空!");
+        return apiUserDao.getApiUserByAccessKeyId(accessKeyId);
+    }
+
+    /**
      * 获取所有API账号
      *
      * @return
