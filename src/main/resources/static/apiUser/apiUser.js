@@ -41,13 +41,13 @@ Ext.onReady(function () {
       flex: 2.5
     }, {
       dataIndex: 'valid',
-      header: '生效开关',
+      header: '开关',
       flex: 1.5,
       renderer: function (value) {
         if (value === "true") {
-          return '<img src="' + oss + 'user_admin.png"' + alignStyle + "/> 已生效";
+          return '<img src="' + oss + 'green.png"' + alignStyle + "/>";
         } else {
-          return '<img src="' + oss + 'user_guest.png"' + alignStyle + "/> 未生效";
+          return '<img src="' + oss + 'gray.png"' + alignStyle + "/>";
         }
       }
     }],
