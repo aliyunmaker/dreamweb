@@ -25,7 +25,7 @@ Ext
                         href: 'userGroup/userGroupManage.html',
                         hrefTarget: 'mainFrame'
                     }, {
-                      text: "API用户管理",
+                      text: "API账号管理",
                       leaf: true,
                       href: 'apiUser/apiUser.html',
                       hrefTarget: 'mainFrame'
