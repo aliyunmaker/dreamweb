@@ -1,7 +1,9 @@
 package cc.landingzone.dreamweb.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,25 +58,30 @@ public class LoginController extends BaseController {
         return "login";
     }
 
-    @RequestMapping("/apiLogin")
-    public void apiLogin(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("/autoLogin")
+    public void autoLogin(HttpServletRequest request, HttpServletResponse response) {
         long now = System.currentTimeMillis();
 
         WebResult result = new WebResult();
         try {
-            String accessKeyId = request.getParameter("accessKeyId");
+            String token = request.getParameter("token");
+            Assert.hasText(token, "token不能为空!");
+
+            // BASE64解码
+            String params = new String(Base64.getUrlDecoder().decode(token.getBytes(StandardCharsets.UTF_8)));
+            Map<String, String> paramMap = Arrays.stream(params.split("&"))
+                .collect(Collectors.toMap(x -> x.split("=")[0], x -> x.split("=")[1]));
+
+            String accessKeyId = paramMap.get("accessKeyId");
             Assert.hasText(accessKeyId, "accessKeyId不能为空!");
 
-            String signature = request.getParameter("signature");
+            String signature = paramMap.get("signature");
             Assert.hasText(signature, "signature不能为空!");
 
-            String timestamp = request.getParameter("timestamp");
+            String timestamp = paramMap.get("timestamp");
             Assert.hasText(timestamp, "timestamp不能为空!");
 
-            // String signatureNonce = request.getParameter("signatureNonce");
-            // Assert.hasText(signatureNonce, "signatureNonce must not be empty");
-
-            String loginName = request.getParameter("loginName");
+            String loginName = paramMap.get("loginName");
             Assert.hasText(loginName, "loginName不能为空!");
 
             ApiUser apiUser = apiUserService.getApiUserByAccessKeyId(accessKeyId);
@@ -84,10 +91,10 @@ public class LoginController extends BaseController {
             }
 
             // 构造params, key1=value1&key2=value2...
-            String params = Collections.list(request.getParameterNames()).stream()
-                .filter(parameterName -> !"signature".equals(parameterName))
-                .sorted()
-                .map(parameterName -> parameterName + "=" + request.getParameter(parameterName))
+            params = paramMap.entrySet().stream()
+                .filter(entry -> !"signature".equals(entry.getKey()))
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
 
             // 校验签名

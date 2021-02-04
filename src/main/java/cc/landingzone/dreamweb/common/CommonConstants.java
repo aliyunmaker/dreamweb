@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.common;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,7 @@ public class CommonConstants {
     public static final String WEB_LANDINGZONE_ID;
     public static final String WEB_LANDINGZONE_SECRET;
 
-    public static final String API_LOGOUT_URL = "/apiLogout";
-    public static final String API_LOGOUT_SUCCESS_URL;
+    public static final String LOGOUT_SUCCESS_URL;
 
     // 是否线上环境
     public static final boolean ENV_ONLINE;
@@ -32,7 +32,12 @@ public class CommonConstants {
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         WEB_LANDINGZONE_ID = properties.getProperty("dreamweb.weixin.landingzone.id");
         WEB_LANDINGZONE_SECRET = properties.getProperty("dreamweb.weixin.landingzone.secret");
-        API_LOGOUT_SUCCESS_URL = properties.getProperty("dreamweb.api_logout_success_url");
+        String logoutSuccessUrl = properties.getProperty("dreamweb.weixin.landingzone.logout_success_url");
+        if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
+            LOGOUT_SUCCESS_URL = "/login?logout";
+        } else {
+            LOGOUT_SUCCESS_URL = logoutSuccessUrl;
+        }
     }
 
     public static Properties loadProperties() {
