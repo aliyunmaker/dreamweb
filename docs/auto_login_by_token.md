@@ -12,7 +12,7 @@
 1. Token是经过BASE64编码后的字符串，token本身包含4个部分，分别是：
 
 	| 字段名称 | 字段类型 | 字段含义 | 备注 |
-	| ---- | ---- | ---- | ---- | ---- |
+	| ---- | ---- | ---- | ---- |
 	| accessKeyId | String | 通过DreamWeb系统申请的AccessKey ID | 用于标识企业客户平台 |
 	| timestamp | Long | 当前系统时间，Unix风格的13位时间戳，例如：1612137600000 | 用于判断token是否过期 |
 	| loginName | String | 用户的登录名 | 用户在企业中的唯一标识 |
@@ -59,7 +59,7 @@ needSignature: accessKeyId=testAccessKeyId&loginName=testLoginName&timestamp=161
 【代码中的变量说明】
 
 | 变量名称 | 变量类型 | 变量含义 | 占位符 |
-| ---- | ---- | ---- | ---- | ---- | 
+| ---- | ---- | ---- | ---- |
 | ACCESS\_KEY_ID | String | 通过DreamWeb系统申请的AccessKey ID | \<your\_dreamWeb_accessKeyId> |
 | ACCESS\_KEY_SECRET | String | 通过DreamWeb系统申请的AccessKey Secret | \<your\_dreamWeb_accessKeySecret> |
 | loginName | String | 用户的登录名 | \<your\_user_loginName> |
