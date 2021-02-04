@@ -9,15 +9,14 @@ import java.util.Map;
 import cc.landingzone.dreamweb.utils.SignatureUtils;
 
 /**
- * Demo: 企业客户平台跳转到DreamWeb, 通过token实现自动登录<br/>
+ * Demo: 通过token实现企业客户平台到DreamWeb系统的自动登录<br/>
  *
  * <br/>
  * <p>
  *     本样例中通过代码生成自动登录所需的token<br/>
  *     <br/>
- *     企业客户平台还需要按照以下格式拼接成实际可以跳转的地址：<br/>
- *     scheme://主机名[:端口号]+/autoLogin?token={token}<br/>
- *     例如: http://localhost:8080/autoLogin?token={token}
+ *     将DreamWeb系统的登录地址, 和上一步中得到的token, 拼接成实际可以跳转的地址: <br/>
+ *     (http/https)://{DreamWeb系统的域名}[:端口号]/autoLogin?token={token}
  * </p>
  *
  * @author merc-bottle
@@ -26,11 +25,11 @@ import cc.landingzone.dreamweb.utils.SignatureUtils;
 public class AutoLoginDemo {
 
     /**
-     * 通过DreamWeb申请的 AccessKey ID, 用于标识企业客户平台
+     * 通过DreamWeb系统申请的 AccessKey ID, 用于标识企业客户平台
      */
     private static final String ACCESS_KEY_ID = "<your_dreamWeb_accessKeyId>";
     /**
-     * 通过DreamWeb申请的 AccessKey Secret, 用于验证企业客户平台的密钥, 必须保密
+     * 通过DreamWeb系统申请的 AccessKey Secret, 用于计算签名字符串以及服务端验证签名字符串, 必须严格保密
      */
     private static final String ACCESS_KEY_SECRET = "<your_dreamWeb_accessKeySecret>";
 
@@ -57,12 +56,12 @@ public class AutoLoginDemo {
         // 用户的loginName
         paramMap.put("loginName", loginName);
 
-        // 按照参数名称的字典顺序对请求中所有参数(不包括signature参数本身)进行排序
+        // 按照参数名称的字典顺序对请求中所有参数(不包括signature参数)进行排序
         String[] keyArray = paramMap.keySet().toArray(new String[0]);
         Arrays.sort(keyArray);
 
-        // 将参数名称和值用"="进行连接, 得到形如"key=value"的字符串
-        // 将"="连接得到的参数组合按顺序依次用"&"进行连接, 得到"key1=value1&key2=value2..."的字符串
+        // 将参数的名称和值用"="进行连接, 得到如同"key=value"的字符串
+        // 将"="连接得到的参数组合按顺序依次用"&"进行连接, 得到如同"key1=value1&key2=value2..."的待签名字符串
         StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
         for (String key : keyArray) {
@@ -75,13 +74,15 @@ public class AutoLoginDemo {
         }
         String needSign = stringBuilder.toString();
 
-        // 使用AccessKey Secret计算签名
+        // 计算待签名字符串的HMAC值, 使用的哈希算法是SHA1
+        // 对计算结果进行HEX编码, 得到签名字符串
+        // 计算过程中需要用到AccessKey Secret
         String signature = SignatureUtils.generateSignature(needSign, ACCESS_KEY_SECRET);
 
         // 拼接签名, 得到完整的参数字符串
         String params = needSign + "&signature=" + signature;
 
-        // 使用BASE64编码为token
+        // 对参数字符串进行BASE64编码, 得到token
         String token = Base64.getUrlEncoder().withoutPadding().encodeToString(params.getBytes(StandardCharsets.UTF_8));
         return token;
     }

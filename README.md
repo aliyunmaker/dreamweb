@@ -16,6 +16,8 @@ openssl pkcs8 -topk8 -inform PEM -outform DER -in saml.pem -out saml.pkcs8 -nocr
 
 将生成的saml.crt saml.pem  saml.pkcs8 三个文件放在src/main/resources/ssocert/ 目录下
 
-
 ### 启动类(springboot)
 cc.landingzone.dreamweb.DreamwebApplication
+
+### 文档
+[通过token实现自动登录](docs/auto_login_by_token.md)
