@@ -10,6 +10,8 @@ public class Account {
 
     @JSONField(name = "AccountId")
     private String accountId;
+    @JSONField(name = "DisplayName")
+    private String displayName;
 
     public String getAccountId() {
         return accountId;
@@ -17,5 +19,13 @@ public class Account {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }
