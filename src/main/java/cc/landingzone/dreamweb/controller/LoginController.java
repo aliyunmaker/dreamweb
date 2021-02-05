@@ -70,7 +70,7 @@ public class LoginController extends BaseController {
             // BASE64解码
             String params = new String(Base64.getUrlDecoder().decode(token.getBytes(StandardCharsets.UTF_8)));
             Map<String, String> paramMap = Arrays.stream(params.split("&"))
-                .collect(Collectors.toMap(x -> x.split("=")[0], x -> x.split("=")[1]));
+                .collect(Collectors.toMap(kv -> kv.split("=")[0], kv -> kv.split("=")[1]));
 
             String accessKeyId = paramMap.get("accessKeyId");
             Assert.hasText(accessKeyId, "accessKeyId不能为空!");
