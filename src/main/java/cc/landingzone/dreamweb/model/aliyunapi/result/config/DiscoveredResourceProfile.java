@@ -8,18 +8,12 @@ import com.alibaba.fastjson.annotation.JSONField;
  */
 public class DiscoveredResourceProfile {
 
-    @JSONField(name = "ResourceDeleted")
-    private Integer resourceDeleted;
     @JSONField(name = "ResourceType")
     private String resourceType;
-
-    public Integer getResourceDeleted() {
-        return resourceDeleted;
-    }
-
-    public void setResourceDeleted(Integer resourceDeleted) {
-        this.resourceDeleted = resourceDeleted;
-    }
+    @JSONField(name = "Region")
+    private String region;
+    @JSONField(name = "ResourceDeleted")
+    private Integer resourceDeleted;
 
     public String getResourceType() {
         return resourceType;
@@ -27,5 +21,21 @@ public class DiscoveredResourceProfile {
 
     public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public Integer getResourceDeleted() {
+        return resourceDeleted;
+    }
+
+    public void setResourceDeleted(Integer resourceDeleted) {
+        this.resourceDeleted = resourceDeleted;
     }
 }
