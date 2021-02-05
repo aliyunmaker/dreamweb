@@ -45,9 +45,9 @@ Ext.onReady(function () {
       flex: 1.5,
       renderer: function (value) {
         if (value === "true") {
-          return '<img src="' + oss + 'green.png"' + alignStyle + "/>";
+          return '<img src="' + oss + 'green.png"' + alignStyle + '/>';
         } else {
-          return '<img src="' + oss + 'gray.png"' + alignStyle + "/>";
+          return '<img src="' + oss + 'gray.png"' + alignStyle + '/>';
         }
       }
     }],
