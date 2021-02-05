@@ -20,11 +20,25 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: deploy via ssh
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: /home/admin/deploy_dreamweb.sh
+#      - name: deploy via ssh
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+#          script: /home/admin/deploy_dreamweb.sh
+      - name: Set output
+        uses: actions/checkout@v2
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: notify to dingding
+        run: |
+          curl --location --request POST 'https://oapi.dingtalk.com/robot/send?access_token=${{ secrets.dingding_access_token }}' \
+          --header 'Content-Type: application/json' \
+          --data-raw '{
+              "msgtype": "text",
+              "text": {
+                  "content": "dreamweb deploy success,version:[${{ steps.vars.outputs.tag }}]"
+              }
+          }'
