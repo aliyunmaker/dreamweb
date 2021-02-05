@@ -12,7 +12,7 @@ Ext.onReady(function () {
     dataUrl: '../resourceView/listAccountResourceInfo.do',
     rootFlag: 'data',
     pageSize: 200,
-    fields: ['accountId', 'resourceCount']
+    fields: ['accountId', 'displayName', 'resourceCount', "resourceCountDeleted"]
   });
 
   resourceViewStore.on('beforeload', function (store, options) {
@@ -25,15 +25,30 @@ Ext.onReady(function () {
     store: resourceViewStore,
     columns: [{
       dataIndex: 'accountId',
-      header: '子账号',
+      header: '子账号UID',
+      flex: 1,
+      renderer: function (value) {
+        return '<span style="line-height:20px;font-size:14px;">' + value + '</span>';
+      }
+    }, {
+      dataIndex: 'displayName',
+      header: '子账号名称',
       flex: 1,
       renderer: function (value) {
         return '<span style="line-height:20px;font-size:14px;">' + value + '</span>';
       }
     }, {
       dataIndex: 'resourceCount',
-      header: '资源列表',
-      flex: 3,
+      header: '运行中的资源列表',
+      flex: 2,
+      renderer: function (value) {
+        value = value.replace(/\n/g, '<br/>');
+        return '<span style="line-height:20px;font-size:14px;">' + value + '</span>';
+      }
+    }, {
+      dataIndex: 'resourceCountDeleted',
+      header: '已删除的资源列表',
+      flex: 2,
       renderer: function (value) {
         value = value.replace(/\n/g, '<br/>');
         return '<span style="line-height:20px;font-size:14px;">' + value + '</span>';

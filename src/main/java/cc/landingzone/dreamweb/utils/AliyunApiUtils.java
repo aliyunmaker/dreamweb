@@ -91,6 +91,7 @@ public class AliyunApiUtils {
         request.putQueryParameter("PageNumber", String.valueOf(pageNumber));
         request.putQueryParameter("PageSize", String.valueOf(PAGE_SIZE));
         request.putQueryParameter("MemberId", memberId);
+        request.putQueryParameter("MultiAccount", "true");
         CommonResponse response = client.getCommonResponse(request);
         return JsonUtils.parseObject(response.getData(), ListDiscoveredResourcesResult.class);
     }
