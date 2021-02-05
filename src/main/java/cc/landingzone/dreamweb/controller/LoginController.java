@@ -109,6 +109,7 @@ public class LoginController extends BaseController {
                 user.setLoginName(loginName);
                 user.setName(loginName);
                 user.setRole("ROLE_GUEST");
+                user.setComment("auto login by token");
                 userService.addUser(user);
             }
 
