@@ -25,6 +25,11 @@ Ext
                         href: 'userGroup/userGroupManage.html',
                         hrefTarget: 'mainFrame'
                     }, {
+                      text: "资源视图",
+                      leaf: true,
+                      href: 'resourceView/resourceView.html',
+                      hrefTarget: 'mainFrame'
+                    }, {
                         text: "注销",
                         leaf: true,
                         iconCls: 'MyExt-logout',
