@@ -1,3 +1,5 @@
+# 官方文档
+# https://help.aliyun.com/document_detail/127411.html
 ECS实例,ACS::ECS::Instance
 ECS弹性网卡,ACS::ECS::NetworkInterface
 ECS安全组,ACS::ECS::SecurityGroup
@@ -50,3 +52,6 @@ DNS实例,ACS::DNS::Instance
 DNS域名分组,ACS::DNS::DomainGroup
 DNS域名,ACS::DNS::Domain
 MSE集群,ACS::MSE::Cluster
+# 手动维护
+RAM用户组,ACS::RAM::Group
+资源组,ACS::ResourceManager::ResourceGroup

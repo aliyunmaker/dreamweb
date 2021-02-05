@@ -39,6 +39,9 @@ public class ResourceViewService {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
             String readline;
             while ((readline = br.readLine()) != null) {
+                if (readline.startsWith("#")) {
+                    continue;
+                }
                 String[] arr = readline.split(",");
                 String resourceTypeName = arr[0];
                 String resourceType = arr[1];
