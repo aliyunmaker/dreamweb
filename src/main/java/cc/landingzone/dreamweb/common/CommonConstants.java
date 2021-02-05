@@ -32,7 +32,7 @@ public class CommonConstants {
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         WEB_LANDINGZONE_ID = properties.getProperty("dreamweb.weixin.landingzone.id");
         WEB_LANDINGZONE_SECRET = properties.getProperty("dreamweb.weixin.landingzone.secret");
-        String logoutSuccessUrl = properties.getProperty("dreamweb.weixin.landingzone.logout_success_url");
+        String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";
         } else {
