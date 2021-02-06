@@ -39,6 +39,6 @@ jobs:
           --data-raw '{
               "msgtype": "text",
               "text": {
-                  "content": "dreamweb deploy success,version:[${{ steps.vars.outputs.tag }}]\n msg:${{ github.event.head_commit.message }}"
+                  "content": "dreamweb deploy success,version:[${{ steps.vars.outputs.tag }}]\\n msg:${{ github.event.head_commit.message }}"
               }
           }'
