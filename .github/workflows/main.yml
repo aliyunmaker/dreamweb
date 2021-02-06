@@ -37,8 +37,9 @@ jobs:
           curl --location --request POST 'https://oapi.dingtalk.com/robot/send?access_token=${{ secrets.dingding_access_token }}' \
           --header 'Content-Type: application/json' \
           --data-raw '{
-              "msgtype": "text",
-              "text": {
-                  "content": "dreamweb deploy success,version:[${{ steps.vars.outputs.tag }}] \n commit msg:${{ github.event.head_commit.message }} \n actor: ${{ github.actor }}"
+              "msgtype": "markdown",
+              "markdown": {
+                  "title": "Dreamweb Deploy",
+                  "text": "### Dreamweb Deploy \n\n-----------------  \n\n [version] \n\n  ${{ steps.vars.outputs.tag }}  \n\n [message] \n\n  ${{ github.event.head_commit.message }}  \n\n [author] \n\n  ${{ github.actor }}"
               }
           }'
