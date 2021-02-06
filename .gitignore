@@ -11,6 +11,8 @@ config/
 !**/src/main/**/config/
 !**/src/test/**/config/
 
+.DS_Store
+
 ### cert ###
 *.crt
 *.pem
