@@ -40,6 +40,6 @@ jobs:
               "msgtype": "markdown",
               "markdown": {
                   "title": "Dreamweb Deploy",
-                  "text": "### Dreamweb Deploy \n\n-----------------  \n\n ##### version \n\n  ${{ steps.vars.outputs.tag }}  \n\n ##### message \n\n  ${{ github.event.head_commit.message }}  \n\n ##### author \n\n  ${{ github.actor }}"
+                  "text": "### Dreamweb Deploy \n\n-----------------  \n\n [version]: ${{ steps.vars.outputs.tag }}  \n\n [message]: ${{ github.event.head_commit.message }}  \n\n [author]: ${{ github.actor }}"
               }
           }'
