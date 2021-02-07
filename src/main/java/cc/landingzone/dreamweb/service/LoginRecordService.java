@@ -10,6 +10,7 @@ import cc.landingzone.dreamweb.dao.LoginRecordDao;
 import cc.landingzone.dreamweb.model.LoginRecord;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
+import cc.landingzone.dreamweb.utils.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,8 @@ public class LoginRecordService {
      */
     public void addLoginRecord(HttpServletRequest request, String loginName, LoginMethodEnum loginMethod) {
         try {
-            String remoteIpAddress = request.getRemoteAddr();
-
             LoginRecord loginRecord = new LoginRecord();
-            loginRecord.setRemoteIpAddress(remoteIpAddress);
+            loginRecord.setClientIpAddr(IpUtils.getClientIpAddr(request));
             loginRecord.setLoginName(loginName);
             loginRecord.setLoginMethod(loginMethod.name());
             loginRecord.setComment(loginMethod.getComment());
@@ -59,7 +58,7 @@ public class LoginRecordService {
     @Transactional
     public void addLoginRecord(LoginRecord loginRecord) {
         Assert.notNull(loginRecord, "数据不能为空!");
-        Assert.hasText(loginRecord.getRemoteIpAddress(), "远程IP地址不能为空!");
+        Assert.hasText(loginRecord.getClientIpAddr(), "客户端IP地址不能为空!");
         Assert.hasText(loginRecord.getLoginName(), "登录名不能为空!");
         Assert.hasText(loginRecord.getLoginMethod(), "登录方式不能为空!");
         loginRecordDao.addLoginRecord(loginRecord);

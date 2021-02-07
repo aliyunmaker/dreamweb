@@ -6,12 +6,12 @@
     <insert id="addLoginRecord"
             parameterType="cc.landingzone.dreamweb.model.LoginRecord" useGeneratedKeys="true" keyProperty="id">
         insert into login_record
-        (remote_ip_address,
+        (client_ip_addr,
          login_name,
          login_method,
          comment,
          gmt_create)
-        values (#{remoteIpAddress},
+        values (#{clientIpAddr},
                 #{loginName},
                 #{loginMethod},
                 #{comment},

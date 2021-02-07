@@ -9,7 +9,7 @@ import java.util.Date;
 public class LoginRecord {
 
     private Integer id;
-    private String remoteIpAddress;
+    private String clientIpAddr;
     private String loginName;
     private String loginMethod;
     private String comment;
@@ -23,12 +23,12 @@ public class LoginRecord {
         this.id = id;
     }
 
-    public String getRemoteIpAddress() {
-        return remoteIpAddress;
+    public String getClientIpAddr() {
+        return clientIpAddr;
     }
 
-    public void setRemoteIpAddress(String remoteIpAddress) {
-        this.remoteIpAddress = remoteIpAddress;
+    public void setClientIpAddr(String clientIpAddr) {
+        this.clientIpAddr = clientIpAddr;
     }
 
     public String getLoginName() {
