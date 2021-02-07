@@ -49,6 +49,11 @@ Ext
                         leaf: true,
                         href: 'apiUser/apiUser.html',
                         hrefTarget: 'mainFrame'
+                    }, {
+                      text: "登录记录",
+                      leaf: true,
+                      href: 'loginRecord/loginRecord.html',
+                      hrefTarget: 'mainFrame'
                     }]
                 }]
             }

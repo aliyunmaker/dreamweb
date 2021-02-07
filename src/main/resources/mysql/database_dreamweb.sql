@@ -103,14 +103,32 @@ DROP TABLE IF EXISTS `api_user`;
 
 CREATE TABLE `api_user` (
                         `id` int(11) NOT NULL AUTO_INCREMENT,
-                        `accessKeyId` varchar(100) DEFAULT NULL,
-                        `accessKeySecret` varchar(100) DEFAULT NULL,
+                        `accessKeyId` varchar(100) NOT NULL,
+                        `accessKeySecret` varchar(100) NOT NULL,
                         `comment` varchar(1000) DEFAULT NULL,
-                        `valid` tinyint(1) DEFAULT NULL COMMENT '是否生效',
+                        `valid` tinyint(1) NOT NULL COMMENT '是否生效',
                         `gmt_create` datetime DEFAULT NULL,
                         `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `accessKeyId` (`accessKeyId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+# Dump of table login_record
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `login_record`;
+
+CREATE TABLE `login_record` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT,
+                            `remote_ip_address` varchar(100) NOT NULL COMMENT '远程IP地址',
+                            `login_name` varchar(100) NOT NULL COMMENT '登录名',
+                            `login_method` varchar(100) NOT NULL COMMENT '登录方式',
+                            `comment` varchar(1000) DEFAULT NULL,
+                            `gmt_create` datetime DEFAULT NULL,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
