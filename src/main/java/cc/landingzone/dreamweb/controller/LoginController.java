@@ -17,7 +17,9 @@ import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.ApiUser;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
 import cc.landingzone.dreamweb.service.ApiUserService;
+import cc.landingzone.dreamweb.service.LoginRecordService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.HttpClientUtils;
 import cc.landingzone.dreamweb.utils.JsonUtils;
@@ -41,6 +43,8 @@ public class LoginController extends BaseController {
     private UserService userService;
     @Autowired
     private ApiUserService apiUserService;
+    @Autowired
+    private LoginRecordService loginRecordService;
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -58,6 +62,78 @@ public class LoginController extends BaseController {
         return "login";
     }
 
+    /**
+     * 网站微信登录回调
+     *
+     * @param request
+     * @param response
+     */
+    @RequestMapping("/weixin/web_login_callback.do")
+    public void web_login_callback(HttpServletRequest request, HttpServletResponse response) {
+        String result = "";
+        try {
+            String code = request.getParameter("code");
+            String sessionUrl = String.format(
+                    "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code",
+                    CommonConstants.WEB_LANDINGZONE_ID, CommonConstants.WEB_LANDINGZONE_SECRET, code);
+            String sessionResult = HttpClientUtils.getDataAsStringFromUrl(sessionUrl);
+            logger.info("sessionResult:{}", sessionResult);
+            Map<String, String> sessionMap = JsonUtils.parseObject(sessionResult,
+                    new TypeReference<Map<String, String>>() {
+                    });
+            String unionid = sessionMap.get("unionid");
+            User user = userService.getUserByUnionid(unionid);
+
+            String userInfoUrl = String.format("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s",
+                    sessionMap.get("access_token"), sessionMap.get("openid"));
+            String userInfoResult = HttpClientUtils.getDataAsStringFromUrl(userInfoUrl);
+            logger.info("userInfoResult:{}", userInfoResult);
+            Map<String, String> userInfoMap = JsonUtils.parseObject(userInfoResult,
+                    new TypeReference<Map<String, String>>() {
+                    });
+
+            if (null == user) {
+                user = new User();
+                user.setLoginName(UserService.WX_UNION_LOGIN_NAME_PREFIX + unionid);
+                user.setName(userInfoMap.get("nickname"));
+                user.setUnionid(unionid);
+                user.setComment(LoginMethodEnum.WEIXIN_LOGIN.getComment());
+                user.setRole(UserService.User_Role_Guest);
+                userService.addUser(user);
+            } else {
+                // 修正用户名和openid,统一以weixin_unionId为准
+                user.setLoginName(UserService.WX_UNION_LOGIN_NAME_PREFIX + unionid);
+                user.setName(userInfoMap.get("nickname"));
+                user.setUnionid(unionid);
+                userService.updateUser(user);
+            }
+            List<GrantedAuthority> grantedAuths = new ArrayList<>();
+            grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getLoginName(),
+                    user.getLoginName(), grantedAuths);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 创建登录记录
+            loginRecordService.addLoginRecord(request, user.getLoginName(), LoginMethodEnum.WEIXIN_LOGIN);
+
+            if ("ROLE_ADMIN".equals(user.getRole())) {
+                response.sendRedirect("/index.html");
+            } else {
+                response.sendRedirect("/welcome/welcome.html");
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result = e.getMessage();
+        }
+        outputToString(response, result);
+    }
+
+    /**
+     * 通过token自动登录
+     *
+     * @param request
+     * @param response
+     */
     @RequestMapping("/autoLogin")
     public void autoLogin(HttpServletRequest request, HttpServletResponse response) {
         long now = System.currentTimeMillis();
@@ -109,7 +185,7 @@ public class LoginController extends BaseController {
                 user.setLoginName(loginName);
                 user.setName(loginName);
                 user.setRole("ROLE_GUEST");
-                user.setComment("auto login by token");
+                user.setComment(LoginMethodEnum.AUTO_LOGIN.getComment());
                 userService.addUser(user);
             }
 
@@ -119,6 +195,10 @@ public class LoginController extends BaseController {
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getLoginName(),
                 user.getLoginName(), grantedAuths);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 创建登录记录
+            loginRecordService.addLoginRecord(request, loginName, LoginMethodEnum.AUTO_LOGIN);
+
             if ("ROLE_ADMIN".equals(user.getRole())) {
                 response.sendRedirect("/index.html");
             } else {
@@ -131,67 +211,5 @@ public class LoginController extends BaseController {
 
             outputToJSON(response, result);
         }
-    }
-
-    /**
-     * 网站微信登录回调
-     *
-     * @param request
-     * @param response
-     */
-    @RequestMapping("/weixin/web_login_callback.do")
-    public void web_login_callback(HttpServletRequest request, HttpServletResponse response) {
-        String result = "";
-        try {
-            String code = request.getParameter("code");
-            String sessionUrl = String.format(
-                    "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code",
-                    CommonConstants.WEB_LANDINGZONE_ID, CommonConstants.WEB_LANDINGZONE_SECRET, code);
-            String sessionResult = HttpClientUtils.getDataAsStringFromUrl(sessionUrl);
-            logger.info("sessionResult:{}", sessionResult);
-            Map<String, String> sessionMap = JsonUtils.parseObject(sessionResult,
-                    new TypeReference<Map<String, String>>() {
-                    });
-            String unionid = sessionMap.get("unionid");
-            User user = userService.getUserByUnionid(unionid);
-
-            String userInfoUrl = String.format("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s",
-                    sessionMap.get("access_token"), sessionMap.get("openid"));
-            String userInfoResult = HttpClientUtils.getDataAsStringFromUrl(userInfoUrl);
-            logger.info("userInfoResult:{}", userInfoResult);
-            Map<String, String> userInfoMap = JsonUtils.parseObject(userInfoResult,
-                    new TypeReference<Map<String, String>>() {
-                    });
-
-            if (null == user) {
-                user = new User();
-                user.setLoginName(UserService.WX_UNION_LOGIN_NAME_PREFIX + unionid);
-                user.setName(userInfoMap.get("nickname"));
-                user.setUnionid(unionid);
-                user.setComment("login from website by weixin qrcode");
-                user.setRole(UserService.User_Role_Guest);
-                userService.addUser(user);
-            } else {
-                // 修正用户名和openid,统一以weixin_unionId为准
-                user.setLoginName(UserService.WX_UNION_LOGIN_NAME_PREFIX + unionid);
-                user.setName(userInfoMap.get("nickname"));
-                user.setUnionid(unionid);
-                userService.updateUser(user);
-            }
-            List<GrantedAuthority> grantedAuths = new ArrayList<>();
-            grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getLoginName(),
-                    user.getLoginName(), grantedAuths);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            if ("ROLE_ADMIN".equals(user.getRole())) {
-                response.sendRedirect("/index.html");
-            } else {
-                response.sendRedirect("/welcome/welcome.html");
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result = e.getMessage();
-        }
-        outputToString(response, result);
     }
 }

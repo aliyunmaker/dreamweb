@@ -9,7 +9,7 @@ Ext.onReady(function () {
   };
 
   var apiUserStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-    dataUrl: '../apiUser/getAllApiUsers.do',
+    dataUrl: '../apiUser/listApiUser.do',
     rootFlag: 'data',
     pageSize: 200,
     fields: ['id', 'accessKeyId', 'accessKeySecret', 'accessKeyId', 'comment', {name: 'valid', type: 'string'}, 'gmtCreate']

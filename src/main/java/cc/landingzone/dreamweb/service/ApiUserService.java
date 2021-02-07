@@ -75,8 +75,8 @@ public class ApiUserService {
      *
      * @return
      */
-    public List<ApiUser> getAllApiUsers() {
-        return apiUserDao.getAllApiUsers();
+    public List<ApiUser> listApiUser() {
+        return apiUserDao.listApiUser();
     }
 
     /**

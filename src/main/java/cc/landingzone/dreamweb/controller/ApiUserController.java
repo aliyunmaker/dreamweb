@@ -72,11 +72,12 @@ public class ApiUserController extends BaseController {
         outputToJSON(response, result);
     }
 
-    @RequestMapping("/getAllApiUsers.do")
-    public void getAllApiUsers(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("/listApiUser.do")
+    public void listApiUser(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            List<ApiUser> apiUsers = apiUserService.getAllApiUsers();
+            List<ApiUser> apiUsers = apiUserService.listApiUser();
+            result.setTotal(apiUsers.size());
             result.setData(apiUsers);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
