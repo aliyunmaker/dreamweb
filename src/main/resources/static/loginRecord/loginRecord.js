@@ -12,7 +12,7 @@ Ext.onReady(function () {
     dataUrl: '../loginRecord/listLoginRecord.do',
     rootFlag: 'data',
     pageSize: 200,
-    fields: ['id', 'remoteIpAddress', 'loginName', 'loginMethod', 'comment', 'gmtCreate']
+    fields: ['id', 'clientIpAddr', 'loginName', 'loginMethod', 'comment', 'gmtCreate']
   });
 
   var loginRecordGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -28,8 +28,8 @@ Ext.onReady(function () {
       header: '登录时间',
       flex: 1
     },  {
-      dataIndex: 'remoteIpAddress',
-      header: '远程IP地址',
+      dataIndex: 'clientIpAddr',
+      header: '客户端IP地址',
       flex: 1
     }, {
       dataIndex: 'loginName',

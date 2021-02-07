@@ -122,7 +122,7 @@ DROP TABLE IF EXISTS `login_record`;
 
 CREATE TABLE `login_record` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
-                            `remote_ip_address` varchar(100) NOT NULL COMMENT '远程IP地址',
+                            `client_ip_addr` varchar(100) NOT NULL COMMENT '客户端IP地址',
                             `login_name` varchar(100) NOT NULL COMMENT '登录名',
                             `login_method` varchar(100) NOT NULL COMMENT '登录方式',
                             `comment` varchar(1000) DEFAULT NULL,
