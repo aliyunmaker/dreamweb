@@ -1,3 +1,4 @@
+global,全球
 cn-hangzhou,华东1_杭州
 cn-shanghai,华东2_上海
 cn-shenzhen,华南1_深圳

@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -32,17 +31,7 @@ public class ResourceViewController extends BaseController {
     public void listAccountResourceInfo(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String regionId = request.getParameter("regionId");
-            Assert.hasText(regionId, "regionId不能为空!");
-
-            String accessKeyId = request.getParameter("accessKeyId");
-            Assert.hasText(accessKeyId, "accessKeyId不能为空!");
-
-            String accessKeySecret = request.getParameter("accessKeySecret");
-            Assert.hasText(accessKeySecret, "accessKeySecret不能为空!");
-
-            List<AccountResourceInfo> accountResourceInfoList = resourceViewService.listAccountResourceInfo(regionId,
-                accessKeyId, accessKeySecret);
+            List<AccountResourceInfo> accountResourceInfoList = resourceViewService.listAccountResourceInfo();
             result.setData(accountResourceInfoList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

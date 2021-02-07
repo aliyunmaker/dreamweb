@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.AccountResourceInfo;
 import cc.landingzone.dreamweb.model.aliyunapi.result.config.DiscoveredResourceProfile;
 import cc.landingzone.dreamweb.model.aliyunapi.result.resourcemanager.Account;
@@ -36,7 +37,9 @@ public class ResourceViewService {
 
     private static final String TOTAL = "total";
     private static final String DELETED = "deleted";
-    private static final String GLOBAL = "global";
+
+    private static final DefaultProfile DEFAULT_PROFILE = DefaultProfile.getProfile("cn-shanghai",
+        CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
 
     private static Map<String, String> resourceTypeMap = new HashMap<>();
     static {
@@ -58,10 +61,10 @@ public class ResourceViewService {
         }
     }
 
-    private static Map<String, String> endpointMap = new HashMap<>();
+    private static Map<String, String> regionMap = new HashMap<>();
     static {
         ResourceLoader loader = new DefaultResourceLoader();
-        Resource resource = loader.getResource("aliyunapi/endpointList.txt");
+        Resource resource = loader.getResource("aliyunapi/regionList.txt");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
             String readline;
             while ((readline = br.readLine()) != null) {
@@ -71,19 +74,18 @@ public class ResourceViewService {
                 String[] arr = readline.split(",");
                 String region = arr[0];
                 String regionName = arr[1];
-                endpointMap.put(region, regionName);
+                regionMap.put(region, regionName);
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
     }
 
-    public List<AccountResourceInfo> listAccountResourceInfo(String regionId, String accessKeyId, String accessKeySecret) {
-        DefaultProfile profile = DefaultProfile.getProfile(regionId, accessKeyId, accessKeySecret);
+    public List<AccountResourceInfo> listAccountResourceInfo() {
         List<Account> accounts;
         try {
             // 查询子账号列表
-            accounts = AliyunApiUtils.listAccounts(profile);
+            accounts = AliyunApiUtils.listAccounts(DEFAULT_PROFILE);
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }
@@ -94,54 +96,28 @@ public class ResourceViewService {
             List<DiscoveredResourceProfile> resourceProfiles;
             try {
                 // 根据子账号ID查询子账号的资源列表
-                resourceProfiles = AliyunApiUtils.listDiscoveredResources(profile, accountId);
+                resourceProfiles = AliyunApiUtils.listDiscoveredResources(DEFAULT_PROFILE, accountId);
             } catch (ClientException e) {
                 throw new RuntimeException(e);
             }
             Map<String/*resourceType*/, Map<String/*region*/, Integer>> resourceTypeCountMap = new HashMap<>();
+            Map<String/*resourceType*/, Map<String/*region*/, Integer>> resourceTypeDeletedCountMap = new HashMap<>();
             for (DiscoveredResourceProfile resourceProfile : resourceProfiles) {
                 String resourceType = resourceProfile.getResourceType();
                 String resourceTypeName = getResourceTypeName(resourceType);
-                resourceTypeCountMap.putIfAbsent(resourceTypeName, new HashMap<>());
-                Map<String, Integer> regionCountMap = resourceTypeCountMap.get(resourceTypeName);
                 if (resourceProfile.getResourceDeleted() == 1) {
-                    regionCountMap.putIfAbsent(TOTAL, 0);
-                    regionCountMap.put(TOTAL, regionCountMap.get(TOTAL) + 1);
-
-                    String region = resourceProfile.getRegion();
-                    if (!GLOBAL.equals(region)) {
-                        regionCountMap.putIfAbsent(region, 0);
-                        regionCountMap.put(region, regionCountMap.get(region) + 1);
-                    }
+                    // deleted=1, 未删除
+                    countResourceProfile(resourceTypeCountMap, resourceProfile, resourceTypeName);
                 } else {
-                    regionCountMap.putIfAbsent(DELETED, 0);
-                    regionCountMap.put(DELETED, regionCountMap.get(DELETED) + 1);
+                    // deleted=0, 已删除
+                    countResourceProfile(resourceTypeDeletedCountMap, resourceProfile, resourceTypeName);
                 }
             }
 
-            String resourceCount = resourceTypeCountMap.entrySet().stream()
-                .sorted(Entry.comparingByKey())
-                .map(entry -> {
-                    String resourceTypeName = entry.getKey();
-                    Map<String/*region*/, Integer> regionCountMap = entry.getValue();
-                    String regionCount = regionCountMap.entrySet().stream()
-                        .filter(e -> !TOTAL.equals(e.getKey()) && !DELETED.equals(e.getKey()))
-                        .sorted(Comparator.comparingInt(Entry::getValue))
-                        .map(e -> getRegionName(e.getKey()) + ": " + e.getValue())
-                        .collect(Collectors.joining(", "));
-                    int total = regionCountMap.get(TOTAL);
-                    if (StringUtils.isNotBlank(regionCount)) {
-                        regionCount = " | " + regionCount;
-                    }
-                    return resourceTypeName + ": " + total + regionCount;
-                })
-                .collect(Collectors.joining("\n"));
-
-            String resourceCountDeleted = resourceTypeCountMap.entrySet().stream()
-                .filter(entry -> entry.getValue().containsKey(DELETED) && entry.getValue().get(DELETED) > 0)
-                .sorted(Entry.comparingByKey())
-                .map(entry -> getRegionName(entry.getKey()) + ": " + entry.getValue())
-                .collect(Collectors.joining("\n"));
+            // 运行中的资源列表
+            String resourceCount = buildResourceCountStr(resourceTypeCountMap);
+            // 已删除的资源列表
+            String resourceCountDeleted = buildResourceCountStr(resourceTypeDeletedCountMap);
 
             AccountResourceInfo accountResourceInfo = new AccountResourceInfo();
             accountResourceInfo.setAccountId(accountId);
@@ -153,6 +129,39 @@ public class ResourceViewService {
         return accountResourceInfoList;
     }
 
+    private void countResourceProfile(Map<String, Map<String, Integer>> resourceTypeCountMap,
+                                      DiscoveredResourceProfile resourceProfile, String resourceTypeName) {
+        resourceTypeCountMap.putIfAbsent(resourceTypeName, new HashMap<>());
+        Map<String, Integer> regionCountMap = resourceTypeCountMap.get(resourceTypeName);
+        regionCountMap.putIfAbsent(TOTAL, 0);
+        regionCountMap.put(TOTAL, regionCountMap.get(TOTAL) + 1);
+
+        String region = resourceProfile.getRegion();
+        regionCountMap.putIfAbsent(region, 0);
+        regionCountMap.put(region, regionCountMap.get(region) + 1);
+    }
+
+    private String buildResourceCountStr(Map<String, Map<String, Integer>> resourceTypeCountMap) {
+        return resourceTypeCountMap.entrySet().stream()
+            .sorted(Entry.comparingByKey())
+            .map(entry -> {
+                String resourceTypeName = entry.getKey();
+                Map<String/*region*/, Integer> regionCountMap = entry.getValue();
+                String regionCount = regionCountMap.entrySet().stream()
+                    .filter(e -> !TOTAL.equals(e.getKey()) && !DELETED.equals(e.getKey()))
+                    .sorted(Comparator.comparingInt(Entry::getValue))
+                    .map(e -> getRegionName(e.getKey()) + ": " + e.getValue())
+                    .collect(Collectors.joining(", "));
+                int total = regionCountMap.get(TOTAL);
+                if (StringUtils.isNotBlank(regionCount)) {
+                    regionCount = "  (" + regionCount + ")";
+                }
+                return "<span style=\"line-height:24px;font-size:16px;\">" + resourceTypeName + ": " + total
+                    + "</span>" + "<span style=\"font-size:12px;\">" + regionCount + "</span>";
+            })
+            .collect(Collectors.joining("<br/>"));
+    }
+
     private String getResourceTypeName(String resourceType) {
         String resourceTypeName = resourceTypeMap.get(resourceType);
         if (StringUtils.isBlank(resourceTypeName)) {
@@ -162,7 +171,7 @@ public class ResourceViewService {
     }
 
     private String getRegionName(String region) {
-        String regionName = endpointMap.get(region);
+        String regionName = regionMap.get(region);
         if (StringUtils.isBlank(regionName)) {
             regionName = region;
         }
