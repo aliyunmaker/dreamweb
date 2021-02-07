@@ -20,7 +20,7 @@ public interface ApiUserDao {
 
     ApiUser getApiUserByAccessKeyId(String accessKeyId);
 
-    List<ApiUser> getAllApiUsers();
+    List<ApiUser> listApiUser();
 
     void deleteApiUser(Integer id);
 }

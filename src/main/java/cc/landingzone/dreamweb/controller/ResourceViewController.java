@@ -32,6 +32,7 @@ public class ResourceViewController extends BaseController {
         WebResult result = new WebResult();
         try {
             List<AccountResourceInfo> accountResourceInfoList = resourceViewService.listAccountResourceInfo();
+            result.setTotal(accountResourceInfoList.size());
             result.setData(accountResourceInfoList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
