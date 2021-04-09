@@ -1,8 +1,8 @@
-## 通过token实现自动登录
+# 通过token实现自动登录
 
 本文介绍了如何通过token实现企业客户平台到DreamWeb系统的自动登录。
 
-### 登录原理
+## 登录原理
 
 1. 用户在企业客户平台登录后，企业客户平台通过在DreamWeb系统的登录地址后面添加token参数，生成一个跳转地址；
 2. 用户点击该地址，跳转到DreamWeb系统，系统自动解析token，识别用户身份，帮助用户自动登录。
@@ -20,13 +20,13 @@
 
 2. Token在生成后30分钟内有效，并且只能使用一次，用户登出后如需再次登录，需要企业客户平台重新生成token和跳转地址。
 
-### 如何生成跳转地址
+## 如何生成跳转地址
 
-#### 1. 准备工作
+### 1. 准备工作
 
 企业客户平台需要在DreamWeb系统中申请API账号，API账号包含一组AccessKey ID和AccessKey Secret。AccessKey ID用于标识企业客户平台，AccessKey Secret是用于计算签名字符串以及服务端验证签名字符串的密钥，必须严格保密。
 
-#### 2. 生成token
+### 2. 生成token
 
 本小节介绍了如何通过代码生成token。
 
@@ -65,6 +65,8 @@ needSignature: accessKeyId=testAccessKeyId&loginName=testLoginName&timestamp=161
 | loginName | String | 用户的登录名 | \<your\_user_loginName> |
 
 【代码示例】
+
+#### Java示例
 
 AutoLoginDemo.class
 
@@ -221,7 +223,76 @@ public class SignatureUtils {
 }
 ```
 
-#### 3. 拼接跳转地址
+#### Python示例
+
+```python
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+import time
+import hmac
+import hashlib
+import base64
+
+# 通过DreamWeb系统申请的 AccessKey ID, 用于标识企业客户平台
+ACCESS_KEY_ID = "testAccessKeyId"
+# 通过DreamWeb系统申请的 AccessKey Secret, 用于计算签名字符串以及服务端验证签名字符串, 必须严格保密
+ACCESS_KEY_SECRET = "testAccessKeySecret"
+
+
+'''
+获取签名校验的参数串
+    将参数的名称和值用"="进行连接, 得到如同"key=value"的字符串
+    将"="连接得到的参数组合按顺序依次用"&"进行连接, 得到如同"key1=value1&key2=value2..."的待签名字符串
+'''
+def getNeedSign(paramMap):
+    needSign = ""
+    keys = sorted(paramMap)
+    for k in keys:
+        v = paramMap[k]
+        needSign += "%s=%s&" %(k,v)
+    if len(needSign) > 1: 
+        return needSign[:-1]
+    else:
+        return ""
+
+'''
+生成自动登录需要的Token
+'''
+def buildAutoLoginToken(loginName):
+    # 创建参数表
+    paramMap = {}
+    # AccessKey ID
+    paramMap["accessKeyId"] = ACCESS_KEY_ID
+    # 13位时间戳: 转换成毫秒的时间戳
+    paramMap["timestamp"] = int(time.time() *1000)
+    # 用户的loginName
+    paramMap["loginName"] = loginName
+    
+    # 获取待签名的字符串
+    needSign = getNeedSign(paramMap)
+    
+    # 计算待签名字符串的HMAC值，使用的哈希算法是SHA1
+    # 对计算结果进行HEX编码，得到签名字符串
+    # 计算过程中需要用到AccessKey Secret
+    signature = hmac.new(ACCESS_KEY_SECRET, msg=needSign, digestmod=hashlib.sha1).hexdigest()
+
+    # 拼接签名, 得到完整的参数字符串
+    params = needSign + "&signature=" + signature
+    print params
+
+    # 对参数字符串进行BASE64编码, 得到token
+    token = base64.urlsafe_b64encode(params)
+    return token
+
+if __name__ == '__main__':
+    # 用户的loginName
+    loginName = "testLoginName"
+    token = buildAutoLoginToken(loginName)
+    print token
+```
+
+### 3. 拼接跳转地址
 
 企业客户平台还需要按照以下格式，将DreamWeb系统的登录地址，和上一步中得到的token，拼接成实际可以跳转的地址：
 
