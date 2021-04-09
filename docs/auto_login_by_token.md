@@ -158,7 +158,7 @@ public class AutoLoginDemo {
         String params = needSign + "&signature=" + signature;
 
         // 对参数字符串进行BASE64编码, 得到token
-        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(params.getBytes(StandardCharsets.UTF_8));
+        String token = Base64.getUrlEncoder().encodeToString(params.getBytes(StandardCharsets.UTF_8));
         return token;
     }
 }
