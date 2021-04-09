@@ -279,7 +279,6 @@ def buildAutoLoginToken(loginName):
 
     # 拼接签名, 得到完整的参数字符串
     params = needSign + "&signature=" + signature
-    print params
 
     # 对参数字符串进行BASE64编码, 得到token
     token = base64.urlsafe_b64encode(params)
