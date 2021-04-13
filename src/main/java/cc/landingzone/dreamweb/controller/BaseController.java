@@ -1,10 +1,10 @@
 package cc.landingzone.dreamweb.controller;
 
-import javax.servlet.http.HttpServletResponse;
-
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class BaseController {
 
@@ -60,6 +60,39 @@ public class BaseController {
         try {
             if (null != result) {
                 response.getOutputStream().write(result);
+            }
+            response.flushBuffer();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 输出为文件
+     *
+     * @param response
+     * @param result
+     * @param fileName
+     */
+    public void outputToFile(HttpServletResponse response, String result, String fileName) {
+        outputToFile(response, result, fileName, "text/html;charset=UTF-8");
+    }
+
+
+    /**
+     * 输出为文件
+     *
+     * @param response
+     * @param result
+     * @param fileName
+     * @param contentType
+     */
+    public void outputToFile(HttpServletResponse response, String result, String fileName, String contentType) {
+        response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
+        response.setContentType(contentType);
+        try {
+            if (null != result) {
+                response.getWriter().write(result);
             }
             response.flushBuffer();
         } catch (Exception e) {

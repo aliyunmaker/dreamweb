@@ -25,10 +25,10 @@ Ext
                         href: 'userGroup/userGroupManage.html',
                         hrefTarget: 'mainFrame'
                     }, {
-                      text: "资源视图",
-                      leaf: true,
-                      href: 'resourceView/resourceView.html',
-                      hrefTarget: 'mainFrame'
+                        text: "资源视图",
+                        leaf: true,
+                        href: 'resourceView/resourceView.html',
+                        hrefTarget: 'mainFrame'
                     }, {
                         text: "注销",
                         leaf: true,
@@ -40,6 +40,11 @@ Ext
                     iconCls: 'MyExt-menu-sub',
                     expanded: true,
                     children: [{
+                        text: "SSO配置",
+                        leaf: true,
+                        href: 'ssoConfig/ssoConfig.html',
+                        hrefTarget: 'mainFrame'
+                    },{
                         text: "账号生成器",
                         leaf: true,
                         href: 'tools/tools.html',
@@ -50,10 +55,10 @@ Ext
                         href: 'apiUser/apiUser.html',
                         hrefTarget: 'mainFrame'
                     }, {
-                      text: "登录记录",
-                      leaf: true,
-                      href: 'loginRecord/loginRecord.html',
-                      hrefTarget: 'mainFrame'
+                        text: "登录记录",
+                        leaf: true,
+                        href: 'loginRecord/loginRecord.html',
+                        hrefTarget: 'mainFrame'
                     }]
                 }]
             }

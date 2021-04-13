@@ -49,10 +49,10 @@ public class UserController extends BaseController {
             Collections.sort(list);
             StringBuilder roleListStr = new StringBuilder();
             roleListStr.append("<table>");
-            roleListStr.append("<tr><th>Login</th><th>Type</th><th>Name</th><th>Value</th></tr>");
+            roleListStr.append("<tr><th>Login</th><th>Type</th><th>Name</th><th>Value</th><th>Token</th></tr>");
             for (UserRole role : list) {
-                roleListStr.append("<tr><td><a href='../../sso/login.do?sp=" + role.getRoleType() + "&userRoleId=" + role.getId() + "' target='_blank'>登录控制台</a></td><td>" + role.getRoleType() + "</td><td>" + role.getRoleName() + "</td><td>"
-                        + role.getRoleValue() + "</td></tr>");
+                roleListStr.append("<tr><td><a href='../../sso/login.do?sp=" + role.getRoleType() + "&userRoleId=" + role.getId() + "' target='_blank'><i class='fa fa-sign-in' aria-hidden='true'></i>&nbsp;登录控制台</a></td><td>" + role.getRoleType() + "</td><td>" + role.getRoleName() + "</td><td>"
+                        + role.getRoleValue() + "</td><td><a href='../../sso/downloadToken.do?sp=" + role.getRoleType() + "&userRoleId=" + role.getId() + "' target='_blank'><i class='fa fa-download' aria-hidden='true'></i>&nbsp;download</a></td></tr>");
             }
             roleListStr.append("</table>");
             map.put("roleList", roleListStr.toString());
