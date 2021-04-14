@@ -14,8 +14,8 @@ public class LdapTest {
 
 
     public static void main(String[] args) {
-        testAuth();
-//        testGetUserInfo();
+//        testAuth();
+        testGetUserInfo();
     }
 
 
@@ -23,9 +23,8 @@ public class LdapTest {
         Hashtable<String, String> env = new Hashtable<>();
         String LDAP_URL = "ldap://121.199.62.9:389"; // LDAP 访问地址
 //        String LDAP_URL = "ldap://127.0.0.1:389"; // LDAP 访问地址
-//        String username = "admin@example.org"; // 注意用户名的写法：@sunfire.com是必须的, 可以提取成配置
-        String username = "cn=admin,dc=sunfire,dc=com"; // 注意用户名的写法：@sunfire.com是必须的, 可以提取成配置
-        String password = "Sunfire2019"; // 密码
+        String username = "charles@sunfire.com";
+        String password = "test_1234"; // 密码
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, LDAP_URL);
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
@@ -43,12 +42,10 @@ public class LdapTest {
     }
 
     public static void testGetUserInfo() {
-
         Hashtable<String, String> env = new Hashtable<>();
-//        String LDAP_URL = "ldap://121.199.62.9:389"; // LDAP 访问地址
-        String LDAP_URL = "ldap://127.0.0.1:389";
-        String username = "cn=admin,dc=example,dc=org"; // 注意用户名的写法：@sunfire.com是必须的, 可以提取成配置
-        String password = "admin"; // 密码
+        String LDAP_URL = "ldap://121.199.62.9:389"; // LDAP 访问地址
+        String username = "charles@landingzone.cc";
+        String password = "test_1234"; // 密码
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, LDAP_URL);
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
@@ -62,9 +59,11 @@ public class LdapTest {
             // 设置搜索范围
             searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             // 设置搜索过滤条件
-            String searchFilter = "(|(uid=billy))";
+            String searchFilter = "(objectClass=user)";
+//            String searchFilter = "(objectClass=*)";
             // 设置搜索域节点
-            String searchBase = "dc=example,dc=org";
+//            String searchBase = "dc=landingzone,dc=cc";
+            String searchBase = "ou=hangzhou,dc=landingzone,dc=cc";
             // 定制返回属性
             String[] returningAttrs = {"url", "whenChanged", "employeeID", "name", "userPrincipalName",
                     "physicalDeliveryOfficeName", "departmentNumber", "telephoneNumber", "homePhone", "mobile",
