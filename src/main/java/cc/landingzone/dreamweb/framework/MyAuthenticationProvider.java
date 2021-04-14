@@ -1,8 +1,5 @@
 package cc.landingzone.dreamweb.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.Md5Utils;
@@ -17,6 +14,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import javax.naming.Context;
+import javax.naming.directory.InitialDirContext;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 
 @Component
@@ -44,6 +47,25 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         User user = userService.getUserByLoginName(username);
         if (null == user) {
             throw new UsernameNotFoundException(username);
+        }
+
+        //如果是@landingzone.cc的用户就用AD的LDAP验证
+        if (username.endsWith("@landingzone.cc")) {
+            Hashtable<String, String> env = new Hashtable<>();
+            String LDAP_URL = "ldap://121.199.62.9:389"; // LDAP 访问地址
+            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+            env.put(Context.PROVIDER_URL, LDAP_URL);
+            env.put(Context.SECURITY_AUTHENTICATION, "simple");
+            env.put(Context.SECURITY_PRINCIPAL, username);
+            env.put(Context.SECURITY_CREDENTIALS, password);
+            try {
+                InitialDirContext dc = new InitialDirContext(env);
+                List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
+                grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
+                return new UsernamePasswordAuthenticationToken(username, user.getPassword(), grantedAuths);
+            } catch (Exception e) {
+                throw new BadCredentialsException(e.getMessage());
+            }
         }
 
         // 密码策略: md5(salt+password)  equals  user.getAuthkey()
