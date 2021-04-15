@@ -10,6 +10,12 @@ public enum LoginMethodEnum {
      * 用户名密码登录
      */
     NORMAL_LOGIN("login from website by username and password"),
+
+    /**
+     * LDAP用户
+     */
+    LDAP_LOGIN("login form website by ldap"),
+
     /**
      * 微信登录
      */
@@ -18,6 +24,7 @@ public enum LoginMethodEnum {
      * 通过token的方式自动登录
      */
     AUTO_LOGIN("auto login by token");
+
 
     private String comment;
 

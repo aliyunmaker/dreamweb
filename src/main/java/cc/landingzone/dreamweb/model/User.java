@@ -1,10 +1,13 @@
 package cc.landingzone.dreamweb.model;
 
+import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
+
 import java.util.Date;
 
 public class User {
 
     private Integer id;
+    private LoginMethodEnum loginMethod;
     private String unionid;
     private String loginName;
     private String name;
@@ -94,5 +97,13 @@ public class User {
 
     public void setUnionid(String unionid) {
         this.unionid = unionid;
+    }
+
+    public LoginMethodEnum getLoginMethod() {
+        return loginMethod;
+    }
+
+    public void setLoginMethod(LoginMethodEnum loginMethod) {
+        this.loginMethod = loginMethod;
     }
 }

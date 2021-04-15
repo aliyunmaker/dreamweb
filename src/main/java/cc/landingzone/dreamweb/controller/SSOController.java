@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import cc.landingzone.dreamweb.framework.MyAuthenticationProvider;
-import cc.landingzone.dreamweb.model.SSOSpEnum;
+import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.WebResult;

@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.model;
+package cc.landingzone.dreamweb.model.enums;
 
 /**
  * sso service provider enum

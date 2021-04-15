@@ -1,18 +1,19 @@
 package cc.landingzone.dreamweb.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cc.landingzone.dreamweb.dao.UserDao;
 import cc.landingzone.dreamweb.framework.MyAuthenticationProvider;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.User;
+import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserService {
@@ -35,6 +36,7 @@ public class UserService {
     public void addUser(User user) {
         Assert.notNull(user, "数据不能为空!");
         Assert.hasText(user.getLoginName(), "工号不能为空!");
+        Assert.notNull(user.getLoginMethod(), "loginMethod can not be null!");
         if (StringUtils.isBlank(user.getRole())) {
             user.setRole(User_Role_Guest);
         }
@@ -108,6 +110,20 @@ public class UserService {
     public User getUserById(Integer id) {
         Assert.notNull(id, "id不能为空!");
         return userDao.getUserById(id);
+    }
+
+
+    /**
+     * 根据登录类型获取用户列表
+     *
+     * @param loginMethod
+     * @return
+     */
+    List<User> getUsersByLoginMethod(LoginMethodEnum loginMethod) {
+        Assert.notNull(loginMethod, "loginMethod can not be null!");
+        Map<String, Object> map = new HashMap<>();
+        map.put("loginMethod", loginMethod);
+        return userDao.getUsersByLoginMethod(map);
     }
 
 

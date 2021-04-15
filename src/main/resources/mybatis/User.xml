@@ -7,6 +7,7 @@
             parameterType="cc.landingzone.dreamweb.model.User" useGeneratedKeys="true" keyProperty="id">
         insert into user
         (login_name,
+         login_method,
          name,
          email,
          comment,
@@ -16,6 +17,7 @@
          unionid,
          gmt_create)
         values (#{loginName},
+                #{loginMethod},
                 #{name},
                 #{email},
                 #{comment},
@@ -62,6 +64,18 @@
         from user
         where id = #{id}
     </delete>
+
+
+    <select id="getUsersByLoginMethod" resultType="cc.landingzone.dreamweb.model.User" parameterType="map">
+        select * from user
+        <where>
+            <if test="loginMethod != null and loginMethod !=''">
+                and login_method = #{loginMethod}
+            </if>
+        </where>
+    </select>
+
+
 
     <select id="searchUser" resultType="cc.landingzone.dreamweb.model.User" parameterType="map">
         select * from user

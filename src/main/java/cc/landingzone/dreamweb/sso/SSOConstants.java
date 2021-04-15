@@ -1,7 +1,7 @@
 package cc.landingzone.dreamweb.sso;
 
 
-import cc.landingzone.dreamweb.model.SSOSpEnum;
+import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
 
 public class SSOConstants {
     // 是否自动提交表单,默认为false,方便调试
