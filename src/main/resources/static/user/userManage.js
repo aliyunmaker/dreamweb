@@ -9,7 +9,7 @@ Ext.onReady(function () {
         dataUrl: '../user/searchUser.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'loginName', 'name', 'email', 'comment', 'role', 'phone', 'gmtCreate', 'unionid']
+        fields: ['id', 'loginName', 'loginMethod', 'name', 'email', 'comment', 'role', 'phone', 'gmtCreate', 'unionid']
     });
 
     userStore.on('beforeload', function (store, options) {
@@ -63,6 +63,24 @@ Ext.onReady(function () {
             header: "名称",
             width: 120
         }, {
+            dataIndex: 'loginMethod',
+            header: "类型",
+            width: 60,
+            align: 'center',
+            renderer: function (value) {
+                if (value === "NORMAL_LOGIN") {
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_web.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                } else if (value === "LDAP_LOGIN") {
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_ldap.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                } else if (value === "WEIXIN_LOGIN") {
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_weixin.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                } else if (value === "AUTO_LOGIN") {
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_api.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                } else {
+                    return value;
+                }
+            }
+        }, {
             dataIndex: 'email',
             header: "邮箱",
             width: 200,
@@ -78,9 +96,9 @@ Ext.onReady(function () {
             align: 'center',
             renderer: function (value) {
                 if (value === "ROLE_GUEST") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_guest.png" />';
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_guest.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else if (value === "ROLE_ADMIN") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_admin.png" />';
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_admin.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else {
                     return value;
                 }

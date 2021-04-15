@@ -1,5 +1,7 @@
 package cc.landingzone.dreamweb.model;
 
+import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
+
 /**
  * 角色,目前只支持跟用户组关联
  *

@@ -1,19 +1,8 @@
 package cc.landingzone.dreamweb.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.task.SyncUserFromLDAPTask;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+
 @Controller
 @RequestMapping("/system")
 public class SystemController extends BaseController implements InitializingBean {
@@ -39,6 +40,9 @@ public class SystemController extends BaseController implements InitializingBean
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private SyncUserFromLDAPTask syncUserFromLDAPTask;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         startTime = LocalDateTime.now();
@@ -48,6 +52,17 @@ public class SystemController extends BaseController implements InitializingBean
     public static HttpSession getSession() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getRequest().getSession(true); // true == allow create
+    }
+
+    @RequestMapping("/syncUserFormLDAP.do")
+    public void syncUserFormLDAP(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            syncUserFromLDAPTask.doTask();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        outputToJSON(response, result);
     }
 
 

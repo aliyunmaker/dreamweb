@@ -94,6 +94,7 @@ public class LoginController extends BaseController {
 
             if (null == user) {
                 user = new User();
+                user.setLoginMethod(LoginMethodEnum.WEIXIN_LOGIN);
                 user.setLoginName(UserService.WX_UNION_LOGIN_NAME_PREFIX + unionid);
                 user.setName(userInfoMap.get("nickname"));
                 user.setUnionid(unionid);
@@ -183,6 +184,7 @@ public class LoginController extends BaseController {
             if (null == user) {
                 user = new User();
                 user.setLoginName(loginName);
+                user.setLoginMethod(LoginMethodEnum.AUTO_LOGIN);
                 user.setName(loginName);
                 user.setRole("ROLE_GUEST");
                 user.setComment(LoginMethodEnum.AUTO_LOGIN.getComment());
