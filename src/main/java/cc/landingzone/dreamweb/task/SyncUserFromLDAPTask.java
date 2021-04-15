@@ -8,6 +8,7 @@ import cc.landingzone.dreamweb.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.stereotype.Component;
 
 import javax.naming.Context;
@@ -16,12 +17,17 @@ import javax.naming.directory.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 @Component
 public class SyncUserFromLDAPTask {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisLockRegistry redisLockRegistry;
 
     private static Logger logger = LoggerFactory.getLogger(SyncUserFromLDAPTask.class);
 
@@ -44,26 +50,36 @@ public class SyncUserFromLDAPTask {
             {ATTR_SAM_ACCOUNT_NAME, ATTR_USER_PRINCIPAL_NAME, ATTR_DISPLAY_NAME, ATTR_TELEPHONE_NUMBER};
 
 
-    //    @Scheduled(cron = "0 0 8 * * ?")
+    //        @Scheduled(cron = "0 0 8 * * ?")
     //5分钟
 //    @Scheduled(fixedRate = 5 * 60 * 1000)
     public void doTask() {
+        Lock lock = redisLockRegistry.obtain("mylock");
         try {
-            List<User> userList = searchLDAP("");
-            for (User user : userList) {
-                User dbUser = userService.getUserByLoginName(user.getLoginName());
-                if (dbUser == null) {
-                    user.setLoginMethod(LoginMethodEnum.LDAP_LOGIN);
-                    userService.addUser(user);
-                } else {
-                    if (!LoginMethodEnum.LDAP_LOGIN.equals(dbUser.getLoginMethod())) {
-                        logger.error("sync error:" + dbUser.getLoginName() + ". " + JsonUtils.toJsonString(dbUser));
+            boolean success = lock.tryLock(3, TimeUnit.SECONDS);
+            logger.info("get lock:" + success);
+            if (success) {
+                List<User> userList = searchLDAP("");
+                for (User user : userList) {
+                    User dbUser = userService.getUserByLoginName(user.getLoginName());
+                    if (dbUser == null) {
+                        user.setLoginMethod(LoginMethodEnum.LDAP_LOGIN);
+                        userService.addUser(user);
+                    } else {
+                        if (!LoginMethodEnum.LDAP_LOGIN.equals(dbUser.getLoginMethod())) {
+                            logger.error("sync error:" + dbUser.getLoginName() + ". " + JsonUtils.toJsonString(dbUser));
+                        }
                     }
                 }
+                logger.info("sync success! count:" + userList.size());
+
+                //sleep 10s
+                Thread.sleep(5000);
             }
-            logger.info("sync success! count:" + userList.size());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+        } finally {
+            lock.unlock();
         }
     }
 
