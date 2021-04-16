@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.redis.util.RedisLockRegistry;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.naming.Context;
@@ -50,9 +51,14 @@ public class SyncUserFromLDAPTask {
             {ATTR_SAM_ACCOUNT_NAME, ATTR_USER_PRINCIPAL_NAME, ATTR_DISPLAY_NAME, ATTR_TELEPHONE_NUMBER};
 
 
-    //        @Scheduled(cron = "0 0 8 * * ?")
-    //5分钟
-//    @Scheduled(fixedRate = 5 * 60 * 1000)
+    public static void main(String[] args) {
+        List<User> list = searchLDAP("");
+        System.out.println(JsonUtils.toJsonString(list));
+    }
+
+    //    @Scheduled(fixedRate = 5 * 60 * 1000)
+    //10分钟
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void doTask() {
         Lock lock = redisLockRegistry.obtain("mylock");
         try {
@@ -74,18 +80,13 @@ public class SyncUserFromLDAPTask {
                 logger.info("sync success! count:" + userList.size());
 
                 //sleep 10s
-                Thread.sleep(5000);
+                Thread.sleep(10000);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
             lock.unlock();
         }
-    }
-
-    public static void main(String[] args) {
-        List<User> list = searchLDAP("");
-        System.out.println(JsonUtils.toJsonString(list));
     }
 
     private static List<User> searchLDAP(String filter) {
