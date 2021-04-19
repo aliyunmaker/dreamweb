@@ -61,8 +61,9 @@ public class SyncUserFromLDAPTask {
     @Scheduled(cron = "0 0/10 * * * ?")
     public void doTask() {
         Lock lock = redisLockRegistry.obtain("mylock");
+        boolean success = false;
         try {
-            boolean success = lock.tryLock(3, TimeUnit.SECONDS);
+            success = lock.tryLock(3, TimeUnit.SECONDS);
             logger.info("get lock:" + success);
             if (success) {
                 List<User> userList = searchLDAP("");
@@ -85,7 +86,9 @@ public class SyncUserFromLDAPTask {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
-            lock.unlock();
+            if (success) {
+                lock.unlock();
+            }
         }
     }
 
