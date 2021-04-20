@@ -17,6 +17,7 @@ config/
 *.crt
 *.pem
 *.pkcs8
+*.pfx
 
 ### STS ###
 .apt_generated
