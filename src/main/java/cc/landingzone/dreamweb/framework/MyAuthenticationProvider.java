@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.framework;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.Md5Utils;
+import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -43,6 +44,9 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
+
+        //decrypt password
+        password = RSAEncryptUtils.decrypt(password);
 
         User user = userService.getUserByLoginName(username);
         if (null == user) {
