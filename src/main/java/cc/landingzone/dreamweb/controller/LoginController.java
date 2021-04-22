@@ -1,18 +1,5 @@
 package cc.landingzone.dreamweb.controller;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.alibaba.fastjson.TypeReference;
-
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.ApiUser;
 import cc.landingzone.dreamweb.model.User;
@@ -23,7 +10,9 @@ import cc.landingzone.dreamweb.service.LoginRecordService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.HttpClientUtils;
 import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 import cc.landingzone.dreamweb.utils.SignatureUtils;
+import com.alibaba.fastjson.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +22,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class LoginController extends BaseController {
@@ -58,7 +54,8 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("publicKey", RSAEncryptUtils.publicKey);
         return "login";
     }
 
@@ -147,7 +144,7 @@ public class LoginController extends BaseController {
             // BASE64解码
             String params = new String(Base64.getUrlDecoder().decode(token.getBytes(StandardCharsets.UTF_8)));
             Map<String, String> paramMap = Arrays.stream(params.split("&"))
-                .collect(Collectors.toMap(kv -> kv.split("=")[0], kv -> kv.split("=")[1]));
+                    .collect(Collectors.toMap(kv -> kv.split("=")[0], kv -> kv.split("=")[1]));
 
             String accessKeyId = paramMap.get("accessKeyId");
             Assert.hasText(accessKeyId, "accessKeyId不能为空!");
@@ -169,10 +166,10 @@ public class LoginController extends BaseController {
 
             // 构造params, key1=value1&key2=value2...
             params = paramMap.entrySet().stream()
-                .filter(entry -> !"signature".equals(entry.getKey()))
-                .sorted(Map.Entry.comparingByKey())
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(Collectors.joining("&"));
+                    .filter(entry -> !"signature".equals(entry.getKey()))
+                    .sorted(Map.Entry.comparingByKey())
+                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+                    .collect(Collectors.joining("&"));
 
             // 校验签名
             SignatureUtils.checkSignature(params, apiUser.getAccessKeySecret(), signature);
@@ -195,7 +192,7 @@ public class LoginController extends BaseController {
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getLoginName(),
-                user.getLoginName(), grantedAuths);
+                    user.getLoginName(), grantedAuths);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // 创建登录记录
