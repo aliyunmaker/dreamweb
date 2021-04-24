@@ -1,19 +1,19 @@
 package cc.landingzone.dreamweb.utils;
 
 
-import com.google.common.io.CharStreams;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.AbstractMap;
+import java.util.Map;
 
 public class RSAEncryptUtils {
 
@@ -27,17 +27,20 @@ public class RSAEncryptUtils {
                 new org.bouncycastle.jce.provider.BouncyCastleProvider()
         );
         try {
-            publicKey = CharStreams.toString(new InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_public.pem"), StandardCharsets.UTF_8));
-            privateKey = CharStreams.toString(new InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_private.pem"), StandardCharsets.UTF_8));
-
-            publicKey = publicKey
-                    .replace("-----BEGIN PUBLIC KEY-----", "")
-                    .replaceAll(System.lineSeparator(), "")
-                    .replace("-----END PUBLIC KEY-----", "");
-            privateKey = privateKey
-                    .replace("-----BEGIN RSA PRIVATE KEY-----", "")
-                    .replaceAll(System.lineSeparator(), "")
-                    .replace("-----END RSA PRIVATE KEY-----", "");
+//            publicKey = CharStreams.toString(new InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_public.pem"), StandardCharsets.UTF_8));
+//            privateKey = CharStreams.toString(new InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_private.pem"), StandardCharsets.UTF_8));
+//
+//            publicKey = publicKey
+//                    .replace("-----BEGIN PUBLIC KEY-----", "")
+//                    .replaceAll(System.lineSeparator(), "")
+//                    .replace("-----END PUBLIC KEY-----", "");
+//            privateKey = privateKey
+//                    .replace("-----BEGIN RSA PRIVATE KEY-----", "")
+//                    .replaceAll(System.lineSeparator(), "")
+//                    .replace("-----END RSA PRIVATE KEY-----", "");
+            Map.Entry<String, String> keyPair = genKeyPair();
+            publicKey = keyPair.getKey();
+            privateKey = keyPair.getValue();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -60,7 +63,7 @@ public class RSAEncryptUtils {
      *
      * @throws NoSuchAlgorithmException
      */
-    public static void genKeyPair() throws NoSuchAlgorithmException {
+    public static Map.Entry<String, String> genKeyPair() throws NoSuchAlgorithmException {
         // KeyPairGenerator类用于生成公钥和私钥对，基于RSA算法生成对象
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
         // 初始化密钥对生成器，密钥大小为96-1024位
@@ -72,6 +75,8 @@ public class RSAEncryptUtils {
         String publicKeyString = new String(Base64.encodeBase64(publicKey.getEncoded()));
         // 得到私钥字符串
         String privateKeyString = new String(Base64.encodeBase64((privateKey.getEncoded())));
+        Map.Entry<String, String> result = new AbstractMap.SimpleEntry<String, String>(publicKeyString, privateKeyString);
+        return result;
     }
 
     /**
