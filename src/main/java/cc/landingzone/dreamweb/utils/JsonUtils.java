@@ -1,9 +1,5 @@
 package cc.landingzone.dreamweb.utils;
 
-import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.List;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -11,6 +7,10 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
 import org.apache.commons.lang3.StringUtils;
+
+import java.lang.reflect.Type;
+import java.util.Date;
+import java.util.List;
 
 public class JsonUtils {
 
@@ -23,6 +23,10 @@ public class JsonUtils {
     private static final SerializerFeature[] fastJsonFeatures = {SerializerFeature.WriteMapNullValue,
             SerializerFeature.WriteEnumUsingToString, SerializerFeature.SortField,
             SerializerFeature.DisableCircularReferenceDetect};
+
+    private static final SerializerFeature[] fastJsonFeaturesForWeb = {SerializerFeature.WriteMapNullValue,
+            SerializerFeature.WriteEnumUsingToString, SerializerFeature.SortField,
+            SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.BrowserSecure};
 
     static {
         fastjson_serializeConfig_time.put(Date.class, new SimpleDateFormatSerializer("yyyy-MM-dd HH:mm:ss"));
@@ -67,18 +71,21 @@ public class JsonUtils {
     }
 
     public static String toJsonString(Object object) {
-        return toJsonString(object, fastjson_serializeConfig_noYear);
+        return toJsonString(object, fastjson_serializeConfig_noYear, fastJsonFeatures);
     }
 
     public static String toJsonStringWithDatetime(Object object) {
-        return toJsonString(object, fastjson_serializeConfig_time);
+        return toJsonString(object, fastjson_serializeConfig_time, fastJsonFeatures);
     }
 
-    public static String toJsonString(Object object, SerializeConfig serializeConfig) {
+    public static String toJsonStringForWeb(Object object) {
+        return toJsonString(object, fastjson_serializeConfig_time, fastJsonFeaturesForWeb);
+    }
+
+    private static String toJsonString(Object object, SerializeConfig serializeConfig, SerializerFeature[] features) {
         if (null == object) {
             return "";
         }
-        return JSON.toJSONString(object, serializeConfig, fastJsonFeatures);
+        return JSON.toJSONString(object, serializeConfig, features);
     }
-
 }

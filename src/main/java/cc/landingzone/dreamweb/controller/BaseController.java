@@ -20,7 +20,7 @@ public class BaseController {
         response.setContentType("application/json;charset=UTF-8");
         try {
             if (null != result) {
-                String resultString = JsonUtils.toJsonStringWithDatetime(result);
+                String resultString = JsonUtils.toJsonStringForWeb(result);
                 response.setContentLength(resultString.getBytes("UTF-8").length);
                 response.getWriter().write(resultString);
             }
