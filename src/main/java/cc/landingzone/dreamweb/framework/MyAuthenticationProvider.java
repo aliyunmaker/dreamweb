@@ -1,11 +1,9 @@
 package cc.landingzone.dreamweb.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.Md5Utils;
+import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +15,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Component
@@ -40,6 +41,9 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
+
+        //decrypt password
+        password = RSAEncryptUtils.decrypt(password);
 
         User user = userService.getUserByLoginName(username);
         if (null == user) {

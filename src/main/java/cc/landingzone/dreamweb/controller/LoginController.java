@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 import com.alibaba.fastjson.TypeReference;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
@@ -33,6 +34,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -58,7 +60,8 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("publicKey", RSAEncryptUtils.publicKey);
         return "login";
     }
 

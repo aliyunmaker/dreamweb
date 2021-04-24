@@ -78,9 +78,9 @@ Ext.onReady(function () {
             align: 'center',
             renderer: function (value) {
                 if (value === "ROLE_GUEST") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_guest.png" />';
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_guest.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else if (value === "ROLE_ADMIN") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_admin.png" />';
+                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_admin.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else {
                     return value;
                 }
