@@ -1,12 +1,5 @@
 package cc.landingzone.dreamweb.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
@@ -14,12 +7,20 @@ import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.UserRoleService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.utils.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -84,12 +85,14 @@ public class UserController extends BaseController {
         outputToJSON(response, result);
     }
 
+
     @RequestMapping("/addUser.do")
     public void addUser(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
             String formString = request.getParameter("formString");
             User systemUser = JsonUtils.parseObject(formString, User.class);
+            SecurityUtils.xssFilter(systemUser);
             userService.addUser(systemUser);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -109,6 +112,7 @@ public class UserController extends BaseController {
             dbUser.setName(updateUser.getName());
             dbUser.setPhone(updateUser.getPhone());
             dbUser.setComment(updateUser.getComment());
+            SecurityUtils.xssFilter(dbUser);
             userService.updateUser(dbUser);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

@@ -11,6 +11,7 @@ import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.UserGroupAssociateService;
 import cc.landingzone.dreamweb.service.UserGroupService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +46,7 @@ public class UserGroupController extends BaseController {
         try {
             String formString = request.getParameter("formString");
             UserGroup userGroup = JsonUtils.parseObject(formString, UserGroup.class);
+            SecurityUtils.xssFilter(userGroup);
             userGroupService.addUserGroup(userGroup);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -60,6 +62,7 @@ public class UserGroupController extends BaseController {
         try {
             String formString = request.getParameter("formString");
             UserGroup userGroup = JsonUtils.parseObject(formString, UserGroup.class);
+            SecurityUtils.xssFilter(userGroup);
             userGroupService.updateUserGroup(userGroup);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

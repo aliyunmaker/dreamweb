@@ -8,6 +8,7 @@ import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.UserRoleService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,7 @@ public class UserRoleController extends BaseController {
             Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
             UserRole userRole = JsonUtils.parseObject(formString, UserRole.class);
             userRole.setUserGroupId(userGroupId);
+            SecurityUtils.xssFilter(userRole);
             userRoleService.addUserRole(userRole);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -57,6 +59,7 @@ public class UserRoleController extends BaseController {
         try {
             String formString = request.getParameter("formString");
             UserRole userRole = JsonUtils.parseObject(formString, UserRole.class);
+            SecurityUtils.xssFilter(userRole);
             userRoleService.updateUserRole(userRole);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
