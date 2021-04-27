@@ -3,10 +3,6 @@ package cc.landingzone.dreamweb.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc.landingzone.dreamweb.model.aliyunapi.result.config.DiscoveredResourceProfile;
-import cc.landingzone.dreamweb.model.aliyunapi.result.config.ListDiscoveredResourcesResult;
-import cc.landingzone.dreamweb.model.aliyunapi.result.resourcemanager.Account;
-import cc.landingzone.dreamweb.model.aliyunapi.result.resourcemanager.ListAccountsResult;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -14,8 +10,11 @@ import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import cc.landingzone.dreamweb.model.aliyunapi.result.config.DiscoveredResourceProfile;
+import cc.landingzone.dreamweb.model.aliyunapi.result.config.ListDiscoveredResourcesResult;
+import cc.landingzone.dreamweb.model.aliyunapi.result.resourcemanager.Account;
+import cc.landingzone.dreamweb.model.aliyunapi.result.resourcemanager.ListAccountsResult;
 
 /**
  * @author merc-bottle
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AliyunApiUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(AliyunApiUtils.class);
+    // private static Logger logger = LoggerFactory.getLogger(AliyunApiUtils.class);
 
     private static final String RESOURCE_MANAGER_SYS_DOMAIN = "resourcemanager.aliyuncs.com";
     private static final String RESOURCE_MANAGER_SYS_VERSION = "2020-03-31";

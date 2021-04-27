@@ -100,7 +100,7 @@ public class SamlGenerator {
 //        nameIDFormat.setFormat(NameIDType.UNSPECIFIED);
 //        idpssoDescriptor.getNameIDFormats().add(nameIDFormat);
 
-        // TODO 符合aws user sso的要求,需要增加
+        // 符合aws user sso的要求,需要增加
 //        <?xml version="1.0" encoding="UTF-8"?>
 //        <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://chengchao.name/b65d76ce4260/">
 //            <md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">

@@ -22,10 +22,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-
 @Component
 public class MyAuthenticationProvider implements AuthenticationProvider {
-
 
     @Autowired
     private UserService userService;
@@ -45,7 +43,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        //decrypt password
+        // decrypt password
         password = RSAEncryptUtils.decrypt(password);
 
         User user = userService.getUserByLoginName(username);
@@ -53,7 +51,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
             throw new UsernameNotFoundException(username);
         }
 
-        //如果是@landingzone.cc的用户就用AD的LDAP验证
+        // 如果是@landingzone.cc的用户就用AD的LDAP验证
         if (username.endsWith("@landingzone.cc")) {
             Hashtable<String, String> env = new Hashtable<>();
             String LDAP_URL = "ldap://121.199.62.9:389"; // LDAP 访问地址
@@ -72,7 +70,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
             }
         }
 
-        // 密码策略: md5(salt+password)  equals  user.getAuthkey()
+        // 密码策略: md5(salt+password) equals user.getAuthkey()
         if (buildMd5Password(password).equals(user.getPassword())) {
             List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
             grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));

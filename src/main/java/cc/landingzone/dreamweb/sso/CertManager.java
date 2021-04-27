@@ -1,16 +1,12 @@
 package cc.landingzone.dreamweb.sso;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-import io.jsonwebtoken.lang.Assert;
 import org.opensaml.xml.security.x509.BasicX509Credential;
 import org.springframework.util.FileCopyUtils;
 
