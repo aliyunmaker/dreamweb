@@ -70,22 +70,21 @@ public class LdapTest {
                     "department", "sAMAccountName", "whenChanged", "mail"};
             // 不定制属性，返回所有的属性集
             searchCtls.setReturningAttributes(returningAttrs);
-            int totalResults = 0;
             try {
-                NamingEnumeration answer = dc.search(searchBase, searchFilter, searchCtls);
+                NamingEnumeration<?> answer = dc.search(searchBase, searchFilter, searchCtls);
                 while (answer.hasMoreElements()) {
                     SearchResult sr = (SearchResult) answer.next();
                     String dn = sr.getName();
                     System.out.println("\n" + dn);
-
+                    int totalResults = 0;
                     Attributes Attrs = sr.getAttributes();
                     if (Attrs != null) {
                         try {
-                            for (NamingEnumeration ne = Attrs.getAll(); ne.hasMore(); ) {
+                            for (NamingEnumeration<?> ne = Attrs.getAll(); ne.hasMore(); ) {
                                 Attribute Attr = (Attribute) ne.next();
                                 String attrId = Attr.getID();
                                 // 读取属性值
-                                for (NamingEnumeration e = Attr.getAll(); e.hasMore(); totalResults++) {
+                                for (NamingEnumeration<?> e = Attr.getAll(); e.hasMore(); totalResults++) {
                                     // 接受循环遍历读取的userPrincipalName用户属性
                                     String attrValue = e.next().toString();
                                     System.out.println(attrId + "=" + attrValue);

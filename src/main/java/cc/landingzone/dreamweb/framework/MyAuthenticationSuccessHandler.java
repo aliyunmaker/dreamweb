@@ -14,7 +14,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -22,9 +21,11 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     private LoginRecordService loginRecordService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
         // 创建登录记录
-        loginRecordService.addLoginRecord(request, authentication.getPrincipal().toString(), LoginMethodEnum.NORMAL_LOGIN);
+        loginRecordService.addLoginRecord(request, authentication.getPrincipal().toString(),
+                LoginMethodEnum.NORMAL_LOGIN);
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         if (roles.contains("ROLE_ADMIN")) {

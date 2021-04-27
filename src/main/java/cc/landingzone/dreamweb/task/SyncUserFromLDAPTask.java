@@ -108,16 +108,16 @@ public class SyncUserFromLDAPTask {
             // 设置搜索域节点
             String searchBase = "ou=hangzhou,dc=landingzone,dc=cc";
 
-            NamingEnumeration answer = dc.search(searchBase, searchFilter, searchCtls);
+            NamingEnumeration<?> answer = dc.search(searchBase, searchFilter, searchCtls);
             while (answer.hasMoreElements()) {
                 User user = new User();
                 SearchResult sr = (SearchResult) answer.next();
                 Attributes attrs = sr.getAttributes();
                 if (attrs != null) {
-                    for (NamingEnumeration ne = attrs.getAll(); ne.hasMore(); ) {
+                    for (NamingEnumeration<?> ne = attrs.getAll(); ne.hasMore(); ) {
                         Attribute attr = (Attribute) ne.next();
                         String attrId = attr.getID();
-                        for (NamingEnumeration e = attr.getAll(); e.hasMore(); ) {
+                        for (NamingEnumeration<?> e = attr.getAll(); e.hasMore(); ) {
                             String attrValue = e.next().toString();
 //                            System.out.println(attrId + "====" + attrValue);
 //                            if (ATTR_SAM_ACCOUNT_NAME.equals(attrId)) {

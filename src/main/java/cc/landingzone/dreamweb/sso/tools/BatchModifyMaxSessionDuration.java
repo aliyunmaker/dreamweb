@@ -98,7 +98,7 @@ public class BatchModifyMaxSessionDuration {
         request.setSysDomain("resourcemanager.aliyuncs.com");
         request.setSysVersion("2020-03-31");
         request.setSysAction("ListAccounts");
-        //TODO 暂时先设置成100,如果账号数量超过100,需要修改代码,增加翻页的逻辑
+        //暂时先设置成100,如果账号数量超过100,需要修改代码,增加翻页的逻辑
         request.putQueryParameter("PageSize", "100");
         request.setSysProtocol(ProtocolType.HTTPS);
         CommonResponse response = client.getCommonResponse(request);
