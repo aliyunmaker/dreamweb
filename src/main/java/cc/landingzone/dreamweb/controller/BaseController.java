@@ -20,7 +20,8 @@ public class BaseController {
         response.setContentType("application/json;charset=UTF-8");
         try {
             if (null != result) {
-                String resultString = JsonUtils.toJsonStringForWeb(result);
+                // String resultString = JsonUtils.toJsonStringForWeb(result);
+                String resultString = JsonUtils.toJsonString(result);
                 response.setContentLength(resultString.getBytes("UTF-8").length);
                 response.getWriter().write(resultString);
             }
@@ -77,7 +78,6 @@ public class BaseController {
     public void outputToFile(HttpServletResponse response, String result, String fileName) {
         outputToFile(response, result, fileName, "text/html;charset=UTF-8");
     }
-
 
     /**
      * 输出为文件
