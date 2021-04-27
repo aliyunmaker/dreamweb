@@ -1,9 +1,9 @@
 package cc.landingzone.dreamweb.utils;
 
-
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -23,21 +23,23 @@ public class RSAEncryptUtils {
     public static Logger logger = LoggerFactory.getLogger(RSAEncryptUtils.class.getName());
 
     static {
-        java.security.Security.addProvider(
-                new org.bouncycastle.jce.provider.BouncyCastleProvider()
-        );
+        java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         try {
-//            publicKey = CharStreams.toString(new InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_public.pem"), StandardCharsets.UTF_8));
-//            privateKey = CharStreams.toString(new InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_private.pem"), StandardCharsets.UTF_8));
-//
-//            publicKey = publicKey
-//                    .replace("-----BEGIN PUBLIC KEY-----", "")
-//                    .replaceAll(System.lineSeparator(), "")
-//                    .replace("-----END PUBLIC KEY-----", "");
-//            privateKey = privateKey
-//                    .replace("-----BEGIN RSA PRIVATE KEY-----", "")
-//                    .replaceAll(System.lineSeparator(), "")
-//                    .replace("-----END RSA PRIVATE KEY-----", "");
+            // publicKey = CharStreams.toString(new
+            // InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_public.pem"),
+            // StandardCharsets.UTF_8));
+            // privateKey = CharStreams.toString(new
+            // InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_private.pem"),
+            // StandardCharsets.UTF_8));
+            //
+            // publicKey = publicKey
+            // .replace("-----BEGIN PUBLIC KEY-----", "")
+            // .replaceAll(System.lineSeparator(), "")
+            // .replace("-----END PUBLIC KEY-----", "");
+            // privateKey = privateKey
+            // .replace("-----BEGIN RSA PRIVATE KEY-----", "")
+            // .replaceAll(System.lineSeparator(), "")
+            // .replace("-----END RSA PRIVATE KEY-----", "");
             Map.Entry<String, String> keyPair = genKeyPair();
             publicKey = keyPair.getKey();
             privateKey = keyPair.getValue();
@@ -70,12 +72,13 @@ public class RSAEncryptUtils {
         keyPairGen.initialize(1024, new SecureRandom());
         // 生成一个密钥对，保存在keyPair中
         KeyPair keyPair = keyPairGen.generateKeyPair();
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();   // 得到私钥
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();  // 得到公钥
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate(); // 得到私钥
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic(); // 得到公钥
         String publicKeyString = new String(Base64.encodeBase64(publicKey.getEncoded()));
         // 得到私钥字符串
         String privateKeyString = new String(Base64.encodeBase64((privateKey.getEncoded())));
-        Map.Entry<String, String> result = new AbstractMap.SimpleEntry<String, String>(publicKeyString, privateKeyString);
+        Map.Entry<String, String> result = new AbstractMap.SimpleEntry<String, String>(publicKeyString,
+                privateKeyString);
         return result;
     }
 
@@ -88,10 +91,13 @@ public class RSAEncryptUtils {
      * @throws Exception 加密过程中的异常信息
      */
     public static String encrypt(String str, String publicKey) throws Exception {
-        //base64编码的公钥
+        Assert.hasText(str, "str can not be blank!");
+        Assert.hasText(publicKey, "privateKey can not be blank!");
+        // base64编码的公钥
         byte[] decoded = Base64.decodeBase64(publicKey);
-        RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(decoded));
-        //RSA加密
+        RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA")
+                .generatePublic(new X509EncodedKeySpec(decoded));
+        // RSA加密
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
         String outStr = Base64.encodeBase64String(cipher.doFinal(str.getBytes(StandardCharsets.UTF_8)));
@@ -107,12 +113,15 @@ public class RSAEncryptUtils {
      * @throws Exception 解密过程中的异常信息
      */
     public static String decrypt(String str, String privateKey) throws Exception {
-        //64位解码加密后的字符串
+        Assert.hasText(str, "str can not be blank!");
+        Assert.hasText(privateKey, "privateKey can not be blank!");
+        // 64位解码加密后的字符串
         byte[] inputByte = Base64.decodeBase64(str.getBytes("UTF-8"));
-        //base64编码的私钥
+        // base64编码的私钥
         byte[] decoded = Base64.decodeBase64(privateKey);
-        RSAPrivateKey priKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(decoded));
-        //RSA解密
+        RSAPrivateKey priKey = (RSAPrivateKey) KeyFactory.getInstance("RSA")
+                .generatePrivate(new PKCS8EncodedKeySpec(decoded));
+        // RSA解密
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, priKey);
         String outStr = new String(cipher.doFinal(inputByte));
@@ -126,6 +135,5 @@ public class RSAEncryptUtils {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
 
 }
