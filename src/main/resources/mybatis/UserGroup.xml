@@ -39,8 +39,8 @@
     <select id="getUsersByUserGroupId"
             resultType="cc.landingzone.dreamweb.model.User">
         select u.*
-        from user_group_associate uga
-                 left join user u on uga.user_id = u.id
+        from user u 
+                 left join user_group_associate uga on uga.user_id = u.id
                  left join user_group ug on uga.user_group_id = ug.id
         where uga.user_group_id = #{userGroupId}
     </select>
