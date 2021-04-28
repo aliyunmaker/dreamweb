@@ -20,4 +20,6 @@ public interface UserGroupDao {
 
     public void updateUserGroup(UserGroup userGroup);
 
+    public UserGroup getUserGroupByName(String name);
+
 }

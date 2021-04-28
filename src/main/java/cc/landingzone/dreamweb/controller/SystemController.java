@@ -1,19 +1,17 @@
 package cc.landingzone.dreamweb.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.model.WebResult;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +24,9 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.model.WebResult;
 
 @Controller
 @RequestMapping("/system")
@@ -97,10 +98,11 @@ public class SystemController extends BaseController implements InitializingBean
                 }
                 logger.info("jarFilePath:" + jarFilePath);
                 JarFile jarFile = new JarFile(jarFilePath);
-                JarEntry entry = jarFile.getJarEntry("META-INF/MANIFEST.MF");
+                //JarEntry entry = jarFile.getJarEntry("META-INF/MANIFEST.MF");
 //                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
                 Manifest manifest = new Manifest(jarFile.getManifest());
                 String version = manifest.getMainAttributes().getValue("Version");
+                jarFile.close();
                 if (StringUtils.isBlank(version)) {
                     version = "online version";
                 }

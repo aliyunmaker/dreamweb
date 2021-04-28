@@ -45,4 +45,9 @@
         where uga.user_group_id = #{userGroupId}
     </select>
 
+    <select id="getUserGroupByName"
+            resultType="cc.landingzone.dreamweb.model.UserGroup">
+        select * from user_group where name = #{name}
+    </select>
+
 </mapper>

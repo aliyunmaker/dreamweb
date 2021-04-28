@@ -1,5 +1,22 @@
 package cc.landingzone.dreamweb.controller;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import cc.landingzone.dreamweb.framework.MyAuthenticationProvider;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
@@ -8,20 +25,6 @@ import cc.landingzone.dreamweb.service.UserRoleService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import cc.landingzone.dreamweb.utils.SecurityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * charles
@@ -52,8 +55,9 @@ public class UserController extends BaseController {
             roleListStr.append("<table>");
             roleListStr.append("<tr><th>Login</th><th>Type</th><th>Name</th><th>Value</th></tr>");
             for (UserRole role : list) {
-                roleListStr.append("<tr><td><a href='../../sso/login.do?sp=" + role.getRoleType() + "&userRoleId=" + role.getId() + "' target='_blank'>登录控制台</a></td><td>" + role.getRoleType() + "</td><td>" + role.getRoleName() + "</td><td>"
-                        + role.getRoleValue() + "</td></tr>");
+                roleListStr.append("<tr><td><a href='../../sso/login.do?sp=" + role.getRoleType() + "&userRoleId="
+                        + role.getId() + "' target='_blank'>登录控制台</a></td><td>" + role.getRoleType() + "</td><td>"
+                        + role.getRoleName() + "</td><td>" + role.getRoleValue() + "</td></tr>");
             }
             roleListStr.append("</table>");
             map.put("roleList", roleListStr.toString());
@@ -85,7 +89,6 @@ public class UserController extends BaseController {
         outputToJSON(response, result);
     }
 
-
     @RequestMapping("/addUser.do")
     public void addUser(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -113,6 +116,10 @@ public class UserController extends BaseController {
             dbUser.setPhone(updateUser.getPhone());
             dbUser.setComment(updateUser.getComment());
             SecurityUtils.xssFilter(dbUser);
+            // password不能做xss过滤
+            if (StringUtils.isNotBlank(updateUser.getPassword())) {
+                dbUser.setPassword(MyAuthenticationProvider.buildMd5Password(updateUser.getPassword()));
+            }
             userService.updateUser(dbUser);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

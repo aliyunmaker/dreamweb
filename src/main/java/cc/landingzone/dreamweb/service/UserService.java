@@ -25,7 +25,6 @@ public class UserService {
 
     public static final String WX_UNION_LOGIN_NAME_PREFIX = "weixin_";
 
-
     /**
      * 添加
      *
@@ -41,7 +40,13 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getPassword())) {
             user.setPassword(MyAuthenticationProvider.buildMd5Password(user.getPassword()));
         }
-        //user.setAuthkey(GoogleAuthUtils.generateAuthkey());
+        // user.setAuthkey(GoogleAuthUtils.generateAuthkey());
+
+        User userDB = getUserByLoginName(user.getLoginName());
+        if (userDB != null) {
+            throw new IllegalArgumentException("用户不能重名:" + user.getLoginName());
+        }
+
         userDao.addUser(user);
     }
 
@@ -59,7 +64,6 @@ public class UserService {
         user.setRole(role);
         updateUser(user);
     }
-
 
     /**
      * 删除用户
@@ -110,7 +114,6 @@ public class UserService {
         return userDao.getUserById(id);
     }
 
-
     /**
      * 搜索用户
      *
@@ -142,6 +145,5 @@ public class UserService {
         }
         return list;
     }
-
 
 }

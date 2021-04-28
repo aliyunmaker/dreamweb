@@ -26,6 +26,10 @@ public class UserGroupService {
     public void addUserGroup(UserGroup userGroup) {
         Assert.notNull(userGroup, "数据不能为空!");
         Assert.hasText(userGroup.getName(), "名称不能为空!");
+        UserGroup userGroupDB = getUserGroupByName(userGroup.getName());
+        if (userGroupDB != null) {
+            throw new IllegalArgumentException("用户组不能重名:" + userGroup.getName());
+        }
         userGroupDao.addUserGroup(userGroup);
     }
 
@@ -39,6 +43,11 @@ public class UserGroupService {
 
     public List<UserGroup> getAllUserGroups() {
         return userGroupDao.getAllUserGroups();
+    }
+
+    public UserGroup getUserGroupByName(String name) {
+        Assert.hasText(name, "名称不能为空!");
+        return userGroupDao.getUserGroupByName(name);
     }
 
     @Transactional

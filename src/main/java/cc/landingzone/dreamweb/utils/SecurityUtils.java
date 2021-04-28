@@ -8,7 +8,6 @@ import java.beans.PropertyDescriptor;
 
 public class SecurityUtils {
 
-
     /**
      * 过滤对象中会导致xss攻击的字符串
      *
@@ -22,9 +21,10 @@ public class SecurityUtils {
             if (!String.class.equals(p.getPropertyType())) {
                 continue;
             }
-            Object a = p.getReadMethod().invoke(o, null);
+            Object a = p.getReadMethod().invoke(o, new Object[] {});
             if (null != a) {
-                String target = a.toString().replaceAll("<script>", "").replaceAll("javascript:", "").replaceAll("<", "").replaceAll(">", "");
+                String target = a.toString().replaceAll("<script>", "").replaceAll("javascript:", "")
+                        .replaceAll("<", "").replaceAll(">", "");
                 p.getWriteMethod().invoke(o, target);
             }
         }
