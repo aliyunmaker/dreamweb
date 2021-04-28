@@ -32,6 +32,7 @@
         update user
         set login_name              = #{loginName},
             name                    = #{name},
+            password                = #{password},
             email                   = #{email},
             comment                 = #{comment},
             role                    = #{role},
