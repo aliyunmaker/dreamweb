@@ -61,7 +61,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
             env.put(Context.SECURITY_PRINCIPAL, username);
             env.put(Context.SECURITY_CREDENTIALS, password);
             try {
-                InitialDirContext dc = new InitialDirContext(env);
+                new InitialDirContext(env);
                 List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
                 grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
                 return new UsernamePasswordAuthenticationToken(username, user.getPassword(), grantedAuths);
