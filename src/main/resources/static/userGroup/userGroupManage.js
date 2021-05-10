@@ -100,9 +100,9 @@ Ext.onReady(function () {
     listeners: {
       itemclick: function (grid, record) {
         var select = MyExt.util.SelectGridModel(grid, true);
+        userStore.removeAll();
+        userRoleStore.removeAll();
         if (!select) {
-          userStore.removeAll();
-          userRoleStore.removeAll();
           return;
         }
         userStore.load();
@@ -288,9 +288,9 @@ Ext.onReady(function () {
       displayField: 'loginName',
       // template for the content inside text field
       displayTpl: Ext.create('Ext.XTemplate',
-          '<tpl for=".">',
-          '{loginName}[{name}]',
-          '</tpl>'
+        '<tpl for=".">',
+        '{loginName}[{name}]',
+        '</tpl>'
       ),
       valueField: 'id',
       name: 'userId',

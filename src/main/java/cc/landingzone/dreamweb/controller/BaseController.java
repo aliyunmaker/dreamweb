@@ -21,7 +21,7 @@ public class BaseController {
         try {
             if (null != result) {
                 // String resultString = JsonUtils.toJsonStringForWeb(result);
-                String resultString = JsonUtils.toJsonString(result);
+                String resultString = JsonUtils.toJsonStringWithDatetime(result);
                 response.setContentLength(resultString.getBytes("UTF-8").length);
                 response.getWriter().write(resultString);
             }
