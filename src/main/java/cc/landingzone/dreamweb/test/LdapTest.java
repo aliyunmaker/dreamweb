@@ -82,12 +82,14 @@ public class LdapTest {
                             for (NamingEnumeration<?> ne = Attrs.getAll(); ne.hasMore(); ) {
                                 Attribute Attr = (Attribute) ne.next();
                                 String attrId = Attr.getID();
+                                int totalResults = 0;
                                 // 读取属性值
                                 for (NamingEnumeration<?> e = Attr.getAll(); e.hasMore(); totalResults++) {
                                     // 接受循环遍历读取的userPrincipalName用户属性
                                     String attrValue = e.next().toString();
                                     System.out.println(attrId + "=" + attrValue);
                                 }
+                                System.out.println(totalResults);
                             }
                         } catch (NamingException e) {
                             System.err.println("Throw Exception : " + e);
