@@ -9,20 +9,33 @@
     <script type="text/javascript"
             src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script type="text/javascript">
-        // let task;
-        // $(document).ready(function () {
-        //     $("#btn_downloadmeta").on("click", function () {
-        //
-        //     });
-        // });
+        let task;
+        $(document).ready(function () {
+            $("#btn_update").on("click", function () {
+                $.ajax({
+                    url: "../rsakey/updateRSAKey.do",
+                    success: function(result) {
+                        if(result.success) {
+                            $("#msg_box_success").show();
+                        }else {
+                            $("#msg_box_failed").show();
+                        }
+                    }
+                })
+            });
+        });
     </script>
 </head>
 <body>
 <div class="container">
     <h1>系统密钥管理</h1>
     <hr>
-    <br>
-    <button onclick="location.href='../updateRSAKey'" class="btn btn-success">&nbsp;&nbsp;更新密钥&nbsp;&nbsp;</button>
+    <br/>
+    <!-- <button onclick="location.href='../updateRSAKey'" class="btn btn-success">&nbsp;&nbsp;更新密钥&nbsp;&nbsp;</button> -->
+    <button id="btn_update" class="btn btn-success">&nbsp;&nbsp;更新密钥&nbsp;&nbsp;</button>
+    <br/><br/>
+    <div id="msg_box_success" style="display:none" class="alert alert-success" role="alert">更新成功</div>
+    <div id="msg_box_failed" style="display:none" class="alert alert-danger" role="alert">更新失败</div>
 </div>
 </body>
 </html>
