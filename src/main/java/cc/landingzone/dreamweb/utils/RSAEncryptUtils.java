@@ -3,7 +3,12 @@ package cc.landingzone.dreamweb.utils;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import cc.landingzone.dreamweb.dao.RSADao;
+import cc.landingzone.dreamweb.model.RSAKey;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -13,12 +18,18 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.AbstractMap;
+import java.util.List;
 import java.util.Map;
 
-public class RSAEncryptUtils {
 
+@Component
+public class RSAEncryptUtils {
+    @Autowired
+    private RSADao rsaDao;
+    
     public static String publicKey;
     private static String privateKey;
+    public static boolean hasInitKey = false;
 
     public static Logger logger = LoggerFactory.getLogger(RSAEncryptUtils.class.getName());
 
@@ -40,6 +51,11 @@ public class RSAEncryptUtils {
             // .replace("-----BEGIN RSA PRIVATE KEY-----", "")
             // .replaceAll(System.lineSeparator(), "")
             // .replace("-----END RSA PRIVATE KEY-----", "");
+            // Map.Entry<String, String> keyPair = getKeyPairFromDB();
+            // if(keyPair == null) {
+            //     keyPair = genKeyPair();
+            //     setKeyPairToDB(keyPair);
+            // }
             Map.Entry<String, String> keyPair = genKeyPair();
             publicKey = keyPair.getKey();
             privateKey = keyPair.getValue();
@@ -48,8 +64,14 @@ public class RSAEncryptUtils {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    //有问题，执行初始化块时还没有执行autowired，因此rsaDao为空，报错
+    // {
+    //     if(hasKeyInDB == false) {
+    //         SetKey();
+    //     }
+    // }
 
+    public static void main(String[] args) throws Exception {
         System.out.println(publicKey);
         System.out.println(privateKey);
         String message = "1111";
@@ -136,4 +158,29 @@ public class RSAEncryptUtils {
         }
     }
 
+    Map.Entry<String, String> getKeyPairFromDB() {
+        List<RSAKey> rl = rsaDao.getKeyPair();
+        if(rl.size() == 0) {
+            return null;
+        }else{
+            RSAKey res = rl.get(0);
+            return new AbstractMap.SimpleEntry<String, String>(res.getPublicKey(),
+            res.getPrivateKey());
+        }
+    }
+
+    void setKeyPairToDB(Map.Entry<String, String> keyPair) {
+        rsaDao.setKeyPair(new RSAKey(keyPair.getKey(), keyPair.getValue()));
+    }
+
+    public void SetKey() {
+        Map.Entry<String, String> keyPair = getKeyPairFromDB();
+        if(keyPair == null) {
+            rsaDao.setKeyPair(new RSAKey(publicKey, privateKey));
+        }else {
+            publicKey = keyPair.getKey();
+            privateKey = keyPair.getValue();
+        }
+        hasInitKey = true;
+    }
 }
