@@ -12,4 +12,5 @@ public interface RSADao {
 
     void setKeyPair(RSAKey keyPair);
 
+    void updateKeyPair(RSAKey keyPair);
 }

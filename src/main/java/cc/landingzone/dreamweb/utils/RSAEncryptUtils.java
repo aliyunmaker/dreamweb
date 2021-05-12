@@ -3,12 +3,7 @@ package cc.landingzone.dreamweb.utils;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import cc.landingzone.dreamweb.dao.RSADao;
-import cc.landingzone.dreamweb.model.RSAKey;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -18,24 +13,20 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 
 
-@Component
 public class RSAEncryptUtils {
-    @Autowired
-    private RSADao rsaDao;
     
-    public static String publicKey;
-    private static String privateKey;
-    public static boolean hasInitKey = false;
+    // public static String publicKey;
+    // private static String privateKey;
+    // public static boolean hasInitKey = false;
 
     public static Logger logger = LoggerFactory.getLogger(RSAEncryptUtils.class.getName());
 
-    static {
-        java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        try {
+    // static {
+    //     java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    //     try {
             // publicKey = CharStreams.toString(new
             // InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_public.pem"),
             // StandardCharsets.UTF_8));
@@ -56,13 +47,13 @@ public class RSAEncryptUtils {
             //     keyPair = genKeyPair();
             //     setKeyPairToDB(keyPair);
             // }
-            Map.Entry<String, String> keyPair = genKeyPair();
-            publicKey = keyPair.getKey();
-            privateKey = keyPair.getValue();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
+    //         Map.Entry<String, String> keyPair = genKeyPair();
+    //         publicKey = keyPair.getKey();
+    //         privateKey = keyPair.getValue();
+    //     } catch (Exception e) {
+    //         logger.error(e.getMessage(), e);
+    //     }
+    // }
 
     //有问题，执行初始化块时还没有执行autowired，因此rsaDao为空，报错
     // {
@@ -71,16 +62,16 @@ public class RSAEncryptUtils {
     //     }
     // }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(publicKey);
-        System.out.println(privateKey);
-        String message = "1111";
-        String messageEn = encrypt(message, publicKey);
-        System.out.println(messageEn);
+    // public static void main(String[] args) throws Exception {
+    //     System.out.println(publicKey);
+    //     System.out.println(privateKey);
+    //     String message = "1111";
+    //     String messageEn = encrypt(message, publicKey);
+    //     System.out.println(messageEn);
 
-        String messageDe = decrypt(messageEn, privateKey);
-        System.out.println(messageDe);
-    }
+    //     String messageDe = decrypt(messageEn, privateKey);
+    //     System.out.println(messageDe);
+    // }
 
     /**
      * 随机生成密钥对
@@ -150,37 +141,37 @@ public class RSAEncryptUtils {
         return outStr;
     }
 
-    public static String decrypt(String str) {
-        try {
-            return decrypt(str, privateKey);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
+    // public static String decrypt(String str) {
+    //     try {
+    //         // return decrypt(str, privateKey);
+    //     } catch (Exception e) {
+    //         throw new RuntimeException(e.getMessage(), e);
+    //     }
+    // }
 
-    Map.Entry<String, String> getKeyPairFromDB() {
-        List<RSAKey> rl = rsaDao.getKeyPair();
-        if(rl.size() == 0) {
-            return null;
-        }else{
-            RSAKey res = rl.get(0);
-            return new AbstractMap.SimpleEntry<String, String>(res.getPublicKey(),
-            res.getPrivateKey());
-        }
-    }
+    // Map.Entry<String, String> getKeyPairFromDB() {
+    //     List<RSAKey> rl = rsaDao.getKeyPair();
+    //     if(rl.size() == 0) {
+    //         return null;
+    //     }else{
+    //         RSAKey res = rl.get(0);
+    //         return new AbstractMap.SimpleEntry<String, String>(res.getPublicKey(),
+    //         res.getPrivateKey());
+    //     }
+    // }
 
-    void setKeyPairToDB(Map.Entry<String, String> keyPair) {
-        rsaDao.setKeyPair(new RSAKey(keyPair.getKey(), keyPair.getValue()));
-    }
+    // void setKeyPairToDB(Map.Entry<String, String> keyPair) {
+    //     rsaDao.setKeyPair(new RSAKey(keyPair.getKey(), keyPair.getValue()));
+    // }
 
-    public void SetKey() {
-        Map.Entry<String, String> keyPair = getKeyPairFromDB();
-        if(keyPair == null) {
-            rsaDao.setKeyPair(new RSAKey(publicKey, privateKey));
-        }else {
-            publicKey = keyPair.getKey();
-            privateKey = keyPair.getValue();
-        }
-        hasInitKey = true;
-    }
+    // public void SetKey() {
+    //     Map.Entry<String, String> keyPair = getKeyPairFromDB();
+    //     if(keyPair == null) {
+    //         rsaDao.setKeyPair(new RSAKey(publicKey, privateKey));
+    //     }else {
+    //         publicKey = keyPair.getKey();
+    //         privateKey = keyPair.getValue();
+    //     }
+    //     hasInitKey = true;
+    // }
 }

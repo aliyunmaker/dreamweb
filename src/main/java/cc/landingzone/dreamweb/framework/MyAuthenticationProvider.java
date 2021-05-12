@@ -1,9 +1,9 @@
 package cc.landingzone.dreamweb.framework;
 
 import cc.landingzone.dreamweb.model.User;
+import cc.landingzone.dreamweb.service.RSAService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.Md5Utils;
-import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,6 +27,8 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RSAService rsaService;
 
     private static final String salt = "dream";
 
@@ -44,7 +46,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
 
         // decrypt password
-        password = RSAEncryptUtils.decrypt(password);
+        password = rsaService.decrypt(password);
 
         User user = userService.getUserByLoginName(username);
         if (null == user) {

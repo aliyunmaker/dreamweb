@@ -3,12 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.RSADao">
-    <insert id="setKeyPair"
-            parameterType="cc.landingzone.dreamweb.model.RSAKey" useGeneratedKeys="true" keyProperty="id">
+    <insert id="setKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
         insert into rsakey
-        (public_key,
+        (id,
+         public_key,
          private_key)
-        values (#{publicKey},
+        values (0,
+                #{publicKey},
                 #{privateKey})
     </insert>
 
@@ -24,9 +25,17 @@
         where id = #{id}
     </update> -->
 
+    <update id="updateKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
+        update rsakey
+        set public_key      = #{publicKey},
+            private_key     = #{privateKey}
+        where id = 0
+    </update>
+
     <select id="getKeyPair" resultType="cc.landingzone.dreamweb.model.RSAKey">
         select *
         from rsakey
+        where id = 0
         <!-- where login_name = #{loginName} -->
     </select>
 
