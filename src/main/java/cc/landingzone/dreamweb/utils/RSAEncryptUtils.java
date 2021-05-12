@@ -17,6 +17,9 @@ import java.util.Map;
 
 public class RSAEncryptUtils {
 
+    /**
+     * 后面不再使用
+     */
     public static String publicKey;
     private static String privateKey;
 
