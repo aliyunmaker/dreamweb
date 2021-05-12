@@ -41,6 +41,8 @@ public class LoginController extends BaseController {
     private ApiUserService apiUserService;
     @Autowired
     private LoginRecordService loginRecordService;
+    @Autowired
+    private RSAEncryptUtils rsaEncryptUtils;
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -55,6 +57,9 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/login")
     public String login(Model model) {
+        if(RSAEncryptUtils.hasInitKey == false) {
+            rsaEncryptUtils.SetKey();
+        }
         model.addAttribute("publicKey", RSAEncryptUtils.publicKey);
         return "login";
     }
