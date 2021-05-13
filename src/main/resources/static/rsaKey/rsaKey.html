@@ -16,9 +16,12 @@
                     url: "../rsakey/updateRSAKey.do",
                     success: function(result) {
                         if(result.success) {
-                            $("#msg_box_success").show();
+                            // $("#msg_box_success").show();
+                            alert("更新成功，点击确定返回登录页");
+                            location.href="../logout";
                         }else {
-                            $("#msg_box_failed").show();
+                            alert("更新失败");
+                            // $("#msg_box_failed").show();
                         }
                     }
                 })
@@ -34,8 +37,8 @@
     <!-- <button onclick="location.href='../updateRSAKey'" class="btn btn-success">&nbsp;&nbsp;更新密钥&nbsp;&nbsp;</button> -->
     <button id="btn_update" class="btn btn-success">&nbsp;&nbsp;更新密钥&nbsp;&nbsp;</button>
     <br/><br/>
-    <div id="msg_box_success" style="display:none" class="alert alert-success" role="alert">更新成功</div>
-    <div id="msg_box_failed" style="display:none" class="alert alert-danger" role="alert">更新失败</div>
+    <!-- <div id="msg_box_success" style="display:none" class="alert alert-success" role="alert">更新成功</div>
+    <div id="msg_box_failed" style="display:none" class="alert alert-danger" role="alert">更新失败</div> -->
 </div>
 </body>
 </html>
