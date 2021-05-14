@@ -7,10 +7,10 @@ import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
 import cc.landingzone.dreamweb.service.ApiUserService;
 import cc.landingzone.dreamweb.service.LoginRecordService;
+import cc.landingzone.dreamweb.service.RSAService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.HttpClientUtils;
 import cc.landingzone.dreamweb.utils.JsonUtils;
-import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 import cc.landingzone.dreamweb.utils.SignatureUtils;
 import com.alibaba.fastjson.TypeReference;
 import org.slf4j.Logger;
@@ -41,6 +41,8 @@ public class LoginController extends BaseController {
     private ApiUserService apiUserService;
     @Autowired
     private LoginRecordService loginRecordService;
+    @Autowired
+    private RSAService rsaService;
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -55,9 +57,16 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/login")
     public String login(Model model) {
-        model.addAttribute("publicKey", RSAEncryptUtils.publicKey);
+        model.addAttribute("publicKey", rsaService.getPublicKey());
         return "login";
     }
+
+    // @RequestMapping("/updateRSAKey")
+    // public String updateRSAKey(Model model) {
+    //     rsaService.UpdateKey();
+    //     model.addAttribute("publicKey", rsaService.getPublicKey());
+    //     return "login";
+    // }
 
     /**
      * 网站微信登录回调
