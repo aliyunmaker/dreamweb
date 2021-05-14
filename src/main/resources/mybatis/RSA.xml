@@ -17,18 +17,6 @@
                 now())
     </insert>
 
-    <!-- <update id="updateUser" parameterType="cc.landingzone.dreamweb.model.User">
-        update user
-        set login_name              = #{loginName},
-            name                    = #{name},
-            email                   = #{email},
-            comment                 = #{comment},
-            role                    = #{role},
-            phone                   = #{phone},
-            unionid                 = #{unionid}
-        where id = #{id}
-    </update> -->
-
     <update id="updateKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
         update rsakey
         set public_key      = #{publicKey},
@@ -42,10 +30,4 @@
         where key_name = #{keyName}
         <!-- where login_name = #{loginName} -->
     </select>
-
-    <!-- <delete id="deleteUser" parameterType="int">
-        delete
-        from user
-        where id = #{id}
-    </delete> -->
 </mapper>

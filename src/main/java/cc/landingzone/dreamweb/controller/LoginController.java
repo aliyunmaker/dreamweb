@@ -61,13 +61,6 @@ public class LoginController extends BaseController {
         return "login";
     }
 
-    // @RequestMapping("/updateRSAKey")
-    // public String updateRSAKey(Model model) {
-    //     rsaService.UpdateKey();
-    //     model.addAttribute("publicKey", rsaService.getPublicKey());
-    //     return "login";
-    // }
-
     /**
      * 网站微信登录回调
      *
