@@ -8,7 +8,7 @@ import cc.landingzone.dreamweb.model.RSAKey;
 
 @Component
 public interface RSADao {
-    List<RSAKey> getKeyPair();
+    List<RSAKey> getKeyPair(String keyName);
 
     void setKeyPair(RSAKey keyPair);
 

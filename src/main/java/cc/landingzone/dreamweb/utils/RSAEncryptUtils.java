@@ -24,8 +24,8 @@ public class RSAEncryptUtils {
 
     public static Logger logger = LoggerFactory.getLogger(RSAEncryptUtils.class.getName());
 
-    // static {
-    //     java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    static {
+        java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
     //     try {
             // publicKey = CharStreams.toString(new
             // InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_public.pem"),
@@ -53,7 +53,7 @@ public class RSAEncryptUtils {
     //     } catch (Exception e) {
     //         logger.error(e.getMessage(), e);
     //     }
-    // }
+    }
 
     //有问题，执行初始化块时还没有执行autowired，因此rsaDao为空，报错
     // {

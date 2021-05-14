@@ -5,12 +5,16 @@
 <mapper namespace="cc.landingzone.dreamweb.dao.RSADao">
     <insert id="setKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
         insert into rsakey
-        (id,
+        (key_name,
          public_key,
-         private_key)
-        values (0,
+         private_key,
+         comment,
+         gmt_create)
+        values (#{keyName},
                 #{publicKey},
-                #{privateKey})
+                #{privateKey},
+                #{comment},
+                now())
     </insert>
 
     <!-- <update id="updateUser" parameterType="cc.landingzone.dreamweb.model.User">
@@ -29,13 +33,13 @@
         update rsakey
         set public_key      = #{publicKey},
             private_key     = #{privateKey}
-        where id = 0
+        where key_name = #{keyName}
     </update>
 
     <select id="getKeyPair" resultType="cc.landingzone.dreamweb.model.RSAKey">
         select *
         from rsakey
-        where id = 0
+        where key_name = #{keyName}
         <!-- where login_name = #{loginName} -->
     </select>
 
