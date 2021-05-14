@@ -59,6 +59,11 @@ Ext
                         leaf: true,
                         href: 'loginRecord/loginRecord.html',
                         hrefTarget: 'mainFrame'
+                    }, {
+                        text: "系统密钥管理",
+                        leaf: true,
+                        href: 'rsaKey/rsaKey.html',
+                        hrefTarget: 'mainFrame'
                     }]
                 }]
             }
