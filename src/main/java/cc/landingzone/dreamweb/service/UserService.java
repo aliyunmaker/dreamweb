@@ -44,6 +44,10 @@ public class UserService {
             user.setPassword(MyAuthenticationProvider.buildMd5Password(user.getPassword()));
         }
         //user.setAuthkey(GoogleAuthUtils.generateAuthkey());
+        User userDB = getUserByLoginName(user.getLoginName());
+        if (userDB != null) {
+            throw new IllegalArgumentException("用户不能重名:" + user.getLoginName());
+        }
         userDao.addUser(user);
     }
 
