@@ -50,7 +50,7 @@ public class Md5Utils {
     }
 
     public static void main(String[] args) {
-        System.out.println(getMD5("adminsalt"));
+        System.out.println(getMD5("alimonitor"));
     }
 
 }

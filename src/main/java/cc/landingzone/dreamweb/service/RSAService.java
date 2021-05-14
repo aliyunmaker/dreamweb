@@ -31,14 +31,14 @@ public class RSAService {
     // private static String privateKey;
     // private static boolean hasInitKey = false;
     private Lock lock = new ReentrantLock();
-    private LoadingCache<Integer, Map.Entry<String, String>> cache = CacheBuilder.newBuilder()
-        .maximumSize(1)
-        .expireAfterWrite(30, TimeUnit.SECONDS)
-        .build(new CacheLoader<Integer, Map.Entry<String, String>>(){
-            public Map.Entry<String, String> load(Integer key) {
-                return getKeyPairFromDB();
-            }
-        });
+    // private LoadingCache<Integer, Map.Entry<String, String>> cache = CacheBuilder.newBuilder()
+    //     .maximumSize(1)
+    //     .expireAfterWrite(30, TimeUnit.SECONDS)
+    //     .build(new CacheLoader<Integer, Map.Entry<String, String>>(){
+    //         public Map.Entry<String, String> load(Integer key) {
+    //             return getKeyPairFromDB();
+    //         }
+    //     });
     
     public static Logger logger = LoggerFactory.getLogger(RSAService.class.getName());
 
