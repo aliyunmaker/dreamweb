@@ -10,13 +10,8 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 import cc.landingzone.dreamweb.dao.RSADao;
 import cc.landingzone.dreamweb.model.RSAKey;
@@ -24,13 +19,13 @@ import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 
 @Component
 public class RSAService {
+
     @Autowired
     private RSADao rsaDao;
 
     // private static String publicKey;
     // private static String privateKey;
     // private static boolean hasInitKey = false;
-    private Lock lock = new ReentrantLock();
     // private LoadingCache<Integer, Map.Entry<String, String>> cache = CacheBuilder.newBuilder()
     //     .maximumSize(1)
     //     .expireAfterWrite(30, TimeUnit.SECONDS)
@@ -69,15 +64,7 @@ public class RSAService {
      * @return 公私钥对，可能为空
      */
     private Map.Entry<String, String> getKeyPairFromDB() {
-        List<RSAKey> rsaKeyList = null;
-        lock.lock();
-        try {
-            rsaKeyList = rsaDao.getKeyPair();    
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }finally {
-            lock.unlock();
-        }
+        List<RSAKey> rsaKeyList = rsaDao.getKeyPair("systemRSAKey");    
         if(rsaKeyList == null || rsaKeyList.size() == 0) {
             return null;
         }else{
@@ -91,14 +78,11 @@ public class RSAService {
      * @param keyPair 随机生成的密钥对
      */
     private void setKeyPairToDB(Map.Entry<String, String> keyPair) {
-        lock.lock();
-        try {
-            rsaDao.setKeyPair(new RSAKey(keyPair.getKey(), keyPair.getValue()));
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }finally {
-            lock.unlock();
-        }
+        RSAKey rsaKey = new RSAKey();
+        rsaKey.setPublicKey(keyPair.getKey());
+        rsaKey.setPrivateKey(keyPair.getValue());
+        rsaKey.setKeyName("systemRSAKey");
+        rsaDao.setKeyPair(rsaKey);
     }
 
     /**
@@ -106,14 +90,11 @@ public class RSAService {
      * @param keyPair 随机生成的密钥对
      */
     private void updateKeyPairToDB(Map.Entry<String, String> keyPair) {
-        lock.lock();
-        try {
-            rsaDao.updateKeyPair(new RSAKey(keyPair.getKey(), keyPair.getValue()));
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }finally {
-            lock.unlock();
-        }
+        RSAKey rsaKey = new RSAKey();
+        rsaKey.setPublicKey(keyPair.getKey());
+        rsaKey.setPrivateKey(keyPair.getValue());
+        rsaKey.setKeyName("systemRSAKey");
+        rsaDao.updateKeyPair(rsaKey);
     }
 
     /**
@@ -121,7 +102,7 @@ public class RSAService {
      * 否则，则先随机生成公私钥对，并插入到数据库中
      * @return 公私钥对，可能为空
      */
-    private Map.Entry<String, String> GetKeyPair() {
+    private Map.Entry<String, String> getKeyPair() {
         Map.Entry<String, String> keyPair = null;
         keyPair = getKeyPairFromDB();
         // try {
@@ -130,7 +111,6 @@ public class RSAService {
         //     //防止数据库里没数据，cache拿到空数据抛出异常
         // }
         if(keyPair == null) {
-            java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
             try {
                 keyPair = RSAEncryptUtils.genKeyPair();
             } catch (Exception e) {
@@ -147,7 +127,7 @@ public class RSAService {
      * @return 私钥
      */
     private String getPrivateKey() {
-        Map.Entry<String, String> keyPair = GetKeyPair();
+        Map.Entry<String, String> keyPair = getKeyPair();
         return keyPair == null ? null : keyPair.getValue();
     }
 
@@ -158,18 +138,17 @@ public class RSAService {
      * @return 公钥
      */
     public String getPublicKey() {
-        Map.Entry<String, String> keyPair = GetKeyPair();
+        Map.Entry<String, String> keyPair = getKeyPair();
         return keyPair == null ? null : keyPair.getKey();
     }
 
     /**
      * 更新数据库中的公私钥对
      */
-    public void UpdateKey() {
+    public void updateRSAKey() {
         try {
             Map.Entry<String, String> keyPair = getKeyPairFromDB();
             // Map.Entry<String, String> keyPair = cache.get(0);
-            java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
             Map.Entry<String, String> newKeyPair = RSAEncryptUtils.genKeyPair();
             if(keyPair == null) {
                 setKeyPairToDB(newKeyPair);
