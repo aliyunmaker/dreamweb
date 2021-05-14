@@ -19,5 +19,7 @@ public interface UserGroupDao {
     public List<User> getUsersByUserGroupId(Integer userGroupId);
 
     public void updateUserGroup(UserGroup userGroup);
+    
+    public UserGroup getUserGroupByName(String name);
 
 }

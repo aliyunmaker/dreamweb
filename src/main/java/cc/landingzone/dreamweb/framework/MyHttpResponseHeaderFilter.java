@@ -27,7 +27,6 @@ public class MyHttpResponseHeaderFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        long start = System.currentTimeMillis();
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setHeader(
                 "Dreamweb-Hostname", HostName);

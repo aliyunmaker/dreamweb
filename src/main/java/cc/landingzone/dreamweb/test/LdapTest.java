@@ -31,7 +31,7 @@ public class LdapTest {
         env.put(Context.SECURITY_PRINCIPAL, username);
         env.put(Context.SECURITY_CREDENTIALS, password);
         try {
-            InitialDirContext dc = new InitialDirContext(env);// 初始化上下文
+            new InitialDirContext(env);// 初始化上下文
             System.out.println("认证成功");
         } catch (javax.naming.AuthenticationException e) {
             System.out.println("认证失败");
@@ -76,19 +76,20 @@ public class LdapTest {
                     SearchResult sr = (SearchResult) answer.next();
                     String dn = sr.getName();
                     System.out.println("\n" + dn);
-                    int totalResults = 0;
                     Attributes Attrs = sr.getAttributes();
                     if (Attrs != null) {
                         try {
                             for (NamingEnumeration<?> ne = Attrs.getAll(); ne.hasMore(); ) {
                                 Attribute Attr = (Attribute) ne.next();
                                 String attrId = Attr.getID();
+                                int totalResults = 0;
                                 // 读取属性值
                                 for (NamingEnumeration<?> e = Attr.getAll(); e.hasMore(); totalResults++) {
                                     // 接受循环遍历读取的userPrincipalName用户属性
                                     String attrValue = e.next().toString();
                                     System.out.println(attrId + "=" + attrValue);
                                 }
+                                System.out.println(totalResults);
                             }
                         } catch (NamingException e) {
                             System.err.println("Throw Exception : " + e);
