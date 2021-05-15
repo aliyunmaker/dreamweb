@@ -15,63 +15,13 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.AbstractMap;
 import java.util.Map;
 
-
 public class RSAEncryptUtils {
-    
-    // public static String publicKey;
-    // private static String privateKey;
-    // public static boolean hasInitKey = false;
 
     public static Logger logger = LoggerFactory.getLogger(RSAEncryptUtils.class.getName());
 
-    // static {
-    //     java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-    //     try {
-            // publicKey = CharStreams.toString(new
-            // InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_public.pem"),
-            // StandardCharsets.UTF_8));
-            // privateKey = CharStreams.toString(new
-            // InputStreamReader(RSAEncryptUtils.class.getResourceAsStream("/ssocert/rsa_private.pem"),
-            // StandardCharsets.UTF_8));
-            //
-            // publicKey = publicKey
-            // .replace("-----BEGIN PUBLIC KEY-----", "")
-            // .replaceAll(System.lineSeparator(), "")
-            // .replace("-----END PUBLIC KEY-----", "");
-            // privateKey = privateKey
-            // .replace("-----BEGIN RSA PRIVATE KEY-----", "")
-            // .replaceAll(System.lineSeparator(), "")
-            // .replace("-----END RSA PRIVATE KEY-----", "");
-            // Map.Entry<String, String> keyPair = getKeyPairFromDB();
-            // if(keyPair == null) {
-            //     keyPair = genKeyPair();
-            //     setKeyPairToDB(keyPair);
-            // }
-    //         Map.Entry<String, String> keyPair = genKeyPair();
-    //         publicKey = keyPair.getKey();
-    //         privateKey = keyPair.getValue();
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage(), e);
-    //     }
-    // }
-
-    //有问题，执行初始化块时还没有执行autowired，因此rsaDao为空，报错
-    // {
-    //     if(hasKeyInDB == false) {
-    //         SetKey();
-    //     }
-    // }
-
-    // public static void main(String[] args) throws Exception {
-    //     System.out.println(publicKey);
-    //     System.out.println(privateKey);
-    //     String message = "1111";
-    //     String messageEn = encrypt(message, publicKey);
-    //     System.out.println(messageEn);
-
-    //     String messageDe = decrypt(messageEn, privateKey);
-    //     System.out.println(messageDe);
-    // }
+    static {
+        java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    }
 
     /**
      * 随机生成密钥对
@@ -140,38 +90,4 @@ public class RSAEncryptUtils {
         String outStr = new String(cipher.doFinal(inputByte));
         return outStr;
     }
-
-    // public static String decrypt(String str) {
-    //     try {
-    //         // return decrypt(str, privateKey);
-    //     } catch (Exception e) {
-    //         throw new RuntimeException(e.getMessage(), e);
-    //     }
-    // }
-
-    // Map.Entry<String, String> getKeyPairFromDB() {
-    //     List<RSAKey> rl = rsaDao.getKeyPair();
-    //     if(rl.size() == 0) {
-    //         return null;
-    //     }else{
-    //         RSAKey res = rl.get(0);
-    //         return new AbstractMap.SimpleEntry<String, String>(res.getPublicKey(),
-    //         res.getPrivateKey());
-    //     }
-    // }
-
-    // void setKeyPairToDB(Map.Entry<String, String> keyPair) {
-    //     rsaDao.setKeyPair(new RSAKey(keyPair.getKey(), keyPair.getValue()));
-    // }
-
-    // public void SetKey() {
-    //     Map.Entry<String, String> keyPair = getKeyPairFromDB();
-    //     if(keyPair == null) {
-    //         rsaDao.setKeyPair(new RSAKey(publicKey, privateKey));
-    //     }else {
-    //         publicKey = keyPair.getKey();
-    //         privateKey = keyPair.getValue();
-    //     }
-    //     hasInitKey = true;
-    // }
 }
