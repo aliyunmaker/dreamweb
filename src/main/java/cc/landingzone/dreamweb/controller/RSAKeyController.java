@@ -14,18 +14,17 @@ import cc.landingzone.dreamweb.service.RSAService;
 
 @Controller
 @RequestMapping("/rsakey")
-public class RSAKeyController extends BaseController {
-
+public class RSAKeyController extends BaseController{
     @Autowired
     private RSAService rsaService;
 
-    private Logger logger = LoggerFactory.getLogger(RSAKeyController.class);
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping("/updateRSAKey.do")
     public void updateRSAKey(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            rsaService.updateRSAKey();
+            rsaService.UpdateKey();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
