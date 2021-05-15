@@ -1,30 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.RSADao">
-    <insert id="addRSAKey" parameterType="cc.landingzone.dreamweb.model.RSAKey">
+    <insert id="setKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
         insert into rsakey
-        (key_name,
+        (id,
          public_key,
-         private_key,
-         comment,
-         gmt_create)
-        values (#{keyName},
+         private_key)
+        values (0,
                 #{publicKey},
-                #{privateKey},
-                #{comment},
-                now())
+                #{privateKey})
     </insert>
 
-    <update id="updateRSAKey" parameterType="cc.landingzone.dreamweb.model.RSAKey">
+    <!-- <update id="updateUser" parameterType="cc.landingzone.dreamweb.model.User">
+        update user
+        set login_name              = #{loginName},
+            name                    = #{name},
+            email                   = #{email},
+            comment                 = #{comment},
+            role                    = #{role},
+            phone                   = #{phone},
+            unionid                 = #{unionid}
+        where id = #{id}
+    </update> -->
+
+    <update id="updateKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
         update rsakey
         set public_key      = #{publicKey},
             private_key     = #{privateKey}
-        where id = #{id}
+        where id = 0
     </update>
 
-    <select id="getRSAKeyByName" resultType="cc.landingzone.dreamweb.model.RSAKey">
+    <select id="getKeyPair" resultType="cc.landingzone.dreamweb.model.RSAKey">
         select *
         from rsakey
-        where key_name = #{keyName}
+        where id = 0
+        <!-- where login_name = #{loginName} -->
     </select>
+
+    <!-- <delete id="deleteUser" parameterType="int">
+        delete
+        from user
+        where id = #{id}
+    </delete> -->
 </mapper>
