@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,18 +8,18 @@
     <title>Generator</title>
     <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
     <script type="text/javascript"
-            src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+        src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script type="text/javascript">
         let task;
         $(document).ready(function () {
             $("#btn_update").on("click", function () {
                 $.ajax({
                     url: "../rsakey/updateRSAKey.do",
-                    success: function(result) {
-                        if(result.success) {
+                    success: function (result) {
+                        if (result.success) {
                             alert("更新成功，点击确定返回登录页");
-                            location.href="../logout";
-                        }else {
+                            location.href = "../logout";
+                        } else {
                             alert("更新失败");
                         }
                     }
@@ -27,13 +28,15 @@
         });
     </script>
 </head>
+
 <body>
-<div class="container">
-    <h1>系统密钥管理</h1>
-    <hr>
-    <br/>
-    <button id="btn_update" class="btn btn-success">&nbsp;&nbsp;更新密钥&nbsp;&nbsp;</button>
-    <br/><br/>
-</div>
+    <div class="container">
+        <h1>系统密钥管理</h1>
+        <hr>
+        <br />
+        <button id="btn_update" class="btn btn-success">&nbsp;&nbsp;更新密钥&nbsp;&nbsp;</button>
+        <br /><br />
+    </div>
 </body>
+
 </html>

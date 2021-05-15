@@ -167,10 +167,8 @@ public class LoginController extends BaseController {
             }
 
             // 构造params, key1=value1&key2=value2...
-            params = paramMap.entrySet().stream()
-                    .filter(entry -> !"signature".equals(entry.getKey()))
-                    .sorted(Map.Entry.comparingByKey())
-                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+            params = paramMap.entrySet().stream().filter(entry -> !"signature".equals(entry.getKey()))
+                    .sorted(Map.Entry.comparingByKey()).map(entry -> entry.getKey() + "=" + entry.getValue())
                     .collect(Collectors.joining("&"));
 
             // 校验签名

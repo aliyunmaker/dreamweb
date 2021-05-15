@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.RSADao">
-    <insert id="setKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
+    <insert id="addRSAKey" parameterType="cc.landingzone.dreamweb.model.RSAKey">
         insert into rsakey
         (key_name,
          public_key,
@@ -17,17 +15,16 @@
                 now())
     </insert>
 
-    <update id="updateKeyPair" parameterType="cc.landingzone.dreamweb.model.RSAKey">
+    <update id="updateRSAKey" parameterType="cc.landingzone.dreamweb.model.RSAKey">
         update rsakey
         set public_key      = #{publicKey},
             private_key     = #{privateKey}
-        where key_name = #{keyName}
+        where id = #{id}
     </update>
 
-    <select id="getKeyPair" resultType="cc.landingzone.dreamweb.model.RSAKey">
+    <select id="getRSAKeyByName" resultType="cc.landingzone.dreamweb.model.RSAKey">
         select *
         from rsakey
         where key_name = #{keyName}
-        <!-- where login_name = #{loginName} -->
     </select>
 </mapper>
