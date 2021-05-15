@@ -15,14 +15,15 @@
 
 # Dump of table user
 # ------------------------------------------------------------
-
+create database dreamweb;
+use dreamweb;
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
                         `id` int(11) NOT NULL AUTO_INCREMENT,
                         `unionid` varchar(100) DEFAULT NULL COMMENT '微信的统一id',
                         `login_name` varchar(100) NOT NULL DEFAULT '' COMMENT '登录名',
-                        `login_method` varchar(50) DEFAULT NULL '' COMMENT '登录类型',
+                        `login_method` varchar(50) DEFAULT NULL COMMENT '登录类型',
                         `name` varchar(200) DEFAULT '',
                         `email` varchar(200) DEFAULT NULL,
                         `password` varchar(100) DEFAULT NULL,
@@ -131,7 +132,6 @@ CREATE TABLE `login_record` (
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 
 # Dump of table rsakey
