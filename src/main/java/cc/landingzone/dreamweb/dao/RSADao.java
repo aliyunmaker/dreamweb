@@ -1,16 +1,14 @@
 package cc.landingzone.dreamweb.dao;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import cc.landingzone.dreamweb.model.RSAKey;
 
 @Component
 public interface RSADao {
-    List<RSAKey> getKeyPair();
+    RSAKey getRSAKeyByName(String keyName);
 
-    void setKeyPair(RSAKey keyPair);
+    void addRSAKey(RSAKey rsaKey);
 
-    void updateKeyPair(RSAKey keyPair);
+    void updateRSAKey(RSAKey rsaKey);
 }
