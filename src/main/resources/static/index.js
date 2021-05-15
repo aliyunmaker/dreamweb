@@ -44,7 +44,7 @@ Ext
                         leaf: true,
                         href: 'ssoConfig/ssoConfig.html',
                         hrefTarget: 'mainFrame'
-                    }, {
+                    },{
                         text: "账号生成器",
                         leaf: true,
                         href: 'tools/tools.html',
