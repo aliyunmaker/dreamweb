@@ -18,8 +18,9 @@ public class RSAService {
     @Autowired
     private RSADao rsaDao;
 
-    public static Logger logger = LoggerFactory.getLogger(RSAService.class);
     private static final String KEYNAME = "systemRSAKey";
+
+    public static Logger logger = LoggerFactory.getLogger(RSAService.class);
 
     /**
      * 将随机生成的密钥对添加到数据库中
@@ -56,8 +57,8 @@ public class RSAService {
      * 更新数据库中的公私钥对
      */
     public void updateRSAKey() {
+        RSAKey rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
         try {
-            RSAKey rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
             Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
             if (rsaKey == null) {
                 addRSAKeyToDB(keyPair);
