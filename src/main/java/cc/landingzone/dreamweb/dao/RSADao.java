@@ -6,6 +6,7 @@ import cc.landingzone.dreamweb.model.RSAKey;
 
 @Component
 public interface RSADao {
+    
     RSAKey getRSAKeyByName(String keyName);
 
     void addRSAKey(RSAKey rsaKey);
