@@ -13,6 +13,7 @@ import cc.landingzone.dreamweb.utils.HttpClientUtils;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import cc.landingzone.dreamweb.utils.SignatureUtils;
 import com.alibaba.fastjson.TypeReference;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +44,6 @@ public class LoginController extends BaseController {
     @Autowired
     private LoginRecordService loginRecordService;
     @Autowired
-    private RSAService rsaService;
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -57,7 +58,6 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/login")
     public String login(Model model) {
-        model.addAttribute("publicKey", rsaService.getPublicKey());
         return "login";
     }
 
