@@ -27,12 +27,13 @@ public class RSAService {
      * 
      * @param keyPair 随机生成的密钥对
      */
-    private void addRSAKeyToDB(Map.Entry<String, String> keyPair) {
+    private RSAKey addRSAKeyToDB(Map.Entry<String, String> keyPair) {
         RSAKey rsaKey = new RSAKey();
         rsaKey.setPublicKey(keyPair.getKey());
         rsaKey.setPrivateKey(keyPair.getValue());
         rsaKey.setKeyName(KEYNAME);
         rsaDao.addRSAKey(rsaKey);
+        return rsaKey;
     }
 
     /**
@@ -45,7 +46,7 @@ public class RSAService {
         if (rsaKey == null) {
             try {
                 Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
-                addRSAKeyToDB(keyPair);
+                rsaKey = addRSAKeyToDB(keyPair);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
