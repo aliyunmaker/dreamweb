@@ -1,5 +1,8 @@
 package cc.landingzone.dreamweb.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,6 +29,21 @@ public class RSAKeyController extends BaseController {
         WebResult result = new WebResult();
         try {
             rsaService.updateRSAKey();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/getPublicKey.do")
+    public void getPublicKey(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("publicKey", rsaService.getPublicKey());
+            result.setData(map);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

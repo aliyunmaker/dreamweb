@@ -19,6 +19,7 @@ public class RSAService {
     private RSADao rsaDao;
 
     public static Logger logger = LoggerFactory.getLogger(RSAService.class);
+
     private static final String KEYNAME = "systemRSAKey";
 
     /**
@@ -56,8 +57,8 @@ public class RSAService {
      * 更新数据库中的公私钥对
      */
     public void updateRSAKey() {
+        RSAKey rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
         try {
-            RSAKey rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
             Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
             if (rsaKey == null) {
                 addRSAKeyToDB(keyPair);

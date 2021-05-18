@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+
 <head>
     <title>无限梦想</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -51,48 +52,59 @@
                 });
             }
         }
-        let publicKey = /*[[${publicKey}]]*/'error';
         let doLogin = function () {
-            let encrypt = new JSEncrypt();
-            encrypt.setPublicKey(publicKey);
-            let encrypted = encrypt.encrypt($('#passwordInput').val());
-            $('#passwordInput').val(encrypted);
-            console.log(encrypted);
-            document.getElementById('loginForm').submit();
+            $.ajax({
+                url: "../rsakey/getPublicKey.do",
+                success: function (result) {
+                    if (result.success) {
+                        let publicKey = result.data.publicKey;
+                        let encrypt = new JSEncrypt();
+                        encrypt.setPublicKey(publicKey);
+                        let encrypted = encrypt.encrypt($('#passwordInput').val());
+                        $('#passwordInput').val(encrypted);
+                        console.log(encrypted);
+                        document.getElementById('loginForm').submit();
+                    } else {
+                        alert("获取公钥失败");
+                    }
+                }
+            })
+
         }
         /*]]>*/
     </script>
 </head>
 
 <body>
-<div class="container">
-    <div align="center">
-        <h2>无限梦想</h2>
-        <hr>
-        <div th:if="${param.error}">
-            Invalid username and password.
+    <div class="container">
+        <div align="center">
+            <h2>无限梦想</h2>
+            <hr>
+            <div th:if="${param.error}">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}">
+                You have been logged out.
+            </div>
         </div>
-        <div th:if="${param.logout}">
-            You have been logged out.
-        </div>
-    </div>
 
-    <form class="form-signin" id="loginForm" th:action="@{/login}" method='POST'>
-        <input type="text" name="username" id="usernameInput" class="form-control" placeholder="用户名" required autofocus><br/>
-        <input type="password" name="password" id="passwordInput" class="form-control" placeholder="密码" required>
-        <br/>
-        <input type="checkbox" name="remember-me" checked="true"/><span>&nbsp;&nbsp;remember me</span><br/><br/>
-        <button class="btn btn-primary login-btn" onclick="doLogin();">登录</button>
-        <button class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();">微信登录</button>
-        <br/> <br/>
-    </form>
-    <div align="center" id="weixin-login-div" style="display: none">
-        <div id="login_container"></div>
+        <form class="form-signin" id="loginForm" th:action="@{/login}" method='POST'>
+            <input type="text" name="username" id="usernameInput" class="form-control" placeholder="用户名" required
+                autofocus><br />
+            <input type="password" name="password" id="passwordInput" class="form-control" placeholder="密码"
+                required><br />
+            <input type="checkbox" name="remember-me" checked="true" /><span>&nbsp;&nbsp;remember me</span><br /><br />
+            <button class="btn btn-primary login-btn" onclick="doLogin();" type="button">登录</button>
+            <button class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();" type="button">微信登录</button>
+            <br /><br />
+        </form>
+        <div align="center" id="weixin-login-div" style="display: none">
+            <div id="login_container"></div>
+        </div>
+        <div align="center" style="color: dimgrey">
+            <p>© landingzone.cc</p>
+        </div>
     </div>
-    <div align="center" style="color: dimgrey">
-        <p>© landingzone.cc</p>
-    </div>
-</div>
 
 </body>
 
