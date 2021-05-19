@@ -15,6 +15,8 @@ import cc.landingzone.dreamweb.service.UserGroupAssociateService;
 import cc.landingzone.dreamweb.service.UserGroupService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
+import io.jsonwebtoken.lang.Assert;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -166,4 +168,30 @@ public class UserGroupController extends BaseController {
         outputToJSON(response, result);
     }
 
+    @RequestMapping("/batchDeleteUserGroupAssociate.do")
+    public void batchDeleteUserGroupAssociate(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userIdsStr = request.getParameter("userIds");
+            Assert.hasText(userIdsStr, "userIds must not be empty");
+            List<Integer> userIds = JsonUtils.parseArray(userIdsStr, Integer.class);
+            Assert.notEmpty(userIds, "userIds must have elements");
+            Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
+            List<UserGroupAssociate> userGroupAssociates = userIds.stream()
+                .map(userId -> {
+                    UserGroupAssociate userGroupAssociate = new UserGroupAssociate();
+                    userGroupAssociate.setUserGroupId(userGroupId);
+                    userGroupAssociate.setUserId(userId);
+                    return userGroupAssociate;
+                })
+                .collect(Collectors.toList());
+            userGroupAssociateService.deleteUserGroupAssociates(userGroupAssociates);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+    
 }

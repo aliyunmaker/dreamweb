@@ -220,14 +220,18 @@ Ext.onReady(function () {
           return;
         }
 
-        var userSelect = MyExt.util.SelectGridModel(userGrid, true);
+        var userSelect = MyExt.util.SelectGridModel(userGrid, false);
         if (!userSelect) {
           return;
         }
+        var userIds = []
+        for (var x in userSelect) {
+          userIds.push(userSelect[x].data["id"]);
+        }
         MyExt.util.MessageConfirm('是否确定移除', function () {
-          MyExt.util.Ajax('../userGroup/deleteUserGroupAssociate.do', {
+          MyExt.util.Ajax('../userGroup/batchDeleteUserGroupAssociate.do', {
             userGroupId: select[0].data["id"],
-            userId: userSelect[0].data["id"]
+            userIds: Ext.JSON.encode(userIds)
           }, function (data) {
             userStore.load();
             MyExt.Msg.alert('移除成功!');

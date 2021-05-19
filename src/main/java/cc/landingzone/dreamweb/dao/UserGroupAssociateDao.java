@@ -21,5 +21,7 @@ public interface UserGroupAssociateDao {
     void deleteUserGroupAssociate(@Param(value = "userId") Integer userId,
                                   @Param(value = "userGroupId") Integer userGroupId);
 
+    void deleteUserGroupAssociates(List<UserGroupAssociate> userGroupAssociates);
+
     void deleteUserGroupAssociateByUserGroupId(Integer userGroupId);
 }
