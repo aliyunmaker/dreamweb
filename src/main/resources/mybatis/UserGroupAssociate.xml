@@ -52,6 +52,14 @@
           and user_group_id = #{userGroupId}
     </delete>
 
+    <delete id="deleteUserGroupAssociates">
+        delete
+        from user_group_associate
+        where (user_id, user_group_id) in (
+            <foreach collection="userGroupAssociates" item="ug" index="index" separator=",">(#{ug.userId}, #{ug.userGroupId})</foreach>
+        )
+    </delete>
+
     <delete id="deleteUserGroupAssociateByUserGroupId" parameterType="map">
         delete
         from user_group_associate
