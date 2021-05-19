@@ -234,6 +234,16 @@ Ext.onReady(function () {
           });
         });
       }
+      }, {
+        text: '批量添加用户',
+        iconCls: 'MyExt-add',
+        handler: function () {
+          var select = MyExt.util.SelectGridModel(userGroupGrid, true);
+          if (!select) {
+            return;
+          }
+          batchUserFormWindow.changeFormUrlAndShow('');
+        }
     }],
     listeners: {}
   });
@@ -313,6 +323,39 @@ Ext.onReady(function () {
           userGroupId: select[0].data["id"]
         }, function (data) {
           userFormWindow.hide();
+          userStore.load();
+          MyExt.Msg.alert('操作成功!');
+        });
+      }
+    }
+  });
+
+  var batchUserFormWindow = new MyExt.Component.FormWindow({
+    title: '批量添加用户',
+    width: 500,
+    height: 200,
+    formItems: [{
+      name: 'id',
+      hidden: true
+    }, {
+      xtype: 'textarea',
+      height: 120,
+      emptyText: '登录名(使用英文逗号分隔用户, 举例: admin,user1)',
+      fieldLabel: '用户',
+      name: 'userLoginNames'
+    }],
+    submitBtnFn: function () {
+      var select = MyExt.util.SelectGridModel(userGroupGrid, true);
+      if (!select) {
+        return;
+      }
+      var form = batchUserFormWindow.getFormPanel().getForm();
+      if (form.isValid()) {
+        MyExt.util.Ajax('../userGroup/batchAddUserGroupAssociate.do', {
+          userLoginNames: form.getValues().userLoginNames,
+          userGroupId: select[0].data["id"]
+        }, function (data) {
+          batchUserFormWindow.hide();
           userStore.load();
           MyExt.Msg.alert('操作成功!');
         });

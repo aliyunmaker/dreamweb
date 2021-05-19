@@ -75,6 +75,13 @@
         </where>
     </select>
 
+    <select id="getUsersByLoginNames" resultType="cc.landingzone.dreamweb.model.User">
+        select *
+        from user
+        where login_name in (
+            <foreach collection="loginNames" item="loginName" index="index" separator=",">#{loginName}</foreach>
+        )
+    </select>
 
 
     <select id="searchUser" resultType="cc.landingzone.dreamweb.model.User" parameterType="map">
