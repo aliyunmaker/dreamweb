@@ -12,6 +12,8 @@ public interface UserGroupAssociateDao {
 
     void addUserGroupAssociate(UserGroupAssociate userGroupAssociate);
 
+    void addUserGroupAssociates(List<UserGroupAssociate> userGroupAssociates);
+
     List<UserGroupAssociate> getUserGroupAssociatesByUserGroupId(Integer userGroupId);
 
     void deleteUserGroupAssociateById(Integer id);

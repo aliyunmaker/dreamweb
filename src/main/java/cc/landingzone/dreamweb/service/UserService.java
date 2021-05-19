@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ public class UserService {
     public static final String User_Role_Guest = "ROLE_GUEST";
 
     public static final String WX_UNION_LOGIN_NAME_PREFIX = "weixin_";
-
 
     /**
      * 添加
@@ -43,7 +43,7 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getPassword())) {
             user.setPassword(MyAuthenticationProvider.buildMd5Password(user.getPassword()));
         }
-        //user.setAuthkey(GoogleAuthUtils.generateAuthkey());
+        // user.setAuthkey(GoogleAuthUtils.generateAuthkey());
         User userDB = getUserByLoginName(user.getLoginName());
         if (userDB != null) {
             throw new IllegalArgumentException("用户不能重名:" + user.getLoginName());
@@ -65,7 +65,6 @@ public class UserService {
         user.setRole(role);
         updateUser(user);
     }
-
 
     /**
      * 删除用户
@@ -116,7 +115,6 @@ public class UserService {
         return userDao.getUserById(id);
     }
 
-
     /**
      * 根据登录类型获取用户列表
      *
@@ -130,6 +128,30 @@ public class UserService {
         return userDao.getUsersByLoginMethod(map);
     }
 
+    /**
+     * 根据登录名数组获取用户列表
+     *
+     * @param loginNames
+     * @return
+     */
+    public List<User> getUsersByLoginNames(List<String> loginNames) {
+        Assert.notEmpty(loginNames, "登录名不能为空!");
+        List<User> users = userDao.getUsersByLoginNames(loginNames);
+        if (users.size() != loginNames.size()) {
+            List<String> diff = new ArrayList<String>();
+            Map<String, Integer> map = new HashMap<String, Integer>(loginNames.size());
+            for (User user : users) {
+                map.put(user.getLoginName(), 1);
+            }
+            for (String name : loginNames) {
+                if (map.get(name) == null) {
+                    diff.add(name);
+                }
+            }
+            Assert.isTrue(users.size() == loginNames.size(), "操作失败！以下用户不存在：" + String.join(",", diff));
+        }
+        return users;
+    }
 
     /**
      * 搜索用户
@@ -162,6 +184,5 @@ public class UserService {
         }
         return list;
     }
-
 
 }
