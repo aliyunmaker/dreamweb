@@ -1,9 +1,5 @@
 package cc.landingzone.dreamweb.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cc.landingzone.dreamweb.dao.UserDao;
 import cc.landingzone.dreamweb.framework.MyAuthenticationProvider;
 import cc.landingzone.dreamweb.model.Page;
@@ -13,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserService {
@@ -112,6 +113,31 @@ public class UserService {
     public User getUserById(Integer id) {
         Assert.notNull(id, "id不能为空!");
         return userDao.getUserById(id);
+    }
+
+    /**
+     * 根据登录名数组获取用户列表
+     *
+     * @param loginNames
+     * @return
+     */
+    public List<User> getUsersByLoginNames(List<String> loginNames) {
+        Assert.notEmpty(loginNames, "登录名不能为空!");
+        List<User> users = userDao.getUsersByLoginNames(loginNames);
+        if (users.size() != loginNames.size()) {
+            List<String> diff = new ArrayList<String>();
+            Map<String, Integer> map = new HashMap<String, Integer>(loginNames.size());
+            for (User user : users) {
+                map.put(user.getLoginName(), 1);
+            }
+            for (String name : loginNames) {
+                if (map.get(name) == null) {
+                    diff.add(name);
+                }
+            }
+            Assert.isTrue(users.size() == loginNames.size(), "操作失败！以下用户不存在：" + String.join(",", diff));
+        }
+        return users;
     }
 
     /**

@@ -23,6 +23,8 @@ public interface UserDao {
 
     List<User> searchUser(Map<String, Object> map);
 
+    List<User> getUsersByLoginNames(List<String> loginNames);
+
     Integer searchUserTotal(Map<String, Object> map);
 
 }

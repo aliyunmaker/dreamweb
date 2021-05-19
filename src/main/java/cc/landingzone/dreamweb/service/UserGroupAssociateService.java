@@ -23,6 +23,17 @@ public class UserGroupAssociateService {
         userGroupAssociateDao.addUserGroupAssociate(userGroupAssociate);
     }
 
+    @Transactional
+    public void addUserGroupAssociates(List<UserGroupAssociate> userGroupAssociates) {
+        Assert.notEmpty(userGroupAssociates, "数据不能为空!");
+        for (UserGroupAssociate userGroupAssociate : userGroupAssociates) {
+            Assert.notNull(userGroupAssociate, "数据不能为空!");
+            Assert.notNull(userGroupAssociate.getUserGroupId(), "userGroupId不能为空!");
+            Assert.notNull(userGroupAssociate.getUserId(), "userId不能为空!");
+        }
+        userGroupAssociateDao.addUserGroupAssociates(userGroupAssociates);
+    }
+
     public List<UserGroupAssociate> getUserGroupAssociatesByUserGroupId(Integer userGroupId) {
         Assert.notNull(userGroupId, "数据不能为空!");
         return userGroupAssociateDao.getUserGroupAssociatesByUserGroupId(userGroupId);

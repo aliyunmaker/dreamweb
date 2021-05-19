@@ -8,13 +8,26 @@
     <insert id="addUserGroupAssociate"
             parameterType="cc.landingzone.dreamweb.model.UserGroupAssociate"
             useGeneratedKeys="true" keyProperty="id">
-        insert into user_group_associate
+        insert ignore into user_group_associate
         (user_group_id,
          user_id,
          gmt_create)
         values (#{userGroupId},
                 #{userId},
                 now())
+    </insert>
+
+    <insert id="addUserGroupAssociates"
+            useGeneratedKeys="true" keyProperty="id">
+        insert ignore into user_group_associate
+        (user_group_id,
+         user_id,
+         gmt_create)
+        values <foreach collection="userGroupAssociates" item="ug" index="index" separator=",">
+            (#{ug.userGroupId},
+             #{ug.userId},
+             now())
+        </foreach>
     </insert>
 
 
