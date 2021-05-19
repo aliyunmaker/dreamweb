@@ -58,4 +58,15 @@ public class UserGroupAssociateService {
         userGroupAssociateDao.deleteUserGroupAssociate(userId, userGroupId);
     }
 
+    @Transactional
+    public void deleteUserGroupAssociates(List<UserGroupAssociate> userGroupAssociates) {
+        Assert.notEmpty(userGroupAssociates, "userGroupAssociates can not be null!");
+        for (UserGroupAssociate userGroupAssociate : userGroupAssociates) {
+            Assert.notNull(userGroupAssociate, "userGroupAssociate can not be null!");
+            Assert.notNull(userGroupAssociate.getUserGroupId(), "userGroupId can not be null!");
+            Assert.notNull(userGroupAssociate.getUserId(), "userId can not be null!");
+        }
+        userGroupAssociateDao.deleteUserGroupAssociates(userGroupAssociates);
+    }
+
 }

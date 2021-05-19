@@ -18,6 +18,7 @@ import cc.landingzone.dreamweb.utils.JsonUtils;
 import cc.landingzone.dreamweb.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -161,6 +162,32 @@ public class UserGroupController extends BaseController {
             Integer userId = Integer.valueOf(request.getParameter("userId"));
             Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
             userGroupAssociateService.deleteUserGroupAssociate(userId, userGroupId);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/batchDeleteUserGroupAssociate.do")
+    public void batchDeleteUserGroupAssociate(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userIdsStr = request.getParameter("userIds");
+            Assert.hasText(userIdsStr, "userIds must not be empty");
+            List<Integer> userIds = JsonUtils.parseArray(userIdsStr, Integer.class);
+            Assert.notEmpty(userIds, "userIds must have elements");
+            Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
+            List<UserGroupAssociate> userGroupAssociates = userIds.stream()
+                .map(userId -> {
+                    UserGroupAssociate userGroupAssociate = new UserGroupAssociate();
+                    userGroupAssociate.setUserGroupId(userGroupId);
+                    userGroupAssociate.setUserId(userId);
+                    return userGroupAssociate;
+                })
+                .collect(Collectors.toList());
+            userGroupAssociateService.deleteUserGroupAssociates(userGroupAssociates);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
