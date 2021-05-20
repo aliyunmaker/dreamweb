@@ -9,7 +9,7 @@ public interface RSADao {
     
     RSAKey getRSAKeyByName(String keyName);
 
-    void addRSAKey(RSAKey rsaKey);
+    int addRSAKey(RSAKey rsaKey);
 
     void updateRSAKey(RSAKey rsaKey);
 }
