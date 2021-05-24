@@ -23,21 +23,7 @@ public class RSAService {
     private static final String KEYNAME = "systemRSAKey";
 
     /**
-     * 将随机生成的密钥对添加到数据库中
-     * 
-     * @param keyPair 随机生成的密钥对
-     */
-    private RSAKey addRSAKeyToDB(Map.Entry<String, String> keyPair) {
-        RSAKey rsaKey = new RSAKey();
-        rsaKey.setPublicKey(keyPair.getKey());
-        rsaKey.setPrivateKey(keyPair.getValue());
-        rsaKey.setKeyName(KEYNAME);
-        rsaDao.addRSAKey(rsaKey);
-        return rsaKey;
-    }
-
-    /**
-     * 获取公私钥对，若数据库中数据有则从数据库中读取； 否则，则先随机生成公私钥对，并插入到数据库中
+     * 获取系统密钥，若数据库中有则从数据库中读取； 否则，则先随机生成公密钥对，并插入到数据库中
      * 
      * @return 公私钥对，可能为空
      */
@@ -46,7 +32,13 @@ public class RSAService {
         if (rsaKey == null) {
             try {
                 Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
-                rsaKey = addRSAKeyToDB(keyPair);
+                rsaKey = new RSAKey();
+                rsaKey.setPublicKey(keyPair.getKey());
+                rsaKey.setPrivateKey(keyPair.getValue());
+                rsaKey.setKeyName(KEYNAME);
+                if (rsaDao.addRSAKey(rsaKey) == 0) {
+                    rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
+                }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -55,19 +47,15 @@ public class RSAService {
     }
 
     /**
-     * 更新数据库中的公私钥对
+     * 随机生成新的密钥对并更新数据库中的系统密钥
      */
     public void updateRSAKey() {
         RSAKey rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
         try {
             Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
-            if (rsaKey == null) {
-                addRSAKeyToDB(keyPair);
-            } else {
-                rsaKey.setPublicKey(keyPair.getKey());
-                rsaKey.setPrivateKey(keyPair.getValue());
-                rsaDao.updateRSAKey(rsaKey);
-            }
+            rsaKey.setPublicKey(keyPair.getKey());
+            rsaKey.setPrivateKey(keyPair.getValue());
+            rsaDao.updateRSAKey(rsaKey);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }

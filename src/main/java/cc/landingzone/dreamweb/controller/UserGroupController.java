@@ -2,7 +2,10 @@ package cc.landingzone.dreamweb.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserGroup;
@@ -10,7 +13,10 @@ import cc.landingzone.dreamweb.model.UserGroupAssociate;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.UserGroupAssociateService;
 import cc.landingzone.dreamweb.service.UserGroupService;
+import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
+import io.jsonwebtoken.lang.Assert;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +29,9 @@ public class UserGroupController extends BaseController {
 
     @Autowired
     private UserGroupAssociateService userGroupAssociateService;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping("/getAllUserGroups.do")
     public void getAllUserGroups(HttpServletRequest request, HttpServletResponse response) {
@@ -119,6 +128,31 @@ public class UserGroupController extends BaseController {
         outputToJSON(response, result);
     }
 
+    @RequestMapping("/batchAddUserGroupAssociate.do")
+    public void batchAddUserGroupAssociate(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
+            List<String> userLoginNames = Arrays
+                    .asList(request.getParameter("userLoginNames").replaceAll("\\s", "").split(","));
+            List<User> users = userService.getUsersByLoginNames(userLoginNames);
+            List<UserGroupAssociate> userGroupAssociates = users.stream()
+                .map(user -> {
+                    UserGroupAssociate userGroupAssociate = new UserGroupAssociate();
+                    userGroupAssociate.setUserGroupId(userGroupId);
+                    userGroupAssociate.setUserId(user.getId());
+                    return userGroupAssociate;
+                })
+                .collect(Collectors.toList());
+            userGroupAssociateService.addUserGroupAssociates(userGroupAssociates);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
     @RequestMapping("/deleteUserGroupAssociate.do")
     public void deleteUserGroupAssociate(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -134,4 +168,30 @@ public class UserGroupController extends BaseController {
         outputToJSON(response, result);
     }
 
+    @RequestMapping("/batchDeleteUserGroupAssociate.do")
+    public void batchDeleteUserGroupAssociate(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userIdsStr = request.getParameter("userIds");
+            Assert.hasText(userIdsStr, "userIds must not be empty");
+            List<Integer> userIds = JsonUtils.parseArray(userIdsStr, Integer.class);
+            Assert.notEmpty(userIds, "userIds must have elements");
+            Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
+            List<UserGroupAssociate> userGroupAssociates = userIds.stream()
+                .map(userId -> {
+                    UserGroupAssociate userGroupAssociate = new UserGroupAssociate();
+                    userGroupAssociate.setUserGroupId(userGroupId);
+                    userGroupAssociate.setUserId(userId);
+                    return userGroupAssociate;
+                })
+                .collect(Collectors.toList());
+            userGroupAssociateService.deleteUserGroupAssociates(userGroupAssociates);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+    
 }
