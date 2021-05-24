@@ -12,12 +12,16 @@ public interface UserGroupAssociateDao {
 
     void addUserGroupAssociate(UserGroupAssociate userGroupAssociate);
 
+    void addUserGroupAssociates(List<UserGroupAssociate> userGroupAssociates);
+
     List<UserGroupAssociate> getUserGroupAssociatesByUserGroupId(Integer userGroupId);
 
     void deleteUserGroupAssociateById(Integer id);
 
     void deleteUserGroupAssociate(@Param(value = "userId") Integer userId,
                                   @Param(value = "userGroupId") Integer userGroupId);
+
+    void deleteUserGroupAssociates(List<UserGroupAssociate> userGroupAssociates);
 
     void deleteUserGroupAssociateByUserGroupId(Integer userGroupId);
 }

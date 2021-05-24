@@ -220,20 +220,34 @@ Ext.onReady(function () {
           return;
         }
 
-        var userSelect = MyExt.util.SelectGridModel(userGrid, true);
+        var userSelect = MyExt.util.SelectGridModel(userGrid, false);
         if (!userSelect) {
           return;
         }
+        var userIds = []
+        for (var x in userSelect) {
+          userIds.push(userSelect[x].data["id"]);
+        }
         MyExt.util.MessageConfirm('是否确定移除', function () {
-          MyExt.util.Ajax('../userGroup/deleteUserGroupAssociate.do', {
+          MyExt.util.Ajax('../userGroup/batchDeleteUserGroupAssociate.do', {
             userGroupId: select[0].data["id"],
-            userId: userSelect[0].data["id"]
+            userIds: Ext.JSON.encode(userIds)
           }, function (data) {
             userStore.load();
             MyExt.Msg.alert('移除成功!');
           });
         });
       }
+      }, {
+        text: '批量添加用户',
+        iconCls: 'MyExt-add',
+        handler: function () {
+          var select = MyExt.util.SelectGridModel(userGroupGrid, true);
+          if (!select) {
+            return;
+          }
+          batchUserFormWindow.changeFormUrlAndShow('');
+        }
     }],
     listeners: {}
   });
@@ -313,6 +327,39 @@ Ext.onReady(function () {
           userGroupId: select[0].data["id"]
         }, function (data) {
           userFormWindow.hide();
+          userStore.load();
+          MyExt.Msg.alert('操作成功!');
+        });
+      }
+    }
+  });
+
+  var batchUserFormWindow = new MyExt.Component.FormWindow({
+    title: '批量添加用户',
+    width: 500,
+    height: 200,
+    formItems: [{
+      name: 'id',
+      hidden: true
+    }, {
+      xtype: 'textarea',
+      height: 120,
+      emptyText: '登录名(使用英文逗号分隔用户, 举例: admin,user1)',
+      fieldLabel: '用户',
+      name: 'userLoginNames'
+    }],
+    submitBtnFn: function () {
+      var select = MyExt.util.SelectGridModel(userGroupGrid, true);
+      if (!select) {
+        return;
+      }
+      var form = batchUserFormWindow.getFormPanel().getForm();
+      if (form.isValid()) {
+        MyExt.util.Ajax('../userGroup/batchAddUserGroupAssociate.do', {
+          userLoginNames: form.getValues().userLoginNames,
+          userGroupId: select[0].data["id"]
+        }, function (data) {
+          batchUserFormWindow.hide();
           userStore.load();
           MyExt.Msg.alert('操作成功!');
         });

@@ -25,6 +25,8 @@ public interface UserDao {
 
     List<User> getUsersByLoginMethod(Map<String, Object> map);
 
+    List<User> getUsersByLoginNames(List<String> loginNames);
+
     Integer searchUserTotal(Map<String, Object> map);
 
 }
