@@ -13,6 +13,7 @@ import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
 import cc.landingzone.dreamweb.service.UserRoleService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
@@ -93,6 +94,7 @@ public class UserController extends BaseController {
         try {
             String formString = request.getParameter("formString");
             User systemUser = JsonUtils.parseObject(formString, User.class);
+            systemUser.setLoginMethod(LoginMethodEnum.NORMAL_LOGIN);
             SecurityUtils.xssFilter(systemUser);
             userService.addUser(systemUser);
         } catch (Exception e) {
