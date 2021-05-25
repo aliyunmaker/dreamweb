@@ -25,11 +25,6 @@ Ext
                         href: 'userGroup/userGroupManage.html',
                         hrefTarget: 'mainFrame'
                     }, {
-                        text: "资源视图",
-                        leaf: true,
-                        href: 'resourceView/resourceView.html',
-                        hrefTarget: 'mainFrame'
-                    }, {
                         text: "注销",
                         leaf: true,
                         iconCls: 'MyExt-logout',
@@ -43,11 +38,6 @@ Ext
                         text: "SSO配置",
                         leaf: true,
                         href: 'ssoConfig/ssoConfig.html',
-                        hrefTarget: 'mainFrame'
-                    }, {
-                        text: "账号生成器",
-                        leaf: true,
-                        href: 'tools/tools.html',
                         hrefTarget: 'mainFrame'
                     }, {
                         text: "API密钥管理",
