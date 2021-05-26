@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cc.landingzone.dreamweb.dao.RSADao;
-import cc.landingzone.dreamweb.model.RSAKey;
+import cc.landingzone.dreamweb.model.SystemConfig;
+import cc.landingzone.dreamweb.utils.JsonUtils;
 import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 
 @Component
@@ -18,43 +20,59 @@ public class RSAService {
     @Autowired
     private RSADao rsaDao;
 
-    public static Logger logger = LoggerFactory.getLogger(RSAService.class);
+    @Autowired
+    SystemConfigService systemConfigService;
 
-    private static final String KEYNAME = "systemRSAKey";
+    private static Logger logger = LoggerFactory.getLogger(RSAService.class);
+
+    private static final String CONFIG_NAME = "systemRSAKey";
+
+    /**
+     * 随机生成密钥对
+     * 
+     * @return 密钥对
+     * @throws NoSuchAlgorithmException
+     */
+    private RSAKeyPair genRSAKeyPair() throws NoSuchAlgorithmException {
+        Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
+        RSAKeyPair rsaKeyPair = new RSAKeyPair();
+        rsaKeyPair.setPublicKey(keyPair.getKey());
+        rsaKeyPair.setPrivateKey(keyPair.getValue());
+        return rsaKeyPair;
+    }
 
     /**
      * 获取系统密钥，若数据库中有则从数据库中读取； 否则，则先随机生成公密钥对，并插入到数据库中
      * 
-     * @return 公私钥对，可能为空
+     * @return 密钥对，可能为空
      */
-    private RSAKey getRSAKey() {
-        RSAKey rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
+    private RSAKeyPair getRSAKeyPair() {
+        SystemConfig rsaKey = rsaDao.getRSAKeyByName(CONFIG_NAME);
         if (rsaKey == null) {
             try {
-                Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
-                rsaKey = new RSAKey();
-                rsaKey.setPublicKey(keyPair.getKey());
-                rsaKey.setPrivateKey(keyPair.getValue());
-                rsaKey.setKeyName(KEYNAME);
+                RSAKeyPair rsaKeyPair = genRSAKeyPair();
+                rsaKey = new SystemConfig();
+                rsaKey.setConfigName(CONFIG_NAME);
+                rsaKey.setConfigValue(JsonUtils.toJsonString(rsaKeyPair));
                 if (rsaDao.addRSAKey(rsaKey) == 0) {
-                    rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
+                    rsaKey = rsaDao.getRSAKeyByName(CONFIG_NAME);
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         }
-        return rsaKey;
+        RSAKeyPair rsaKeyPair = JsonUtils.parseObject(rsaKey.getConfigValue(), RSAKeyPair.class);
+        return rsaKeyPair;
     }
 
     /**
      * 随机生成新的密钥对并更新数据库中的系统密钥
      */
     public void updateRSAKey() {
-        RSAKey rsaKey = rsaDao.getRSAKeyByName(KEYNAME);
+        SystemConfig rsaKey = rsaDao.getRSAKeyByName(CONFIG_NAME);
         try {
-            Map.Entry<String, String> keyPair = RSAEncryptUtils.genKeyPair();
-            rsaKey.setPublicKey(keyPair.getKey());
-            rsaKey.setPrivateKey(keyPair.getValue());
+            RSAKeyPair rsaKeyPair = genRSAKeyPair();
+            rsaKey.setConfigValue(JsonUtils.toJsonString(rsaKeyPair));
             rsaDao.updateRSAKey(rsaKey);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -67,8 +85,8 @@ public class RSAService {
      * @return 私钥
      */
     private String getPrivateKey() {
-        RSAKey rsaKey = getRSAKey();
-        return rsaKey == null ? null : rsaKey.getPrivateKey();
+        RSAKeyPair rsaKeyPair = getRSAKeyPair();
+        return rsaKeyPair == null ? null : rsaKeyPair.getPrivateKey();
     }
 
     /**
@@ -77,8 +95,8 @@ public class RSAService {
      * @return 公钥
      */
     public String getPublicKey() {
-        RSAKey rsaKey = getRSAKey();
-        return rsaKey == null ? null : rsaKey.getPublicKey();
+        RSAKeyPair rsaKeyPair = getRSAKeyPair();
+        return rsaKeyPair == null ? null : rsaKeyPair.getPublicKey();
     }
 
     /**
@@ -94,4 +112,28 @@ public class RSAService {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+    
+}
+
+class RSAKeyPair {
+
+    private String publicKey;
+    private String privateKey;
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
+
 }

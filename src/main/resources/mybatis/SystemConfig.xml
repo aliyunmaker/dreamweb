@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.SystemConfigDao">
+    <insert id="addSystemConfig" parameterType="cc.landingzone.dreamweb.model.SystemConfig"
+        useGeneratedKeys="true" keyProperty="id">
+        insert into system_config
+        (config_name,
+         config_value,
+         comment,
+         changeable,
+         valid,
+         gmt_create)
+        values (#{configName},
+                #{configValue},
+                #{comment},
+                #{changeable},
+                #{valid},
+                now())
+    </insert>
+
+    <select id="listSystemConfig" resultType="cc.landingzone.dreamweb.model.SystemConfig">
+        select *
+        from system_config
+    </select>
+
+    <select id="getSystemConfig" resultType="cc.landingzone.dreamweb.model.SystemConfig">
+        select *
+        from system_config
+        where config_name = #{configName}
+    </select>
+
+    <delete id="deleteSystemConfig" parameterType="int">
+        delete
+        from system_config
+        where id = #{id}
+    </delete>
+</mapper>

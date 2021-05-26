@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.RSADao">
-    <insert id="addRSAKey" parameterType="cc.landingzone.dreamweb.model.RSAKey"
+    <insert id="addRSAKey" parameterType="cc.landingzone.dreamweb.model.SystemConfig"
         useGeneratedKeys="true" keyProperty="id">
-        insert ignore into rsakey
-        (key_name,
-         public_key,
-         private_key,
+        insert ignore into system_config
+        (config_name,
+         config_value,
          comment,
          gmt_create)
-        values (#{keyName},
-                #{publicKey},
-                #{privateKey},
+        values (#{configName},
+                #{configValue},
                 #{comment},
                 now())
     </insert>
 
-    <update id="updateRSAKey" parameterType="cc.landingzone.dreamweb.model.RSAKey">
-        update rsakey
-        set public_key      = #{publicKey},
-            private_key     = #{privateKey}
+    <update id="updateRSAKey" parameterType="cc.landingzone.dreamweb.model.SystemConfig">
+        update system_config
+        set config_value = #{configValue}
         where id = #{id}
     </update>
 
-    <select id="getRSAKeyByName" resultType="cc.landingzone.dreamweb.model.RSAKey">
+    <select id="getRSAKeyByName" resultType="cc.landingzone.dreamweb.model.SystemConfig">
         select *
-        from rsakey
-        where key_name = #{keyName}
+        from system_config
+        where config_name = #{configName}
     </select>
 </mapper>
