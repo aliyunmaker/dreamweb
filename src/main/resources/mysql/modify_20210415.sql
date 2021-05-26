@@ -4,9 +4,9 @@ ALTER TABLE `user`
 
 
 
-# 数据订正：登录方式为null的记录
+# 数据订正: User表 登录方式为null的记录
 # ------------------------------------------------------------
-# 1. 通过唯一渠道登录过的用户，将登录方式设置为登录记录中的登录方式
+# 1. 通过唯一渠道登录过的用户, 将登录方式设置为登录记录中的登录方式
 UPDATE user u, login_record lr
 SET u.login_method = lr.login_method
 WHERE u.login_method IS NULL
@@ -24,7 +24,7 @@ WHERE u.login_method IS NULL
             AND count_record.c > 1
     );
 
-# 2. 没有登录过的用户，将登录方式设置为"NORMAL_LOGIN"
+# 2. 没有登录过的用户, 将登录方式设置为"NORMAL_LOGIN"
 UPDATE user
 SET login_method = "NORMAL_LOGIN"
 WHERE login_method IS NULL
@@ -33,7 +33,7 @@ WHERE login_method IS NULL
         FROM login_record
     );
 
-# 3. （仅查询）通过多个渠道登录过的用户
+# 3. (仅查询) 通过多个渠道登录过的用户
 SELECT DISTINCT(login_record.login_name)
 FROM login_record,
     (
