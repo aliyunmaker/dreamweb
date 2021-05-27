@@ -266,13 +266,11 @@ public class SSOController extends BaseController implements InitializingBean {
     /**
      * init sp,目前只支持阿里云的Role SSO
      * <p>
-     * https://chengchao.name/springrun/sso/initSP.htm?idpProviderName=charlesIDP&roleName=charlesRole&accessKeyId=&accessKeySecret=
-     *
      * @param request
      * @param response
      */
-    @RequestMapping("/initSP.do")
-    public void initSP(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("/ssoConfig.do")
+    public void ssoConfig(HttpServletRequest request, HttpServletResponse response) {
         String result = new String();
         try {
             String idpProviderName = request.getParameter("idpProviderName");

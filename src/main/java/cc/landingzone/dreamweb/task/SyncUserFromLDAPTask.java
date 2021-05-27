@@ -1,25 +1,30 @@
 package cc.landingzone.dreamweb.task;
 
 
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
-import cc.landingzone.dreamweb.service.UserService;
-import cc.landingzone.dreamweb.utils.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.redis.util.RedisLockRegistry;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.directory.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.redis.util.RedisLockRegistry;
+import org.springframework.stereotype.Component;
+
+import cc.landingzone.dreamweb.model.User;
+import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
+import cc.landingzone.dreamweb.service.UserService;
+import cc.landingzone.dreamweb.utils.JsonUtils;
 
 @Component
 public class SyncUserFromLDAPTask {

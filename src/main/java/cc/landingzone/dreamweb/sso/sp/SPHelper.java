@@ -69,7 +69,8 @@ public class SPHelper {
 
         result.append("1. add saml provider");
         result.append(LINE_BREAK);
-        // 1. add saml provider, this samlMetadata can download from IDP(for example: Azure AD)
+        // 1. add saml provider, this samlMetadata can download from IDP(for example:
+        // Azure AD)
         String samlMetadata = SamlGenerator.generateMetaXML();
         String addSAMLProviderResult = addSAMLProviders(profile, idpProviderName, samlMetadata);
         result.append("result: " + addSAMLProviderResult);
@@ -97,12 +98,14 @@ public class SPHelper {
 
         String roleExpression = "acs:ram::" + uid + ":role/" + roleName + ",acs:ram::" + uid + ":saml-provider/"
                 + idpProviderName;
-        result.append("roleExpression: " + roleExpression);
+        result.append("roleExpression: ");
+        result.append(LINE_BREAK);
+        result.append(roleExpression);
         return result.toString();
     }
 
     public static String attachPolicyToRole(DefaultProfile profile, String policyName, String policyType,
-                                            String roleName) throws Exception {
+            String roleName) throws Exception {
         AttachPolicyToRoleRequest request = new AttachPolicyToRoleRequest();
         request.setPolicyName(policyName);
         request.setPolicyType(policyType);

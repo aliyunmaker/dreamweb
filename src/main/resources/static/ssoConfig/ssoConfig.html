@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,23 +8,83 @@
     <title>Generator</title>
     <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
     <script type="text/javascript"
-            src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+        src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script type="text/javascript">
-        // let task;
-        // $(document).ready(function () {
-        //     $("#btn_downloadmeta").on("click", function () {
-        //
-        //     });
-        // });
+        let task;
+        $(document).ready(function () {
+            $("#btn_config").on("click", function () {
+                let accessKeyId = $("input[name='accessKeyId']").val();
+                let accessKeySecret = $("input[name='accessKeySecret']").val();
+                let idpProviderName = $('input[name="idpProviderName"]').val();
+                let roleName = $('input[name="roleName"]').val();
+
+                $("#msgBox").show();
+                $("#msgBox").delay(1000).hide(500);
+
+                $.ajax({
+                    url: "../../sso/ssoConfig.do",
+                    data: {
+                        accessKeyId: accessKeyId,
+                        accessKeySecret: accessKeySecret,
+                        idpProviderName: idpProviderName,
+                        roleName: roleName
+                    },
+                    success: function (result) {
+                        $("#consoleDiv").html(result);
+                    }
+                });
+
+            });
+        });
     </script>
 </head>
+
 <body>
-<div class="container">
-    <h1>SSO配置</h1>
-    <hr>
-    <h3>第一步</h3>
-    <br>
-    <button id="btn_downloadmeta" onclick="location.href='../../sso/metaxml.do'" class="btn btn-success">&nbsp;&nbsp;下载meta.xml&nbsp;&nbsp;</button>
-</div>
+    <div class="container">
+        <h1>SSO自动化配置</h1>
+        <hr>
+        <h3>配置信息</h3>
+        <br>
+        <div class="form-group">
+            <label>
+                <h4>AccessKeyId</h4>
+            </label>
+            <input class="form-control" name="accessKeyId" placeholder="必填">
+        </div>
+
+        <div class="form-group">
+            <label>
+                <h4>AccessKeySecret</h4>
+            </label>
+            <input class="form-control" name="accessKeySecret" type="password" placeholder="必填">
+        </div>
+
+        <div class="form-group">
+            <label>
+                <h4>IDP名称</h4>
+            </label>
+            <input class="form-control" name="idpProviderName" placeholder="必填">
+        </div>
+
+        <div class="form-group">
+            <label>
+                <h4>角色名称</h4>
+            </label>
+            <input class="form-control" name="roleName" placeholder="必填">
+        </div>
+        <br>
+
+        <button id="btn_config" class="btn btn-success">&nbsp;&nbsp;开始配置&nbsp;&nbsp;</button>
+
+        <br>
+        <div id="msgBox" style="display:none" class="alert alert-success" role="alert">
+            已经提交,请耐心等待!
+        </div>
+        <br>
+        <div id="consoleDiv" style="background-color: black;color: #adb5bd;word-break: break-all;padding: 10px;">
+            waiting...
+        </div>
+    </div>
 </body>
+
 </html>
