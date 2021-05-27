@@ -18,7 +18,7 @@
                     success: function (result) {
                         if (result.success) {
                             alert("更新成功，点击确定返回登录页");
-                            location.href = "../logout";
+                            window.top.location.href = "../logout";
                         } else {
                             alert("更新失败");
                         }
