@@ -35,7 +35,7 @@ Ext
                     iconCls: 'MyExt-menu-sub',
                     expanded: true,
                     children: [{
-                        text: "SSO配置",
+                        text: "SSO自动化配置",
                         leaf: true,
                         href: 'ssoConfig/ssoConfig.html',
                         hrefTarget: 'mainFrame'
