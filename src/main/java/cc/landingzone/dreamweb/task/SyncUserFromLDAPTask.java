@@ -58,7 +58,7 @@ public class SyncUserFromLDAPTask {
 
     //    @Scheduled(fixedRate = 5 * 60 * 1000)
     //10分钟
-    @Scheduled(cron = "0 0/10 * * * ?")
+    //@Scheduled(cron = "0 0/10 * * * ?")
     public void doTask() {
         Lock lock = redisLockRegistry.obtain("mylock");
         boolean success = false;
