@@ -21,8 +21,10 @@
         }
 
         .login-btn {
-            margin-right: 25px;
-            width: 80px;
+            /*margin-right: 25px;*/
+            display: block;
+            margin: 0 auto;
+            width: 140px;
         }
 
         .weixin-login-btn {
@@ -95,7 +97,7 @@
                 required><br />
             <input type="checkbox" name="remember-me" checked="true" /><span>&nbsp;&nbsp;remember me</span><br /><br />
             <button class="btn btn-primary login-btn" onclick="doLogin();" type="button">登录</button>
-            <button class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();" type="button">微信登录</button>
+            <!--<button class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();" type="button">微信登录</button>-->
             <br /><br />
         </form>
         <div align="center" id="weixin-login-div" style="display: none">
