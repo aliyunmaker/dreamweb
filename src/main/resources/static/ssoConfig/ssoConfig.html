@@ -16,7 +16,7 @@
                 let accessKeyId = $("input[name='accessKeyId']").val();
                 let accessKeySecret = $("input[name='accessKeySecret']").val();
                 let idpProviderName = $('input[name="idpProviderName"]').val();
-                let roleName = $('input[name="roleName"]').val();
+                let roleJson = $('textarea[name="roleJson"]').val();
 
                 $("#msgBox").show();
                 $("#msgBox").delay(1000).hide(500);
@@ -27,7 +27,7 @@
                         accessKeyId: accessKeyId,
                         accessKeySecret: accessKeySecret,
                         idpProviderName: idpProviderName,
-                        roleName: roleName
+                        roleJson: roleJson
                     },
                     success: function (result) {
                         $("#consoleDiv").html(result);
@@ -41,36 +41,34 @@
 
 <body>
     <div class="container">
-        <h1>SSO自动化配置</h1>
+        <h4>SSO自动化配置</h4>
         <hr>
-        <h3>配置信息</h3>
-        <br>
         <div class="form-group">
             <label>
-                <h4>AccessKeyId</h4>
+                <h6>AccessKeyId</h6>
             </label>
             <input class="form-control" name="accessKeyId" placeholder="必填">
         </div>
 
         <div class="form-group">
             <label>
-                <h4>AccessKeySecret</h4>
+                <h6>AccessKeySecret</h6>
             </label>
             <input class="form-control" name="accessKeySecret" type="password" placeholder="必填">
         </div>
 
         <div class="form-group">
             <label>
-                <h4>IDP名称</h4>
+                <h6>IDP名称</h6>
             </label>
             <input class="form-control" name="idpProviderName" placeholder="必填">
         </div>
 
         <div class="form-group">
             <label>
-                <h4>角色名称</h4>
+                <h6>角色列表(JSON)</h6>
             </label>
-            <input class="form-control" name="roleName" placeholder="必填">
+            <textarea class="form-control" name="roleJson" placeholder="必填" rows="6"></textarea>
         </div>
         <br>
 
