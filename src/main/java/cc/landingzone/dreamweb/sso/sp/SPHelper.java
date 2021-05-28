@@ -1,8 +1,8 @@
 package cc.landingzone.dreamweb.sso.sp;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.sso.CertManager;
-import cc.landingzone.dreamweb.sso.SamlGenerator;
+import java.util.List;
+import java.util.Map;
+
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -13,7 +13,13 @@ import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleRequest;
 import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleResponse;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityRequest;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
+
 import org.opensaml.DefaultBootstrap;
+
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.sso.CertManager;
+import cc.landingzone.dreamweb.sso.SamlGenerator;
+import cc.landingzone.dreamweb.utils.JsonUtils;
 
 public class SPHelper {
 
@@ -22,13 +28,14 @@ public class SPHelper {
 
     public static void main(String[] args) throws Exception {
         // for test
-        CertManager.initSigningCredential();
-        DefaultBootstrap.bootstrap();
-        String idpProviderName = "MyAzureAD";
-        String roleName = "charlesRole1";
-        DefaultProfile profile = DefaultProfile.getProfile(CommonConstants.Aliyun_REGION_HANGZHOU,
-                CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-        initSP(profile, idpProviderName, roleName);
+        // CertManager.initSigningCredential();
+        // DefaultBootstrap.bootstrap();
+        // String idpProviderName = "MyAzureAD";
+        // String roleName = "charlesRole1";
+        // DefaultProfile profile =
+        // DefaultProfile.getProfile(CommonConstants.Aliyun_REGION_HANGZHOU,
+        // CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        // initSP(profile, idpProviderName, roleName);
 
     }
 
@@ -41,7 +48,8 @@ public class SPHelper {
      * @return
      * @throws Exception
      */
-    public static String initSP(DefaultProfile profile, String idpProviderName, String roleName) throws Exception {
+    public static String initSP(DefaultProfile profile, String idpProviderName, Map<String, List<String>> roleMap)
+            throws Exception {
         StringBuilder result = new StringBuilder();
 
         String uid = getUid(profile);
@@ -50,20 +58,20 @@ public class SPHelper {
         result.append(LINE_BREAK);
         result.append("idpProvider: " + idpProviderName);
         result.append(LINE_BREAK);
-        result.append("roleName: " + roleName);
+        result.append("roleMap: " + JsonUtils.toJsonString(roleMap));
         result.append(LINE_BREAK);
 
         String policyDocument = "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Condition\":{\"StringEquals\":{\"saml:recipient\":\"https://signin.aliyun.com/saml-role/sso\"}},\"Effect\":\"Allow\",\"Principal\":{\"Federated\":[\"acs:ram::"
                 + uid + ":saml-provider/" + idpProviderName + "\"]}}],\"Version\":\"1\"}";
-        String policyName = "AdministratorAccess";
-        String policyType = "System";
+        // String policyName = "AdministratorAccess";
+        // String policyType = "System";
 
         result.append("policyDocument: " + policyDocument);
         result.append(LINE_BREAK);
-        result.append("policyName: " + policyName);
-        result.append(LINE_BREAK);
-        result.append("policyType: " + policyType);
-        result.append(LINE_BREAK);
+        // result.append("policyName: " + policyName);
+        // result.append(LINE_BREAK);
+        // result.append("policyType: " + policyType);
+        // result.append(LINE_BREAK);
         result.append(LINE_BREAK);
         result.append(LINE_SEPARATED);
 
@@ -80,25 +88,37 @@ public class SPHelper {
 
         result.append("2. create role");
         result.append(LINE_BREAK);
-        // 2. create role
-        String createRoleResult = createRole(profile, roleName, policyDocument);
-        result.append("result: " + createRoleResult);
-        result.append(LINE_BREAK);
-        result.append(LINE_BREAK);
-        result.append(LINE_SEPARATED);
 
-        result.append("3. attach policy to role");
-        result.append(LINE_BREAK);
-        // 3. attach policy to role
-        String attachPolicyToRoleResult = attachPolicyToRole(profile, policyName, policyType, roleName);
-        result.append("result: " + attachPolicyToRoleResult);
-        result.append(LINE_BREAK);
-        result.append(LINE_BREAK);
-        result.append(LINE_SEPARATED);
+        String roleExpression = "";
 
-        String roleExpression = "acs:ram::" + uid + ":role/" + roleName + ",acs:ram::" + uid + ":saml-provider/"
-                + idpProviderName;
+        for (Map.Entry<String, List<String>> entry : roleMap.entrySet()) {
+            String roleName = entry.getKey();
+            // 2. create role
+            String createRoleResult = createRole(profile, roleName, policyDocument);
+            result.append("result: " + createRoleResult);
+            result.append(LINE_BREAK);
+            result.append(LINE_BREAK);
+            result.append(LINE_SEPARATED);
+
+            String policyType = "System";
+            for (String policyName : entry.getValue()) {
+                result.append("3. attach policy to role");
+                result.append(LINE_BREAK);
+                // 3. attach policy to role
+                String attachPolicyToRoleResult = attachPolicyToRole(profile, policyName, policyType, roleName);
+                result.append("result: " + attachPolicyToRoleResult);
+                result.append(LINE_BREAK);
+                result.append(LINE_BREAK);
+                result.append(LINE_SEPARATED);
+            }
+            roleExpression += "acs:ram::" + uid + ":role/" + roleName + ",acs:ram::" + uid + ":saml-provider/"
+                    + idpProviderName;
+            roleExpression += LINE_BREAK;
+        }
+
         result.append("roleExpression: ");
+        result.append(LINE_BREAK);
+        result.append("------------------------------------------------------------------------------");
         result.append(LINE_BREAK);
         result.append(roleExpression);
         return result.toString();

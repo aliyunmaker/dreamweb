@@ -1,24 +1,19 @@
 package cc.landingzone.dreamweb.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
 
-import cc.landingzone.dreamweb.framework.MyAuthenticationProvider;
-import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.UserRole;
-import cc.landingzone.dreamweb.model.WebResult;
-import cc.landingzone.dreamweb.service.UserRoleService;
-import cc.landingzone.dreamweb.service.UserService;
-import cc.landingzone.dreamweb.sso.CertManager;
-import cc.landingzone.dreamweb.sso.SSOConstants;
-import cc.landingzone.dreamweb.sso.SamlGenerator;
-import cc.landingzone.dreamweb.sso.sp.RAMSamlHelper;
-import cc.landingzone.dreamweb.sso.sp.SPHelper;
-import cc.landingzone.dreamweb.utils.FreeMarkerUtils;
-import cc.landingzone.dreamweb.utils.JsonUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.aliyuncs.profile.DefaultProfile;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.DefaultBootstrap;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,6 +24,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import cc.landingzone.dreamweb.framework.MyAuthenticationProvider;
+import cc.landingzone.dreamweb.model.User;
+import cc.landingzone.dreamweb.model.UserRole;
+import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
+import cc.landingzone.dreamweb.service.UserRoleService;
+import cc.landingzone.dreamweb.service.UserService;
+import cc.landingzone.dreamweb.sso.CertManager;
+import cc.landingzone.dreamweb.sso.SSOConstants;
+import cc.landingzone.dreamweb.sso.SamlGenerator;
+import cc.landingzone.dreamweb.sso.sp.RAMSamlHelper;
+import cc.landingzone.dreamweb.sso.sp.SPHelper;
+import cc.landingzone.dreamweb.utils.FreeMarkerUtils;
+import cc.landingzone.dreamweb.utils.JsonUtils;
 
 @Controller
 @RequestMapping("/sso")
@@ -61,7 +71,7 @@ public class SSOController extends BaseController implements InitializingBean {
                 throw new UsernameNotFoundException(username);
             }
 
-            // 密码策略: md5(salt+password)  equals  user.getAuthkey()
+            // 密码策略: md5(salt+password) equals user.getAuthkey()
             if (!MyAuthenticationProvider.buildMd5Password(password).equals(user.getPassword())) {
                 throw new BadCredentialsException("password error!");
             }
@@ -152,7 +162,7 @@ public class SSOController extends BaseController implements InitializingBean {
                 // 只有role sso 才需要这些参数
                 Set<String> roleSet = new HashSet<String>();
                 for (UserRole userRole : roleList) {
-                    //如果指定roleId,则只添加该role
+                    // 如果指定roleId,则只添加该role
                     if (StringUtils.isNotBlank(userRoleId) && !userRoleId.equals(userRole.getId().toString())) {
                         continue;
                     }
@@ -178,7 +188,6 @@ public class SSOController extends BaseController implements InitializingBean {
         }
 
     }
-
 
     @RequestMapping("/downloadToken.do")
     public void downloadToken(HttpServletRequest request, HttpServletResponse response) {
@@ -218,7 +227,7 @@ public class SSOController extends BaseController implements InitializingBean {
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
             for (UserRole userRole : roleList) {
-                //如果指定roleId,则只添加该role
+                // 如果指定roleId,则只添加该role
                 if (StringUtils.isNotBlank(userRoleId) && !userRoleId.equals(userRole.getId().toString())) {
                     continue;
                 }
@@ -255,7 +264,7 @@ public class SSOController extends BaseController implements InitializingBean {
     public void metaxml(HttpServletRequest request, HttpServletResponse response) {
         try {
             String metaxml = SamlGenerator.generateMetaXML();
-            outputToFile(response,metaxml,"meta.xml","application/xml;charset=UTF-8");
+            outputToFile(response, metaxml, "meta.xml", "application/xml;charset=UTF-8");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             outputToString(response, e.getMessage());
@@ -266,6 +275,7 @@ public class SSOController extends BaseController implements InitializingBean {
     /**
      * init sp,目前只支持阿里云的Role SSO
      * <p>
+     * 
      * @param request
      * @param response
      */
@@ -274,27 +284,31 @@ public class SSOController extends BaseController implements InitializingBean {
         String result = new String();
         try {
             String idpProviderName = request.getParameter("idpProviderName");
-            String roleName = request.getParameter("roleName");
+            String roleJson = request.getParameter("roleJson");
             String accessKeyId = request.getParameter("accessKeyId");
             String accessKeySecret = request.getParameter("accessKeySecret");
+            Assert.hasText(accessKeyId, "accessKeyId can not be blank!");
+            Assert.hasText(accessKeySecret, "accessKeySecret can not be blank!");
+            Assert.hasText(idpProviderName, "idpProviderName can not be blank!");
 
-            // 如果没有传AK信息就默认用自己的AK
+            Map<String,List<String>> roleMap = JSON.parseObject(roleJson,new TypeReference<Map<String,List<String>>>(){});
             DefaultProfile profile = DefaultProfile.getProfile(
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU,
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeyId,
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
-            if (StringUtils.isNotBlank(accessKeyId) && StringUtils.isNotBlank(accessKeySecret)) {
-                profile = DefaultProfile.getProfile(
-                        cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId,
-                        accessKeySecret);
-            }
-            result = SPHelper.initSP(profile, idpProviderName, roleName);
+                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId,
+                    accessKeySecret);
+            // }
+            result = SPHelper.initSP(profile, idpProviderName, roleMap);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();
         }
         outputToString(response, result);
 
+    }
+
+    public static void main(String[] args) {
+        String json = "{\"admin\":[\"role1\",\"role2\"]}";
+        Map<String,List<String>> list2 = JSON.parseObject(json,new TypeReference<Map<String,List<String>>>(){});
+        System.out.println(JsonUtils.toJsonString(list2)); 
     }
 
     @RequestMapping("/getSAMLToken.do")
