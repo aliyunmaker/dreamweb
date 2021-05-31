@@ -45,12 +45,16 @@ public class SystemConfigController extends BaseController {
         WebResult result = new WebResult();
         try {
             String configName = request.getParameter("configName");
+            Assert.hasText(configName, "配置名不能为空!");
+            String configValue = request.getParameter("configValue");
+            Assert.hasText(configValue, "配置值不能为空!");
+            String comment = request.getParameter("comment");
+            String changeableStr = request.getParameter("changeable");
+            Assert.hasText(changeableStr, "可修改不能为空!");
+            boolean changeable = Boolean.parseBoolean(changeableStr);
+
             SystemConfig systemConfig = systemConfigService.getSystemConfigByName(configName);
             Assert.isNull(systemConfig, "该配置已存在!");
-            String configValue = request.getParameter("configValue");
-            String comment = request.getParameter("comment");
-            Boolean changeable = Boolean.parseBoolean(request.getParameter("changeable"));
-
             systemConfig = new SystemConfig();
             systemConfig.setConfigName(configName);
             systemConfig.setConfigValue(configValue);
@@ -72,13 +76,15 @@ public class SystemConfigController extends BaseController {
             String idStr = request.getParameter("id");
             Assert.hasText(idStr, "id不能为空!");
             Integer id = Integer.valueOf(idStr);
+            String configValue = request.getParameter("configValue");
+            Assert.hasText(configValue, "配置值不能为空!");
+            String comment = request.getParameter("comment");
+            String changeableStr = request.getParameter("changeable");
+            Assert.hasText(changeableStr, "可修改不能为空!");
+            boolean changeable = Boolean.parseBoolean(changeableStr);
+            
             SystemConfig systemConfig = systemConfigService.getSystemConfigById(id);
             Assert.notNull(systemConfig, "该配置不存在!");
-
-            String configValue = request.getParameter("configValue");
-            String comment = request.getParameter("comment");
-            Boolean changeable = Boolean.parseBoolean(request.getParameter("changeable"));
-            
             systemConfig.setConfigValue(configValue);
             systemConfig.setComment(comment);
             systemConfig.setChangeable(changeable);
