@@ -2,9 +2,9 @@ package cc.landingzone.dreamweb.service;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import org.slf4j.Logger;
@@ -46,8 +46,9 @@ public class RSAService {
      * 获取系统密钥，若数据库中有则从数据库中读取； 否则，则先随机生成公密钥对，并插入到数据库中
      * 
      * @return 密钥对，可能为空
+     * @throws
      */
-    private RSAKeyPair getRSAKeyPair() {
+    private RSAKeyPair getRSAKeyPair() throws RuntimeException {
         SystemConfig rsaKey = systemConfigDao.getSystemConfigByName(CONFIG_NAME);
         if (rsaKey == null) {
             try {
@@ -55,13 +56,13 @@ public class RSAService {
                 rsaKey = new SystemConfig();
                 rsaKey.setConfigName(CONFIG_NAME);
                 rsaKey.setConfigValue(JsonUtils.toJsonString(rsaKeyPair));
-                try {
-                    systemConfigDao.addUnChangeableSystemConfig(rsaKey);
-                } catch (DuplicateKeyException e) {
+                rsaKey.setChangeable(false);
+                if (systemConfigDao.addSystemConfig(rsaKey) == 0) {
                     rsaKey = systemConfigDao.getSystemConfigByName(CONFIG_NAME);
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
         RSAKeyPair rsaKeyPair = JsonUtils.parseObject(rsaKey.getConfigValue(), RSAKeyPair.class);
@@ -89,7 +90,7 @@ public class RSAService {
      */
     private String getPrivateKey() {
         RSAKeyPair rsaKeyPair = getRSAKeyPair();
-        return rsaKeyPair == null ? null : rsaKeyPair.getPrivateKey();
+        return Optional.ofNullable(rsaKeyPair).map(RSAKeyPair::getPrivateKey).orElse(null);
     }
 
     /**
@@ -99,7 +100,7 @@ public class RSAService {
      */
     public String getPublicKey() {
         RSAKeyPair rsaKeyPair = getRSAKeyPair();
-        return rsaKeyPair == null ? null : rsaKeyPair.getPublicKey();
+        return Optional.ofNullable(rsaKeyPair).map(RSAKeyPair::getPublicKey).orElse(null);
     }
 
     /**
@@ -112,6 +113,7 @@ public class RSAService {
         try {
             return RSAEncryptUtils.decrypt(str, getPrivateKey());
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

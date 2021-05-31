@@ -25,12 +25,11 @@ public class SystemConfigService {
     private LoadingCache<String, Optional<String>> cache = CacheBuilder.newBuilder()
         .maximumSize(100)
         .refreshAfterWrite(1, TimeUnit.SECONDS)
-        .build(
-            new CacheLoader<String, Optional<String>>() {
+        .build(new CacheLoader<String, Optional<String>>() {
+                @Override
                 public Optional<String> load(String key) {
                     SystemConfig systemConfig = systemConfigDao.getSystemConfigByName(key);
-                    String configValue = (systemConfig == null ? null : systemConfig.getConfigValue());
-                    return Optional.ofNullable(configValue);
+                    return Optional.ofNullable(systemConfig).map(SystemConfig::getConfigValue);
                 }
             }
         );
@@ -75,19 +74,7 @@ public class SystemConfigService {
     public String getStringValue(String configName) {
         Assert.hasText(configName, "配置名不能为空!");
         SystemConfig systemConfig = systemConfigDao.getSystemConfigByName(configName);
-        return systemConfig == null ? null : systemConfig.getConfigValue();
-    }
-
-    /**
-     * 通过配置名获得配置布尔值，若该配置为空则返回默认值
-     * 
-     * @param configName
-     * @param defaultValue
-     * @return configValue or defaultValue
-     */
-    public String getStringValue(String configName, String defaultValue) {
-        String value = getStringValue(configName);
-        return value == null ? defaultValue : value;
+        return Optional.ofNullable(systemConfig).map(SystemConfig::getConfigValue).orElse(null);
     }
 
     /**
@@ -98,18 +85,6 @@ public class SystemConfigService {
      */
     public Boolean getBoolValue(String configName) {
         return Boolean.parseBoolean(getStringValue(configName));
-    }
-
-    /**
-     * 通过配置名获得布尔值，若配置为空时则返回默认值
-     * 
-     * @param configName
-     * @param defaultValue
-     * @return
-     */
-    public Boolean getBoolValue(String configName, Boolean defaultValue) {
-        String configValue = getStringValue(configName);
-        return configValue == null ? defaultValue : Boolean.parseBoolean(configValue);
     }
 
     /**
@@ -164,18 +139,6 @@ public class SystemConfigService {
     }
 
     /**
-     * 从缓存通过配置名获得配置字符串值，若该配置为空则返回默认值
-     * 
-     * @param configName
-     * @param defaultValue
-     * @return configValue or defaultValue
-     */
-    public String getStringValueFromCache(String configName, String defaultValue) {
-        String value = getStringValueFromCache(configName);
-        return value == null ? defaultValue : value;
-    }
-
-    /**
      * 从缓存通过配置名获得布尔值，若忽略大小写后为true则返回true，否则返回false
      * 
      * @param configName
@@ -183,18 +146,6 @@ public class SystemConfigService {
      */
     public Boolean getBoolValueFromCache(String configName) {
         return Boolean.parseBoolean(getStringValueFromCache(configName));
-    }
-
-    /**
-     * 从缓存通过配置名获得布尔值，若配置为空时则返回默认值
-     * 
-     * @param configName
-     * @param defaultValue
-     * @return
-     */
-    public Boolean getBoolValueFromCache(String configName, Boolean defaultValue) {
-        String configValue = getStringValueFromCache(configName);
-        return configValue == null ? defaultValue : Boolean.parseBoolean(configValue);
     }
 
 
@@ -214,30 +165,12 @@ public class SystemConfigService {
     }
 
     /**
-     * 是否允许使用微信登录，若配置不存在则返回默认值
-     * @param defaultValue
-     * @return
-     */
-    public Boolean isAllowWechatLogin(Boolean defaultValue) {
-        return getBoolValueFromCache("allowWechatLogin", defaultValue);
-    }
-
-    /**
      * 是否允许使用LDAP登录，若配置不存在则返回false
      * 
      * @return
      */
     public Boolean isAllowLDAP() {
         return getBoolValueFromCache("allowLDAP");
-    }
-
-    /**
-     * 是否允许使用LDAP登录，若配置不存在则返回默认值
-     * @param defaultValue
-     * @return
-     */
-    public Boolean isAllowLDAP(Boolean defaultValue) {
-        return getBoolValueFromCache("allowLDAP", defaultValue);
     }
 
 }

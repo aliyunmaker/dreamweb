@@ -15,9 +15,7 @@ public interface SystemConfigDao {
 
     SystemConfig getSystemConfigByName(String configName);
 
-    void addSystemConfig(SystemConfig systemConfig);
-
-    void addUnChangeableSystemConfig(SystemConfig systemConfig);
+    int addSystemConfig(SystemConfig systemConfig);
 
     void updateSystemConfig(SystemConfig systemConfig);
 
