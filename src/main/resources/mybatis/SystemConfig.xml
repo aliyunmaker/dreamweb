@@ -8,25 +8,52 @@
          config_value,
          comment,
          changeable,
-         valid,
          gmt_create)
         values (#{configName},
                 #{configValue},
                 #{comment},
                 #{changeable},
-                #{valid},
                 now())
     </insert>
+
+    <insert id="addUnChangeableSystemConfig" parameterType="cc.landingzone.dreamweb.model.SystemConfig"
+        useGeneratedKeys="true" keyProperty="id">
+        insert into system_config
+        (config_name,
+         config_value,
+         comment,
+         changeable,
+         gmt_create)
+        values (#{configName},
+                #{configValue},
+                #{comment},
+                false,
+                now())
+    </insert>
+
+    <update id="updateSystemConfig" parameterType="cc.landingzone.dreamweb.model.SystemConfig">
+        update system_config
+        set config_value    = #{configValue},
+            comment         = #{comment},
+            changeable      = #{changeable}
+        where id = #{id}
+    </update>
 
     <select id="listSystemConfig" resultType="cc.landingzone.dreamweb.model.SystemConfig">
         select *
         from system_config
     </select>
 
-    <select id="getSystemConfig" resultType="cc.landingzone.dreamweb.model.SystemConfig">
+    <select id="getSystemConfigByName" resultType="cc.landingzone.dreamweb.model.SystemConfig">
         select *
         from system_config
         where config_name = #{configName}
+    </select>
+
+    <select id="getSystemConfigById" resultType="cc.landingzone.dreamweb.model.SystemConfig">
+        select *
+        from system_config
+        where id = #{id}
     </select>
 
     <delete id="deleteSystemConfig" parameterType="int">

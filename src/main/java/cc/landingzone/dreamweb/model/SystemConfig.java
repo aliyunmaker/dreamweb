@@ -9,7 +9,6 @@ public class SystemConfig {
     private String configValue;
     private String comment;
     private Boolean changeable;
-    private Boolean valid;
     private Date gmtCreate;
 
     public Integer getId() {
@@ -50,14 +49,6 @@ public class SystemConfig {
 
     public void setChangeable(Boolean changeable) {
         this.changeable = changeable;
-    }
-
-    public Boolean getValid() {
-        return valid;
-    }
-
-    public void setValid(Boolean valid) {
-        this.valid = valid;
     }
 
     public Date getGmtCreate() {

@@ -12,7 +12,7 @@ Ext.onReady(function () {
     dataUrl: '../systemConfig/listSystemConfig.do',
     rootFlag: 'data',
     pageSize: 200,
-    fields: ['id', 'configName', 'configValue', 'comment', 'gmtCreate', { name: 'valid', type: 'string' }, { name: 'changeable', type: 'string' }]
+    fields: ['id', 'configName', 'configValue', 'comment', 'gmtCreate', { name: 'changeable', type: 'string' }]
   });
 
   var systemConfigGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -39,17 +39,6 @@ Ext.onReady(function () {
       dataIndex: 'comment',
       header: '备注',
       flex: 1.5
-    }, {
-      dataIndex: 'valid',
-      header: '开关',
-      flex: 0.5,
-      renderer: function (value) {
-        if (value === "true") {
-          return '<img src="' + oss + 'green.png"' + alignStyle + '/>';
-        } else {
-          return '<img src="' + oss + 'gray.png"' + alignStyle + '/>';
-        }
-      }
     }],
     tbar: [{
       text: '新增',
@@ -69,7 +58,8 @@ Ext.onReady(function () {
           MyExt.Msg.alert("该项不可修改");
           return;
         }
-        updateSystemConfigFormWindow.changeFormUrlAndShow("../systemConfig/updateSystemConfig.do")
+        updateSystemConfigFormWindow.changeFormUrlAndShow("../systemConfig/updateSystemConfig.do");
+        updateSystemConfigFormWindow.getFormPanel().getForm().loadRecord(select[0]);
       }
     }, {
       text: '删除',
@@ -143,24 +133,6 @@ Ext.onReady(function () {
         name: "changeable",
         inputValue: "false"
       }]
-    }, {
-      fieldLabel: '生效',
-      labelWidth: 50,
-      xtype: 'radiogroup',
-      allowBlank: false,
-      columns: 2,
-      items: [{
-        boxLabel: "是",
-        id: 'valid0',
-        name: "valid",
-        inputValue: "true",
-        checked: true
-      }, {
-        boxLabel: "否",
-        id: 'valid1',
-        name: "valid",
-        inputValue: "false"
-      }]
     }],
     submitBtnFn: function () {
       var form = addSystemConfigFormWindow.getFormPanel().getForm();
@@ -172,7 +144,6 @@ Ext.onReady(function () {
           configValue: formValue['configValue'],
           comment: formValue['comment'],
           changeable: formValue['changeable'],
-          valid: formValue['valid']
         }, function (data) {
           if (data.success) {
             addSystemConfigFormWindow.hide();
@@ -224,24 +195,6 @@ Ext.onReady(function () {
         name: "changeable",
         inputValue: "false"
       }]
-    }, {
-      fieldLabel: '生效',
-      labelWidth: 50,
-      xtype: 'radiogroup',
-      allowBlank: false,
-      columns: 2,
-      items: [{
-        boxLabel: "是",
-        id: 'valid0',
-        name: "valid",
-        inputValue: "true",
-        checked: true
-      }, {
-        boxLabel: "否",
-        id: 'valid1',
-        name: "valid",
-        inputValue: "false"
-      }]
     }],
     submitBtnFn: function () {
       var form = updateSystemConfigFormWindow.getFormPanel().getForm();
@@ -252,7 +205,6 @@ Ext.onReady(function () {
           configValue: formValue['configValue'],
           comment: formValue['comment'],
           changeable: formValue['changeable'],
-          valid: formValue['valid']
         }, function (data) {
           if (data.success) {
             updateSystemConfigFormWindow.hide();
