@@ -4,12 +4,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cc.landingzone.dreamweb.dao.RSADao;
+import cc.landingzone.dreamweb.dao.SystemConfigDao;
 import cc.landingzone.dreamweb.model.SystemConfig;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
@@ -18,7 +19,7 @@ import cc.landingzone.dreamweb.utils.RSAEncryptUtils;
 public class RSAService {
 
     @Autowired
-    private RSADao rsaDao;
+    private SystemConfigDao systemConfigDao;
 
     @Autowired
     SystemConfigService systemConfigService;
@@ -47,15 +48,17 @@ public class RSAService {
      * @return 密钥对，可能为空
      */
     private RSAKeyPair getRSAKeyPair() {
-        SystemConfig rsaKey = rsaDao.getRSAKeyByName(CONFIG_NAME);
+        SystemConfig rsaKey = systemConfigDao.getSystemConfigByName(CONFIG_NAME);
         if (rsaKey == null) {
             try {
                 RSAKeyPair rsaKeyPair = genRSAKeyPair();
                 rsaKey = new SystemConfig();
                 rsaKey.setConfigName(CONFIG_NAME);
                 rsaKey.setConfigValue(JsonUtils.toJsonString(rsaKeyPair));
-                if (rsaDao.addRSAKey(rsaKey) == 0) {
-                    rsaKey = rsaDao.getRSAKeyByName(CONFIG_NAME);
+                try {
+                    systemConfigDao.addUnChangeableSystemConfig(rsaKey);
+                } catch (DuplicateKeyException e) {
+                    rsaKey = systemConfigDao.getSystemConfigByName(CONFIG_NAME);
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
@@ -69,11 +72,11 @@ public class RSAService {
      * 随机生成新的密钥对并更新数据库中的系统密钥
      */
     public void updateRSAKey() {
-        SystemConfig rsaKey = rsaDao.getRSAKeyByName(CONFIG_NAME);
+        SystemConfig rsaKey = systemConfigDao.getSystemConfigByName(CONFIG_NAME);
         try {
             RSAKeyPair rsaKeyPair = genRSAKeyPair();
             rsaKey.setConfigValue(JsonUtils.toJsonString(rsaKeyPair));
-            rsaDao.updateRSAKey(rsaKey);
+            systemConfigDao.updateSystemConfig(rsaKey);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }

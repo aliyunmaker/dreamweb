@@ -1,16 +1,16 @@
 package cc.landingzone.dreamweb.controller;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.model.ApiUser;
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.WebResult;
-import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
-import cc.landingzone.dreamweb.service.ApiUserService;
-import cc.landingzone.dreamweb.service.LoginRecordService;
-import cc.landingzone.dreamweb.service.UserService;
-import cc.landingzone.dreamweb.utils.HttpClientUtils;
-import cc.landingzone.dreamweb.utils.JsonUtils;
-import cc.landingzone.dreamweb.utils.SignatureUtils;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.alibaba.fastjson.TypeReference;
 
 import org.slf4j.Logger;
@@ -26,12 +26,18 @@ import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.model.ApiUser;
+import cc.landingzone.dreamweb.model.User;
+import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
+import cc.landingzone.dreamweb.service.ApiUserService;
+import cc.landingzone.dreamweb.service.LoginRecordService;
+import cc.landingzone.dreamweb.service.SystemConfigService;
+import cc.landingzone.dreamweb.service.UserService;
+import cc.landingzone.dreamweb.utils.HttpClientUtils;
+import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.utils.SignatureUtils;
 
 @Controller
 public class LoginController extends BaseController {
@@ -42,6 +48,8 @@ public class LoginController extends BaseController {
     private ApiUserService apiUserService;
     @Autowired
     private LoginRecordService loginRecordService;
+    @Autowired
+    private SystemConfigService systemConfigService;
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -56,6 +64,7 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/login")
     public String login(Model model) {
+        model.addAttribute("allowWechatLogin", systemConfigService.isAllowWechatLogin());
         return "login";
     }
 

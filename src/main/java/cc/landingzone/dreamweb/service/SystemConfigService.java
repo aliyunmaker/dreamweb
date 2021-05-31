@@ -1,6 +1,12 @@
 package cc.landingzone.dreamweb.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,6 +23,19 @@ public class SystemConfigService {
     @Autowired
     private SystemConfigDao systemConfigDao;
 
+    private LoadingCache<String, Optional<String>> cache = CacheBuilder.newBuilder()
+        .maximumSize(100)
+        .expireAfterWrite(5, TimeUnit.SECONDS)
+        .build(
+            new CacheLoader<String, Optional<String>>() {
+                public Optional<String> load(String key) {
+                    SystemConfig systemConfig = systemConfigDao.getSystemConfigByName(key);
+                    String configValue = (systemConfig == null ? null : systemConfig.getConfigValue());
+                    return Optional.ofNullable(configValue);
+                }
+            }
+        );
+
     /**
      * 获取所有系统配置
      * 
@@ -27,14 +46,25 @@ public class SystemConfigService {
     }
 
     /**
-     * 通过名字获得配置
+     * 通过id获得配置
      * 
-     * @param configName
+     * @param id
+     * @return
+     */
+    public SystemConfig getSystemConfigById(Integer id) {
+        Assert.notNull(id, "id不能为空");
+        return systemConfigDao.getSystemConfigById(id);
+    }
+
+    /**
+     * 通过配置名获得配置
+     * 
+     * @param configName 配置名
      * @return
      */
     public SystemConfig getSystemConfigByName(String configName) {
-        Assert.hasText(configName, "配置名不能为空");
-        return systemConfigDao.getSystemConfig(configName);
+        Assert.hasText(configName, "配置名不能为空!");
+        return systemConfigDao.getSystemConfigByName(configName);
     }
 
     /**
@@ -49,8 +79,18 @@ public class SystemConfigService {
         try {
             systemConfigDao.addSystemConfig(systemConfig);
         } catch (DuplicateKeyException e) {
-            throw new DuplicateKeyException("该配置名已存在!");
+            throw new DuplicateKeyException("该配置已存在!");
         }
+    }
+
+    /**
+     * 更新系统配置
+     * 
+     * @param systemConfig
+     */
+    public void updateSystemConfig(SystemConfig systemConfig) {
+        Assert.notNull(systemConfig, "数据不能为空!");
+        systemConfigDao.updateSystemConfig(systemConfig);
     }
 
     /**
@@ -63,5 +103,100 @@ public class SystemConfigService {
         Assert.notNull(id, "id can not be null!");
         systemConfigDao.deleteSystemConfig(id);
     }
-    
+
+
+    /**
+     * ################################################
+     * ###################使用缓存方法###################
+     * ################################################
+     */
+
+    /**
+     * 通过配置名获得配置值
+     * 
+     * @param configName
+     * @return configValue
+     */
+    public String getStringValueFromCache(String configName) {
+        Assert.hasText(configName, "配置名不能为空!");
+        return cache.getUnchecked(configName).orElse(null);
+    }
+
+    /**
+     * 通过配置名获得配置值，若该配置为空则返回默认值
+     * 
+     * @param configName
+     * @param defaultValue
+     * @return configValue or defaultValue
+     */
+    public String getStringValueFromCache(String configName, String defaultValue) {
+        String value = getStringValueFromCache(configName);
+        return value == null ? defaultValue : value;
+    }
+
+    /**
+     * 通过配置名查看其是否允许，若忽略大小写后为true则返回true，否则返回false
+     * 
+     * @param configName
+     * @return
+     */
+    public Boolean getBoolValueFromCache(String configName) {
+        return Boolean.parseBoolean(getStringValueFromCache(configName));
+    }
+
+    /**
+     * 通过配置名查看其是否允许，若配置为空时则返回默认值
+     * 
+     * @param configName
+     * @param defaultValue
+     * @return
+     */
+    public Boolean getBoolValueFromCache(String configName, Boolean defaultValue) {
+        String configValue = getStringValueFromCache(configName);
+        return configValue == null ? defaultValue : Boolean.parseBoolean(configValue);
+    }
+
+
+    /**
+     * ################################################
+     * ###################特定配置方法###################
+     * ################################################
+     */
+
+    /**
+     * 是否允许使用微信登录，若配置不存在则返回false
+     * 
+     * @return
+     */
+    public Boolean isAllowWechatLogin() {
+        return getBoolValueFromCache("allowWechatLogin");
+    }
+
+    /**
+     * 是否允许使用微信登录，若配置不存在则返回默认值
+     * @param defaultValue
+     * @return
+     */
+    public Boolean isAllowWechatLogin(Boolean defaultValue) {
+        return getBoolValueFromCache("allowWechatLogin", defaultValue);
+    }
+
+    /**
+     * 是否允许使用LDAP登录，若配置不存在则返回false
+     * 
+     * @return
+     */
+    public Boolean isAllowLDAP() {
+        return getBoolValueFromCache("allowLDAP");
+    }
+
+    /**
+     * 是否允许使用LDAP登录，若配置不存在则返回默认值
+     * @param defaultValue
+     * @return
+     */
+    public Boolean isAllowLDAP(Boolean defaultValue) {
+        return getBoolValueFromCache("allowLDAP", defaultValue);
+    }
+
 }

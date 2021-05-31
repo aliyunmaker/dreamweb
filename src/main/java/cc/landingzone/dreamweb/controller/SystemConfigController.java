@@ -45,18 +45,43 @@ public class SystemConfigController extends BaseController {
         WebResult result = new WebResult();
         try {
             String configName = request.getParameter("configName");
+            SystemConfig systemConfig = systemConfigService.getSystemConfigByName(configName);
             String configValue = request.getParameter("configValue");
             String comment = request.getParameter("comment");
             Boolean changeable = Boolean.parseBoolean(request.getParameter("changeable"));
-            Boolean valid = Boolean.parseBoolean(request.getParameter("valid"));
 
-            SystemConfig systemConfig = new SystemConfig();
+            systemConfig = new SystemConfig();
             systemConfig.setConfigName(configName);
             systemConfig.setConfigValue(configValue);
             systemConfig.setComment(comment);
             systemConfig.setChangeable(changeable);
-            systemConfig.setValid(valid);
             systemConfigService.addSystemConfig(systemConfig);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/updateSystemConfig.do")
+    public void updateSystemConfig(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String idStr = request.getParameter("id");
+            Assert.hasText(idStr, "id不能为空!");
+            Integer id = Integer.valueOf(idStr);
+            SystemConfig systemConfig = systemConfigService.getSystemConfigById(id);
+            Assert.notNull(systemConfig, "配置不能为空!");
+
+            String configValue = request.getParameter("configValue");
+            String comment = request.getParameter("comment");
+            Boolean changeable = Boolean.parseBoolean(request.getParameter("changeable"));
+            
+            systemConfig.setConfigValue(configValue);
+            systemConfig.setComment(comment);
+            systemConfig.setChangeable(changeable);
+            systemConfigService.updateSystemConfig(systemConfig);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

@@ -11,9 +11,15 @@ public interface SystemConfigDao {
 
     List<SystemConfig> listSystemConfig();
 
-    SystemConfig getSystemConfig(String configName);
+    SystemConfig getSystemConfigById(Integer id);
+
+    SystemConfig getSystemConfigByName(String configName);
 
     void addSystemConfig(SystemConfig systemConfig);
+
+    void addUnChangeableSystemConfig(SystemConfig systemConfig);
+
+    void updateSystemConfig(SystemConfig systemConfig);
 
     void deleteSystemConfig(Integer id);
 

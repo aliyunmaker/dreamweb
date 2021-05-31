@@ -20,6 +20,12 @@
             margin: 0 auto;
         }
 
+        .login-btn-no-wechat {
+            display: block;
+            margin: 0 auto;
+            width: 140px;
+        }
+
         .login-btn {
             margin-right: 25px;
             width: 80px;
@@ -52,6 +58,7 @@
                 });
             }
         }
+        // let allowWechatLogin = 'error';
         let doLogin = function () {
             $.ajax({
                 url: "../rsakey/getPublicKey.do",
@@ -94,8 +101,9 @@
             <input type="password" name="password" id="passwordInput" class="form-control" placeholder="密码"
                 required><br />
             <input type="checkbox" name="remember-me" checked="true" /><span>&nbsp;&nbsp;remember me</span><br /><br />
-            <button class="btn btn-primary login-btn" onclick="doLogin();" type="button">登录</button>
-            <button class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();" type="button">微信登录</button>
+            <button th:if="${!allowWechatLogin}" class="btn btn-primary login-btn-no-wechat" onclick="doLogin();" type="button">登录</button>
+            <button th:if="${allowWechatLogin}" class="btn btn-primary login-btn" onclick="doLogin();" type="button">登录</button>
+            <button th:if="${allowWechatLogin}" class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();" type="button">微信登录</button>
             <br /><br />
         </form>
         <div align="center" id="weixin-login-div" style="display: none">
