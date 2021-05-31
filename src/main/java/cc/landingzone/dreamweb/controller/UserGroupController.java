@@ -17,6 +17,7 @@ import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import io.jsonwebtoken.lang.Assert;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -133,8 +134,11 @@ public class UserGroupController extends BaseController {
         WebResult result = new WebResult();
         try {
             Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
-            List<String> userLoginNames = Arrays
-                    .asList(request.getParameter("userLoginNames").replaceAll("\\s", "").split(","));
+            String userLoginNamesStr = request.getParameter("userLoginNames");
+            Assert.hasText(userLoginNamesStr, "userLoginNames must not be blank!");
+            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split(","))
+                .map(StringUtils::trim)
+                .collect(Collectors.toList());
             List<User> users = userService.getUsersByLoginNames(userLoginNames);
             List<UserGroupAssociate> userGroupAssociates = users.stream()
                 .map(user -> {
