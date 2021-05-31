@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.task;
 
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.enums.LoginMethodEnum;
+import cc.landingzone.dreamweb.service.SystemConfigService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ public class SyncUserFromLDAPTask {
 
     @Autowired
     private RedisLockRegistry redisLockRegistry;
+
+    @Autowired
+    private SystemConfigService systemConfigService;
 
     private static Logger logger = LoggerFactory.getLogger(SyncUserFromLDAPTask.class);
 
@@ -58,8 +62,11 @@ public class SyncUserFromLDAPTask {
 
     //    @Scheduled(fixedRate = 5 * 60 * 1000)
     //10分钟
-    //@Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void doTask() {
+        if(!systemConfigService.isAllowLDAP()) {
+            return;
+        }
         Lock lock = redisLockRegistry.obtain("mylock");
         boolean success = false;
         try {
