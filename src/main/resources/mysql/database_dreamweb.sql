@@ -134,22 +134,22 @@ CREATE TABLE `login_record` (
 
 
 
-# Dump of table rsakey
+# Dump of table system_config
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `rsakey`;
+DROP TABLE IF EXISTS `system_config`;
 
-CREATE TABLE `rsakey` (
+CREATE TABLE `system_config` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
-                            `key_name` varchar(100) NOT NULL COMMENT '密钥名',
-                            `public_key` varchar(1200) DEFAULT NULL COMMENT '公钥',
-                            `private_key` varchar(1200) DEFAULT NULL COMMENT '私钥',
+                            `config_name` varchar(100) NOT NULL COMMENT '配置名',
+                            `config_value` varchar(5000) DEFAULT NULL COMMENT '配置',
                             `comment` varchar(1000) DEFAULT NULL,
+                            `changeable` tinyint(1) NOT NULL DEFAULT TRUE COMMENT '是否可修改',
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
-                            UNIQUE KEY `key_name` (`key_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+                            UNIQUE KEY `config_name` (`config_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
