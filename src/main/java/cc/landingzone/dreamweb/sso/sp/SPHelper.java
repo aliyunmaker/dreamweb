@@ -1,12 +1,19 @@
 package cc.landingzone.dreamweb.sso.sp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
+import com.aliyuncs.auth.BasicCredentials;
+import com.aliyuncs.auth.STSAssumeRoleSessionCredentialsProvider;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleRequest;
@@ -14,10 +21,6 @@ import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleResponse;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityRequest;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
 
-import org.opensaml.DefaultBootstrap;
-
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.sso.CertManager;
 import cc.landingzone.dreamweb.sso.SamlGenerator;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 
@@ -36,7 +39,21 @@ public class SPHelper {
         // DefaultProfile.getProfile(CommonConstants.Aliyun_REGION_HANGZHOU,
         // CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         // initSP(profile, idpProviderName, roleName);
+    }
 
+    public static String initMultiAccountSP(String accessKeyId, String accessKeySecret, String idpProviderName,
+            Map<String, List<String>> roleMap) throws Exception {
+        StringBuilder result = new StringBuilder();
+        DefaultProfile profile = DefaultProfile.getProfile(
+                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId, accessKeySecret);
+        List<Map<String, String>> accountList = listAccounts(profile);
+        for (Map<String, String> accountMap : accountList) {
+            IAcsClient client = getSubAccountClinet(accessKeyId, accessKeySecret, accountMap.get("AccountId"));
+            String singleLog = initSingleAccountSP(client, idpProviderName, roleMap);
+            result.append(singleLog);
+        }
+
+        return result.toString();
     }
 
     /**
@@ -48,11 +65,11 @@ public class SPHelper {
      * @return
      * @throws Exception
      */
-    public static String initSP(DefaultProfile profile, String idpProviderName, Map<String, List<String>> roleMap)
-            throws Exception {
+    public static String initSingleAccountSP(IAcsClient client, String idpProviderName,
+            Map<String, List<String>> roleMap) throws Exception {
         StringBuilder result = new StringBuilder();
 
-        String uid = getUid(profile);
+        String uid = getUid(client);
 
         result.append("UID:" + uid);
         result.append(LINE_BREAK);
@@ -80,7 +97,7 @@ public class SPHelper {
         // 1. add saml provider, this samlMetadata can download from IDP(for example:
         // Azure AD)
         String samlMetadata = SamlGenerator.generateMetaXML();
-        String addSAMLProviderResult = addSAMLProviders(profile, idpProviderName, samlMetadata);
+        String addSAMLProviderResult = addSAMLProviders(client, idpProviderName, samlMetadata);
         result.append("result: " + addSAMLProviderResult);
         result.append(LINE_BREAK);
         result.append(LINE_BREAK);
@@ -94,7 +111,7 @@ public class SPHelper {
         for (Map.Entry<String, List<String>> entry : roleMap.entrySet()) {
             String roleName = entry.getKey();
             // 2. create role
-            String createRoleResult = createRole(profile, roleName, policyDocument);
+            String createRoleResult = createRole(client, roleName, policyDocument);
             result.append("result: " + createRoleResult);
             result.append(LINE_BREAK);
             result.append(LINE_BREAK);
@@ -105,7 +122,7 @@ public class SPHelper {
                 result.append("3. attach policy to role");
                 result.append(LINE_BREAK);
                 // 3. attach policy to role
-                String attachPolicyToRoleResult = attachPolicyToRole(profile, policyName, policyType, roleName);
+                String attachPolicyToRoleResult = attachPolicyToRole(client, policyName, policyType, roleName);
                 result.append("result: " + attachPolicyToRoleResult);
                 result.append(LINE_BREAK);
                 result.append(LINE_BREAK);
@@ -121,22 +138,23 @@ public class SPHelper {
         result.append("------------------------------------------------------------------------------");
         result.append(LINE_BREAK);
         result.append(roleExpression);
+        result.append(LINE_BREAK);
+        result.append("------------------------------------------------------------------------------");
+        result.append(LINE_BREAK);
         return result.toString();
     }
 
-    public static String attachPolicyToRole(DefaultProfile profile, String policyName, String policyType,
-            String roleName) throws Exception {
+    public static String attachPolicyToRole(IAcsClient client, String policyName, String policyType, String roleName)
+            throws Exception {
         AttachPolicyToRoleRequest request = new AttachPolicyToRoleRequest();
         request.setPolicyName(policyName);
         request.setPolicyType(policyType);
         request.setRoleName(roleName);
-        IAcsClient client = new DefaultAcsClient(profile);
         AttachPolicyToRoleResponse response = client.getAcsResponse(request);
         return response.getRequestId();
     }
 
-    public static String createRole(DefaultProfile profile, String roleName, String policyDocument) throws Exception {
-        IAcsClient client = new DefaultAcsClient(profile);
+    public static String createRole(IAcsClient client, String roleName, String policyDocument) throws Exception {
         CommonRequest request = new CommonRequest();
         request.setSysDomain("ram.aliyuncs.com");
         request.setSysVersion("2015-05-01");
@@ -148,16 +166,14 @@ public class SPHelper {
         return response.getData();
     }
 
-    public static String getUid(DefaultProfile profile) throws Exception {
+    public static String getUid(IAcsClient client) throws Exception {
         GetCallerIdentityRequest request = new GetCallerIdentityRequest();
-        IAcsClient client = new DefaultAcsClient(profile);
         GetCallerIdentityResponse response = client.getAcsResponse(request);
         return response.getAccountId();
     }
 
-    public static String addSAMLProviders(DefaultProfile profile, String providerName, String samlMetadata)
+    public static String addSAMLProviders(IAcsClient client, String providerName, String samlMetadata)
             throws Exception {
-        IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
         request.setSysDomain("ims.aliyuncs.com");
         request.setSysVersion("2019-08-15");
@@ -167,6 +183,59 @@ public class SPHelper {
         request.putQueryParameter("SAMLMetadataDocument", samlMetadata);
         CommonResponse response = client.getCommonResponse(request);
         return response.getData();
+    }
+
+    /**
+     * get resource account list
+     *
+     * @return
+     * @throws Exception
+     */
+    public static List<Map<String, String>> listAccounts(DefaultProfile profile) throws Exception {
+        IAcsClient client = new DefaultAcsClient(profile);
+        CommonRequest request = new CommonRequest();
+        request.setSysDomain("resourcemanager.aliyuncs.com");
+        request.setSysVersion("2020-03-31");
+        request.setSysAction("ListAccounts");
+        // 暂时先设置成100,如果账号数量超过100,需要修改代码,增加翻页的逻辑
+        request.putQueryParameter("PageSize", "100");
+        request.setSysProtocol(ProtocolType.HTTPS);
+        CommonResponse response = client.getCommonResponse(request);
+        String result = response.getData();
+        System.out.println("==================================");
+        System.out.println(result);
+        JSONObject jsonObject = JSON.parseObject(result);
+        JSONArray accountList = jsonObject.getJSONObject("Accounts").getJSONArray("Account");
+        List<Map<String, String>> accountMapList = new ArrayList<>();
+        // List<String> list = new ArrayList<>();
+        for (int i = 0; i < accountList.size(); i++) {
+            Map<String, String> accountMap = JsonUtils.parseObject(accountList.getJSONObject(i).toJSONString(),
+                    new TypeReference<Map<String, String>>() {
+                    });
+            accountMapList.add(accountMap);
+            // list.add(accountList.getJSONObject(i).getString("AccountId"));
+        }
+        return accountMapList;
+    }
+
+    /**
+     * 根据master的AK,获取子账号的操作权限
+     * 
+     * @param accessKeyId
+     * @param accessKeySecret
+     * @param uid
+     * @return
+     * @throws Exception
+     */
+    public static DefaultAcsClient getSubAccountClinet(String accessKeyId, String accessKeySecret, String uid)
+            throws Exception {
+        BasicCredentials basicCredentials = new BasicCredentials(accessKeyId, accessKeySecret);
+        DefaultProfile profile = DefaultProfile.getProfile(
+                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId, accessKeySecret);
+        STSAssumeRoleSessionCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(basicCredentials,
+                "acs:ram::" + uid + ":role/resourcedirectoryaccountaccessrole", profile);
+        DefaultAcsClient client = new DefaultAcsClient(profile, provider);
+        return client;
     }
 
 }

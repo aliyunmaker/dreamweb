@@ -291,24 +291,27 @@ public class SSOController extends BaseController implements InitializingBean {
             Assert.hasText(accessKeySecret, "accessKeySecret can not be blank!");
             Assert.hasText(idpProviderName, "idpProviderName can not be blank!");
 
-            Map<String,List<String>> roleMap = JSON.parseObject(roleJson,new TypeReference<Map<String,List<String>>>(){});
-            DefaultProfile profile = DefaultProfile.getProfile(
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId,
-                    accessKeySecret);
+            Map<String, List<String>> roleMap = JSON.parseObject(roleJson,
+                    new TypeReference<Map<String, List<String>>>() {
+                    });
+            // DefaultProfile profile = DefaultProfile.getProfile(
+            // cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU,
+            // accessKeyId,
+            // accessKeySecret);
             // }
-            result = SPHelper.initSP(profile, idpProviderName, roleMap);
+            result = SPHelper.initMultiAccountSP(accessKeyId, accessKeySecret, idpProviderName, roleMap);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();
         }
         outputToString(response, result);
-
     }
 
     public static void main(String[] args) {
         String json = "{\"admin\":[\"role1\",\"role2\"]}";
-        Map<String,List<String>> list2 = JSON.parseObject(json,new TypeReference<Map<String,List<String>>>(){});
-        System.out.println(JsonUtils.toJsonString(list2)); 
+        Map<String, List<String>> list2 = JSON.parseObject(json, new TypeReference<Map<String, List<String>>>() {
+        });
+        System.out.println(JsonUtils.toJsonString(list2));
     }
 
     @RequestMapping("/getSAMLToken.do")
@@ -359,6 +362,28 @@ public class SSOController extends BaseController implements InitializingBean {
             result = e.getMessage();
         }
         outputToString(response, result);
+
+    }
+
+    @RequestMapping("/listSubAccount.do")
+    public void listSubAccount(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String accessKeyId = request.getParameter("accessKeyId");
+            String accessKeySecret = request.getParameter("accessKeySecret");
+            Assert.hasText(accessKeyId, "accessKeyId can not be blank!");
+            Assert.hasText(accessKeySecret, "accessKeySecret can not be blank!");
+            DefaultProfile profile = DefaultProfile.getProfile(
+                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId,
+                    accessKeySecret);
+            List<Map<String, String>> list = SPHelper.listAccounts(profile);
+            result.setData(list);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
 
     }
 
