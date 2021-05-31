@@ -95,14 +95,14 @@
             </div>
         </div>
 
-        <form class="form-signin" id="loginForm" th:action="@{/login}" method='POST'>
+        <form class="form-signin" id="loginForm" onsubmit="return false" th:action="@{/login}" method='POST'>
             <input type="text" name="username" id="usernameInput" class="form-control" placeholder="用户名" required
                 autofocus><br />
             <input type="password" name="password" id="passwordInput" class="form-control" placeholder="密码"
                 required><br />
             <input type="checkbox" name="remember-me" checked="true" /><span>&nbsp;&nbsp;remember me</span><br /><br />
-            <button th:if="${!allowWechatLogin}" class="btn btn-primary login-btn-no-wechat" onclick="doLogin();" type="button">登录</button>
-            <button th:if="${allowWechatLogin}" class="btn btn-primary login-btn" onclick="doLogin();" type="button">登录</button>
+            <button th:if="${!allowWechatLogin}" class="btn btn-primary login-btn-no-wechat" onclick="doLogin();" type="submit">登录</button>
+            <button th:if="${allowWechatLogin}" class="btn btn-primary login-btn" onclick="doLogin();" type="submit">登录</button>
             <button th:if="${allowWechatLogin}" class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();" type="button">微信登录</button>
             <br /><br />
         </form>

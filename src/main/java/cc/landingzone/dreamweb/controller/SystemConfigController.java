@@ -46,6 +46,7 @@ public class SystemConfigController extends BaseController {
         try {
             String configName = request.getParameter("configName");
             SystemConfig systemConfig = systemConfigService.getSystemConfigByName(configName);
+            Assert.isNull(systemConfig, "该配置已存在!");
             String configValue = request.getParameter("configValue");
             String comment = request.getParameter("comment");
             Boolean changeable = Boolean.parseBoolean(request.getParameter("changeable"));
@@ -72,7 +73,7 @@ public class SystemConfigController extends BaseController {
             Assert.hasText(idStr, "id不能为空!");
             Integer id = Integer.valueOf(idStr);
             SystemConfig systemConfig = systemConfigService.getSystemConfigById(id);
-            Assert.notNull(systemConfig, "配置不能为空!");
+            Assert.notNull(systemConfig, "该配置不存在!");
 
             String configValue = request.getParameter("configValue");
             String comment = request.getParameter("comment");

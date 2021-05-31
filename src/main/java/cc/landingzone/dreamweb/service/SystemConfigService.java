@@ -9,7 +9,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -25,7 +24,7 @@ public class SystemConfigService {
 
     private LoadingCache<String, Optional<String>> cache = CacheBuilder.newBuilder()
         .maximumSize(100)
-        .expireAfterWrite(5, TimeUnit.SECONDS)
+        .refreshAfterWrite(1, TimeUnit.SECONDS)
         .build(
             new CacheLoader<String, Optional<String>>() {
                 public Optional<String> load(String key) {
@@ -68,19 +67,61 @@ public class SystemConfigService {
     }
 
     /**
+     * 通过配置名获得配置字符串值
+     * 
+     * @param configName
+     * @return configValue
+     */
+    public String getStringValue(String configName) {
+        Assert.hasText(configName, "配置名不能为空!");
+        SystemConfig systemConfig = systemConfigDao.getSystemConfigByName(configName);
+        return systemConfig == null ? null : systemConfig.getConfigValue();
+    }
+
+    /**
+     * 通过配置名获得配置布尔值，若该配置为空则返回默认值
+     * 
+     * @param configName
+     * @param defaultValue
+     * @return configValue or defaultValue
+     */
+    public String getStringValue(String configName, String defaultValue) {
+        String value = getStringValue(configName);
+        return value == null ? defaultValue : value;
+    }
+
+    /**
+     * 通过配置名获得布尔值，若忽略大小写后为true则返回true，否则返回false
+     * 
+     * @param configName
+     * @return
+     */
+    public Boolean getBoolValue(String configName) {
+        return Boolean.parseBoolean(getStringValue(configName));
+    }
+
+    /**
+     * 通过配置名获得布尔值，若配置为空时则返回默认值
+     * 
+     * @param configName
+     * @param defaultValue
+     * @return
+     */
+    public Boolean getBoolValue(String configName, Boolean defaultValue) {
+        String configValue = getStringValue(configName);
+        return configValue == null ? defaultValue : Boolean.parseBoolean(configValue);
+    }
+
+    /**
      * 添加系统配置
      *
      * @param systemConfig
      * @throws Exception
      */
     @Transactional
-    public void addSystemConfig(SystemConfig systemConfig) throws DuplicateKeyException {
+    public void addSystemConfig(SystemConfig systemConfig) {
         Assert.notNull(systemConfig, "数据不能为空!");
-        try {
-            systemConfigDao.addSystemConfig(systemConfig);
-        } catch (DuplicateKeyException e) {
-            throw new DuplicateKeyException("该配置已存在!");
-        }
+        systemConfigDao.addSystemConfig(systemConfig);
     }
 
     /**
@@ -112,7 +153,7 @@ public class SystemConfigService {
      */
 
     /**
-     * 通过配置名获得配置值
+     * 从缓存通过配置名获得配置字符串值
      * 
      * @param configName
      * @return configValue
@@ -123,7 +164,7 @@ public class SystemConfigService {
     }
 
     /**
-     * 通过配置名获得配置值，若该配置为空则返回默认值
+     * 从缓存通过配置名获得配置字符串值，若该配置为空则返回默认值
      * 
      * @param configName
      * @param defaultValue
@@ -135,7 +176,7 @@ public class SystemConfigService {
     }
 
     /**
-     * 通过配置名查看其是否允许，若忽略大小写后为true则返回true，否则返回false
+     * 从缓存通过配置名获得布尔值，若忽略大小写后为true则返回true，否则返回false
      * 
      * @param configName
      * @return
@@ -145,7 +186,7 @@ public class SystemConfigService {
     }
 
     /**
-     * 通过配置名查看其是否允许，若配置为空时则返回默认值
+     * 从缓存通过配置名获得布尔值，若配置为空时则返回默认值
      * 
      * @param configName
      * @param defaultValue
