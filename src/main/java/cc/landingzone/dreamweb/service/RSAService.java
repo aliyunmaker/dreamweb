@@ -48,7 +48,7 @@ public class RSAService {
      * @return 密钥对，可能为空
      * @throws
      */
-    private RSAKeyPair getRSAKeyPair() throws RuntimeException {
+    private RSAKeyPair getRSAKeyPair() {
         SystemConfig rsaKey = systemConfigDao.getSystemConfigByName(CONFIG_NAME);
         if (rsaKey == null) {
             try {

@@ -83,7 +83,7 @@ public class SystemConfigService {
      * @param configName
      * @return
      */
-    public Boolean getBoolValue(String configName) {
+    public boolean getBoolValue(String configName) {
         return Boolean.parseBoolean(getStringValue(configName));
     }
 
@@ -144,7 +144,7 @@ public class SystemConfigService {
      * @param configName
      * @return
      */
-    public Boolean getBoolValueFromCache(String configName) {
+    public boolean getBoolValueFromCache(String configName) {
         return Boolean.parseBoolean(getStringValueFromCache(configName));
     }
 
@@ -160,7 +160,7 @@ public class SystemConfigService {
      * 
      * @return
      */
-    public Boolean isAllowWechatLogin() {
+    public boolean isAllowWechatLogin() {
         return getBoolValueFromCache("allowWechatLogin");
     }
 
@@ -169,7 +169,7 @@ public class SystemConfigService {
      * 
      * @return
      */
-    public Boolean isAllowLDAP() {
+    public boolean isAllowLDAP() {
         return getBoolValueFromCache("allowLDAP");
     }
 

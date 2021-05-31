@@ -50,7 +50,7 @@ public class SystemConfigController extends BaseController {
             Assert.hasText(configValue, "配置值不能为空!");
             String comment = request.getParameter("comment");
             String changeableStr = request.getParameter("changeable");
-            Assert.hasText(changeableStr, "可修改不能为空!");
+            Assert.hasText(changeableStr, "changeable不能为空!");
             boolean changeable = Boolean.parseBoolean(changeableStr);
 
             SystemConfig systemConfig = systemConfigService.getSystemConfigByName(configName);
@@ -80,7 +80,7 @@ public class SystemConfigController extends BaseController {
             Assert.hasText(configValue, "配置值不能为空!");
             String comment = request.getParameter("comment");
             String changeableStr = request.getParameter("changeable");
-            Assert.hasText(changeableStr, "可修改不能为空!");
+            Assert.hasText(changeableStr, "changeable不能为空!");
             boolean changeable = Boolean.parseBoolean(changeableStr);
             
             SystemConfig systemConfig = systemConfigService.getSystemConfigById(id);
