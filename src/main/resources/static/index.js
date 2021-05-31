@@ -54,6 +54,11 @@ Ext
                         leaf: true,
                         href: 'rsaKey/rsaKey.html',
                         hrefTarget: 'mainFrame'
+                    }, {
+                        text: "配置管理",
+                        leaf: true,
+                        href: 'systemConfig/systemConfig.html',
+                        hrefTarget: 'mainFrame'
                     }]
                 }]
             }
