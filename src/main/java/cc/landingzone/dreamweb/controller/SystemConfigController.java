@@ -79,15 +79,15 @@ public class SystemConfigController extends BaseController {
             String configValue = request.getParameter("configValue");
             Assert.hasText(configValue, "配置值不能为空!");
             String comment = request.getParameter("comment");
-            String changeableStr = request.getParameter("changeable");
-            Assert.hasText(changeableStr, "changeable不能为空!");
-            boolean changeable = Boolean.parseBoolean(changeableStr);
+            // String changeableStr = request.getParameter("changeable");
+            // Assert.hasText(changeableStr, "changeable不能为空!");
+            // boolean changeable = Boolean.parseBoolean(changeableStr);
             
             SystemConfig systemConfig = systemConfigService.getSystemConfigById(id);
             Assert.notNull(systemConfig, "该配置不存在!");
             systemConfig.setConfigValue(configValue);
             systemConfig.setComment(comment);
-            systemConfig.setChangeable(changeable);
+            // systemConfig.setChangeable(changeable);
             systemConfigService.updateSystemConfig(systemConfig);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
