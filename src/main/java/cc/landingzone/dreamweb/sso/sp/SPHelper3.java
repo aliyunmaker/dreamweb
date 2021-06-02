@@ -47,17 +47,6 @@ public class SPHelper3 {
         System.out.println(JsonUtils.toJsonString(list));
     }
 
-    public static String initMultiAccountSP(DefaultProfile profile, String idpProviderName,
-            Map<String, List<String>> roleMap) throws Exception {
-                StringBuilder result = new StringBuilder();
-        List<Map<String, String>> accountList = listAccounts(profile);
-        for (Map<String, String> accountMap : accountList) {
-            
-            String singleLog = initSingleAccountSP(profile, idpProviderName, roleMap);
-        }
-
-        return result.toString();
-    }
 
     /**
      * init sp (alicloud)
