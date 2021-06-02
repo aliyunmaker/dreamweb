@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.common;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -25,6 +26,8 @@ public class CommonConstants {
     // 是否线上环境
     public static final boolean ENV_ONLINE;
 
+    public static final String CONFIG_PATH = System.getProperty("user.dir") + "/config/";
+
     static {
         Properties properties = loadProperties();
         ENV_ONLINE = Boolean.parseBoolean(properties.getProperty("dreamweb.env_online"));
@@ -44,6 +47,9 @@ public class CommonConstants {
         Properties properties = new Properties();
         try {
             InputStream ins = CommonConstants.class.getResourceAsStream("/application.properties");
+            if (ins == null) {
+                ins = new FileInputStream(CommonConstants.CONFIG_PATH + "/application.properties");
+            }
             properties.load(ins);
             ins.close();
         } catch (Exception e) {
