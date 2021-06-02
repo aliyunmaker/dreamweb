@@ -67,13 +67,13 @@
                     },
                     success: function (result) {
                         let accountList = result.data;
-                        let acccountDiv = '<ul class="list-group">';
+                        let acccountDiv = '';
                         for (let index = 0; index < accountList.length; index++) {
                             let account = accountList[index];
-                            acccountDiv += '<li class="list-group-item">' + JSON.stringify(account) + '</li>'
+                            acccountDiv += '<div class="list-group-item"><h4 class="list-group-item-heading">' + account.DisplayName + '  &nbsp;[' + account.AccountId + ']' + '</h4><p class="list-group-item-text">' + JSON.stringify(account) + '</p></div>';
+                            // acccountDiv += '<li class="list-group-item">' + JSON.stringify(account) + '</li>'
                             // acccountDiv += '<li class="list-group-item">' + account.DisplayName + '[' + account.AccountId + ']' + '</li>'
                         }
-                        acccountDiv += '</ul>';
                         $("#accountListDiv").html(acccountDiv);
                     }
                 });
@@ -128,9 +128,8 @@
 
 
         <h6>子账号列表</h6>
-        <div id="accountListDiv">
+        <div class="list-group" id="accountListDiv">
         </div>
-
         <br>
         <hr>
         <div id="consoleDiv" style="background-color: black;color: #adb5bd;word-break: break-all;padding: 10px;">
