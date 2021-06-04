@@ -250,6 +250,12 @@
                             <exclude>ssocert/**</exclude>
                         </excludes>
                     </resource>
+                    <resource>
+                        <directory>config/deploy/resources</directory>
+                        <excludes>
+                            <exclude>application.properties</exclude>
+                        </excludes>
+                    </resource>
                 </resources>
             </build>
         </profile>
