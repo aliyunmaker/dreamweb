@@ -11,3 +11,12 @@ CREATE TABLE `system_config` (
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `config_name` (`config_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+LOCK TABLES `system_config` WRITE;
+
+INSERT INTO `system_config` (`config_name`, `config_value`, `comment`, `changeable`, `gmt_create`)
+VALUES
+('allowWechatLogin','true','是否允许通过微信登录',TRUE, now()),
+('allowLDAP','false','是否允许通过LDAP登录',TRUE, now());
+
+UNLOCK TABLES;
