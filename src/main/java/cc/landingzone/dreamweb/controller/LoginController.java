@@ -64,6 +64,7 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/login")
     public String login(Model model) {
+        model.addAttribute("loginPageTitle", systemConfigService.getLoginPageTitle());
         model.addAttribute("allowWechatLogin", systemConfigService.isAllowWechatLogin());
         return "login";
     }
