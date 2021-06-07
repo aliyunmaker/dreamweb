@@ -173,4 +173,7 @@ public class SystemConfigService {
         return getBoolValueFromCache("allowLDAP");
     }
 
+    public String getLoginPageTitle() {
+        return Optional.ofNullable(getStringValueFromCache("loginPageTitle")).orElse("无限梦想");
+    }
 }
