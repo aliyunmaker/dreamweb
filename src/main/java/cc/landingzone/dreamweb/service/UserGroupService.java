@@ -1,6 +1,9 @@
 package cc.landingzone.dreamweb.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cc.landingzone.dreamweb.dao.UserGroupDao;
 import cc.landingzone.dreamweb.model.User;
@@ -48,6 +51,25 @@ public class UserGroupService {
     public UserGroup getUserGroupByName(String name) {
         Assert.hasText(name, "名称不能为空!");
         return userGroupDao.getUserGroupByName(name);
+    }
+
+    public List<UserGroup> getUserGroupsByNames(List<String> userGroupNames) {
+        Assert.notEmpty(userGroupNames, "用户组名不能为空!");
+        List<UserGroup> userGroups = userGroupDao.getUserGroupsByNames(userGroupNames);
+        if (userGroups.size() != userGroupNames.size()) {
+            List<String> diff = new ArrayList<String>();
+            Map<String, Integer> map = new HashMap<String, Integer>(userGroupNames.size());
+            for (UserGroup userGroup : userGroups) {
+                map.put(userGroup.getName(), 1);
+            }
+            for (String name : userGroupNames) {
+                if (map.get(name) == null) {
+                    diff.add(name);
+                }
+            }
+            Assert.isTrue(userGroups.size() == userGroupNames.size(), "操作失败！以下用户组不存在：" + String.join(",", diff));
+        }
+        return userGroups;
     }
 
     @Transactional

@@ -28,6 +28,15 @@
         from user_group
     </select>
 
+    <select id="getUserGroupsByNames"
+            resultType="cc.landingzone.dreamweb.model.UserGroup">
+        select *
+        from user_group
+        where name in (
+            <foreach collection="userGroupNames" item="userGroupName" index="index" separator=",">#{userGroupName}</foreach>
+        )
+    </select>
+
     <delete id="deleteUserGroup" parameterType="int">
         delete
         from user_group
