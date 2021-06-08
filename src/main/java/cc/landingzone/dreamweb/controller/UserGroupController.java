@@ -136,7 +136,7 @@ public class UserGroupController extends BaseController {
             Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
             String userLoginNamesStr = request.getParameter("userLoginNames");
             Assert.hasText(userLoginNamesStr, "userLoginNames must not be blank!");
-            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split(","))
+            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split(",\\s*|[\\n\\r]"))
                 .map(StringUtils::trim)
                 .collect(Collectors.toList());
             List<User> users = userService.getUsersByLoginNames(userLoginNames);
@@ -146,6 +146,45 @@ public class UserGroupController extends BaseController {
                     userGroupAssociate.setUserGroupId(userGroupId);
                     userGroupAssociate.setUserId(user.getId());
                     return userGroupAssociate;
+                })
+                .collect(Collectors.toList());
+            userGroupAssociateService.addUserGroupAssociates(userGroupAssociates);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/batchAssociateUsersAndGroups.do")
+    public void batchAssociateUsersAndGroups(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userLoginNamesStr = request.getParameter("userLoginNames");
+            Assert.hasText(userLoginNamesStr, "userLoginNames must not be blank!");
+            String userGroupNamesStr = request.getParameter("userGroupNames");
+            Assert.hasText(userGroupNamesStr, "userGroupNames must not be blank!");
+
+            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split(",\\s*|[\\n\\r]"))
+                .map(StringUtils::trim)
+                .collect(Collectors.toList());
+            List<User> users = userService.getUsersByLoginNames(userLoginNames);
+
+            List<String> userGroupNames = Arrays.stream(userGroupNamesStr.split(",\\s*|[\\n\\r]"))
+                .map(StringUtils::trim)
+                .collect(Collectors.toList());
+            List<UserGroup> userGroups = userGroupService.getUserGroupsByNames(userGroupNames);
+
+            List<UserGroupAssociate> userGroupAssociates = users.stream()
+                .flatMap(user -> {
+                    return userGroups.stream()
+                        .map(userGroup -> {
+                            UserGroupAssociate userGroupAssociate = new UserGroupAssociate();
+                            userGroupAssociate.setUserGroupId(userGroup.getId());
+                            userGroupAssociate.setUserId(user.getId());
+                            return userGroupAssociate;
+                        });
                 })
                 .collect(Collectors.toList());
             userGroupAssociateService.addUserGroupAssociates(userGroupAssociates);
