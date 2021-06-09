@@ -55,6 +55,21 @@ Ext
                         href: 'systemConfig/systemConfig.html',
                         hrefTarget: 'mainFrame'
                     }]
+                }, {
+                    text: "<font style='font-weight: bold;'>可视化工具</font>",
+                    iconCls: 'MyExt-menu-sub',
+                    expanded: true,
+                    children: [{
+                        text: "跨账号SLS可视化",
+                        leaf: true,
+                        href: 'slsView/slsView.html',
+                        hrefTarget: 'mainFrame'
+                    }, {
+                        text: "SLS配置",
+                        leaf: true,
+                        href: 'slsConfig/slsConfig.html',
+                        hrefTarget: 'mainFrame'
+                    }]
                 }]
             }
         });
