@@ -152,6 +152,26 @@ CREATE TABLE `system_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+
+# Dump of table sls_config
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `sls_config`;
+
+CREATE TABLE `sls_config` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT,
+                            `config_name` varchar(100) NOT NULL COMMENT '配置名',
+                            `config_value` varchar(5000) DEFAULT NULL COMMENT '配置',
+                            `config_owner_id` int(11) NOT NULL COMMENT '所有者',
+                            `comment` varchar(1000) DEFAULT NULL,
+                            `gmt_create` datetime DEFAULT NULL,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `config_name` (`config_name`),
+                            UNIQUE KEY `config_owner_id` (`config_owner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

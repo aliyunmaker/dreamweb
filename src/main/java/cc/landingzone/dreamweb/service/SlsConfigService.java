@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class SlsConfigService {
+
     private static Logger logger = LoggerFactory.getLogger(LoginRecordService.class);
 
     @Autowired

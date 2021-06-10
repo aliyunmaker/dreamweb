@@ -17,7 +17,8 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/slsConfig")
-public class SlsConfigController extends BaseController{
+public class SlsConfigController extends BaseController {
+
     @Autowired
     SlsConfigService slsConfigService;
 
