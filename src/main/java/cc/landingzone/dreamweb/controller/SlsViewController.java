@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.controller;
 import cc.landingzone.dreamweb.model.*;
 import cc.landingzone.dreamweb.service.SlsConfigService;
 import cc.landingzone.dreamweb.service.SlsViewService;
+import com.aliyun.openservices.log.common.Project;
 import io.jsonwebtoken.lang.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,8 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/slsView")
-public class SlsViewController extends BaseController{
+public class SlsViewController extends BaseController {
+
     @Autowired
     SlsViewService slsViewService;
 
@@ -43,10 +45,10 @@ public class SlsViewController extends BaseController{
             // 获取当前账号下的SLS配置信息
             SlsConfigInfo slsConfigInfo = slsConfigService.getSlsConfigInfoFromCache();
             Assert.notNull(slsConfigInfo, "账号下SLS配置不存在！请先进行SLS配置");
-            List<SlsProjectInfo> projectInfoList = slsViewService.listProjectsInfo(page, slsConfigInfo);
+            List<Project> projectList = slsViewService.listProjectsInfo(page, slsConfigInfo);
 
-            result.setTotal(projectInfoList.size());
-            result.setData(projectInfoList);
+            result.setTotal(projectList.size());
+            result.setData(projectList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

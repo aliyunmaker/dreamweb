@@ -2,29 +2,26 @@ package cc.landingzone.dreamweb.service;
 
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.SlsConfigInfo;
-import cc.landingzone.dreamweb.model.SlsProjectInfo;
 import cc.landingzone.dreamweb.utils.SlsUtils;
-import com.alibaba.fastjson.JSON;
-import com.aliyuncs.exceptions.ClientException;
+import com.aliyun.openservices.log.Client;
+import com.aliyun.openservices.log.common.Project;
+import com.aliyun.openservices.log.exception.LogException;
+import com.aliyun.openservices.log.request.ListLogStoresRequest;
+import com.aliyun.openservices.log.request.ListProjectRequest;
+import com.aliyun.openservices.log.response.ListLogStoresResponse;
+import com.aliyun.openservices.log.response.ListProjectResponse;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class SlsViewService {
+
     private static Logger logger = LoggerFactory.getLogger(LoginRecordService.class);
     private static final String ROLE_SESSION = "console-role-session"; // 用户自定义参数。此参数用来区分不同的令牌，可用于用户级别的访问审计。
     private static final String SLS_HOST_SUFFIX = ".log.aliyuncs.com";
@@ -35,41 +32,21 @@ public class SlsViewService {
      * @param slsConfigInfo sls配置信息
      * @return 全部Project信息
      */
-    public List<SlsProjectInfo> listProjectsInfo(Page page, SlsConfigInfo slsConfigInfo) {
+    public List<Project> listProjectsInfo(Page page, SlsConfigInfo slsConfigInfo) {
         String host = slsConfigInfo.getSlsRegion() + SLS_HOST_SUFFIX; //服务入口
-        String requestUrl = String.format("http://%s/?offset=%d&size=%d", host, page.getStart(), page.getLimit()); // 访问地址
 
-        // 创建Http Get请求
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet projectHttpGet = new HttpGet(requestUrl);
-
+        List<Project> projectList = new ArrayList<>();
         try {
-            // 设置访问aliyun sls所需的Http请求头
-            projectHttpGet.setHeader("x-log-apiversion", "0.6.0");
-            projectHttpGet.setHeader("x-log-bodyrawsize", "0");
-            projectHttpGet.setHeader("x-log-signaturemethod", "hmac-sha1");
-            // 使用secretKey对http请求签名
-            projectHttpGet.setHeader("authorization", SlsUtils.generateAuthorization(projectHttpGet,
-                    slsConfigInfo.getSlsAccessKey(),
-                    slsConfigInfo.getSlsSecretKey()));
-        } catch (UnsupportedEncodingException e) {
+            Client slsClient = new Client(host, slsConfigInfo.getSlsAccessKey(), slsConfigInfo.getSlsSecretKey());
+            ListProjectRequest request = new ListProjectRequest("", page.getStart(), page.getLimit());
+            ListProjectResponse response = slsClient.ListProject(request);
+            projectList = response.getProjects();
+        } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
-        List<SlsProjectInfo> projectInfoList = new ArrayList<>();
-        try {
-            // 发送Http请求
-            CloseableHttpResponse httpResponse = httpClient.execute(projectHttpGet);
-            if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                String projectInfoRes = EntityUtils.toString(httpResponse.getEntity());
-                logger.info("received projectInfo: {}", projectInfoRes);
-                projectInfoList = JSON.parseObject(projectInfoRes).getJSONArray("projects").toJavaList(SlsProjectInfo.class);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return projectInfoList;
+        return projectList;
     }
 
 
@@ -81,37 +58,17 @@ public class SlsViewService {
      * @return Logstore信息
      */
     public List<String> listLogstoresInfo(String projectName, Page page, SlsConfigInfo slsConfigInfo) {
-        String host = projectName + "." + slsConfigInfo.getSlsRegion() + SLS_HOST_SUFFIX; // 服务入口
-        String requestUrl = String.format("http://%s/logstores?logstoreName&offset=%d&size=%d", host, page.getStart(), page.getLimit()); // 请求路径
-
-        // 创建Http Get请求
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet logstoreHttpGet = new HttpGet(requestUrl);
-
-        try {
-            // 设置访问aliyun sls所需的Http请求头
-            logstoreHttpGet.setHeader("x-log-apiversion", "0.6.0");
-            logstoreHttpGet.setHeader("x-log-bodyrawsize", "0");
-            logstoreHttpGet.setHeader("x-log-signaturemethod", "hmac-sha1");
-            // 使用secretKey对http请求签名
-            logstoreHttpGet.setHeader("authorization", SlsUtils.generateAuthorization(logstoreHttpGet,
-                    slsConfigInfo.getSlsAccessKey(),
-                    slsConfigInfo.getSlsSecretKey()));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        String host = slsConfigInfo.getSlsRegion() + SLS_HOST_SUFFIX; // 服务入口
 
         List<String> logstoreList = new ArrayList<>();
         try {
-            // 发送Http请求
-            CloseableHttpResponse httpResponse = httpClient.execute(logstoreHttpGet);
-            if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                String logstoreRes = EntityUtils.toString(httpResponse.getEntity());
-                logger.info("received projectInfo: {}", logstoreRes);
-                logstoreList = JSON.parseObject(logstoreRes).getJSONArray("logstores").toJavaList(String.class);
-            }
-        } catch (IOException e) {
+            Client slsClient = new Client(host, slsConfigInfo.getSlsAccessKey(), slsConfigInfo.getSlsSecretKey());
+            ListLogStoresRequest logStoresRequest = new ListLogStoresRequest(projectName, page.getStart(), page.getLimit(), "");
+            ListLogStoresResponse logStoresResponse = slsClient.ListLogStores(logStoresRequest);
+            logstoreList = logStoresResponse.GetLogStores();
+        } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
         return logstoreList;
@@ -143,15 +100,11 @@ public class SlsViewService {
             // 3. 通过登录token生成日志服务web访问链接进行跳转
             signInUrl = SlsUtils.generateSignInUrl(signInToken, projectName, logstroeName);
             Assert.notNull(signInUrl, "signInUrl生成失败");
-        } catch (ClientException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
+
         return signInUrl;
     }
 }

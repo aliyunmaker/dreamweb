@@ -8,11 +8,8 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
-import org.apache.commons.codec.digest.HmacAlgorithms;
-import org.apache.commons.codec.digest.HmacUtils;
-import org.apache.http.Header;
+
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -23,14 +20,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.lang.System.exit;
 
 public class SlsUtils {
+
     private static Logger logger = LoggerFactory.getLogger(SignatureUtils.class);
 
     private static final String STS_HOST = "sts.aliyuncs.com";
@@ -119,125 +111,5 @@ public class SlsUtils {
                 URLEncoder.encode(slsUrl, "utf-8"),
                 URLEncoder.encode(signInToken, "utf-8"));
         return signInUrl;
-    }
-
-    /**
-     * 生成Authorization
-     * @param httpGet Get请求，携带有请求头
-     * @param secretKey SLS配置中的AccessKeySecret
-     * @return 该httpGet请求的数字签名
-     * @throws UnsupportedEncodingException
-     */
-    public static String generateAuthorization(HttpGet httpGet, String accessKey, String secretKey) throws UnsupportedEncodingException {
-        // 1. 根据Http头信息，生成UTF-8编码的签名字符串
-        String signString = generateSignString(httpGet);
-        String signStringUTF8 = new String(signString.getBytes(), "utf-8");
-
-        // 2. 使用Hmac-sha1算法加密
-        HmacUtils hm1 = new HmacUtils(HmacAlgorithms.HMAC_SHA_1, secretKey);
-        byte[] encryptedSignString = hm1.hmac(signStringUTF8);
-
-        // 3. 使用Base64编码
-        String signature = Base64.getEncoder().encodeToString(encryptedSignString);
-        String authorization = "LOG " + accessKey + ":" + signature;
-
-        return authorization;
-    }
-
-    /**
-     * 根据Get请求，生成签名
-     * @param httpGet 请求信息
-     * @return
-     */
-    private static String generateSignString(HttpGet httpGet) {
-        // 1. 获取签名所需的请求method
-        String method = httpGet.getMethod();
-
-        // 2. 获取签名所需的访问resource
-        String resourcePattern = "http://.*(/.*)";
-        Pattern pattern = Pattern.compile(resourcePattern);
-        Matcher matcher = pattern.matcher(httpGet.getURI().toString());
-
-        String canonicalizedResource = "";
-        if(matcher.find()) {
-            canonicalizedResource = matcher.group(1);
-        }
-
-        // 3. 根据Http的请求头，拼接生成签名所需的canonicalizedLogHeaders
-        Header[] headers = httpGet.getAllHeaders();
-        // 请求头按字典序排序
-        Arrays.sort(headers, Comparator.comparing(NameValuePair::getName));
-        // 以x-log和x-acs开头的签名需要被拼接
-        String logHeaderPattern = "^((x-log)|(x-acs)).*";
-
-        StringBuilder canonicalizedLogHeadersBuilder = new StringBuilder();
-        for(Header header : headers) {
-            String key = header.getName();
-            String value = header.getValue();
-            if(Pattern.matches(logHeaderPattern, key)) {
-                canonicalizedLogHeadersBuilder.append(key).append(":").append(value);
-                canonicalizedLogHeadersBuilder.append("\n");
-            }
-        }
-
-        String canonicalizedLogHeaders;
-        if(canonicalizedLogHeadersBuilder.length() == 0) {
-            canonicalizedLogHeaders = "";
-        } else {
-            canonicalizedLogHeaders = canonicalizedLogHeadersBuilder
-                    .deleteCharAt(canonicalizedLogHeadersBuilder.length()-1)
-                    .toString();
-        }
-
-        // 4. 添加Date
-        String GMTDate = generateGMTDate();
-        httpGet.setHeader("Date", GMTDate);
-
-
-        // 5. 将各个组件拼接程签名字符串
-        String signString = generateSignString(method,
-                "",
-                "",
-                GMTDate,
-                canonicalizedLogHeaders,
-                canonicalizedResource);
-        return signString;
-    }
-
-    /**
-     * 根据各个组件拼接生成签名字符串
-     * @param verb HTTP请求方法
-     * @param contentMD5 HTTP请求Body部分的MD5值，必须大写字符串
-     * @param contentType HTTP请求中Body部分类型
-     * @param date HTTP请求中的标准时间戳
-     * @param canonicalizedLogHeaders HTTP请求中以x-log和x-acs为前缀的自定义头构造的字符串
-     * @param canonicalizedResource HTTP请求资源构造的字符串
-     * @return 签名字符串
-     */
-    private static String generateSignString(String verb,
-                                             String contentMD5,
-                                             String contentType,
-                                             String date,
-                                             String canonicalizedLogHeaders,
-                                             String canonicalizedResource) {
-        String signString = verb + "\n"
-                + contentMD5 + "\n"
-                + contentType + "\n"
-                + date + "\n"
-                + canonicalizedLogHeaders + "\n"
-                + canonicalizedResource;
-
-        return signString;
-    }
-
-    /**
-     * 生成GMT标准时间戳
-     * @return
-     */
-    private static String generateGMTDate() {
-        SimpleDateFormat sdf3 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-        sdf3.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String rfc1123 = sdf3.format(new Date());
-        return rfc1123;
     }
 }
