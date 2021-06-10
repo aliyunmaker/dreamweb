@@ -136,8 +136,10 @@ public class UserGroupController extends BaseController {
             Integer userGroupId = Integer.valueOf(request.getParameter("userGroupId"));
             String userLoginNamesStr = request.getParameter("userLoginNames");
             Assert.hasText(userLoginNamesStr, "userLoginNames must not be blank!");
-            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split(",\\s*|[\\n\\r]"))
+            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split("[,\\n\\r]"))
                 .map(StringUtils::trim)
+                .filter(StringUtils::isNotBlank)
+                .distinct()
                 .collect(Collectors.toList());
             List<User> users = userService.getUsersByLoginNames(userLoginNames);
             List<UserGroupAssociate> userGroupAssociates = users.stream()
@@ -166,13 +168,17 @@ public class UserGroupController extends BaseController {
             String userGroupNamesStr = request.getParameter("userGroupNames");
             Assert.hasText(userGroupNamesStr, "userGroupNames must not be blank!");
 
-            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split(",\\s*|[\\n\\r]"))
+            List<String> userLoginNames = Arrays.stream(userLoginNamesStr.split("[,\\n\\r]"))
                 .map(StringUtils::trim)
+                .filter(StringUtils::isNotBlank)
+                .distinct()
                 .collect(Collectors.toList());
             List<User> users = userService.getUsersByLoginNames(userLoginNames);
 
-            List<String> userGroupNames = Arrays.stream(userGroupNamesStr.split(",\\s*|[\\n\\r]"))
+            List<String> userGroupNames = Arrays.stream(userGroupNamesStr.split("[,\\n\\r]"))
                 .map(StringUtils::trim)
+                .filter(StringUtils::isNotBlank)
+                .distinct()
                 .collect(Collectors.toList());
             List<UserGroup> userGroups = userGroupService.getUserGroupsByNames(userGroupNames);
 
