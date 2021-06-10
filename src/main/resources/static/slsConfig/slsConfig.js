@@ -42,23 +42,23 @@ Ext.onReady(function () {
       flex: 2
     }],
     tbar: [{
-      text: '修改',
-      iconCls: 'MyExt-modify',
-      handler: function () {
-        var select = MyExt.util.SelectGridModel(slsConfigGrid);
-        if (!select) {
-          return;
-        }
-        slsConfigFormWindow.changeFormUrlAndShow("../slsConfig/updateSlsConfig.do");
-        slsConfigFormWindow.getFormPanel().getForm().loadRecord(select[0]);
-      }
-    }, {
       text: '增加',
       iconCls: 'MyExt-add',
       handler: function () {
         slsConfigFormWindow.changeFormUrlAndShow('../slsConfig/addSlsConfig.do');
       }
     }, {
+      text: '修改',
+      iconCls: 'MyExt-modify',
+      handler: function () {
+        var select = MyExt.util.SelectGridModel(slsConfigGrid);
+        if (!select) {
+          return;
+          }
+          slsConfigFormWindow.changeFormUrlAndShow("../slsConfig/updateSlsConfig.do");
+          slsConfigFormWindow.getFormPanel().getForm().loadRecord(select[0]);
+        }
+      }, {
       text: '删除',
         iconCls: 'MyExt-delete',
         handler: function () {
