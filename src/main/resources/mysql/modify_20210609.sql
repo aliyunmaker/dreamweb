@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS `sls_config`;
-
 CREATE TABLE `sls_config` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
                             `config_name` varchar(100) NOT NULL COMMENT '配置名',
