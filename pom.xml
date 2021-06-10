@@ -115,6 +115,11 @@
             <artifactId>aliyun-java-sdk-ecs</artifactId>
             <version>4.17.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun.openservices</groupId>
+            <artifactId>aliyun-log</artifactId>
+            <version>0.6.60</version>
+        </dependency>
         <!-- aliyun sdk end -->
 
         <!-- httpclient 4.5 -->
