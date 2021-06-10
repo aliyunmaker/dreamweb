@@ -26,7 +26,7 @@ public class SlsUtils {
     private static Logger logger = LoggerFactory.getLogger(SlsUtils.class);
 
     private static final String STS_HOST = "sts.aliyuncs.com";
-    private static final String SIGN_IN_HOST = "http://signin.aliyun.com";
+    private static final String SIGN_IN_HOST = "https://signin.aliyun.com";
 
     /**
      * 访问令牌服务获取临时AK和Token
