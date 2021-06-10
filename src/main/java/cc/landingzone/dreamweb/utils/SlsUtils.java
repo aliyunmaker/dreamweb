@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 
 public class SlsUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(SignatureUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(SlsUtils.class);
 
     private static final String STS_HOST = "sts.aliyuncs.com";
     private static final String SIGN_IN_HOST = "http://signin.aliyun.com";

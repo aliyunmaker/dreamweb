@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 public class SlsViewService {
 
-    private static Logger logger = LoggerFactory.getLogger(LoginRecordService.class);
+    private static Logger logger = LoggerFactory.getLogger(SlsViewService.class);
     private static final String ROLE_SESSION = "console-role-session"; // 用户自定义参数。此参数用来区分不同的令牌，可用于用户级别的访问审计。
     private static final String SLS_HOST_SUFFIX = ".log.aliyuncs.com";
 
@@ -42,7 +42,6 @@ public class SlsViewService {
             ListProjectResponse response = slsClient.ListProject(request);
             projectList = response.getProjects();
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error(e.getMessage(), e);
         }
 
@@ -67,7 +66,6 @@ public class SlsViewService {
             ListLogStoresResponse logStoresResponse = slsClient.ListLogStores(logStoresRequest);
             logstoreList = logStoresResponse.GetLogStores();
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error(e.getMessage(), e);
         }
 
@@ -101,7 +99,6 @@ public class SlsViewService {
             signInUrl = SlsUtils.generateSignInUrl(signInToken, projectName, logstroeName);
             Assert.notNull(signInUrl, "signInUrl生成失败");
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error(e.getMessage(), e);
         }
 
