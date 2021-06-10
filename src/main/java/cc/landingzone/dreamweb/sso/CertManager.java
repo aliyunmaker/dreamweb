@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.sso;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -9,6 +10,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 import org.opensaml.xml.security.x509.BasicX509Credential;
 import org.springframework.util.FileCopyUtils;
+
+import cc.landingzone.dreamweb.common.CommonConstants;
 
 /**
  * CertManager
@@ -22,13 +25,18 @@ public class CertManager {
 
     public static void initSigningCredential() throws Exception {
 
-
         InputStream inStream = CertManager.class.getResourceAsStream(SSOConstants.PUBLIC_KEY_PATH);
+        if (inStream == null) {
+            inStream = new FileInputStream(CommonConstants.CONFIG_PATH + SSOConstants.PUBLIC_KEY_PATH);
+        }
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         X509Certificate publicKey = (X509Certificate) cf.generateCertificate(inStream);
         inStream.close();
 
         InputStream keyInStream = CertManager.class.getResourceAsStream(SSOConstants.PRIVATE_KEY_PATH);
+        if (keyInStream == null) {
+            keyInStream = new FileInputStream(CommonConstants.CONFIG_PATH + SSOConstants.PRIVATE_KEY_PATH);
+        }
         byte[] keyBuf = FileCopyUtils.copyToByteArray(keyInStream);
 
         // create private key

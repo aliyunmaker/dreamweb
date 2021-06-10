@@ -56,6 +56,7 @@ public class RSAService {
                 rsaKey = new SystemConfig();
                 rsaKey.setConfigName(CONFIG_NAME);
                 rsaKey.setConfigValue(JsonUtils.toJsonString(rsaKeyPair));
+                rsaKey.setComment("系统密钥");
                 rsaKey.setChangeable(false);
                 if (systemConfigDao.addSystemConfig(rsaKey) == 0) {
                     rsaKey = systemConfigDao.getSystemConfigByName(CONFIG_NAME);

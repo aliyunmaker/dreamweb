@@ -96,6 +96,12 @@ Ext.onReady(function () {
           });
         });
       }
+    }, {
+      text: '关联用户',
+      iconCls: 'MyExt-add',
+      handler: function () {
+        batchUserGroupFormWindow.changeFormUrlAndShow('');
+      }
     }],
     listeners: {
       itemclick: function (grid, record) {
@@ -361,6 +367,41 @@ Ext.onReady(function () {
         }, function (data) {
           batchUserFormWindow.hide();
           userStore.load();
+          MyExt.Msg.alert('操作成功!');
+        });
+      }
+    }
+  });
+
+  var batchUserGroupFormWindow = new MyExt.Component.FormWindow({
+    title: '关联用户',
+    width: 500,
+    height: 300,
+    formItems: [{
+      name: 'id',
+      hidden: true
+    }, {
+      xtype: 'textarea',
+      height: 120,
+      emptyText: '用户登录名(使用英文逗号或换行分隔用户, 举例: admin,user1)',
+      fieldLabel: '用户',
+      name: 'userLoginNames'
+    }, {
+      xtype: 'textarea',
+      height: 120,
+      emptyText: '用户组名(使用英文逗号或换行分隔用户, 举例: group1,group2)',
+      fieldLabel: '用户组',
+      name: 'userGroupNames'
+    }],
+    submitBtnFn: function () {
+      var form = batchUserGroupFormWindow.getFormPanel().getForm();
+      if (form.isValid()) {
+        MyExt.util.Ajax('../userGroup/batchAssociateUsersAndGroups.do', {
+          userLoginNames: form.getValues().userLoginNames,
+          userGroupNames: form.getValues().userGroupNames
+        }, function (data) {
+          batchUserGroupFormWindow.hide();
+          reload();
           MyExt.Msg.alert('操作成功!');
         });
       }
