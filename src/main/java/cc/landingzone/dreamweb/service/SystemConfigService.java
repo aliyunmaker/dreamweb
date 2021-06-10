@@ -138,14 +138,20 @@ public class SystemConfigService {
         return cache.getUnchecked(configName).orElse(null);
     }
 
+    public String getStringValueFromCache(String configName, String defaultValue) {
+        Assert.hasText(configName, "配置名不能为空!");
+        return cache.getUnchecked(configName).orElse(defaultValue);
+    }
+
     /**
      * 从缓存通过配置名获得布尔值，若忽略大小写后为true则返回true，否则返回false
      * 
      * @param configName
      * @return
      */
-    public boolean getBoolValueFromCache(String configName) {
-        return Boolean.parseBoolean(getStringValueFromCache(configName));
+    public boolean getBooleanValueFromCache(String configName) {
+        Assert.hasText(configName, "配置名不能为空!");
+        return cache.getUnchecked(configName).map(Boolean::parseBoolean).orElse(false);
     }
 
 
@@ -161,7 +167,7 @@ public class SystemConfigService {
      * @return
      */
     public boolean isAllowWechatLogin() {
-        return getBoolValueFromCache("allowWechatLogin");
+        return getBooleanValueFromCache("allowWechatLogin");
     }
 
     /**
@@ -170,7 +176,10 @@ public class SystemConfigService {
      * @return
      */
     public boolean isAllowLDAP() {
-        return getBoolValueFromCache("allowLDAP");
+        return getBooleanValueFromCache("allowLDAP");
     }
 
+    public String getLoginPageTitle() {
+        return getStringValueFromCache("loginPageTitle", "无限梦想");
+    }
 }
