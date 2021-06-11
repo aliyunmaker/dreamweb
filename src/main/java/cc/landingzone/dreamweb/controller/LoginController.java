@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -60,6 +61,15 @@ public class LoginController extends BaseController {
         } catch (Exception e) {
         }
 
+    }
+
+    @RequestMapping("/index.html")
+    public String hello(Model model) {
+        model.addAttribute("isAdmin", AuthorityUtils.authorityListToSet(
+            SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+            ).contains("ROLE_ADMIN"));
+        model.addAttribute("allowSLS", systemConfigService.isAllowSLS());
+        return "index";
     }
 
     @RequestMapping("/login")
