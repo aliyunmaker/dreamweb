@@ -182,4 +182,8 @@ public class SystemConfigService {
     public String getLoginPageTitle() {
         return getStringValueFromCache("loginPageTitle", "无限梦想");
     }
+
+    public boolean isAllowSLS() {
+        return getBooleanValueFromCache("allowSLS");
+    }
 }
