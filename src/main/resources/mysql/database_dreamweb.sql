@@ -157,7 +157,8 @@ INSERT INTO `system_config` (`config_name`, `config_value`, `comment`, `changeab
 VALUES
 ('allowWechatLogin','true','是否允许通过微信登录',TRUE,now()),
 ('allowLDAP','false','是否允许通过LDAP登录',TRUE,now()),
-('loginPageTitle','无限梦想','登录页标题',TRUE,now());
+('loginPageTitle','无限梦想','登录页标题',TRUE,now()),
+('allowSLS','false','可视化工具SLS开关',TRUE,now());
 
 UNLOCK TABLES;
 
