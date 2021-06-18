@@ -179,11 +179,21 @@ public class SystemConfigService {
         return getBooleanValueFromCache("allowLDAP");
     }
 
+    /**
+     * 登录页标题
+     * 
+     * @return
+     */
     public String getLoginPageTitle() {
         return getStringValueFromCache("loginPageTitle", "无限梦想");
     }
 
-    public boolean isAllowSLS() {
-        return getBooleanValueFromCache("allowSLS");
+    /**
+     * 是否有解决方案Demo的选项
+     * 
+     * @return
+     */
+    public boolean isAllowSolutionDemo() {
+        return getBooleanValueFromCache("allowSolutionDemo");
     }
 }
