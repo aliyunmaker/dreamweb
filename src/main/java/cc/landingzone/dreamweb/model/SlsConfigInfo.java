@@ -1,6 +1,7 @@
 package cc.landingzone.dreamweb.model;
 
 public class SlsConfigInfo {
+
     private String slsAccessKey;
     private String slsSecretKey;
     private String slsArn;
