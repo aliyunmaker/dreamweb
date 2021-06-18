@@ -68,7 +68,7 @@ public class LoginController extends BaseController {
         model.addAttribute("isAdmin", AuthorityUtils.authorityListToSet(
             SecurityContextHolder.getContext().getAuthentication().getAuthorities()
             ).contains("ROLE_ADMIN"));
-        model.addAttribute("allowSLS", systemConfigService.isAllowSLS());
+        model.addAttribute("allowSolutionDemo", systemConfigService.isAllowSolutionDemo());
         return "index";
     }
 

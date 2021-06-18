@@ -1,0 +1,64 @@
+<html>
+<head>
+    <title>无限梦想</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!--
+    <meta http-equiv="pragma" content="no-cache" />
+    -->
+    <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
+    <script type="text/javascript"
+            src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/extjs/4.1/ext-all.js"></script>
+    <script type="text/javascript" src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/myComponent.js"></script>
+    <script type="text/javascript" src="bootstrap.js"></script>
+    <script type="text/javascript" src="bootstrap.bundle.js"></script>
+    <script type="text/javascript">
+        function requestParam(paras) {
+            var url = location.search;
+            if (url.indexOf('?') == -1) {
+                return null;
+            }
+            var paramsStr = url.substr(1).split("&");
+            var paramObj = {};
+            for (var i = 0; i < paramsStr.length; i++) {
+                var kv = paramsStr[i].split('=');
+                var key = kv[0], value = decodeURI(kv[1]);
+                paramObj[key] = value
+            }
+            return paramObj;
+        }
+
+        function loadWebPage(src) {
+            var srcDiv = '<iframe class="embed-responsive-item" src="' + src + '"></iframe>';
+            $("#srcDiv").html(srcDiv);
+        }
+
+        window.onload = function() {
+            var urlParam = requestParam();
+            var name = urlParam["name"]
+            var menu = JSON.parse(urlParam["menu"]);
+            $("#name").html(name);
+            let menuDiv = '';
+            for(var val in menu) {
+                menuDiv += '<label class="btn btn-outline-primary"><input type="radio" name="options" onchange="loadWebPage(&apos;' + menu[val] + '&apos;);" autocomplete="off">' + val + '</label>';
+            }
+            $("#menu").html(menuDiv);
+        }
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" id="name"></a>
+    
+            <div class="btn-group btn-group-toggle" data-toggle="buttons" id="menu">
+    
+            </div>
+        </nav>
+    
+        <div class="embed-responsive embed-responsive-4by3" id="srcDiv">
+    
+        </div>
+    </div>
+</body>
+</html>

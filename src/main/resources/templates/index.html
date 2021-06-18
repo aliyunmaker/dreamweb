@@ -60,12 +60,6 @@
                                 expanded: true,
                                 children: [
                                     {
-                                        text: "SSO自动化配置",
-                                        leaf: true,
-                                        href: 'ssoConfig/ssoConfig.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    {
                                         text: "API密钥管理",
                                         leaf: true,
                                         href: 'apiUser/apiUser.html',
@@ -82,28 +76,21 @@
                                         leaf: true,
                                         href: 'systemConfig/systemConfig.html',
                                         hrefTarget: 'mainFrame'
-                                    }
-                                ]
-                            },
-                            /*[/]*/
-                            /*[# th:if="${allowSLS}"]*/
-                            {
-                                text: "<font style='font-weight: bold;'>可视化工具</font>",
-                                iconCls: 'MyExt-menu-sub',
-                                expanded: true,
-                                children: [
+                                    },
+                                    /*[# th:if="${allowSolutionDemo}"]*/
                                     {
-                                        text: "跨账号SLS可视化",
+                                        text: "解决方案Demo",
                                         leaf: true,
-                                        href: 'slsView/slsView.html',
+                                        href: 'solutionDemo/solutionDemo.html',
                                         hrefTarget: 'mainFrame'
                                     },
-                                    {
-                                        text: "SLS配置",
-                                        leaf: true,
-                                        href: 'slsConfig/slsConfig.html',
-                                        hrefTarget: 'mainFrame'
-                                    }
+                                    // {
+                                    //     text: "解决方案配置",
+                                    //     leaf: true,
+                                    //     href: 'solutionConfig/solutionConfig.html',
+                                    //     hrefTarget: 'mainFrame'
+                                    // }
+                                    /*[/]*/
                                 ]
                             }
                             /*[/]*/
@@ -162,6 +149,5 @@
 </head>
 <body>
 <div align="left"></div>
-</script>
 </body>
 </html>
