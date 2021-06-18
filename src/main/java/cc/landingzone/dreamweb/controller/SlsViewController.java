@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 @Controller
@@ -26,6 +27,7 @@ public class SlsViewController extends BaseController {
 
     /**
      * 获取当前SLS配置下的全部Projects信息
+     *
      * @param request
      * @param response
      */
@@ -60,6 +62,7 @@ public class SlsViewController extends BaseController {
 
     /**
      * 获取当前SLS配置下指定Project中的全部Logstore信息
+     *
      * @param request
      * @param response
      */
@@ -98,6 +101,7 @@ public class SlsViewController extends BaseController {
 
     /**
      * 通过Project和Logstore名称，获取免登录Url
+     *
      * @param request
      * @param response
      */
