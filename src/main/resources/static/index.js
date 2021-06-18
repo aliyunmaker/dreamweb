@@ -69,6 +69,11 @@ Ext
                         leaf: true,
                         href: 'slsConfig/slsConfig.html',
                         hrefTarget: 'mainFrame'
+                    }, {
+                        text: "SLS自动化配置",
+                        leaf: true,
+                        href: 'slsAutoConfig/slsAutoConfig.html',
+                        hrefTarget: 'mainFrame'
                     }]
                 }]
             }
