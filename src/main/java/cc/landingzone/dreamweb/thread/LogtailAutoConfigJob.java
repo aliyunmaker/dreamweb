@@ -25,7 +25,8 @@ public class LogtailAutoConfigJob implements Callable<String> {
     private String masterUid;
     private StringBuilder result;
 
-    public LogtailAutoConfigJob(String accountId, String action, IAcsClient client, CountDownLatch countDownLatch, List<String> ecsInstanceIdList, String masterUid) {
+    public LogtailAutoConfigJob(String accountId, String action, IAcsClient client, CountDownLatch countDownLatch,
+                                List<String> ecsInstanceIdList, String masterUid) {
         this.accountId = accountId;
         this.action = action;
         this.client = client;
@@ -43,10 +44,10 @@ public class LogtailAutoConfigJob implements Callable<String> {
         result.append(LINE_BREAK);
 
         StringBuilder resourceIdsBuilder = new StringBuilder();
-        for(String instanceId: ecsInstanceIdList) {
+        for (String instanceId : ecsInstanceIdList) {
             resourceIdsBuilder.append("\"" + instanceId + "\",");
         }
-        if(resourceIdsBuilder.length() > 0) {
+        if (resourceIdsBuilder.length() > 0) {
             resourceIdsBuilder.deleteCharAt(resourceIdsBuilder.length() - 1);
         }
 
@@ -62,25 +63,25 @@ public class LogtailAutoConfigJob implements Callable<String> {
             // 1. 安装Logtail插件
             String logtailTemplate = "ACS-ECS-BulkyInstallLogAgent";
             String logtailParameter = "{\"action\":\"" + action + "\","
-                    + "\"rateControl\":{\"MaxErrors\":100,\"Concurrency\":1,\"Mode\":\"Concurrency\"},"
-                    + "\"regionId\":\"cn-hangzhou\","
-                    + "\"targets\":{\"Type\":\"ResourceIds\",\"ResourceIds\":[" + resourceIds + "],"
-                    + "\"regionId\":\"" + region + "\"}}";
+                + "\"rateControl\":{\"MaxErrors\":100,\"Concurrency\":1,\"Mode\":\"Concurrency\"},"
+                + "\"regionId\":\"cn-hangzhou\","
+                + "\"targets\":{\"Type\":\"ResourceIds\",\"ResourceIds\":[" + resourceIds + "],"
+                + "\"regionId\":\"" + region + "\"}}";
             String executionId = executeTemplate(logtailTemplate, logtailParameter);
             result.append(SlsUtils.drawWithColor(action) + " logtail, executionId: " + executionId);
             result.append(LINE_BREAK);
 
             Boolean isFinished = false;
-            while(!isFinished) {
+            while (!isFinished) {
                 // 每三秒查询一次执行结果
                 Thread.sleep(3000);
 
                 String status = queryExecutionResult(client, executionId);
-                if(status.equals("Success")) {
+                if ("Success".equals(status)) {
                     isFinished = true;
                     result.append("* status: " + SlsUtils.drawWithColor(status));
                     result.append(LINE_BREAK);
-                } else if(status.equals("Failed") || status.equals("Cancelled")) {
+                } else if ("Failed".equals(status) || "Cancelled".equals(status)) {
                     result.append("* status: " + SlsUtils.drawWithColor(status));
                     result.append(LINE_BREAK);
                     break;
@@ -98,8 +99,10 @@ public class LogtailAutoConfigJob implements Callable<String> {
             logger.info("Thread{}: create crossAccountsTemplate success", accountId);
 
             // 3. 执行模板
-            String crossAccountParameters = "{\"rateControl\":{\"MaxErrors\":100,\"Concurrency\":1,\"Mode\":\"Concurrency\"}," +
-                    "\"targets\":{\"Type\":\"ResourceIds\",\"ResourceIds\":[" + resourceIds + "],\"RegionId\":\"" + region + "\"}," +
+            String crossAccountParameters =
+                "{\"rateControl\":{\"MaxErrors\":100,\"Concurrency\":1,\"Mode\":\"Concurrency\"}," +
+                    "\"targets\":{\"Type\":\"ResourceIds\",\"ResourceIds\":[" + resourceIds + "],\"RegionId\":\""
+                    + region + "\"}," +
                     "\"masterUid\":\"" + masterUid + "\"," +
                     "\"action\":\"" + action + "\"," +
                     "\"accountId\":\"" + accountId + "\"" +
@@ -127,8 +130,9 @@ public class LogtailAutoConfigJob implements Callable<String> {
 
     /**
      * 在ECS上执行模板
+     *
      * @param templateName 模板名称
-     * @param parameters 参数
+     * @param parameters   参数
      * @return 执行Id
      * @throws ClientException
      */
@@ -148,7 +152,8 @@ public class LogtailAutoConfigJob implements Callable<String> {
 
     /**
      * 查询某个Execution的执行结果
-     * @param client client连接
+     *
+     * @param client      client连接
      * @param ExecutionId 执行id
      * @return 成功 or 等待 or 失败 or 取消
      * @throws ClientException
@@ -158,24 +163,24 @@ public class LogtailAutoConfigJob implements Callable<String> {
         request.setExecutionId(ExecutionId);
 
         ListExecutionsResponse response = client.getAcsResponse(request);
-        for(ListExecutionsResponse.Execution execution : response.getExecutions()) {
+        for (ListExecutionsResponse.Execution execution : response.getExecutions()) {
             String status = execution.getStatus();
-            if(status.equals("Failed") || status.equals("Cancelled")) {
+            if ("Failed".equals(status) || "Cancelled".equals(status)) {
                 result.append("execute failed, output: " + execution.getOutputs());
                 result.append(LINE_BREAK);
                 logger.error("ExecutionId: {}\nExecutionOutput: {}", ExecutionId, execution.getOutputs());
                 return status;
-            }else if(!status.equals("Success")) {
+            } else if (!"Success".equals(status)) {
                 return "Waiting";
             }
         }
 
-        for(ListExecutionsResponse.Execution execution : response.getExecutions()) {
+        for (ListExecutionsResponse.Execution execution : response.getExecutions()) {
             ListTaskExecutionsRequest taskRequest = new ListTaskExecutionsRequest();
             taskRequest.setExecutionId(execution.getExecutionId());
             ListTaskExecutionsResponse taskResponse = client.getAcsResponse(taskRequest);
 
-            for(ListTaskExecutionsResponse.TaskExecution task: taskResponse.getTaskExecutions()) {
+            for (ListTaskExecutionsResponse.TaskExecution task : taskResponse.getTaskExecutions()) {
                 result.append("* subTask: " + task.getTaskName() + " id: " + task.getTaskExecutionId());
                 result.append(LINE_BREAK);
                 result.append("* outputs: " + task.getOutputs());
@@ -188,117 +193,125 @@ public class LogtailAutoConfigJob implements Callable<String> {
 
     /**
      * 创建模板
+     *
      * @param templateName 创建模板名称
      * @throws ClientException
      */
     private void createCrossAccountsTemplate(String templateName) throws ClientException {
-        if(getTemplateExistStatus(templateName)) {
+        if (getTemplateExistStatus(templateName)) {
             result.append("* tips: template already exist");
             result.append(LINE_BREAK);
-            return ;
+            return;
         }
 
         String crossAccountsTemplateContent = "{\n" +
-                "  \"FormatVersion\": \"OOS-2019-06-01\",\n" +
-                "  \"Description\": \"批量在ECS实例中执行命令\",\n" +
-                "  \"Parameters\": {\n" +
-                "    \"targets\": {\n" +
-                "      \"Type\": \"Json\",\n" +
-                "      \"Description\": \"ECS实例\",\n" +
-                "      \"AssociationProperty\": \"Targets\",\n" +
-                "      \"AssociationPropertyMetadata\": {\n" +
-                "        \"ResourceType\": \"ALIYUN::ECS::Instance\",\n" +
-                "        \"RegionId\": \"regionId\"\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"rateControl\": {\n" +
-                "      \"Description\": \"任务执行的并发比率\",\n" +
-                "      \"Type\": \"Json\",\n" +
-                "      \"AssociationProperty\": \"RateControl\",\n" +
-                "      \"Default\": {\n" +
-                "        \"Mode\": \"Concurrency\",\n" +
-                "        \"MaxErrors\": 0,\n" +
-                "        \"Concurrency\": 10\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"OOSAssumeRole\": {\n" +
-                "      \"Description\": \"OOS扮演的RAM角色\",\n" +
-                "      \"Type\": \"String\",\n" +
-                "      \"Default\": \"OOSServiceRole\"\n" +
-                "    },\n" +
-                "    \"masterUid\": {\n" +
-                "      \"Type\": \"String\",\n" +
-                "      \"Description\": \"主账号uid\"\n" +
-                "    },\n" +
-                "    \"accountId\": {\n" +
-                "      \"Type\": \"String\",\n" +
-                "      \"Description\": \"当前账号id\"\n" +
-                "    },\n" +
-                "    \"action\": {\n" +
-                "      \"Type\": \"String\",\n" +
-                "      \"Description\": \"执行的操作\",\n" +
-                "      \"AllowedValues\": [\n" +
-                "        \"install\",\n" +
-                "        \"uninstall\"\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"RamRole\": \"{{ OOSAssumeRole }}\",\n" +
-                "  \"Tasks\": [\n" +
-                "    {\n" +
-                "      \"Name\": \"getInstance\",\n" +
-                "      \"Description\": \"获取ECS实例\",\n" +
-                "      \"Action\": \"ACS::SelectTargets\",\n" +
-                "      \"Properties\": {\n" +
-                "        \"ResourceType\": \"ALIYUN::ECS::Instance\",\n" +
-                "        \"Filters\": [\n" +
-                "          \"{{ targets }}\"\n" +
-                "        ]\n" +
-                "      },\n" +
-                "      \"Outputs\": {\n" +
-                "        \"instanceIds\": {\n" +
-                "          \"Type\": \"List\",\n" +
-                "          \"ValueSelector\": \"Instances.Instance[].InstanceId\"\n" +
-                "        }\n" +
-                "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"Name\": \"runCommand\",\n" +
-                "      \"Action\": \"ACS::ECS::RunCommand\",\n" +
-                "      \"Description\": \"执行云助手命令\",\n" +
-                "      \"Properties\": {\n" +
-                "        \"commandType\": \"RunShellScript\",\n" +
-                "        \"instanceId\": \"{{ ACS::TaskLoopItem }}\",\n" +
-                "        \"regionId\": \"{{ ACS::RegionId }}\",\n" +
-                "        \"commandContent\": \"if [ \\\"{{action}}\\\" = \\\"install\\\" ]; then\\n  if [ ! -f \\\"/etc/ilogtail/users/{{masterUid}}\\\" ]; then\\n    touch /etc/ilogtail/users/{{masterUid}}\\n  fi\\n\\n  if [ ! -f \\\"/etc/ilogtail/user_defined_id\\\" ]; then\\n    touch /etc/ilogtail/user_defined_id\\n  fi\\n  echo {{accountId}} >> /etc/ilogtail/user_defined_id\\nelse\\n  if [ -f \\\"/etc/ilogtail/users/{{masterUid}}\\\" ]; then\\n    rm -f /etc/ilogtail/users/{{masterUid}}\\n  fi\\n\\n  if [ -f \\\"/etc/ilogtail/user_defined_id\\\" ]; then\\n    rm -f /etc/ilogtail/user_defined_id\\n  fi\\nfi\",\n" +
-                "        \"workingDir\": \"\",\n" +
-                "        \"windowsPasswordName\": \"\",\n" +
-                "        \"enableParameter\": false,\n" +
-                "        \"timeout\": 600,\n" +
-                "        \"username\": \"\"\n" +
-                "      },\n" +
-                "      \"Loop\": {\n" +
-                "        \"Items\": \"{{ getInstance.instanceIds }}\",\n" +
-                "        \"RateControl\": \"{{ rateControl }}\",\n" +
-                "        \"Outputs\": {\n" +
-                "          \"invocationOutputs\": {\n" +
-                "            \"AggregateType\": \"Fn::ListJoin\",\n" +
-                "            \"AggregateField\": \"invocationOutput\"\n" +
-                "          }\n" +
-                "        }\n" +
-                "      },\n" +
-                "      \"Outputs\": {},\n" +
-                "      \"OnError\": \"ACS::END\",\n" +
-                "      \"OnSuccess\": \"ACS::NEXT\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"Outputs\": {\n" +
-                "    \"invocationOutputs\": {\n" +
-                "      \"Type\": \"List\",\n" +
-                "      \"Value\": \"{{ runCommand.invocationOutputs }}\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
+            "  \"FormatVersion\": \"OOS-2019-06-01\",\n" +
+            "  \"Description\": \"批量在ECS实例中执行命令\",\n" +
+            "  \"Parameters\": {\n" +
+            "    \"targets\": {\n" +
+            "      \"Type\": \"Json\",\n" +
+            "      \"Description\": \"ECS实例\",\n" +
+            "      \"AssociationProperty\": \"Targets\",\n" +
+            "      \"AssociationPropertyMetadata\": {\n" +
+            "        \"ResourceType\": \"ALIYUN::ECS::Instance\",\n" +
+            "        \"RegionId\": \"regionId\"\n" +
+            "      }\n" +
+            "    },\n" +
+            "    \"rateControl\": {\n" +
+            "      \"Description\": \"任务执行的并发比率\",\n" +
+            "      \"Type\": \"Json\",\n" +
+            "      \"AssociationProperty\": \"RateControl\",\n" +
+            "      \"Default\": {\n" +
+            "        \"Mode\": \"Concurrency\",\n" +
+            "        \"MaxErrors\": 0,\n" +
+            "        \"Concurrency\": 10\n" +
+            "      }\n" +
+            "    },\n" +
+            "    \"OOSAssumeRole\": {\n" +
+            "      \"Description\": \"OOS扮演的RAM角色\",\n" +
+            "      \"Type\": \"String\",\n" +
+            "      \"Default\": \"OOSServiceRole\"\n" +
+            "    },\n" +
+            "    \"masterUid\": {\n" +
+            "      \"Type\": \"String\",\n" +
+            "      \"Description\": \"主账号uid\"\n" +
+            "    },\n" +
+            "    \"accountId\": {\n" +
+            "      \"Type\": \"String\",\n" +
+            "      \"Description\": \"当前账号id\"\n" +
+            "    },\n" +
+            "    \"action\": {\n" +
+            "      \"Type\": \"String\",\n" +
+            "      \"Description\": \"执行的操作\",\n" +
+            "      \"AllowedValues\": [\n" +
+            "        \"install\",\n" +
+            "        \"uninstall\"\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"RamRole\": \"{{ OOSAssumeRole }}\",\n" +
+            "  \"Tasks\": [\n" +
+            "    {\n" +
+            "      \"Name\": \"getInstance\",\n" +
+            "      \"Description\": \"获取ECS实例\",\n" +
+            "      \"Action\": \"ACS::SelectTargets\",\n" +
+            "      \"Properties\": {\n" +
+            "        \"ResourceType\": \"ALIYUN::ECS::Instance\",\n" +
+            "        \"Filters\": [\n" +
+            "          \"{{ targets }}\"\n" +
+            "        ]\n" +
+            "      },\n" +
+            "      \"Outputs\": {\n" +
+            "        \"instanceIds\": {\n" +
+            "          \"Type\": \"List\",\n" +
+            "          \"ValueSelector\": \"Instances.Instance[].InstanceId\"\n" +
+            "        }\n" +
+            "      }\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"Name\": \"runCommand\",\n" +
+            "      \"Action\": \"ACS::ECS::RunCommand\",\n" +
+            "      \"Description\": \"执行云助手命令\",\n" +
+            "      \"Properties\": {\n" +
+            "        \"commandType\": \"RunShellScript\",\n" +
+            "        \"instanceId\": \"{{ ACS::TaskLoopItem }}\",\n" +
+            "        \"regionId\": \"{{ ACS::RegionId }}\",\n" +
+            "        \"commandContent\": \"if [ \\\"{{action}}\\\" = \\\"install\\\" ]; then\\n  if [ ! -f "
+            + "\\\"/etc/ilogtail/users/{{masterUid}}\\\" ]; then\\n    touch /etc/ilogtail/users/{{masterUid}}\\n  "
+            + "fi\\n\\n  if [ ! -f \\\"/etc/ilogtail/user_defined_id\\\" ]; then\\n    touch "
+            + "/etc/ilogtail/user_defined_id\\n  fi\\n  echo {{accountId}} >> /etc/ilogtail/user_defined_id\\nelse\\n"
+            + "  if [ -f \\\"/etc/ilogtail/users/{{masterUid}}\\\" ]; then\\n    rm -f "
+            + "/etc/ilogtail/users/{{masterUid}}\\n  fi\\n\\n  if [ -f \\\"/etc/ilogtail/user_defined_id\\\" ]; "
+            + "then\\n    rm -f /etc/ilogtail/user_defined_id\\n  fi\\nfi\",\n"
+            +
+            "        \"workingDir\": \"\",\n" +
+            "        \"windowsPasswordName\": \"\",\n" +
+            "        \"enableParameter\": false,\n" +
+            "        \"timeout\": 600,\n" +
+            "        \"username\": \"\"\n" +
+            "      },\n" +
+            "      \"Loop\": {\n" +
+            "        \"Items\": \"{{ getInstance.instanceIds }}\",\n" +
+            "        \"RateControl\": \"{{ rateControl }}\",\n" +
+            "        \"Outputs\": {\n" +
+            "          \"invocationOutputs\": {\n" +
+            "            \"AggregateType\": \"Fn::ListJoin\",\n" +
+            "            \"AggregateField\": \"invocationOutput\"\n" +
+            "          }\n" +
+            "        }\n" +
+            "      },\n" +
+            "      \"Outputs\": {},\n" +
+            "      \"OnError\": \"ACS::END\",\n" +
+            "      \"OnSuccess\": \"ACS::NEXT\"\n" +
+            "    }\n" +
+            "  ],\n" +
+            "  \"Outputs\": {\n" +
+            "    \"invocationOutputs\": {\n" +
+            "      \"Type\": \"List\",\n" +
+            "      \"Value\": \"{{ runCommand.invocationOutputs }}\"\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
 
         CreateTemplateRequest request = new CreateTemplateRequest();
         request.setTemplateName(templateName);
@@ -310,6 +323,7 @@ public class LogtailAutoConfigJob implements Callable<String> {
 
     /**
      * 判断模板是否已经存在
+     *
      * @param templateName 模板名称
      * @return true 存在；false 不存在
      * @throws ClientException
@@ -319,8 +333,8 @@ public class LogtailAutoConfigJob implements Callable<String> {
         listTemplatesRequest.setTemplateName(templateName);
 
         ListTemplatesResponse listTemplatesResponse = client.getAcsResponse(listTemplatesRequest);
-        for(ListTemplatesResponse.Template template: listTemplatesResponse.getTemplates()) {
-            if(template.getTemplateName().equals(templateName)) {
+        for (ListTemplatesResponse.Template template : listTemplatesResponse.getTemplates()) {
+            if (template.getTemplateName().equals(templateName)) {
                 return true;
             }
         }

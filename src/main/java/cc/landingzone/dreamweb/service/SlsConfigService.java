@@ -4,7 +4,9 @@ import cc.landingzone.dreamweb.dao.SlsConfigDao;
 import cc.landingzone.dreamweb.model.SlsConfig;
 import cc.landingzone.dreamweb.model.SlsConfigInfo;
 import cc.landingzone.dreamweb.model.User;
+
 import com.alibaba.fastjson.JSON;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -36,18 +38,17 @@ public class SlsConfigService {
      * SLS配置缓存，未命中则调用CacheLoader的load方法。value不允许为空，用Optional解决
      */
     private LoadingCache<String, Optional<SlsConfig>> cache = CacheBuilder.newBuilder()
-            .maximumSize(100)
-            .refreshAfterWrite(1, TimeUnit.SECONDS)
-            .build(new CacheLoader<String, Optional<SlsConfig>>() {
-                       @Override
-                       public Optional<SlsConfig> load(String userName) {
-                           User user = userService.getUserByLoginName(userName);
-                           SlsConfig slsConfig = slsConfigDao.getSlsConfigByOwnerId(user.getId());
-                           return Optional.ofNullable(slsConfig);
-                       }
+        .maximumSize(100)
+        .refreshAfterWrite(1, TimeUnit.SECONDS)
+        .build(new CacheLoader<String, Optional<SlsConfig>>() {
+                   @Override
+                   public Optional<SlsConfig> load(String userName) {
+                       User user = userService.getUserByLoginName(userName);
+                       SlsConfig slsConfig = slsConfigDao.getSlsConfigByOwnerId(user.getId());
+                       return Optional.ofNullable(slsConfig);
                    }
-            );
-
+               }
+        );
 
     public List<SlsConfig> listSlsConfig() {
         return slsConfigDao.listSlsConfig();
@@ -67,7 +68,8 @@ public class SlsConfigService {
     public void addSlsConfig(SlsConfig slsConfig) {
         Assert.notNull(slsConfig, "数据不能为空!");
         // 获取userId
-        Assert.isNull(slsConfigDao.getSlsConfigByOwnerId(slsConfig.getConfigOwnerId()), "同一账号不能重复配置SLS，请删除原有配置或在原有配置上修改");
+        Assert.isNull(slsConfigDao.getSlsConfigByOwnerId(slsConfig.getConfigOwnerId()),
+            "同一账号不能重复配置SLS，请删除原有配置或在原有配置上修改");
         slsConfigDao.addSlsConfig(slsConfig);
         logger.info("成功添加SLS配置数据：{}", slsConfig);
     }
@@ -83,9 +85,9 @@ public class SlsConfigService {
         slsConfigDao.deleteSlsConfig(id);
     }
 
-
     /**
      * 从缓存中获取当前用户的SLS配置信息
+     *
      * @return
      */
     public SlsConfigInfo getSlsConfigInfoFromCache() throws ExecutionException {
@@ -94,7 +96,7 @@ public class SlsConfigService {
         SlsConfig slsConfig = slsConfigOptional.orElse(null);
 
         SlsConfigInfo slsConfigInfo = null;
-        if(slsConfig != null) {
+        if (slsConfig != null) {
             slsConfigInfo = JSON.parseObject(slsConfig.getConfigValue()).toJavaObject(SlsConfigInfo.class);
         }
 
