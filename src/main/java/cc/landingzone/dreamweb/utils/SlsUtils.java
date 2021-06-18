@@ -97,8 +97,8 @@ public class SlsUtils {
      */
     public static String generateSignInUrl(String signInToken, String project, String logstore) throws UnsupportedEncodingException {
         String slsUrl = String.format("https://sls4service.console.aliyun.com/next"
-                        + "/project/%s/logsearch"
-                        + "/%s?isShare=true&hideTopbar=true&hideSidebar=true",
+                        + "/project/%s"
+                        + "/logsearch/%s?hiddenBack=true&hiddenChangeProject=true&hiddenOverview=true&hideTopbar=true",
                 URLEncoder.encode(project, "utf-8"),
                 URLEncoder.encode(logstore, "utf-8"));
 
@@ -111,5 +111,20 @@ public class SlsUtils {
                 URLEncoder.encode(slsUrl, "utf-8"),
                 URLEncoder.encode(signInToken, "utf-8"));
         return signInUrl;
+    }
+
+    public static String drawWithColor(String action) {
+        String actionWithColor = action;
+        if("install".equals(action) || "Success".equals(action)) {
+            actionWithColor = "<font color=\"green\">" + action + "</font>";
+        } else if("uninstall".equals(action) || "Failed".equals(action)) {
+            actionWithColor = "<font color=\"red\">" + action + "</font>";
+        } else if("create".equals(action)) {
+            actionWithColor = "<font color=\"green\">+ " + action + "</font>";
+        } else if("delete".equals(action)) {
+            actionWithColor = "<font color=\"red\">- " + action + "</font>";
+        }
+
+        return actionWithColor;
     }
 }
