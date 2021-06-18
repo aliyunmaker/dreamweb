@@ -4,6 +4,7 @@ import cc.landingzone.dreamweb.model.AccountEcsInfo;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.SlsAutoConfigService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 @Controller
@@ -26,7 +28,7 @@ public class SlsAutoConfigController extends BaseController {
     SlsAutoConfigService slsAutoConfigService;
 
     @GetMapping("/getEcsList.do")
-    public void getAccounts(HttpServletRequest request, HttpServletResponse response) {
+    public void getEcsList(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
             String accessKey = request.getParameter("accessKey");
@@ -56,9 +58,9 @@ public class SlsAutoConfigController extends BaseController {
             String ecsListJson = request.getParameter("ecsJson");
 
             List<AccountEcsInfo> ecsList;
-            if(ecsListJson == null || ecsListJson.trim().equals("")) {
+            if (StringUtils.isBlank(ecsListJson)) {
                 ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey);
-            }else {
+            } else {
                 ecsList = JsonUtils.parseArray(ecsListJson, AccountEcsInfo.class);
             }
 
@@ -83,9 +85,9 @@ public class SlsAutoConfigController extends BaseController {
             String ecsListJson = request.getParameter("ecsList");
 
             List<AccountEcsInfo> ecsList;
-            if(ecsListJson == null) {
+            if (ecsListJson == null) {
                 ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey);
-            }else {
+            } else {
                 ecsList = JsonUtils.parseArray(ecsListJson, AccountEcsInfo.class);
             }
 

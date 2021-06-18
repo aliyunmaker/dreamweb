@@ -11,8 +11,6 @@ import com.aliyun.openservices.log.response.ListLogStoresResponse;
 import com.aliyun.openservices.log.response.ListProjectResponse;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -28,7 +26,8 @@ public class SlsViewService {
 
     /**
      * 根据sls配置信息获取所有Project信息
-     * @param page 分页参数
+     *
+     * @param page          分页参数
      * @param slsConfigInfo sls配置信息
      * @return 全部Project信息
      */
@@ -37,14 +36,14 @@ public class SlsViewService {
 
         List<Project> projectList = new ArrayList<>();
         AssumeRoleResponse assumeRoleRes = SlsUtils.requestAccessKeyAndSecurityToken(
-                slsConfigInfo.getSlsRegion(),
-                slsConfigInfo.getSlsAccessKey(),
-                slsConfigInfo.getSlsSecretKey(),
-                slsConfigInfo.getSlsArn(),
-                ROLE_SESSION);
+            slsConfigInfo.getSlsRegion(),
+            slsConfigInfo.getSlsAccessKey(),
+            slsConfigInfo.getSlsSecretKey(),
+            slsConfigInfo.getSlsArn(),
+            ROLE_SESSION);
         Client slsClient = new Client(host,
-                assumeRoleRes.getCredentials().getAccessKeyId(),
-                assumeRoleRes.getCredentials().getAccessKeySecret());
+            assumeRoleRes.getCredentials().getAccessKeyId(),
+            assumeRoleRes.getCredentials().getAccessKeySecret());
         slsClient.setSecurityToken(assumeRoleRes.getCredentials().getSecurityToken());
 
         ListProjectRequest request = new ListProjectRequest("", page.getStart(), page.getLimit());
@@ -54,11 +53,11 @@ public class SlsViewService {
         return projectList;
     }
 
-
     /**
      * 获取Project下的Logstores信息
-     * @param projectName 项目名称
-     * @param page 分页信息
+     *
+     * @param projectName   项目名称
+     * @param page          分页信息
      * @param slsConfigInfo SLS配置信息
      * @return Logstore信息
      */
@@ -66,17 +65,18 @@ public class SlsViewService {
         String host = slsConfigInfo.getSlsRegion() + SLS_HOST_SUFFIX; // 服务入口
 
         AssumeRoleResponse assumeRoleRes = SlsUtils.requestAccessKeyAndSecurityToken(
-                slsConfigInfo.getSlsRegion(),
-                slsConfigInfo.getSlsAccessKey(),
-                slsConfigInfo.getSlsSecretKey(),
-                slsConfigInfo.getSlsArn(),
-                ROLE_SESSION);
+            slsConfigInfo.getSlsRegion(),
+            slsConfigInfo.getSlsAccessKey(),
+            slsConfigInfo.getSlsSecretKey(),
+            slsConfigInfo.getSlsArn(),
+            ROLE_SESSION);
         Client slsClient = new Client(host,
-                assumeRoleRes.getCredentials().getAccessKeyId(),
-                assumeRoleRes.getCredentials().getAccessKeySecret());
+            assumeRoleRes.getCredentials().getAccessKeyId(),
+            assumeRoleRes.getCredentials().getAccessKeySecret());
         slsClient.setSecurityToken(assumeRoleRes.getCredentials().getSecurityToken());
 
-        ListLogStoresRequest logStoresRequest = new ListLogStoresRequest(projectName, page.getStart(), page.getLimit(), "");
+        ListLogStoresRequest logStoresRequest = new ListLogStoresRequest(projectName, page.getStart(), page.getLimit(),
+            "");
         ListLogStoresResponse logStoresResponse = slsClient.ListLogStores(logStoresRequest);
         List<String> logstoreList = logStoresResponse.GetLogStores();
 
@@ -85,21 +85,23 @@ public class SlsViewService {
 
     /**
      * 获取登录token并且免登录链接
-     * @param projectName 项目名称
-     * @param logstroeName 日志库名称
+     *
+     * @param projectName   项目名称
+     * @param logstroeName  日志库名称
      * @param slsConfigInfo SLS配置信息
      * @return 免登录Url
      */
-    public String getNonLoginSlsUrl(String projectName, String logstroeName, SlsConfigInfo slsConfigInfo) throws Exception {
+    public String getNonLoginSlsUrl(String projectName, String logstroeName, SlsConfigInfo slsConfigInfo)
+        throws Exception {
         String signInUrl = "";
 
         // 1. 访问令牌服务获取临时AK和Token
         AssumeRoleResponse assumeRoleRes = SlsUtils.requestAccessKeyAndSecurityToken(
-                slsConfigInfo.getSlsRegion(),
-                slsConfigInfo.getSlsAccessKey(),
-                slsConfigInfo.getSlsSecretKey(),
-                slsConfigInfo.getSlsArn(),
-                ROLE_SESSION);
+            slsConfigInfo.getSlsRegion(),
+            slsConfigInfo.getSlsAccessKey(),
+            slsConfigInfo.getSlsSecretKey(),
+            slsConfigInfo.getSlsArn(),
+            ROLE_SESSION);
         Assert.notNull(assumeRoleRes, "assumeRole获取失败");
 
         // 2. 通过临时AK & Token获取登录Token

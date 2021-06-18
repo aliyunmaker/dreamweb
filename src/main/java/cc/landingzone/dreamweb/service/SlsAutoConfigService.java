@@ -37,14 +37,15 @@ public class SlsAutoConfigService {
     private static String LINE_SEPARATED = "<hr>";
 
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-            4,
-            8,
-            30,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue(10));
+        4,
+        8,
+        30,
+        TimeUnit.SECONDS,
+        new ArrayBlockingQueue(10));
 
     /**
      * 获取EcsList
+     *
      * @param accessKey AK
      * @param secretKey SK
      * @return 返回EcsList
@@ -52,13 +53,13 @@ public class SlsAutoConfigService {
      */
     public List<AccountEcsInfo> getEcsList(String accessKey, String secretKey) throws Exception {
         DefaultProfile profile = DefaultProfile.getProfile(
-                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKey, secretKey);
+            cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKey, secretKey);
 
         List<Map<String, String>> accountList = SPHelper.listAccounts(profile);
         DescribeInstancesRequest request = new DescribeInstancesRequest();
 
         List<AccountEcsInfo> accountEcsInfoList = new ArrayList<>();
-        for(Map<String, String> account: accountList) {
+        for (Map<String, String> account : accountList) {
             IAcsClient client = SPHelper.getSubAccountClinet(accessKey, secretKey, account.get("AccountId"));
             DescribeInstancesResponse response = client.getAcsResponse(request);
 
@@ -66,7 +67,7 @@ public class SlsAutoConfigService {
             accountEcsInfo.setAccountId(account.get("AccountId"));
             accountEcsInfo.setDisplayName(account.get("DisplayName"));
             List<String> instanceIdList = new ArrayList<>();
-            for(DescribeInstancesResponse.Instance instance: response.getInstances()) {
+            for (DescribeInstancesResponse.Instance instance : response.getInstances()) {
                 instanceIdList.add(instance.getInstanceId());
             }
             accountEcsInfo.setInstanceIdList(instanceIdList);
@@ -78,17 +79,19 @@ public class SlsAutoConfigService {
 
     /**
      * 在ECS上安装并配置Logtail
+     *
      * @param accountEcsInfoList 账号+ECS列表
-     * @param accessKey ak
-     * @param secretKey sk
-     * @param action install 安装；uninstall 还原
+     * @param accessKey          ak
+     * @param secretKey          sk
+     * @param action             install 安装；uninstall 还原
      * @throws Exception
      */
-    public String initLogtail(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey, String action) throws Exception {
+    public String initLogtail(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey,
+                              String action) throws Exception {
         StringBuilder result = new StringBuilder();
 
         DefaultProfile profile = DefaultProfile.getProfile(
-                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKey, secretKey);
+            cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKey, secretKey);
         IAcsClient masterClient = new DefaultAcsClient(profile);
 
         // 获取主账号uid
@@ -105,28 +108,29 @@ public class SlsAutoConfigService {
         result.append(LINE_BREAK);
         result.append(LINE_SEPARATED);
 
-        result.append("<big><b>1. " + SlsUtils.drawWithColor(action) + " logtail component on subAccount's Ecs</b></big>");
+        result.append(
+            "<big><b>1. " + SlsUtils.drawWithColor(action) + " logtail component on subAccount's Ecs</b></big>");
         result.append(LINE_BREAK);
 
         logger.info("开始执行 {} logtail", action);
         CountDownLatch countDownLatch = new CountDownLatch(accountEcsInfoList.size());
         List<Future<String>> futureList = new ArrayList<>(accountEcsInfoList.size());
-        for(AccountEcsInfo accountEcsInfo: accountEcsInfoList) {
+        for (AccountEcsInfo accountEcsInfo : accountEcsInfoList) {
             IAcsClient client = SPHelper.getSubAccountClinet(accessKey, secretKey, accountEcsInfo.getAccountId());
             Future<String> future = threadPoolExecutor.submit(
-                    new LogtailAutoConfigJob(accountEcsInfo.getAccountId(),
-                            action,
-                            client,
-                            countDownLatch,
-                            accountEcsInfo.getInstanceIdList(),
-                            masterUid));
+                new LogtailAutoConfigJob(accountEcsInfo.getAccountId(),
+                    action,
+                    client,
+                    countDownLatch,
+                    accountEcsInfo.getInstanceIdList(),
+                    masterUid));
 
             futureList.add(future);
         }
         countDownLatch.await();
         logger.info("所有线程执行完成");
 
-        for(Future<String> future: futureList) {
+        for (Future<String> future : futureList) {
             result.append(future.get());
             result.append(LINE_BREAK);
         }
@@ -137,22 +141,23 @@ public class SlsAutoConfigService {
 
     /**
      * 初始化Sls，创建Project和机器组
+     *
      * @param accountEcsInfoList 账号+ecs
-     * @param accessKey ak
-     * @param secretKey sk
-     * @param action install 初始化； uninstall还原
+     * @param accessKey          ak
+     * @param secretKey          sk
+     * @param action             install 初始化； uninstall还原
      */
-    public String initSlsService(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey, String action) {
+    public String initSlsService(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey,
+                                 String action) {
         StringBuilder result = new StringBuilder();
         String host = cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU + SLS_HOST_SUFFIX;
         Client client = new Client(host, accessKey, secretKey);
 
-
-
-        result.append("<big><b>2. " + SlsUtils.drawWithColor(action) + " sls configuration on master account</b></big>");
+        result.append(
+            "<big><b>2. " + SlsUtils.drawWithColor(action) + " sls configuration on master account</b></big>");
         result.append(LINE_BREAK);
 
-        for(AccountEcsInfo accountEcsInfo: accountEcsInfoList) {
+        for (AccountEcsInfo accountEcsInfo : accountEcsInfoList) {
             // accountName作为Project名称，对account名称有限制
             // DisplayName：可以用汉字、英文字母、下划线和英文句点作为名称
             // ProjectName：只能用英文字母和数组，加上短划线
@@ -162,7 +167,7 @@ public class SlsAutoConfigService {
             result.append("<b>start " + accountName + " sls config</b>");
             result.append(LINE_BREAK);
             result.append(LINE_SEPARATED);
-            if(action.equals("install")) {
+            if ("install".equals(action)) {
                 // 1. 创建Project和Logstore
                 String projectAndLogstoreResult = createProjectAndLogstore(client, accountName);
                 result.append(projectAndLogstoreResult);
@@ -234,7 +239,7 @@ public class SlsAutoConfigService {
         try {
             CreateIndexRequest indexRequest = new CreateIndexRequest(projectName, logstoreName, index);
             client.CreateIndex(indexRequest);
-            result.append(SlsUtils.drawWithColor("create")+ " index");
+            result.append(SlsUtils.drawWithColor("create") + " index");
             result.append(LINE_BREAK);
             result.append("* output: " + index.ToJsonString());
         } catch (LogException e) {
@@ -274,6 +279,7 @@ public class SlsAutoConfigService {
 
     /**
      * 创建LogtailConfig
+     *
      * @param client
      * @param projectName
      * @param host
@@ -317,7 +323,7 @@ public class SlsAutoConfigService {
         // 3. 将logtail config绑定到机器组上
         try {
             ApplyConfigToMachineGroupRequest applyConfigToMachineGroupRequest =
-                    new ApplyConfigToMachineGroupRequest(projectName, groupName, configName);
+                new ApplyConfigToMachineGroupRequest(projectName, groupName, configName);
             client.ApplyConfigToMachineGroup(applyConfigToMachineGroupRequest);
             result.append("* attach config: " + configName + " to machineGroup: " + groupName);
         } catch (LogException e) {

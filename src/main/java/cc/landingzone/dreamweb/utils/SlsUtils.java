@@ -115,13 +115,13 @@ public class SlsUtils {
 
     public static String drawWithColor(String action) {
         String actionWithColor = action;
-        if(action.equals("install") || action.equals("Success")) {
+        if("install".equals(action) || "Success".equals(action)) {
             actionWithColor = "<font color=\"green\">" + action + "</font>";
-        } else if(action.equals("uninstall") || action.equals("Failed")) {
+        } else if("uninstall".equals(action) || "Failed".equals(action)) {
             actionWithColor = "<font color=\"red\">" + action + "</font>";
-        } else if(action.equals("create")) {
+        } else if("create".equals(action)) {
             actionWithColor = "<font color=\"green\">+ " + action + "</font>";
-        } else if(action.equals("delete")) {
+        } else if("delete".equals(action)) {
             actionWithColor = "<font color=\"red\">- " + action + "</font>";
         }
 
