@@ -103,14 +103,13 @@ public class SPHelper {
         result.append(LINE_BREAK);
         result.append(LINE_SEPARATED);
 
-        result.append("2. create role");
-        result.append(LINE_BREAK);
-
         String roleExpression = "";
 
         for (Map.Entry<String, List<String>> entry : roleMap.entrySet()) {
             String roleName = entry.getKey();
             // 2. create role
+            result.append("2. create role");
+            result.append(LINE_BREAK);
             String createRoleResult = createRole(client, roleName, policyDocument);
             result.append("result: " + createRoleResult);
             result.append(LINE_BREAK);
