@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.model;
 import java.util.Date;
 
 public class SlsConfig {
+
     private Integer id;
     private String configName;
     private String configValue;
