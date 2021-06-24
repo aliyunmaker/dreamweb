@@ -5,7 +5,6 @@ import java.util.List;
 import cc.landingzone.dreamweb.model.UserRole;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public interface UserRoleDao {
 
@@ -21,4 +20,5 @@ public interface UserRoleDao {
 
     void deleteUserRoleByUserGroupId(Integer userGroupId);
 
+    UserRole getUserRoleByName(Integer userRoleId);
 }

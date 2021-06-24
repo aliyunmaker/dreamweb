@@ -73,4 +73,8 @@ public class UserRoleService {
         return list;
     }
 
+    public UserRole getUserRoleById(Integer userRoleId) {
+        Assert.notNull(userRoleId, "userRoleName can not be null!");
+        return userRoleDao.getUserRoleByName(userRoleId);
+    }
 }

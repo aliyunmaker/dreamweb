@@ -1,13 +1,16 @@
 package cc.landingzone.dreamweb.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import com.aliyuncs.CommonRequest;
+import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
+import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.aliyuncs.profile.IClientProfile;
-import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
-import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -30,47 +33,54 @@ public class SlsUtils {
 
     /**
      * 访问令牌服务获取临时AK和Token
+     *
      * @return 临时AK和Token
      * @throws ClientException
      */
-    public static AssumeRoleResponse requestAccessKeyAndSecurityToken(String region, String accessKey, String secretKey, String roleArn, String roleSession) throws ClientException {
-        DefaultProfile.addEndpoint("", region, "Sts", STS_HOST);
-        IClientProfile profile = DefaultProfile.getProfile(region, accessKey, secretKey);
-        DefaultAcsClient client = new DefaultAcsClient(profile);
+    public static CommonResponse requestAccessKeyAndSecurityToken(String region, String roleArn, String samlProviderArn,
+                                                                  String samlAssertion) throws ClientException {
+        DefaultProfile profile = DefaultProfile.getProfile(region, "", "");
 
-        AssumeRoleRequest assumeRoleReq = new AssumeRoleRequest();
-        assumeRoleReq.setRoleArn(roleArn);
-        assumeRoleReq.setRoleSessionName(roleSession);
-        assumeRoleReq.setMethod(MethodType.POST);
-        assumeRoleReq.setDurationSeconds(3600L); // 过期时间，单位为秒，默认3600
-        // 默认可以不需要setPolicy，即申请获得角色的所有权限
-        // assumeRoleReq.setPolicy(本次生成token实际需要的权限字符串，申请权限必须是角色对应权限的子集);
-        // 权限示例参考链接：https://help.aliyun.com/document_detail/89676.html
+        IAcsClient client = new DefaultAcsClient(profile);
 
-        AssumeRoleResponse assumeRoleRes = client.getAcsResponse(assumeRoleReq);
-        return assumeRoleRes;
+        CommonRequest request = new CommonRequest();
+        request.setSysMethod(MethodType.POST);
+        request.setSysProtocol(ProtocolType.HTTPS);
+        request.setSysDomain(STS_HOST);
+        request.setSysVersion("2015-04-01");
+        request.setSysAction("AssumeRoleWithSAML");
+
+        request.putQueryParameter("RoleArn", roleArn);
+        request.putQueryParameter("SAMLProviderArn", samlProviderArn);
+        request.putQueryParameter("SAMLAssertion", samlAssertion);
+        CommonResponse response = client.getCommonResponse(request);
+        return response;
     }
 
     /**
      * 通过临时AK & Token获取登录Token
-     * @param assumeRoleRes 临时AK & Token
+     *
+     * @param commonResponse 临时AK & Token
      * @return 登录Token
      * @throws IOException
      */
-    public static String requestSignInToken(AssumeRoleResponse assumeRoleRes) throws IOException {
+    public static String requestSignInToken(CommonResponse commonResponse) throws IOException {
+        JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
+        JSONObject credentials = assumeRole.getJSONObject("Credentials");
+
         String signInTokenUrl = SIGN_IN_HOST + String.format(
-                "/federation?Action=GetSigninToken"
-                        + "&AccessKeyId=%s"
-                        + "&AccessKeySecret=%s"
-                        + "&SecurityToken=%s&TicketType=mini",
-                URLEncoder.encode(assumeRoleRes.getCredentials().getAccessKeyId(), "utf-8"),
-                URLEncoder.encode(assumeRoleRes.getCredentials().getAccessKeySecret(), "utf-8"),
-                URLEncoder.encode(assumeRoleRes.getCredentials().getSecurityToken(), "utf-8")
+            "/federation?Action=GetSigninToken"
+                + "&AccessKeyId=%s"
+                + "&AccessKeySecret=%s"
+                + "&SecurityToken=%s&TicketType=mini",
+            URLEncoder.encode(credentials.getString("AccessKeyId"), "utf-8"),
+            URLEncoder.encode(credentials.getString("AccessKeySecret"), "utf-8"),
+            URLEncoder.encode(credentials.getString("SecurityToken"), "utf-8")
         );
 
-        HttpGet signInGet = new HttpGet(signInTokenUrl); //创建HttpGet请求
-        CloseableHttpClient httpClient = HttpClients.createDefault(); // 创建HttpClient
-        HttpResponse httpResponse = httpClient.execute(signInGet); // 用HttpClient执行 HttpGet请求
+        HttpGet signInGet = new HttpGet(signInTokenUrl);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpResponse httpResponse = httpClient.execute(signInGet);
         String signInToken = "";
         if (httpResponse.getStatusLine().getStatusCode() == 200) {
             String signInRes = EntityUtils.toString(httpResponse.getEntity());
@@ -89,39 +99,41 @@ public class SlsUtils {
 
     /**
      * 通过登录token生成日志服务web访问链接进行跳转
+     *
      * @param signInToken 登录token
-     * @param project 项目名称
-     * @param logstore 日志库名称
+     * @param project     项目名称
+     * @param logstore    日志库名称
      * @return 免登录Url
      * @throws UnsupportedEncodingException
      */
-    public static String generateSignInUrl(String signInToken, String project, String logstore) throws UnsupportedEncodingException {
+    public static String generateSignInUrl(String signInToken, String project, String logstore)
+        throws UnsupportedEncodingException {
         String slsUrl = String.format("https://sls4service.console.aliyun.com/next"
-                        + "/project/%s"
-                        + "/logsearch/%s?hiddenBack=true&hiddenChangeProject=true&hiddenOverview=true&hideTopbar=true",
-                URLEncoder.encode(project, "utf-8"),
-                URLEncoder.encode(logstore, "utf-8"));
+                + "/project/%s"
+                + "/logsearch/%s?hiddenBack=true&hiddenChangeProject=true&hiddenOverview=true&hideTopbar=true",
+            URLEncoder.encode(project, "utf-8"),
+            URLEncoder.encode(logstore, "utf-8"));
 
         String signInUrl = SIGN_IN_HOST + String.format(
-                "/federation?Action=Login"
-                        + "&LoginUrl=%s"
-                        + "&Destination=%s"
-                        + "&SigninToken=%s",
-                URLEncoder.encode("https://www.aliyun.com", "utf-8"),
-                URLEncoder.encode(slsUrl, "utf-8"),
-                URLEncoder.encode(signInToken, "utf-8"));
+            "/federation?Action=Login"
+                + "&LoginUrl=%s"
+                + "&Destination=%s"
+                + "&SigninToken=%s",
+            URLEncoder.encode("https://www.aliyun.com", "utf-8"),
+            URLEncoder.encode(slsUrl, "utf-8"),
+            URLEncoder.encode(signInToken, "utf-8"));
         return signInUrl;
     }
 
     public static String drawWithColor(String action) {
         String actionWithColor = action;
-        if("install".equals(action) || "Success".equals(action)) {
+        if ("install".equals(action) || "Success".equals(action)) {
             actionWithColor = "<font color=\"green\">" + action + "</font>";
-        } else if("uninstall".equals(action) || "Failed".equals(action)) {
+        } else if ("uninstall".equals(action) || "Failed".equals(action)) {
             actionWithColor = "<font color=\"red\">" + action + "</font>";
-        } else if("create".equals(action)) {
+        } else if ("create".equals(action)) {
             actionWithColor = "<font color=\"green\">+ " + action + "</font>";
-        } else if("delete".equals(action)) {
+        } else if ("delete".equals(action)) {
             actionWithColor = "<font color=\"red\">- " + action + "</font>";
         }
 
