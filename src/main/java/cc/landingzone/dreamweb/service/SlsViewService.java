@@ -63,12 +63,13 @@ public class SlsViewService {
                        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
                        User user = userService.getUserByLoginName(userName);
                        String region = systemConfigService.getStringValue("region");
+                       String stsHost = systemConfigService.getStringValue("stsHost");
                        // 分页，limit最大是500
                        Page page = new Page(0, 500);
 
                        List<String> projectList = new ArrayList<>();
                        try {
-                           projectList = listProjectsInfo(page, region, user, userRole);
+                           projectList = listProjectsInfo(page, region, stsHost, user, userRole);
                        } catch (Exception e) {
                            logger.error(e.getMessage());
                        }
@@ -87,7 +88,7 @@ public class SlsViewService {
      * @return Project名称列表
      * @throws Exception
      */
-    public List<String> listProjectsInfo(Page page, String region, User user, UserRole userRole) throws Exception {
+    public List<String> listProjectsInfo(Page page, String region, String stsHost, User user, UserRole userRole) throws Exception {
         String host = region + SLS_HOST_SUFFIX;
 
         // 得到roleArn和idpArn，生成Saml Assertion
@@ -98,7 +99,7 @@ public class SlsViewService {
 
         // 根据角色Arn和idpArn 获取AK，SK和SecurityToken
         CommonResponse commonResponse = SlsUtils.requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
-            samlAssertion);
+            samlAssertion, stsHost);
         JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
         JSONObject credentials = assumeRole.getJSONObject("Credentials");
 
@@ -138,7 +139,7 @@ public class SlsViewService {
      * @return Logstore列表
      * @throws Exception
      */
-    public List<String> listLogstoresInfo(String projectName, Page page, String region, User user, UserRole userRole)
+    public List<String> listLogstoresInfo(String projectName, Page page, String region, String stsHost, User user, UserRole userRole)
         throws Exception {
         String host = region + SLS_HOST_SUFFIX;
 
@@ -150,7 +151,7 @@ public class SlsViewService {
 
         // 根据角色Arn和idpArn 获取AK，SK和SecurityToken
         CommonResponse commonResponse = SlsUtils.requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
-            samlAssertion);
+            samlAssertion, stsHost);
         JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
         JSONObject credentials = assumeRole.getJSONObject("Credentials");
 
@@ -177,7 +178,7 @@ public class SlsViewService {
      * @return 免登录链接
      * @throws Exception
      */
-    public String getNonLoginSlsUrl(String projectName, String logstoreName, String region, User user,
+    public String getNonLoginSlsUrl(String projectName, String logstoreName, String region, String stsHost, User user,
                                     UserRole userRole)
         throws Exception {
         String signInUrl = "";
@@ -190,7 +191,7 @@ public class SlsViewService {
 
         // 访问令牌服务获取临时AK和Token
         CommonResponse commonResponse = SlsUtils.requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
-            samlAssertion);
+            samlAssertion, stsHost);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
         // 通过临时AK & Token获取登录Token
