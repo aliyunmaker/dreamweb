@@ -28,7 +28,6 @@ public class SlsUtils {
 
     private static Logger logger = LoggerFactory.getLogger(SlsUtils.class);
 
-    private static final String STS_HOST = "sts.aliyuncs.com";
     private static final String SIGN_IN_HOST = "https://signin.aliyun.com";
 
     /**
@@ -38,7 +37,7 @@ public class SlsUtils {
      * @throws ClientException
      */
     public static CommonResponse requestAccessKeyAndSecurityToken(String region, String roleArn, String samlProviderArn,
-                                                                  String samlAssertion) throws ClientException {
+                                                                  String samlAssertion, String stsHost) throws ClientException {
         DefaultProfile profile = DefaultProfile.getProfile(region, "", "");
 
         IAcsClient client = new DefaultAcsClient(profile);
@@ -46,7 +45,7 @@ public class SlsUtils {
         CommonRequest request = new CommonRequest();
         request.setSysMethod(MethodType.POST);
         request.setSysProtocol(ProtocolType.HTTPS);
-        request.setSysDomain(STS_HOST);
+        request.setSysDomain(stsHost);
         request.setSysVersion("2015-04-01");
         request.setSysAction("AssumeRoleWithSAML");
 
