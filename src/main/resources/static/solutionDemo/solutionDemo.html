@@ -2,69 +2,294 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Generator</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>solutionDemo</title>
 
-    <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
-    <script type="text/javascript"
-            src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
-    <script type="text/javascript" src="bootstrap.bundle.js"></script>
+  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
+  <script type="text/javascript"
+    src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+  <script type="text/javascript" src="bootstrap.bundle.js"></script>
+  <script type="text/javascript" src="solutionDemo.js"></script>
 </head>
 
 <body>
-    <div class="container-fluid">
-      <div class="accordion" id="accordionExample">
-        <div class="card">
-          <div class="card-header" id="headingOne">
-            <h2 class="mb-0">
-              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                身份权限
-              </button>
-            </h2>
+  <div class="container-fluid">
+    <div>
+      <br>
+      <div style="display: flex; justify-content: space-between;">
+        <a class="h2">解决方案</a>
+        <button class="btn btn-success" id="addSolutionBtn" data-toggle="modal" data-target="#addSolutionModal"
+          style="margin-right: 20px; display: none;">添加解决方案</button>
+      </div>
+      <br>
+      <form onsubmit="return false">
+        <div class="form-row">
+          <div class="col-4">
+            <input type="text" id="searchInput" class="form-control" placeholder="请输入解决方案名称或关键字进行搜索">
           </div>
-      
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <div class="card-body">
-              <div class="row">
-                <div class="card-deck">
-                  <div class="card text-center border-dark mb-3" style="max-width: 20rem;">
-                    <div class="card-body h-100">
-                      <h5 class="card-title">自建IDP实现多账号SSO</h5>
-                      <p class="card-text">IdP由集团管理，SLA无法满足云运维所需要的响应速度，IdP非标准化无法直接和阿里云配置。本方案通过自建IDP，一次性配置完成多账号的SSO，多账号登录态能在IDP侧统一切换，延续一致的试用体验，延续现有账号管理体系，不存在单独的个人云账号，避免离职等场景的安全隐患</p>
-                    </div>
-                    <div class="card-body">
-                      <a href='index_solution.html?name=自建IDP实现多账号SSO&menu=%7B"SSO自动化配置":"/ssoConfig/ssoConfig.html"%7D' class="card-link">查看详情</a>
-                    </div>
+          <button type="submit" class="btn btn-success my-2 my-sm-0" onclick="searchSolution()">Search</button>
+        </div>
+      </form>
+    </div>
+    <br>
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand">分组：</a>
+      <div class="btn-group btn-group-toggle" data-toggle="buttons" id="modules">
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('全部')" name="options"
+            autocomplete="off">全部</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('资源规划')" name="options"
+            autocomplete="off">资源规划</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('身份权限')" name="options"
+            autocomplete="off">身份权限</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('合规审计')" name="options"
+            autocomplete="off">合规审计</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('运维管理')" name="options"
+            autocomplete="off">运维管理</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('容器化')" name="options"
+            autocomplete="off">容器化</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('安全防护')" name="options"
+            autocomplete="off">安全防护</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('网络规划')" name="options"
+            autocomplete="off">网络规划</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('自动化')" name="options"
+            autocomplete="off">自动化</label>
+      </div>
+    </nav>
+    <br>
+    <div class="row" id="solutionDiv">
+
+    </div>
+
+    <!-- <div class="row">
+        <div class="col-md-4 col-6" style="margin-bottom: 20px;">
+          <div class="card mb-4 h-100" style="max-width: 22rem;">
+            <div class="card-body h-100">
+              <div class="row justify-content-between">
+                <div class="col">
+                <h5 class="card-title">自建IDP实现多账号SSO</h5>
+                </div>
+                <div class="col-2" style="margin-right: 10px;">
+                  <button type="button" class="btn btn-default" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="box-shadow: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                      <g transform="translate(0, -6.5)">
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                      </g>
+                    </svg>
+                  </button>
+                  <div class="dropdown-menu text-center" style="min-width: 50%;" aria-labelledby="dropdownMenuButton">
+                    <a role="button" onclick="" class="dropdown-item">更新</a>
+                    <a role="button" onclick="" class="dropdown-item">删除</a>
                   </div>
                 </div>
               </div>
+              <p class="card-text">IdP由集团管理，SLA无法满足云运维所需要的响应速度，IdP非标准化无法直接和阿里云配置。本方案通过自建IDP，一次性配置完成多账号的SSO，多账号登录态能在IDP侧统一切换，延续一致的试用体验，延续现有账号管理体系，不存在单独的个人云账号，避免离职等场景的安全隐患</p>
+            </div>
+            <div class="card-body" style="display: flex; justify-content: space-between;">
+              <a href='index_solution.html?name=自建IDP实现多账号SSO&menu=%7B"SSO自动化配置":"/ssoConfig/ssoConfig.html"%7D' class="btn btn-primary">查看详情</a>
+            </div>
+            <div class="card-body">
+              <p class="card-text">
+                <small class="text-muted">创建人：程超</small><br>
+                <small class="text-muted">版本：V0</small>
+              </p>
             </div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-header" id="headingTwo">
-            <h2 class="mb-0">
-              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                运维管理
-              </button>
-            </h2>
+      </div> -->
+
+    <nav aria-label="Page navigation example" id='pagination'>
+      <ul class="pagination justify-content-center">
+        <!-- <li class="page-item page-pre disabled">
+          <a class="page-link" tabindex="-1">&laquo; 上一页</a>
+        </li>
+        <li class="page-item"><a class="page-link">1</a></li>
+        <li class="page-item"><a class="page-link">2</a></li>
+        <li class="page-item"><a class="page-link">3</a></li>
+        <li class="page-item page-next">
+          <a class="page-link">下一页 &raquo;</a>
+        </li>
+      </ul> -->
+    </nav>
+
+    <div class="modal fade" id="addSolutionModal" tabindex="-1" role="dialog" aria-labelledby="addSolutionModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addSolutionModalLabel">添加解决方案</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-            <div class="card-body">
-              <div class="row">
-                <div class="card-deck">
-                  <div class="card text-center border-dark mb-3" style="max-width: 20rem;">
-                    <div class="card-body h-100">
-                      <h5 class="card-title">企业级公有云统一日志</h5>
-                      <p class="card-text">随着企业信息化的发展，面向云的IT基础设施越来越普遍，如何在庞大的IT基础设施面前管理软件的日志，成为IT稳定性保障的关键环节。本方案主要介绍如何使用SLS对阿里云、专有IDC以及第三方云场景下，进行企业级的日志管理</p>
-                    </div>
-                    <div class="card-body">
-                      <a href='index_solution.html?name=企业级公有云统一日志&menu=%7B"SLS自动化配置":"/slsAutoConfig/slsAutoConfig.html", "SLS配置":"/slsConfig/slsConfig.html", "统一日志查看":"/slsView/slsView.html"%7D' class="card-link">查看详情</a>
-                    </div>
+          <div class="modal-body">
+            <form class="needs-validation" novalidate id="addSolutionForm" onsubmit="return false">
+              <div class="form-group">
+                <label for="inputName">名称</label>
+                <input class="form-control" id="inputName" required>
+                <div class="invalid-feedback">
+                  请输入名称
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputIntro">简介</label>
+                <textarea class="form-control" id="inputIntro" rows="3" required></textarea>
+                <div class="invalid-feedback">
+                  请输入简介
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputWebConfig">解决方案详情页配置（JSON）</label>
+                <textarea class="form-control" id="inputWebConfig" rows="3" required></textarea>
+                <div class="invalid-feedback">
+                  请输入解决方案详情页配置
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col">
+                  <label for="inputCreator">创建人</label>
+                  <input type="text" class="form-control" id="inputCreator" required></textarea>
+                  <div class="invalid-feedback">
+                    请输入创建人
                   </div>
                 </div>
+                <div class="form-group col">
+                  <label for="inputVersion">版本</label>
+                  <input type="text" class="form-control" id="inputVersion" required></textarea>
+                  <div class="invalid-feedback">
+                    请输入版本
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputModule">所属模块</label>
+                <select class="custom-select form-control" id="inputModule" required>
+                  <option value="">选择所属模块</option>
+                  <option>资源规划</option>
+                  <option>身份权限</option>
+                  <option>合规审计</option>
+                  <option>运维管理</option>
+                  <option>容器化</option>
+                  <option>安全防护</option>
+                  <option>网络规划</option>
+                  <option>自动化</option>
+                </select>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <button type="submit" class="btn btn-primary btn-block" id="submitAddSolution"
+                    onclick="addSolution()">提交</button>
+                </div>
+                <div class="col">
+                  <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">关闭</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="updateSolutionModal" tabindex="-1" role="dialog"
+      aria-labelledby="updateSolutionModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateSolutionModalLabel">更新解决方案</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="needs-validation" novalidate id="updateSolutionForm" onsubmit="return false">
+              <div id="updateId" disabled></div>
+              <div class="form-group">
+                <label for="updateName">名称</label>
+                <input class="form-control" id="updateName" required>
+                <div class="invalid-feedback">
+                  请输入名称
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="updateIntro">简介</label>
+                <textarea class="form-control" id="updateIntro" rows="3" required></textarea>
+                <div class="invalid-feedback">
+                  请输入简介
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="updateWebConfig">解决方案详情页配置（JSON）</label>
+                <textarea class="form-control" id="updateWebConfig" rows="3" required></textarea>
+                <div class="invalid-feedback">
+                  请输入解决方案详情页配置
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col">
+                  <label for="updateCreator">创建人</label>
+                  <input type="text" class="form-control" id="updateCreator" required></textarea>
+                  <div class="invalid-feedback">
+                    请输入创建人
+                  </div>
+                </div>
+                <div class="form-group col">
+                  <label for="updateVersion">版本</label>
+                  <input type="text" class="form-control" id="updateVersion" required></textarea>
+                  <div class="invalid-feedback">
+                    请输入版本
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="updateModule">所属模块</label>
+                <select class="custom-select form-control" id="updateModule" required>
+                  <option value="">选择所属模块</option>
+                  <option>资源规划</option>
+                  <option>身份权限</option>
+                  <option>合规审计</option>
+                  <option>运维管理</option>
+                  <option>容器化</option>
+                  <option>安全防护</option>
+                  <option>网络规划</option>
+                  <option>自动化</option>
+                </select>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <button type="submit" class="btn btn-primary btn-block" id="submitUpdateSolution">提交</button>
+                </div>
+                <div class="col">
+                  <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">关闭</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="deleteSolutionConfirmModal" tabindex="-1" role="dialog"
+      aria-labelledby="deleteSolutionConfirmModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content message_align">
+          <div class="modal-header">
+            <h4 class="modal-title" id="updateSolutionModalLabel">提示信息</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>您确认要删除吗？</p>
+          </div>
+          <div class="modal-footer">
+            <div class="row">
+              <div class="col">
+                <button type="button" class="btn btn-primary" id="deleteSolutionBtn" data-dismiss="modal"
+                  style="width: 80px;">确定</button>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px;">取消</button>
               </div>
             </div>
           </div>
@@ -72,65 +297,7 @@
       </div>
     </div>
 
-    <!-- <div class="container">
-      <div class="container">
-        <h2>解决方案</h2>
-        <br>
-        <form>
-          <div class="form-row">
-            <div class="col-6">
-              <input type="text" class="form-control" placeholder="请输入解决方案名称或关键字进行搜索">
-            </div>
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </div>
-        </form>
-      </div>
-      <br>
-      <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <a class="navbar-brand" href="#">Navbar</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-        
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-              </li>
-            </ul>
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-          </div>
-        </nav>
-        <div>
-          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <label>分组：</label>
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-              <button type="button" class="btn btn-secondary">1</button>
-              <button type="button" class="btn btn-secondary">2</button>
-              <button type="button" class="btn btn-secondary">3</button>
-              <button type="button" class="btn btn-secondary">4</button>
-            </div>
-            <div class="btn-group mr-2" role="group" aria-label="Second group">
-              <button type="button" class="btn btn-secondary">5</button>
-              <button type="button" class="btn btn-secondary">6</button>
-              <button type="button" class="btn btn-secondary">7</button>
-            </div>
-            <div class="btn-group" role="group" aria-label="Third group">
-              <button type="button" class="btn btn-secondary">8</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
+  </div>
 </body>
+
 </html>

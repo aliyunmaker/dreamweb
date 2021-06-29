@@ -5,7 +5,7 @@ Ext.onReady(function () {
   var alignStyle = ' style="vertical-align:middle"';
 
   var reload = function () {
-    systemConfigStore.load();
+    solutionConfigStore.load();
   };
 
   Ext.MessageBox.buttonText.ok = '确定';
@@ -14,40 +14,40 @@ Ext.onReady(function () {
   Ext.MessageBox.buttonText.cancel = '取消';
 
   var setUnEditable = function (name) {
-    systemConfigFormWindow.getFormPanel().getForm().findField(name).setReadOnly(true);
-    systemConfigFormWindow.getFormPanel().getForm().findField(name).setFieldStyle('background: white; color: #bbbbbb;');
+    solutionConfigFormWindow.getFormPanel().getForm().findField(name).setReadOnly(true);
+    solutionConfigFormWindow.getFormPanel().getForm().findField(name).setFieldStyle('background: white; color: #bbbbbb;');
   }
 
   var setEditable = function(name) {
-    systemConfigFormWindow.getFormPanel().getForm().findField(name).setReadOnly(false);
-    systemConfigFormWindow.getFormPanel().getForm().findField(name).setFieldStyle('background: white; color: black;');
+    solutionConfigFormWindow.getFormPanel().getForm().findField(name).setReadOnly(false);
+    solutionConfigFormWindow.getFormPanel().getForm().findField(name).setFieldStyle('background: white; color: black;');
   }
 
-  var systemConfigStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-    dataUrl: '../systemConfig/listSystemConfig.do',
+  var solutionConfigStore = Ext.create('MyExt.Component.SimpleJsonStore', {
+    dataUrl: '../solutionConfig/listSolutionConfig.do',
     rootFlag: 'data',
     pageSize: 200,
-    fields: ['id', 'configName', 'configValue', 'comment', 'gmtCreate', { name: 'changeable', type: 'string' }]
+    fields: ['id', 'name', 'intro', 'webConfig', 'creator', 'version', 'module']
   });
 
-  var systemConfigGrid = Ext.create('MyExt.Component.GridPanel', {
+  var solutionConfigGrid = Ext.create('MyExt.Component.GridPanel', {
     region: 'center',
     title: '系统配置列表',
-    store: systemConfigStore,
+    store: solutionConfigStore,
     columns: [{
       dataIndex: 'id',
       header: 'ID',
       hidden: true
     }, {
-      dataIndex: 'configName',
+      dataIndex: 'name',
       header: '配置名',
       flex: 1
     }, {
-      dataIndex: 'configValue',
+      dataIndex: 'intro',
       header: '配置值',
       flex: 2
     }, {
-      dataIndex: 'comment',
+      dataIndex: 'webConfig',
       header: '配置说明',
       flex: 2
     }],
@@ -55,20 +55,20 @@ Ext.onReady(function () {
       text: '修改',
       iconCls: 'MyExt-modify',
       handler: function () {
-        var select = MyExt.util.SelectGridModel(systemConfigGrid);
+        var select = MyExt.util.SelectGridModel(solutionConfigGrid);
         if (!select) {
           return;
         }
-        setUnEditable('configName');
+        setUnEditable('name');
         if (select[0].data['changeable'] != 'true') {
-          setUnEditable('configValue');
-          setUnEditable('comment');
+          setUnEditable('intro');
+          setUnEditable('webConfig');
         }else {
-          setEditable('configValue');
-          setEditable('comment');
+          setEditable('intro');
+          setEditable('webConfig');
         }
-        systemConfigFormWindow.changeFormUrlAndShow("../systemConfig/updateSystemConfig.do");
-        systemConfigFormWindow.getFormPanel().getForm().loadRecord(select[0]);
+        solutionConfigFormWindow.changeFormUrlAndShow("../solutionConfig/updateSolutionConfig.do");
+        solutionConfigFormWindow.getFormPanel().getForm().loadRecord(select[0]);
       }
     }, {
       text: '更新系统密钥',
@@ -93,7 +93,7 @@ Ext.onReady(function () {
 
   var LABELWIDTH = 60;
 
-  var systemConfigFormWindow = new MyExt.Component.FormWindow({
+  var solutionConfigFormWindow = new MyExt.Component.FormWindow({
     title: '操作',
     width: 400,
     height: 240,
@@ -104,32 +104,32 @@ Ext.onReady(function () {
       xtype: 'textfield',
       fieldLabel: '配置名',
       labelWidth: LABELWIDTH,
-      name: 'configName',
+      name: 'name',
       allowBlank: false
     }, {
       xtype: 'textarea',
       fieldLabel: '配置值',
       labelWidth: LABELWIDTH,
-      name: 'configValue',
+      name: 'intro',
       allowBlank: false
     }, {
       xtype: 'textarea',
       fieldLabel: '配置说明',
       labelWidth: LABELWIDTH,
-      name: 'comment'
+      name: 'webConfig'
     }],
     submitBtnFn: function () {
-      var form = systemConfigFormWindow.getFormPanel().getForm();
+      var form = solutionConfigFormWindow.getFormPanel().getForm();
       if (form.isValid()) {
         var formValue = form.getValues();
-        MyExt.util.Ajax(systemConfigFormWindow.getFormPanel().url, {
+        MyExt.util.Ajax(solutionConfigFormWindow.getFormPanel().url, {
           id: formValue['id'],
-          configName: formValue['configName'],
-          configValue: formValue['configValue'],
-          comment: formValue['comment']
+          name: formValue['name'],
+          intro: formValue['intro'],
+          webConfig: formValue['webConfig']
         }, function (data) {
           if (data.success) {
-            systemConfigFormWindow.hide();
+            solutionConfigFormWindow.hide();
             reload();
             MyExt.Msg.alert('操作成功!');
           } else {
@@ -142,7 +142,7 @@ Ext.onReady(function () {
 
   Ext.create('Ext.container.Viewport', {
     layout: 'border',
-    items: [systemConfigGrid]
+    items: [solutionConfigGrid]
   });
 
   reload();
