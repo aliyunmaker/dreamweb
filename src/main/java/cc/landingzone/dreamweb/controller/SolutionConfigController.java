@@ -176,10 +176,11 @@ public class SolutionConfigController extends BaseController {
     public void deleteSolutionConfig(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String name = request.getParameter("name");
-            Assert.hasText(name, "名称不能为空!");
+            String idStr =request.getParameter("id");
+            Assert.hasText(idStr, "id不能为空!");
+            Integer id = Integer.valueOf(idStr);
 
-            solutionConfigService.deleteSolutionConfigByName(name);
+            solutionConfigService.deleteSolutionConfig(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

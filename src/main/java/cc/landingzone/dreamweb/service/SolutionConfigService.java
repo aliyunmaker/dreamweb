@@ -74,7 +74,6 @@ public class SolutionConfigService {
      * 添加解决方案配置
      *
      * @param solutionConfig
-     * @throws Exception
      */
     @Transactional
     public void addSolutionConfig(SolutionConfig solutionConfig) {
@@ -87,6 +86,7 @@ public class SolutionConfigService {
      * 
      * @param solutionConfig
      */
+    @Transactional
     public void updateSolutionConfig(SolutionConfig solutionConfig) {
         Assert.notNull(solutionConfig, "数据不能为空!");
         solutionConfigDao.updateSolutionConfig(solutionConfig);
@@ -101,17 +101,6 @@ public class SolutionConfigService {
     public void deleteSolutionConfig(Integer id) {
         Assert.notNull(id, "id can not be null!");
         solutionConfigDao.deleteSolutionConfig(id);
-    }
-
-    /**
-     * 删除解决方案配置
-     *
-     * @param id
-     */
-    @Transactional
-    public void deleteSolutionConfigByName(String name) {
-        Assert.hasText(name, "name can not be null!");
-        solutionConfigDao.deleteSolutionConfigByName(name);
     }
 
 }

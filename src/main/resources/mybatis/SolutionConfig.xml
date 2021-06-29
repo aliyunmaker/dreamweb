@@ -55,7 +55,7 @@
             <if test="module != '全部'">
                 and module = #{module}
             </if>
-            <if test="module != ''">
+            <if test="searchInput != ''">
                 and (name like concat('%',#{searchInput},'%') or intro like concat('%',#{searchInput},'%') or 
                 creator like concat('%',#{searchInput},'%') or version like concat('%',#{searchInput},'%') or 
                 module like concat('%',#{searchInput},'%'))
@@ -70,7 +70,7 @@
             <if test="module != '全部'">
                 and module = #{module}
             </if>
-            <if test="module != ''">
+            <if test="searchInput != ''">
                 and (name like concat('%',#{searchInput},'%') or intro like concat('%',#{searchInput},'%') or 
                 creator like concat('%',#{searchInput},'%') or version like concat('%',#{searchInput},'%') or 
                 module like concat('%',#{searchInput},'%'))
@@ -85,11 +85,5 @@
         delete
         from solution_config
         where id = #{id}
-    </delete>
-
-    <delete id="deleteSolutionConfigByName" parameterType="string">
-        delete
-        from solution_config
-        where name = #{name}
     </delete>
 </mapper>

@@ -22,6 +22,4 @@ public interface SolutionConfigDao {
 
     void deleteSolutionConfig(Integer id);
 
-    void deleteSolutionConfigByName(String name);
-
 }

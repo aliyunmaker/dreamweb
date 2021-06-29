@@ -3,7 +3,7 @@ var MYDATA = {
     moduleSelect: '全部',    //所选模块
     changeable: false,      //是否允许添加、修改、删除解决方案
     pageCurrent: 1,         //当前页面索引
-    pageSize: 100,            //每页显示数量
+    pageSize: 100,          //每页显示数量
     pages: 1                //总页数
 };
 
@@ -233,22 +233,35 @@ function updateSolution(name) {
 }
 
 function deleteSolution(name) {
-    $('#deleteSolutionConfirmModal').modal({ backdrop: 'static', keyboard: false })
-        .one('click', '#deleteSolutionBtn', function () {
-            $.ajax({
-                url: "/solutionConfig/deleteSolutionConfig.do",
-                data: {
-                    name: name
-                },
-                success: function (result) {
-                    if (result.success) {
-                        location.replace(newURL());
-                    } else {
-                        alert("删除失败！" + result.errorMsg);
-                    }
-                }
-            })
-        });
+    $.ajax({
+        url: "/solutionConfig/getSolutionConfigByName.do",
+        data: {
+            name: name
+        },
+        success: function (result) {
+            if (result.success) {
+                let solution = result.data;
+                $('#deleteSolutionConfirmModal').modal({ backdrop: 'static', keyboard: false })
+                    .one('click', '#deleteSolutionBtn', function () {
+                        $.ajax({
+                            url: "/solutionConfig/deleteSolutionConfig.do",
+                            data: {
+                                id: solution.id
+                            },
+                            success: function (result) {
+                                if (result.success) {
+                                    location.replace(newURL());
+                                } else {
+                                    alert("删除失败！" + result.errorMsg);
+                                }
+                            }
+                        })
+                    });
+            } else {
+                alert("获取解决方案失败！" + result.errorMsg);
+            }
+        }
+    });
 }
 
 window.onload = function () {
