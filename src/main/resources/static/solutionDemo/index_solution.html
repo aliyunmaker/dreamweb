@@ -13,7 +13,7 @@
     <script type="text/javascript" src="bootstrap.js"></script>
     <script type="text/javascript" src="bootstrap.bundle.js"></script>
     <script type="text/javascript">
-        function requestParam(paras) {
+        function requestParam() {
             var url = location.search;
             if (url.indexOf('?') == -1) {
                 return null;
@@ -35,12 +35,20 @@
 
         window.onload = function() {
             var urlParam = requestParam();
-            var name = urlParam["name"]
+            var name = urlParam["name"];
             var menu = JSON.parse(urlParam["menu"]);
             $("#name").html(name);
             let menuDiv = '';
-            for(var val in menu) {
-                menuDiv += '<label class="btn btn-outline-primary"><input type="radio" name="options" onchange="loadWebPage(&apos;' + menu[val] + '&apos;);" autocomplete="off">' + val + '</label>';
+            let keys = Object.keys(menu)
+            for (let index = 0; index < keys.length; index++) {
+                const key = keys[index];
+                console.log(key);
+                if (index == 0) {
+                    menuDiv += '<label class="btn btn-outline-primary active"><input type="radio" name="options" onchange="loadWebPage(&apos;' + menu[key] + '&apos;);" autocomplete="off" checked>' + key + '</label>';
+                    loadWebPage(menu[key]);
+                } else {
+                    menuDiv += '<label class="btn btn-outline-primary"><input type="radio" name="options" onchange="loadWebPage(&apos;' + menu[key] + '&apos;);" autocomplete="off">' + key + '</label>';
+                }
             }
             $("#menu").html(menuDiv);
         }
