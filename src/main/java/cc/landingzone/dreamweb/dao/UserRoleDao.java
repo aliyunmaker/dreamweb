@@ -21,4 +21,6 @@ public interface UserRoleDao {
     void deleteUserRoleByUserGroupId(Integer userGroupId);
 
     UserRole getUserRoleByName(Integer userRoleId);
+
+    List<UserRole> getAllUserRoles();
 }
