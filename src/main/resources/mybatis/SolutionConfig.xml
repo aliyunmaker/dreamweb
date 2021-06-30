@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.SolutionConfigDao">
+    <insert id="addSolutionConfig" parameterType="cc.landingzone.dreamweb.model.SolutionConfig"
+        useGeneratedKeys="true" keyProperty="id">
+        insert into solution_config
+        (name,
+         intro,
+         web_config,
+         creator,
+         version,
+         module,
+         gmt_create)
+        values (#{name},
+                #{intro},
+                #{webConfig},
+                #{creator},
+                #{version},
+                #{module},
+                now())
+    </insert>
+
+    <update id="updateSolutionConfig" parameterType="cc.landingzone.dreamweb.model.SolutionConfig">
+        update solution_config
+        set name            = #{name},
+            intro           = #{intro},
+            web_config      = #{webConfig},
+            creator         = #{creator},
+            version         = #{version},
+            module          = #{module}
+        where id = #{id}
+    </update>
+
+    <select id="getSolutionConfigByName" resultType="cc.landingzone.dreamweb.model.SolutionConfig">
+        select *
+        from solution_config
+        where name = #{name}
+    </select>
+
+    <select id="getSolutionConfigById" resultType="cc.landingzone.dreamweb.model.SolutionConfig">
+        select *
+        from solution_config
+        where id = #{id}
+    </select>
+
+    <select id="searchSolution" resultType="cc.landingzone.dreamweb.model.SolutionConfig">
+        select *
+        from solution_config
+        <where>
+            <if test="!isModuleAll">
+                and module = #{module}
+            </if>
+            <if test="!isSearchBlank">
+                and (name like concat('%',#{searchInput},'%') or intro like concat('%',#{searchInput},'%') or 
+                creator like concat('%',#{searchInput},'%') or version like concat('%',#{searchInput},'%') or 
+                module like concat('%',#{searchInput},'%'))
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteSolutionConfig" parameterType="int">
+        delete
+        from solution_config
+        where id = #{id}
+    </delete>
+</mapper>
