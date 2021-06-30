@@ -86,7 +86,7 @@ public class SlsViewController extends BaseController {
             Integer limit = Integer.valueOf(limitStr);
 
             Page page = new Page(start, limit);
-            String region = systemConfigService.getStringValue("region");
+            String region = systemConfigService.getStringValueFromCache("region");
 
             // 获取当前用户信息以及所需要使用的ram角色信息
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -125,7 +125,7 @@ public class SlsViewController extends BaseController {
             Assert.hasText(roleIdStr, "roleId不能为空!");
 
             Integer roleId = Integer.valueOf(roleIdStr);
-            String region = systemConfigService.getStringValue("region");
+            String region = systemConfigService.getStringValueFromCache("region");
 
             // 获取当前用户信息以及所需要使用的ram角色信息
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();

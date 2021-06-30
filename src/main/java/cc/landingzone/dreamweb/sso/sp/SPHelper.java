@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 
+import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.EndpointEnum;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
@@ -44,13 +45,13 @@ public class SPHelper {
     }
 
     public static String initMultiAccountSP(String accessKeyId, String accessKeySecret, String idpProviderName,
-            Map<String, List<String>> roleMap, String region) throws Exception {
+            Map<String, List<String>> roleMap) throws Exception {
         StringBuilder result = new StringBuilder();
-        DefaultProfile profile = DefaultProfile.getProfile(region, accessKeyId, accessKeySecret);
+        DefaultProfile profile = DefaultProfile.getProfile(CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId, accessKeySecret);
         String endpoint = EndpointEnum.RESOURCE_MANAGER.getEndpoint();
         List<Map<String, String>> accountList = listAccounts(profile, endpoint);
         for (Map<String, String> accountMap : accountList) {
-            IAcsClient client = getSubAccountClinet(accessKeyId, accessKeySecret, accountMap.get("AccountId"), region);
+            IAcsClient client = getSubAccountClinet(accessKeyId, accessKeySecret, accountMap.get("AccountId"), CommonConstants.Aliyun_REGION_HANGZHOU);
             String singleLog = initSingleAccountSP(client, idpProviderName, roleMap);
             result.append(singleLog);
         }

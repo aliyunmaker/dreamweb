@@ -375,3 +375,44 @@ Caused by: java.lang.NullPointerException: null
 2021-06-30 16:13:05,741 INFO  o.s.b.a.w.s.WelcomePageHandlerMapping [main] - Adding welcome page template: index
 2021-06-30 16:13:06,435 WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext [main] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'enableRedisKeyspaceNotificationsInitializer' defined in class path resource [org/springframework/boot/autoconfigure/session/RedisSessionConfiguration$SpringBootRedisHttpSessionConfiguration.class]: Invocation of init method failed; nested exception is org.springframework.data.redis.RedisConnectionFailureException: Unable to connect to Redis; nested exception is io.lettuce.core.RedisConnectionException: Unable to connect to localhost:6379
 2021-06-30 16:13:06,436 INFO  o.s.s.c.ThreadPoolTaskExecutor [main] - Shutting down ExecutorService 'applicationTaskExecutor'
+2021-06-30 19:14:56,093 INFO  c.l.dreamweb.DreamwebApplication [main] - Starting DreamwebApplication using Java 1.8.0_151 on B-31TDLVDL-2141.local with PID 46017 (/Users/kerwin/Projects/dreamweb/target/classes started by kerwin in /Users/kerwin/Projects/dreamweb)
+2021-06-30 19:14:56,096 INFO  c.l.dreamweb.DreamwebApplication [main] - No active profile set, falling back to default profiles: default
+2021-06-30 19:14:57,305 INFO  o.s.d.r.c.RepositoryConfigurationDelegate [main] - Multiple Spring Data modules found, entering strict repository configuration mode!
+2021-06-30 19:14:57,310 INFO  o.s.d.r.c.RepositoryConfigurationDelegate [main] - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2021-06-30 19:14:57,347 INFO  o.s.d.r.c.RepositoryConfigurationDelegate [main] - Finished Spring Data repository scanning in 19 ms. Found 0 Redis repository interfaces.
+2021-06-30 19:14:57,629 INFO  o.s.i.c.DefaultConfiguringBeanFactoryPostProcessor [main] - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2021-06-30 19:14:57,635 INFO  o.s.i.c.DefaultConfiguringBeanFactoryPostProcessor [main] - No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2021-06-30 19:14:57,638 INFO  o.s.i.c.DefaultConfiguringBeanFactoryPostProcessor [main] - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2021-06-30 19:14:57,914 INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] - Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-06-30 19:14:57,925 INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] - Bean 'integrationChannelResolver' of type [org.springframework.integration.support.channel.BeanFactoryChannelResolver] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-06-30 19:14:57,927 INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] - Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-06-30 19:14:58,289 INFO  o.s.b.w.e.tomcat.TomcatWebServer [main] - Tomcat initialized with port(s): 8080 (http)
+2021-06-30 19:14:58,303 INFO  o.a.coyote.http11.Http11NioProtocol [main] - Initializing ProtocolHandler ["http-nio-8080"]
+2021-06-30 19:14:58,303 INFO  o.a.catalina.core.StandardService [main] - Starting service [Tomcat]
+2021-06-30 19:14:58,303 INFO  o.a.catalina.core.StandardEngine [main] - Starting Servlet engine: [Apache Tomcat/9.0.41]
+2021-06-30 19:14:58,401 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] [main] - Initializing Spring embedded WebApplicationContext
+2021-06-30 19:14:58,402 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext [main] - Root WebApplicationContext: initialization completed in 2240 ms
+2021-06-30 19:14:59,612 WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext [main] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'webSecurityConfig': Unsatisfied dependency expressed through field 'authProvider'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'myAuthenticationProvider': Unsatisfied dependency expressed through field 'userService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userService': Unsatisfied dependency expressed through field 'userDao'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userDao' defined in file [/Users/kerwin/Projects/dreamweb/target/classes/cc/landingzone/dreamweb/dao/UserDao.class]: Unsatisfied dependency expressed through bean property 'sqlSessionFactory'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sqlSessionFactory' defined in class path resource [org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.class]: Unsatisfied dependency expressed through method 'sqlSessionFactory' parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSource' defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Hikari.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception; nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$DataSourceBeanCreationException: Failed to determine a suitable driver class
+2021-06-30 19:14:59,641 INFO  o.a.catalina.core.StandardService [main] - Stopping service [Tomcat]
+2021-06-30 19:14:59,680 INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener [main] - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2021-06-30 19:14:59,717 ERROR o.s.b.d.LoggingFailureAnalysisReporter [main] - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
+

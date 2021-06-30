@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.common;
 import javax.annotation.PostConstruct;
 
 import cc.landingzone.dreamweb.service.SystemConfigService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -67,10 +68,13 @@ public enum EndpointEnum {
         this.endpointPattern = endpointPattern;
     }
 
-    public String getEndpoint() throws RuntimeException {
+    public String getEndpoint() {
         String region = systemConfigService.getStringValueFromCache(REGION);
-        Assert.notNull(region, "请先配置region!");
         boolean useVpc = systemConfigService.getBooleanValueFromCache(USE_VPC);
+
+        if (StringUtils.isBlank(region)) {
+            region = CommonConstants.Aliyun_REGION_HANGZHOU;
+        }
 
         if (SLS == this) {
             if (useVpc) {
