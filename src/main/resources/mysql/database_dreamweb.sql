@@ -159,7 +159,8 @@ VALUES
 ('allowLDAP','false','是否允许通过LDAP登录',TRUE,now()),
 ('loginPageTitle','无限梦想','登录页标题',TRUE,now()),
 ('allowSolutionDemo','false','解决方案Demo开关',TRUE,now()),
-('region','','日志服务地区配置',TRUE,now());
+('region','cn-hangzhou','日志服务地区配置',TRUE,now()),
+('useVpc','false','是否使用私网地址',TRUE,now());
 
 UNLOCK TABLES;
 

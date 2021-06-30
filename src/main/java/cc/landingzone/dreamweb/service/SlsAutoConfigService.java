@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.service;
 
+import cc.landingzone.dreamweb.common.EndpointConstants;
 import cc.landingzone.dreamweb.model.AccountEcsInfo;
 import cc.landingzone.dreamweb.sso.sp.SPHelper;
 import cc.landingzone.dreamweb.thread.LogtailAutoConfigJob;
@@ -21,6 +22,7 @@ import com.aliyuncs.sts.model.v20150401.GetCallerIdentityRequest;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,8 +33,10 @@ import java.util.concurrent.*;
 @Service
 public class SlsAutoConfigService {
 
+    @Autowired
+    SystemConfigService systemConfigService;
+
     private static Logger logger = LoggerFactory.getLogger(SlsAutoConfigService.class);
-    private static final String SLS_HOST_SUFFIX = ".log.aliyuncs.com";
     private static String LINE_BREAK = "<br>";
     private static String LINE_SEPARATED = "<hr>";
 
@@ -51,16 +55,19 @@ public class SlsAutoConfigService {
      * @return 返回EcsList
      * @throws Exception
      */
-    public List<AccountEcsInfo> getEcsList(String accessKey, String secretKey) throws Exception {
-        DefaultProfile profile = DefaultProfile.getProfile(
-            cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKey, secretKey);
+    public List<AccountEcsInfo> getEcsList(String accessKey, String secretKey, String region, Boolean useVpc)
+        throws Exception {
+        DefaultProfile profile = DefaultProfile.getProfile(region, accessKey, secretKey);
+        String resourceManagerEndpoint = EndpointConstants.getResourceManagerEndpoint(region, useVpc);
 
-        List<Map<String, String>> accountList = SPHelper.listAccounts(profile);
+        List<Map<String, String>> accountList = SPHelper.listAccounts(profile, resourceManagerEndpoint);
+        String endpoint = EndpointConstants.getEcsEndpoint(region, useVpc);
         DescribeInstancesRequest request = new DescribeInstancesRequest();
+        request.setSysEndpoint(endpoint);
 
         List<AccountEcsInfo> accountEcsInfoList = new ArrayList<>();
         for (Map<String, String> account : accountList) {
-            IAcsClient client = SPHelper.getSubAccountClinet(accessKey, secretKey, account.get("AccountId"));
+            IAcsClient client = SPHelper.getSubAccountClinet(accessKey, secretKey, account.get("AccountId"), region);
             DescribeInstancesResponse response = client.getAcsResponse(request);
 
             AccountEcsInfo accountEcsInfo = new AccountEcsInfo();
@@ -87,15 +94,16 @@ public class SlsAutoConfigService {
      * @throws Exception
      */
     public String initLogtail(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey,
-                              String action) throws Exception {
+                              String action, String region, Boolean useVpc) throws Exception {
         StringBuilder result = new StringBuilder();
 
-        DefaultProfile profile = DefaultProfile.getProfile(
-            cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKey, secretKey);
+        DefaultProfile profile = DefaultProfile.getProfile(region, accessKey, secretKey);
         IAcsClient masterClient = new DefaultAcsClient(profile);
 
         // 获取主账号uid
         GetCallerIdentityRequest request = new GetCallerIdentityRequest();
+        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
+        request.setSysEndpoint(stsEndpoint);
         GetCallerIdentityResponse response = masterClient.getAcsResponse(request);
         String masterUid = response.getAccountId();
 
@@ -116,14 +124,17 @@ public class SlsAutoConfigService {
         CountDownLatch countDownLatch = new CountDownLatch(accountEcsInfoList.size());
         List<Future<String>> futureList = new ArrayList<>(accountEcsInfoList.size());
         for (AccountEcsInfo accountEcsInfo : accountEcsInfoList) {
-            IAcsClient client = SPHelper.getSubAccountClinet(accessKey, secretKey, accountEcsInfo.getAccountId());
+            IAcsClient client = SPHelper.getSubAccountClinet(accessKey, secretKey, accountEcsInfo.getAccountId(),
+                region);
             Future<String> future = threadPoolExecutor.submit(
                 new LogtailAutoConfigJob(accountEcsInfo.getAccountId(),
                     action,
                     client,
                     countDownLatch,
                     accountEcsInfo.getInstanceIdList(),
-                    masterUid));
+                    masterUid,
+                    region,
+                    useVpc));
 
             futureList.add(future);
         }
@@ -148,10 +159,11 @@ public class SlsAutoConfigService {
      * @param action             install 初始化； uninstall还原
      */
     public String initSlsService(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey,
-                                 String action) {
+                                 String action, String region, Boolean useVpc) {
         StringBuilder result = new StringBuilder();
-        String host = cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU + SLS_HOST_SUFFIX;
-        Client client = new Client(host, accessKey, secretKey);
+
+        String endpoint = EndpointConstants.getSlsEndpoint(region, useVpc);
+        Client client = new Client(endpoint, accessKey, secretKey);
 
         result.append(
             "<big><b>2. " + SlsUtils.drawWithColor(action) + " sls configuration on master account</b></big>");
@@ -179,7 +191,7 @@ public class SlsAutoConfigService {
                 result.append(LINE_SEPARATED);
 
                 // 3. 创建Logtail配置并应用到对应机器组
-                String logtailConfigResult = createLogtailConfig(client, accountName, accountName, host);
+                String logtailConfigResult = createLogtailConfig(client, accountName, accountName, endpoint);
                 result.append(logtailConfigResult);
                 result.append(LINE_SEPARATED);
             } else {
@@ -282,10 +294,10 @@ public class SlsAutoConfigService {
      *
      * @param client
      * @param projectName
-     * @param host
+     * @param endpoint
      * @return
      */
-    private String createLogtailConfig(Client client, String projectName, String groupName, String host) {
+    private String createLogtailConfig(Client client, String projectName, String groupName, String endpoint) {
         StringBuilder result = new StringBuilder();
 
         // 1. logtail config 所需参数
@@ -307,7 +319,7 @@ public class SlsAutoConfigService {
         configInputDetail.SetRegex("(.*)");
         config.SetInputDetail(configInputDetail);
 
-        config.SetOutputDetail(new ConfigOutputDetail(host, logstoreName));
+        config.SetOutputDetail(new ConfigOutputDetail(endpoint, logstoreName));
 
         // 2. 创建logtail Config
         try {
