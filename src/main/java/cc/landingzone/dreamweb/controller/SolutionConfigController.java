@@ -63,7 +63,7 @@ public class SolutionConfigController extends BaseController {
             Assert.hasText(module, "所属模块不能为空!");
 
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigByName(name);
-            Assert.isNull(solutionConfig, "该解决方案名称已存在!");
+            Assert.isNull(solutionConfig, "解决方案已存在!");
             solutionConfig = new SolutionConfig();
             solutionConfig.setName(name);
             solutionConfig.setIntro(intro);
@@ -101,9 +101,9 @@ public class SolutionConfigController extends BaseController {
             Assert.hasText(module, "所属模块不能为空!");
             
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigById(id);
-            Assert.notNull(solutionConfig, "该解决方案不存在!");
-            SolutionConfig solutionConfig2 = solutionConfigService.getSolutionConfigByName(name);
-            Assert.isTrue(solutionConfig2 == null || solutionConfig2.getId() == id, "该名称已被其他解决方案占用!");
+            Assert.notNull(solutionConfig, "解决方案不存在!");
+            SolutionConfig solutionConfigByName = solutionConfigService.getSolutionConfigByName(name);
+            Assert.isTrue(solutionConfigByName == null || solutionConfigByName.getId() == id, "解决方案名称不能重复!");
             solutionConfig.setName(name);
             solutionConfig.setIntro(intro);
             solutionConfig.setWebConfig(webConfig);
