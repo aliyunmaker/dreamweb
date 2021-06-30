@@ -94,8 +94,8 @@ function loadPage() {
         }
         const solution = solutionMap.get(key.value);
         var url = encodeURI("index_solution.html?name=" + solution.name + "&menu=" + solution.webConfig);
-        solutionDiv += '<div class="col-md-4 col-6" style="margin-bottom: 20px;">';
-        solutionDiv += '<div class="card mb-4 h-100" style="max-width: 22rem;">';
+        solutionDiv += '<div class="col-md-auto" style="margin-bottom: 10px; margin-righ: 10px;">';
+        solutionDiv += '<div class="card mb-4 h-100" style="min-width: 20rem; max-width: 20rem; min-height: 30rem; max-height: 30rem;">';
         solutionDiv += '<div class="card-header">' + solution.module + "</div>";
         solutionDiv += '<div class="card-body h-100">';
         // solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
@@ -119,7 +119,7 @@ function loadPage() {
             solutionDiv += '</div>';
         }
         solutionDiv += '</div>';
-        solutionDiv += '<p class="card-text">' + solution.intro + '</p>';
+        solutionDiv += '<p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:8;">' + solution.intro + '</p>';
         solutionDiv += '</div>';
         solutionDiv += '<div class="card-body" style="display: flex; justify-content: space-between;">';
         solutionDiv += '<a href="' + url + '" class="btn btn-primary">查看详情</a>';
