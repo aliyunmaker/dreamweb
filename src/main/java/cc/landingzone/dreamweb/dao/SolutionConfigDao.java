@@ -6,7 +6,6 @@ import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.SolutionConfig;
 
 public interface SolutionConfigDao {
-    List<SolutionConfig> listSolutionConfig();
 
     SolutionConfig getSolutionConfigById(Integer id);
 
