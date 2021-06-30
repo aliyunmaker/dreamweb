@@ -1,6 +1,6 @@
 package cc.landingzone.dreamweb.sso.sp;
 
-import cc.landingzone.dreamweb.common.EndpointConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -25,7 +25,7 @@ public class SPHelper2 {
         String accessKeySecret = "<your accessKeySecret>";
         String samlMetadata = "<download from IDP,for example: Azure AD>";
         DefaultProfile profile = DefaultProfile.getProfile(region, accessKeyId, accessKeySecret);
-        String result = initSP(profile, idpProviderName, roleName, samlMetadata, region, false);
+        String result = initSP(profile, idpProviderName, roleName, samlMetadata);
         System.out.println(result);
 
     }
@@ -40,12 +40,12 @@ public class SPHelper2 {
      * @return
      * @throws Exception
      */
-    public static String initSP(DefaultProfile profile, String idpProviderName, String roleName, String samlMetadata, String region, Boolean useVpc) throws Exception {
+    public static String initSP(DefaultProfile profile, String idpProviderName, String roleName, String samlMetadata) throws Exception {
         StringBuilder result = new StringBuilder();
 
-        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
-        String imsEndpoint = EndpointConstants.getImsEndpoint(region, useVpc);
-        String ramEndpoint = EndpointConstants.getRamEndpoint(region, useVpc);
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
+        String imsEndpoint = EndpointEnum.IMS.getEndpoint();
+        String ramEndpoint = EndpointEnum.RAM.getEndpoint();
 
         String uid = getUid(profile, stsEndpoint);
 

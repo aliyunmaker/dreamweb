@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import cc.landingzone.dreamweb.common.EndpointConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
@@ -78,13 +78,12 @@ public class SlsViewService {
                        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
                        User user = userService.getUserByLoginName(userName);
                        String region = systemConfigService.getStringValue("region");
-                       Boolean useVpc = systemConfigService.getBoolValue("useVpc");
                        // 分页，limit最大是500
                        Page page = new Page(0, 500);
 
                        List<String> projectList = new ArrayList<>();
                        try {
-                           projectList = listProjectsInfo(page, region, user, userRole, useVpc);
+                           projectList = listProjectsInfo(page, region, user, userRole);
                        } catch (Exception e) {
                            logger.error(e.getMessage());
                        }
@@ -103,10 +102,10 @@ public class SlsViewService {
      * @return Project名称列表
      * @throws Exception
      */
-    public List<String> listProjectsInfo(Page page, String region, User user, UserRole userRole, Boolean useVpc)
+    public List<String> listProjectsInfo(Page page, String region, User user, UserRole userRole)
         throws Exception {
-        String slsEndpoint = EndpointConstants.getSlsEndpoint(region, useVpc);
-        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
+        String slsEndpoint = EndpointEnum.SLS.getEndpoint();
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
         String[] roleValue = userRole.getRoleValue().split(",");
@@ -156,11 +155,10 @@ public class SlsViewService {
      * @return Logstore列表
      * @throws Exception
      */
-    public List<String> listLogstoresInfo(String projectName, Page page, String region, User user, UserRole userRole,
-                                          Boolean useVpc)
+    public List<String> listLogstoresInfo(String projectName, Page page, String region, User user, UserRole userRole)
         throws Exception {
-        String slsEndpoint = EndpointConstants.getSlsEndpoint(region, useVpc);
-        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
+        String slsEndpoint = EndpointEnum.SLS.getEndpoint();
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
         String[] roleValue = userRole.getRoleValue().split(",");
@@ -198,11 +196,11 @@ public class SlsViewService {
      * @throws Exception
      */
     public String getNonLoginSlsUrl(String projectName, String logstoreName, String region, User user,
-                                    UserRole userRole, Boolean useVpc)
+                                    UserRole userRole)
         throws Exception {
         String signInUrl = "";
-        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
-        String signinEndpoint = EndpointConstants.getSignInEndpoint(region, useVpc);
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
+        String signinEndpoint = EndpointEnum.SIGN_IN.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
         String[] roleValue = userRole.getRoleValue().split(",");
@@ -280,7 +278,7 @@ public class SlsViewService {
      *
      * @throws Exception
      */
-    public void refreshCache() throws Exception {
+    public void refreshCache() {
         logger.info("begin refresh");
         Set<Integer> keys = cache.asMap().keySet();
         for (Integer key : keys) {

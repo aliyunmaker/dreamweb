@@ -1,6 +1,6 @@
 package cc.landingzone.dreamweb.service;
 
-import cc.landingzone.dreamweb.common.EndpointConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.model.AccountEcsInfo;
 import cc.landingzone.dreamweb.sso.sp.SPHelper;
 import cc.landingzone.dreamweb.thread.LogtailAutoConfigJob;
@@ -55,15 +55,15 @@ public class SlsAutoConfigService {
      * @return 返回EcsList
      * @throws Exception
      */
-    public List<AccountEcsInfo> getEcsList(String accessKey, String secretKey, String region, Boolean useVpc)
+    public List<AccountEcsInfo> getEcsList(String accessKey, String secretKey, String region)
         throws Exception {
         DefaultProfile profile = DefaultProfile.getProfile(region, accessKey, secretKey);
-        String resourceManagerEndpoint = EndpointConstants.getResourceManagerEndpoint(region, useVpc);
+        String resourceManagerEndpoint = EndpointEnum.RESOURCE_MANAGER.getEndpoint();
+        String ecsEndpoint = EndpointEnum.ECS.getEndpoint();
 
         List<Map<String, String>> accountList = SPHelper.listAccounts(profile, resourceManagerEndpoint);
-        String endpoint = EndpointConstants.getEcsEndpoint(region, useVpc);
         DescribeInstancesRequest request = new DescribeInstancesRequest();
-        request.setSysEndpoint(endpoint);
+        request.setSysEndpoint(ecsEndpoint);
 
         List<AccountEcsInfo> accountEcsInfoList = new ArrayList<>();
         for (Map<String, String> account : accountList) {
@@ -94,7 +94,7 @@ public class SlsAutoConfigService {
      * @throws Exception
      */
     public String initLogtail(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey,
-                              String action, String region, Boolean useVpc) throws Exception {
+                              String action, String region) throws Exception {
         StringBuilder result = new StringBuilder();
 
         DefaultProfile profile = DefaultProfile.getProfile(region, accessKey, secretKey);
@@ -102,7 +102,7 @@ public class SlsAutoConfigService {
 
         // 获取主账号uid
         GetCallerIdentityRequest request = new GetCallerIdentityRequest();
-        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
         request.setSysEndpoint(stsEndpoint);
         GetCallerIdentityResponse response = masterClient.getAcsResponse(request);
         String masterUid = response.getAccountId();
@@ -133,8 +133,7 @@ public class SlsAutoConfigService {
                     countDownLatch,
                     accountEcsInfo.getInstanceIdList(),
                     masterUid,
-                    region,
-                    useVpc));
+                    region));
 
             futureList.add(future);
         }
@@ -159,10 +158,10 @@ public class SlsAutoConfigService {
      * @param action             install 初始化； uninstall还原
      */
     public String initSlsService(List<AccountEcsInfo> accountEcsInfoList, String accessKey, String secretKey,
-                                 String action, String region, Boolean useVpc) {
+                                 String action) {
         StringBuilder result = new StringBuilder();
 
-        String endpoint = EndpointConstants.getSlsEndpoint(region, useVpc);
+        String endpoint = EndpointEnum.SLS.getEndpoint();
         Client client = new Client(endpoint, accessKey, secretKey);
 
         result.append(

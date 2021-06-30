@@ -1,6 +1,6 @@
 package cc.landingzone.dreamweb.thread;
 
-import cc.landingzone.dreamweb.common.EndpointConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.utils.SlsUtils;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
@@ -26,10 +26,9 @@ public class LogtailAutoConfigJob implements Callable<String> {
     private String masterUid;
     private StringBuilder result;
     private String region;
-    private Boolean useVpc;
 
     public LogtailAutoConfigJob(String accountId, String action, IAcsClient client, CountDownLatch countDownLatch,
-                                List<String> ecsInstanceIdList, String masterUid, String region, Boolean useVpc) {
+                                List<String> ecsInstanceIdList, String masterUid, String region) {
         this.accountId = accountId;
         this.action = action;
         this.client = client;
@@ -38,12 +37,11 @@ public class LogtailAutoConfigJob implements Callable<String> {
         this.masterUid = masterUid;
         this.result = new StringBuilder();
         this.region = region;
-        this.useVpc = useVpc;
     }
 
     @Override
     public String call() {
-        String oosEndpoint = EndpointConstants.getOosEndpoint(region, useVpc);
+        String oosEndpoint = EndpointEnum.OOS.getEndpoint();
 
         result.append("<b>start " + SlsUtils.drawWithColor(action) + " logtail on account: " + accountId + "</b>");
         result.append(LINE_BREAK);
@@ -185,6 +183,7 @@ public class LogtailAutoConfigJob implements Callable<String> {
 
         for (ListExecutionsResponse.Execution execution : response.getExecutions()) {
             ListTaskExecutionsRequest taskRequest = new ListTaskExecutionsRequest();
+            taskRequest.setSysEndpoint(endpoint);
             taskRequest.setExecutionId(execution.getExecutionId());
             ListTaskExecutionsResponse taskResponse = client.getAcsResponse(taskRequest);
 

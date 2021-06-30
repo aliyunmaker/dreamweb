@@ -93,9 +93,7 @@ public class SlsViewController extends BaseController {
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
-            List<String> logstoreList = slsViewService.listLogstoresInfo(projectName, page, region, user, userRole,
-                useVpc);
+            List<String> logstoreList = slsViewService.listLogstoresInfo(projectName, page, region, user, userRole);
 
             result.setTotal(logstoreList.size());
             result.setData(logstoreList);
@@ -128,15 +126,13 @@ public class SlsViewController extends BaseController {
 
             Integer roleId = Integer.valueOf(roleIdStr);
             String region = systemConfigService.getStringValue("region");
-            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
 
             // 获取当前用户信息以及所需要使用的ram角色信息
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            String nonLoginSlsUrl = slsViewService.getNonLoginSlsUrl(projectName, logstoreName, region, user, userRole,
-                useVpc);
+            String nonLoginSlsUrl = slsViewService.getNonLoginSlsUrl(projectName, logstoreName, region, user, userRole);
 
             result.setData(nonLoginSlsUrl);
         } catch (Exception e) {
