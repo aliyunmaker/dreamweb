@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
-import cc.landingzone.dreamweb.common.EndpointConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.service.SystemConfigService;
 import com.aliyuncs.profile.DefaultProfile;
 
@@ -213,8 +213,7 @@ public class SSOController extends BaseController implements InitializingBean {
             }
 
             String region = systemConfigService.getStringValue("region");
-            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
-            String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
+            String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
             // 如果没有传AK信息就默认用自己的AK
             DefaultProfile profile = DefaultProfile.getProfile(
@@ -310,9 +309,7 @@ public class SSOController extends BaseController implements InitializingBean {
             // accessKeySecret);
             // }
             String region = systemConfigService.getStringValue("region");
-            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
-            result = SPHelper.initMultiAccountSP(accessKeyId, accessKeySecret, idpProviderName, roleMap, region,
-                useVpc);
+            result = SPHelper.initMultiAccountSP(accessKeyId, accessKeySecret, idpProviderName, roleMap, region);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();
@@ -332,8 +329,7 @@ public class SSOController extends BaseController implements InitializingBean {
         String result = new String();
         try {
             String region = systemConfigService.getStringValue("region");
-            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
-            String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
+            String stsEndpoint = EndpointEnum.STS.getEndpoint();
             // 如果没有传AK信息就默认用自己的AK
             DefaultProfile profile = DefaultProfile.getProfile(
                 region,
@@ -389,9 +385,8 @@ public class SSOController extends BaseController implements InitializingBean {
             String accessKeySecret = request.getParameter("accessKeySecret");
             Assert.hasText(accessKeyId, "accessKeyId can not be blank!");
             Assert.hasText(accessKeySecret, "accessKeySecret can not be blank!");
-            String region = systemConfigService.getStringValue("region");
-            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
-            String endpoint = EndpointConstants.getResourceManagerEndpoint(region, useVpc);
+            String region = systemConfigService.getStringValueFromCache("region");
+            String endpoint = EndpointEnum.RESOURCE_MANAGER.getEndpoint();
 
             DefaultProfile profile = DefaultProfile.getProfile(
                 region, accessKeyId,

@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 
-import cc.landingzone.dreamweb.common.EndpointConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -43,7 +43,7 @@ public class SPHelper3 {
         // CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         // initSP(profile, idpProviderName, roleName);
 
-        String endpoint = EndpointConstants.getResourceManagerEndpoint(CommonConstants.Aliyun_REGION_HANGZHOU, false);
+        String endpoint = EndpointEnum.RESOURCE_MANAGER.getEndpoint();
         DefaultProfile profile = DefaultProfile.getProfile(CommonConstants.Aliyun_REGION_HANGZHOU,
                 "LTAI4GJUpyaevoyoXyr6hn47", "4SMabTxnMbo3WYCCYrU95T7XJK5uXs");
         List<Map<String, String>> list = listAccounts(profile, endpoint);
@@ -60,12 +60,12 @@ public class SPHelper3 {
      * @throws Exception
      */
     public static String initSingleAccountSP(DefaultProfile profile, String idpProviderName,
-            Map<String, List<String>> roleMap, String region, Boolean useVpc) throws Exception {
+            Map<String, List<String>> roleMap) throws Exception {
         StringBuilder result = new StringBuilder();
 
-        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
-        String imsEndpoint = EndpointConstants.getImsEndpoint(region, useVpc);
-        String ramEndpoint = EndpointConstants.getRamEndpoint(region, useVpc);
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
+        String imsEndpoint = EndpointEnum.IMS.getEndpoint();
+        String ramEndpoint = EndpointEnum.RAM.getEndpoint();
 
         String uid = getUid(profile, stsEndpoint);
 

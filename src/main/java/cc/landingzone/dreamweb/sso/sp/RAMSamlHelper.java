@@ -1,7 +1,7 @@
 package cc.landingzone.dreamweb.sso.sp;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.EndpointConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.utils.UUIDUtils;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
@@ -14,7 +14,7 @@ import io.jsonwebtoken.lang.Assert;
 public class RAMSamlHelper {
 
     public static void main(String[] args) throws Exception {
-        String stsEndpoint = EndpointConstants.getStsEndpoint(CommonConstants.Aliyun_REGION_HANGZHOU, false);
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
         DefaultProfile profile = DefaultProfile.getProfile(
                 CommonConstants.Aliyun_REGION_HANGZHOU,
                 CommonConstants.Aliyun_AccessKeyId,
