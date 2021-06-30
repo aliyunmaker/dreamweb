@@ -5,6 +5,7 @@ import javax.annotation.PostConstruct;
 import cc.landingzone.dreamweb.service.SystemConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 public enum EndpointEnum {
 
@@ -66,9 +67,10 @@ public enum EndpointEnum {
         this.endpointPattern = endpointPattern;
     }
 
-    public String getEndpoint() {
+    public String getEndpoint() throws RuntimeException {
         String region = systemConfigService.getStringValueFromCache(REGION);
-        Boolean useVpc = systemConfigService.getBooleanValueFromCache(USE_VPC);
+        Assert.notNull(region, "请先配置region!");
+        boolean useVpc = systemConfigService.getBooleanValueFromCache(USE_VPC);
 
         if (SLS == this) {
             if (useVpc) {
