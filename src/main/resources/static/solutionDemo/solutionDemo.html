@@ -58,7 +58,7 @@
       </div>
     </nav>
     <br>
-    <div class="row" id="solutionDiv">
+    <div class="row .modal-dialog-centered" id="solutionDiv">
 
     </div>
 
@@ -115,7 +115,7 @@
 
     <div class="modal fade" id="addSolutionModal" tabindex="-1" role="dialog" aria-labelledby="addSolutionModalLabel"
       aria-hidden="true">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="addSolutionModalLabel">添加解决方案</h5>
@@ -134,14 +134,14 @@
               </div>
               <div class="form-group">
                 <label for="inputIntro">简介</label>
-                <textarea class="form-control" id="inputIntro" rows="3" required></textarea>
+                <textarea class="form-control" id="inputIntro" rows="5" required></textarea>
                 <div class="invalid-feedback">
                   请输入简介
                 </div>
               </div>
               <div class="form-group">
                 <label for="inputWebConfig">解决方案详情页配置（JSON）</label>
-                <textarea class="form-control" id="inputWebConfig" rows="3" required></textarea>
+                <textarea class="form-control" id="inputWebConfig" rows="5" required></textarea>
                 <div class="invalid-feedback">
                   请输入解决方案详情页配置
                 </div>
@@ -193,7 +193,7 @@
 
     <div class="modal fade" id="updateSolutionModal" tabindex="-1" role="dialog"
       aria-labelledby="updateSolutionModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="updateSolutionModalLabel">更新解决方案</h5>
@@ -213,14 +213,14 @@
               </div>
               <div class="form-group">
                 <label for="updateIntro">简介</label>
-                <textarea class="form-control" id="updateIntro" rows="3" required></textarea>
+                <textarea class="form-control" id="updateIntro" rows="5" required></textarea>
                 <div class="invalid-feedback">
                   请输入简介
                 </div>
               </div>
               <div class="form-group">
                 <label for="updateWebConfig">解决方案详情页配置（JSON）</label>
-                <textarea class="form-control" id="updateWebConfig" rows="3" required></textarea>
+                <textarea class="form-control" id="updateWebConfig" rows="5" required></textarea>
                 <div class="invalid-feedback">
                   请输入解决方案详情页配置
                 </div>
@@ -271,7 +271,35 @@
 
     <div class="modal fade" id="deleteSolutionConfirmModal" tabindex="-1" role="dialog"
       aria-labelledby="deleteSolutionConfirmModal" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content message_align">
+          <div class="modal-header">
+            <h4 class="modal-title" id="updateSolutionModalLabel">提示信息</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>您确认要删除吗？</p>
+          </div>
+          <div class="modal-footer">
+            <div class="row">
+              <div class="col">
+                <button type="button" class="btn btn-primary" id="deleteSolutionBtn" data-dismiss="modal"
+                  style="width: 80px;">确定</button>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px;">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="detailIntroModal" tabindex="-1" role="dialog"
+      aria-labelledby="detailIntroModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content message_align">
           <div class="modal-header">
             <h4 class="modal-title" id="updateSolutionModalLabel">提示信息</h4>
