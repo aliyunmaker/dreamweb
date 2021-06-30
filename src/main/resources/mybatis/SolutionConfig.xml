@@ -47,10 +47,10 @@
         select *
         from solution_config
         <where>
-            <if test="module != ''">
+            <if test="!isModuleAll">
                 and module = #{module}
             </if>
-            <if test="searchInput != ''">
+            <if test="!isSearchBlank">
                 and (name like concat('%',#{searchInput},'%') or intro like concat('%',#{searchInput},'%') or 
                 creator like concat('%',#{searchInput},'%') or version like concat('%',#{searchInput},'%') or 
                 module like concat('%',#{searchInput},'%'))

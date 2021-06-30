@@ -10,7 +10,7 @@ public interface SolutionConfigDao {
 
     SolutionConfig getSolutionConfigByName(String name);
 
-    List<SolutionConfig> searchSolution(String module, String searchInput);
+    List<SolutionConfig> searchSolution(String module, String searchInput, Boolean isModuleAll, Boolean isSearchBlank);
 
     int addSolutionConfig(SolutionConfig solutionConfig);
 

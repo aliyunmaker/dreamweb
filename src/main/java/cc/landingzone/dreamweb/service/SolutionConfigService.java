@@ -1,6 +1,8 @@
 package cc.landingzone.dreamweb.service;
 
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,10 +50,9 @@ public class SolutionConfigService {
     public List<SolutionConfig> searchSolution(String module, String searchInput) {
         Assert.notNull(module, "模块不能为空!");
         Assert.notNull(searchInput, "搜索不能为空!");
-        if (module.equals("全部")) {
-            module = "";
-        }
-        return solutionConfigDao.searchSolution(module, searchInput);
+        Boolean isModuleAll = module.equals("全部");
+        Boolean isSearchBlank = StringUtils.isBlank(searchInput);
+        return solutionConfigDao.searchSolution(module, searchInput, isModuleAll, isSearchBlank);
     }
 
     /**
