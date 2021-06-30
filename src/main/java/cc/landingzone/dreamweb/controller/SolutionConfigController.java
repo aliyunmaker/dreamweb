@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.SolutionConfig;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.SolutionConfigService;
@@ -26,55 +25,16 @@ public class SolutionConfigController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(SolutionConfigController.class);
 
-    @RequestMapping("/getSolutionConfigByName.do")
-    public void getSolutionConfigByName(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String name = request.getParameter("name");
-            Assert.hasText(name, "名称不能为空!");
-
-            SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigByName(name);
-            result.setData(solutionConfig);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
-    }
-
-    @RequestMapping("/getSolutionNumber.do") 
-    public void getSolutionNumber(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String module = request.getParameter("module");
-            Assert.hasText(module, "模块不能为空!");
-            String searchInput = request.getParameter("searchInput");
-            Assert.notNull(searchInput, "搜索输入不能为空!");
-
-            int solutionNumber = solutionConfigService.getSolutionNumber(module, searchInput);
-            result.setData(solutionNumber);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
-    }
-
     @RequestMapping("/searchSolution.do")
     public void searchSolution(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
             String module = request.getParameter("module");
-            Assert.hasText(module, "模块不能为空!");
+            Assert.notNull(module, "模块不能为空!");
             String searchInput = request.getParameter("searchInput");
-            Assert.notNull(searchInput, "搜索输入不能为空!");
-            Integer start = Integer.valueOf(request.getParameter("start"));
-            Integer limit = Integer.valueOf(request.getParameter("limit"));
-            Page page = new Page(start, limit);
+            Assert.notNull(searchInput, "搜索不能为空!");
 
-            List<SolutionConfig> solutionConfigs = solutionConfigService.searchSolution(module, searchInput, page);
+            List<SolutionConfig> solutionConfigs = solutionConfigService.searchSolution(module, searchInput);
             result.setTotal(solutionConfigs.size());
             result.setData(solutionConfigs);
         } catch (Exception e) {
@@ -103,7 +63,7 @@ public class SolutionConfigController extends BaseController {
             Assert.hasText(module, "所属模块不能为空!");
 
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigByName(name);
-            Assert.isNull(solutionConfig, "该解决方案已存在!");
+            Assert.isNull(solutionConfig, "该解决方案名称已存在!");
             solutionConfig = new SolutionConfig();
             solutionConfig.setName(name);
             solutionConfig.setIntro(intro);
@@ -142,6 +102,8 @@ public class SolutionConfigController extends BaseController {
             
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigById(id);
             Assert.notNull(solutionConfig, "该解决方案不存在!");
+            SolutionConfig solutionConfig2 = solutionConfigService.getSolutionConfigByName(name);
+            Assert.isTrue(solutionConfig2 == null || solutionConfig2.getId() == id, "该名称已被其他解决方案占用!");
             solutionConfig.setName(name);
             solutionConfig.setIntro(intro);
             solutionConfig.setWebConfig(webConfig);

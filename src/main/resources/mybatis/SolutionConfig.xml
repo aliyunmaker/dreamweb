@@ -43,26 +43,11 @@
         where id = #{id}
     </select>
 
-    <select id="getSolutionNumber" resultType="int">
-        select count(*)
-        from solution_config
-        <where>
-            <if test="module != '全部'">
-                and module = #{module}
-            </if>
-            <if test="searchInput != ''">
-                and (name like concat('%',#{searchInput},'%') or intro like concat('%',#{searchInput},'%') or 
-                creator like concat('%',#{searchInput},'%') or version like concat('%',#{searchInput},'%') or 
-                module like concat('%',#{searchInput},'%'))
-            </if>
-        </where>
-    </select>
-
     <select id="searchSolution" resultType="cc.landingzone.dreamweb.model.SolutionConfig">
         select *
         from solution_config
         <where>
-            <if test="module != '全部'">
+            <if test="module != ''">
                 and module = #{module}
             </if>
             <if test="searchInput != ''">
@@ -71,9 +56,6 @@
                 module like concat('%',#{searchInput},'%'))
             </if>
         </where>
-        <if test="page != null">
-            limit #{page.start},#{page.limit}
-        </if>
     </select>
 
     <delete id="deleteSolutionConfig" parameterType="int">

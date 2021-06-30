@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import cc.landingzone.dreamweb.dao.SolutionConfigDao;
-import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.SolutionConfig;
 
 @Component
@@ -39,17 +38,6 @@ public class SolutionConfigService {
     }
 
     /**
-     * 根据模块和搜索栏获取解决方案的数目
-     * 
-     * @param module
-     * @param searchInput
-     * @return
-     */
-    public int getSolutionNumber(String module, String searchInput) {
-        return solutionConfigDao.getSolutionNumber(module, searchInput);
-    }
-
-    /**
      * 根据模块和搜索栏获取一页解决方案
      * 
      * @param module
@@ -57,8 +45,13 @@ public class SolutionConfigService {
      * @param page
      * @return
      */
-    public List<SolutionConfig> searchSolution(String module, String searchInput, Page page) {
-        return solutionConfigDao.searchSolution(module, searchInput, page);
+    public List<SolutionConfig> searchSolution(String module, String searchInput) {
+        Assert.notNull(module, "模块不能为空!");
+        Assert.notNull(searchInput, "搜索不能为空!");
+        if (module.equals("全部")) {
+            module = "";
+        }
+        return solutionConfigDao.searchSolution(module, searchInput);
     }
 
     /**

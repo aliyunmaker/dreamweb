@@ -2,7 +2,6 @@ package cc.landingzone.dreamweb.dao;
 
 import java.util.List;
 
-import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.SolutionConfig;
 
 public interface SolutionConfigDao {
@@ -11,9 +10,7 @@ public interface SolutionConfigDao {
 
     SolutionConfig getSolutionConfigByName(String name);
 
-    int getSolutionNumber(String module, String searchInput);
-
-    List<SolutionConfig> searchSolution(String module, String searchInput, Page page);
+    List<SolutionConfig> searchSolution(String module, String searchInput);
 
     int addSolutionConfig(SolutionConfig solutionConfig);
 

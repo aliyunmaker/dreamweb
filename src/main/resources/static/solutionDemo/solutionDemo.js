@@ -7,9 +7,7 @@ var MYDATA = {
     pages: 1                //总页数
 };
 
-function test() {
-    alert('test');
-}
+var solutionMap = new Map();
 
 function requestParam() {
     var url = location.search;
@@ -29,8 +27,7 @@ function requestParam() {
 function newURL() {
     var url = location.pathname + '?';
     url += 'searchInput=' + MYDATA.searchInput + '&';
-    url += 'moduleSelect=' + MYDATA.moduleSelect + '&';
-    url += 'pageCurrent=' + MYDATA.pageCurrent;
+    url += 'moduleSelect=' + MYDATA.moduleSelect;
     return url;
 }
 
@@ -40,15 +37,20 @@ function searchSolution(module) {
     }
     MYDATA.searchInput = $('#searchInput').val();
     $.ajax({
-        url: "/solutionConfig/getSolutionNumber.do",
+        url: "/solutionConfig/searchSolution.do",
         data: {
             module: MYDATA.moduleSelect,
             searchInput: MYDATA.searchInput
         },
         success: function (result) {
             if (result.success) {
-                var solutionNumber = result.data;
-                MYDATA.pages = Math.ceil(solutionNumber / MYDATA.pageSize);
+                let solutions = result.data;
+                solutionMap.clear();
+                for (let index = 0; index < solutions.length; index++) {
+                    const solution = solutions[index];
+                    solutionMap.set(solution.id, solution);
+                }
+                MYDATA.pages = Math.ceil(solutions.length / MYDATA.pageSize);
                 MYDATA.pageCurrent = 1;
                 setPagination();
                 loadPage();
@@ -82,70 +84,60 @@ function setPagination() {
 }
 
 function loadPage() {
-    $.ajax({
-        url: "/solutionConfig/searchSolution.do",
-        data: {
-            module: MYDATA.moduleSelect,
-            searchInput: MYDATA.searchInput,
-            start: MYDATA.pageSize * (MYDATA.pageCurrent - 1),
-            limit: MYDATA.pageSize
-        },
-        success: function (result) {
-            if (result.success) {
-                var solutions = result.data;
-                var solutionDiv = '';
-                for (let index = 0; index < solutions.length; index++) {
-                    const solution = solutions[index];
-                    var url = encodeURI("index_solution.html?name=" + solution.name + "&menu=" + solution.webConfig);
-                    solutionDiv += '<div class="col-md-4 col-6" style="margin-bottom: 20px;">';
-                    solutionDiv += '<div class="card mb-4 h-100" style="max-width: 22rem;">';
-                    solutionDiv += '<div class="card-header">' + solution.module + "</div>";
-                    solutionDiv += '<div class="card-body h-100">';
-                    // solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
-                    solutionDiv += '<div class="row justify-content-between">';
-                    solutionDiv += '<div class="col">';
-                    solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
-                    solutionDiv += '</div>';
-                    if (MYDATA.changeable) {
-                        solutionDiv += '<div class="col-2" style="margin-right: 10px;">';
-                        solutionDiv += '<button type="button" class="btn btn-default" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="box-shadow: none;">';
-                        solutionDiv += '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">';
-                        solutionDiv += '<g transform="translate(0, -6.5)">';
-                        solutionDiv += '<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>';
-                        solutionDiv += '</g>';
-                        solutionDiv += '</svg>';
-                        solutionDiv += '</button>';
-                        solutionDiv += '<div class="dropdown-menu text-center" style="min-width: 50%;" aria-labelledby="dropdownMenuButton">';
-                        solutionDiv += '<a role="button" onclick="updateSolution(&apos;' + solution.name + '&apos;);" class="dropdown-item">更新</a>';
-                        solutionDiv += '<a role="button" onclick="deleteSolution(&apos;' + solution.name + '&apos;);" class="dropdown-item">删除</a>';
-                        solutionDiv += '</div>';
-                        solutionDiv += '</div>';
-                    }
-                    solutionDiv += '</div>';
-                    solutionDiv += '<p class="card-text">' + solution.intro + '</p>';
-                    solutionDiv += '</div>';
-                    solutionDiv += '<div class="card-body" style="display: flex; justify-content: space-between;">';
-                    solutionDiv += '<a href="' + url + '" class="btn btn-primary">查看详情</a>';
-                    // if (MYDATA.changeable) {
-                    //   solutionDiv += '<button onclick="updateSolution(&apos;' + solution.name + '&apos;);" class="btn btn-warning">更新</button>';
-                    //   solutionDiv += '<button onclick="deleteSolution(&apos;' + solution.name + '&apos;);" class="btn btn-danger">删除</button>';
-                    // }
-                    solutionDiv += '</div>';
-                    solutionDiv += '<div class="card-footer">';
-                    solutionDiv += '<p class="card-text">';
-                    solutionDiv += '<small class="text-muted">创建人：' + solution.creator + '</small><br>';
-                    solutionDiv += '<small class="text-muted">版本：' + solution.version + '</small>'
-                    solutionDiv += '</p>';
-                    solutionDiv += '</div>';
-                    solutionDiv += '</div>';
-                    solutionDiv += '</div>';
-                }
-                $("#solutionDiv").html(solutionDiv);
-            } else {
-                alert('获取解决方案失败！');
-            }
+    var keys = solutionMap.keys();
+    for (let i = 0; i < MYDATA.pageSize * (MYDATA.pageCurrent - 1); i++) keys.next();
+    var solutionDiv = '';
+    for (let index = 0; index < MYDATA.pageSize; index++) {
+        let key = keys.next();
+        if (key.done) {
+            break;
         }
-    });
+        const solution = solutionMap.get(key.value);
+        var url = encodeURI("index_solution.html?name=" + solution.name + "&menu=" + solution.webConfig);
+        solutionDiv += '<div class="col-md-4 col-6" style="margin-bottom: 20px;">';
+        solutionDiv += '<div class="card mb-4 h-100" style="max-width: 22rem;">';
+        solutionDiv += '<div class="card-header">' + solution.module + "</div>";
+        solutionDiv += '<div class="card-body h-100">';
+        // solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
+        solutionDiv += '<div class="row justify-content-between">';
+        solutionDiv += '<div class="col">';
+        solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
+        solutionDiv += '</div>';
+        if (MYDATA.changeable) {
+            solutionDiv += '<div class="col-2" style="margin-right: 10px;">';
+            solutionDiv += '<button type="button" class="btn btn-default" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="box-shadow: none;">';
+            solutionDiv += '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">';
+            solutionDiv += '<g transform="translate(0, -6.5)">';
+            solutionDiv += '<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>';
+            solutionDiv += '</g>';
+            solutionDiv += '</svg>';
+            solutionDiv += '</button>';
+            solutionDiv += '<div class="dropdown-menu text-center" style="min-width: 50%;" aria-labelledby="dropdownMenuButton">';
+            solutionDiv += '<a role="button" onclick="updateSolution(' + solution.id + ');" class="dropdown-item">更新</a>';
+            solutionDiv += '<a role="button" onclick="deleteSolution(' + solution.id + ');" class="dropdown-item">删除</a>';
+            solutionDiv += '</div>';
+            solutionDiv += '</div>';
+        }
+        solutionDiv += '</div>';
+        solutionDiv += '<p class="card-text">' + solution.intro + '</p>';
+        solutionDiv += '</div>';
+        solutionDiv += '<div class="card-body" style="display: flex; justify-content: space-between;">';
+        solutionDiv += '<a href="' + url + '" class="btn btn-primary">查看详情</a>';
+        // if (MYDATA.changeable) {
+        //   solutionDiv += '<button onclick="updateSolution(&apos;' + solution.name + '&apos;);" class="btn btn-warning">更新</button>';
+        //   solutionDiv += '<button onclick="deleteSolution(&apos;' + solution.name + '&apos;);" class="btn btn-danger">删除</button>';
+        // }
+        solutionDiv += '</div>';
+        solutionDiv += '<div class="card-footer">';
+        solutionDiv += '<p class="card-text">';
+        solutionDiv += '<small class="text-muted">创建人：' + solution.creator + '</small><br>';
+        solutionDiv += '<small class="text-muted">版本：' + solution.version + '</small>';
+        solutionDiv += '</p>';
+        solutionDiv += '</div>';
+        solutionDiv += '</div>';
+        solutionDiv += '</div>';
+    }
+    $("#solutionDiv").html(solutionDiv);
     
 }
 
@@ -177,88 +169,69 @@ function addSolution() {
     })
 }
 
-function updateSolution(name) {
-    $.ajax({
-        url: "/solutionConfig/getSolutionConfigByName.do",
-        data: {
-            name: name
-        },
-        success: function (result) {
-            if (result.success) {
-                let solution = result.data;
-                $('#updateId').val(solution.id);
-                $('#updateName').val(solution.name);
-                $('#updateIntro').val(solution.intro);
-                $('#updateWebConfig').val(solution.webConfig);
-                $('#updateCreator').val(solution.creator);
-                $('#updateVersion').val(solution.version);
-                $('#updateModule').val(solution.module);
-                $('#updateSolutionModal').modal({ backdrop: 'static', keyboard: false })
-                    .one('click', '#submitUpdateSolution', function () {
-                        let form = document.getElementById('updateSolutionForm');
-                        if (form.checkValidity() === false) {
-                            form.classList.add('was-validated');
-                            return false;
-                        }
-                        $.ajax({
-                            url: "/solutionConfig/updateSolutionConfig.do",
-                            data: {
-                                id: $('#updateId').val(),
-                                name: $('#updateName').val(),
-                                intro: $('#updateIntro').val(),
-                                webConfig: $('#updateWebConfig').val(),
-                                creator: $('#updateCreator').val(),
-                                version: $('#updateVersion').val(),
-                                module: $('#updateModule').val()
-                            },
-                            success: function (result) {
-                                if (result.success) {
-                                    form.reset();
-                                    $('#updateSolutionModal').modal('hide');
-                                    location.replace(newURL());
-                                } else {
-                                    alert("更新失败！" + result.errorMsg);
-                                }
-                            }
-                        })
-                    });
-            } else {
-                alert("获取解决方案失败！" + result.errorMsg);
+function updateSolution(id) {
+    var solution = solutionMap.get(id);
+    $('#updateName').val(solution.name);
+    $('#updateIntro').val(solution.intro);
+    $('#updateWebConfig').val(solution.webConfig);
+    $('#updateCreator').val(solution.creator);
+    $('#updateVersion').val(solution.version);
+    $('#updateModule').val(solution.module);
+    $('#updateSolutionModal').modal({ backdrop: 'static', keyboard: false })
+        .one('click', '#submitUpdateSolution', function () {
+            let form = document.getElementById('updateSolutionForm');
+            if (form.checkValidity() === false) {
+                form.classList.add('was-validated');
+                return false;
             }
-        }
-    })
+            $.ajax({
+                url: "/solutionConfig/updateSolutionConfig.do",
+                data: {
+                    id: id,
+                    name: $('#updateName').val(),
+                    intro: $('#updateIntro').val(),
+                    webConfig: $('#updateWebConfig').val(),
+                    creator: $('#updateCreator').val(),
+                    version: $('#updateVersion').val(),
+                    module: $('#updateModule').val()
+                },
+                success: function (result) {
+                    if (result.success) {
+                        form.reset();
+                        $('#updateSolutionModal').modal('hide');
+                        location.replace(newURL());
+                    } else {
+                        alert("更新失败！" + result.errorMsg);
+                    }
+                }
+            })
+        });
 }
 
-function deleteSolution(name) {
-    $.ajax({
-        url: "/solutionConfig/getSolutionConfigByName.do",
-        data: {
-            name: name
-        },
-        success: function (result) {
-            if (result.success) {
-                let solution = result.data;
-                $('#deleteSolutionConfirmModal').modal({ backdrop: 'static', keyboard: false })
-                    .one('click', '#deleteSolutionBtn', function () {
-                        $.ajax({
-                            url: "/solutionConfig/deleteSolutionConfig.do",
-                            data: {
-                                id: solution.id
-                            },
-                            success: function (result) {
-                                if (result.success) {
-                                    location.replace(newURL());
-                                } else {
-                                    alert("删除失败！" + result.errorMsg);
-                                }
-                            }
-                        })
-                    });
-            } else {
-                alert("获取解决方案失败！" + result.errorMsg);
-            }
-        }
-    });
+function deleteSolution(id) {
+    $('#deleteSolutionConfirmModal').modal({ backdrop: 'static', keyboard: false })
+        .one('click', '#deleteSolutionBtn', function () {
+            $.ajax({
+                url: "/solutionConfig/deleteSolutionConfig.do",
+                data: {
+                    id: id
+                },
+                success: function (result) {
+                    if (result.success) {
+                        solutionMap.delete(id);
+                        let newPages = Math.ceil(solutionMap.size / MYDATA.pageSize);
+                        if (newPages != MYDATA.pages) {
+                            MYDATA.pages = newPages;
+                            MYDATA.pageCurrent = Math.min(MYDATA.pageCurrent, MYDATA.pages);
+                            setPagination();
+                        }
+                        location.replace(newURL());
+                    } else {
+                        alert("删除失败！" + result.errorMsg);
+                    }
+                }
+            })
+        });
 }
 
 window.onload = function () {
@@ -266,7 +239,6 @@ window.onload = function () {
     if (param) {
         MYDATA.searchInput = param['searchInput'];
         MYDATA.moduleSelect = param['moduleSelect'];
-        MYDATA.pageCurrent = parseInt(param['pageCurrent']);
     }
     $('#searchInput').val(MYDATA.searchInput);
     var modules = $('#modules>label');
