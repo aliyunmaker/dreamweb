@@ -140,13 +140,6 @@
             <version>4.5.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>19.0</version>
-        </dependency>
-
-
         <!-- jsonwebtoken from weixin -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

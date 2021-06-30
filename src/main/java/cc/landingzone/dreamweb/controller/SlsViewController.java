@@ -86,15 +86,14 @@ public class SlsViewController extends BaseController {
             Integer limit = Integer.valueOf(limitStr);
 
             Page page = new Page(start, limit);
-            String region = systemConfigService.getStringValue("region");
-            String stsHost = systemConfigService.getStringValue("stsHost");
+            String region = systemConfigService.getStringValueFromCache("region");
 
             // 获取当前用户信息以及所需要使用的ram角色信息
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            List<String> logstoreList = slsViewService.listLogstoresInfo(projectName, page, region, stsHost, user, userRole);
+            List<String> logstoreList = slsViewService.listLogstoresInfo(projectName, page, region, user, userRole);
 
             result.setTotal(logstoreList.size());
             result.setData(logstoreList);
@@ -126,15 +125,14 @@ public class SlsViewController extends BaseController {
             Assert.hasText(roleIdStr, "roleId不能为空!");
 
             Integer roleId = Integer.valueOf(roleIdStr);
-            String region = systemConfigService.getStringValue("region");
-            String stsHost = systemConfigService.getStringValue("stsHost");
+            String region = systemConfigService.getStringValueFromCache("region");
 
             // 获取当前用户信息以及所需要使用的ram角色信息
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            String nonLoginSlsUrl = slsViewService.getNonLoginSlsUrl(projectName, logstoreName, region, stsHost, user, userRole);
+            String nonLoginSlsUrl = slsViewService.getNonLoginSlsUrl(projectName, logstoreName, region, user, userRole);
 
             result.setData(nonLoginSlsUrl);
         } catch (Exception e) {

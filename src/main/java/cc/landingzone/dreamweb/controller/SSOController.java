@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
+import cc.landingzone.dreamweb.service.SystemConfigService;
 import com.aliyuncs.profile.DefaultProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +53,9 @@ public class SSOController extends BaseController implements InitializingBean {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private SystemConfigService systemConfigService;
 
     /**
      * 初始化
@@ -206,11 +213,13 @@ public class SSOController extends BaseController implements InitializingBean {
                 throw new IllegalArgumentException("not support:" + ssoSp);
             }
 
+            String stsEndpoint = EndpointEnum.STS.getEndpoint();
+
             // 如果没有传AK信息就默认用自己的AK
             DefaultProfile profile = DefaultProfile.getProfile(
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU,
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeyId,
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
+                CommonConstants.Aliyun_REGION_HANGZHOU,
+                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeyId,
+                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
             // 获取已经登录用户的信息
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(username);
@@ -246,7 +255,7 @@ public class SSOController extends BaseController implements InitializingBean {
             logger.info("roleArn:" + roleArn);
             logger.info("samlProviderArn:" + samlProviderArn);
 
-            result = RAMSamlHelper.querySAMLToken(profile, samlProviderArn, roleArn, samlAssertion);
+            result = RAMSamlHelper.querySAMLToken(profile, samlProviderArn, roleArn, samlAssertion, stsEndpoint);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();
@@ -275,7 +284,7 @@ public class SSOController extends BaseController implements InitializingBean {
     /**
      * init sp,目前只支持阿里云的Role SSO
      * <p>
-     * 
+     *
      * @param request
      * @param response
      */
@@ -292,8 +301,8 @@ public class SSOController extends BaseController implements InitializingBean {
             Assert.hasText(idpProviderName, "idpProviderName can not be blank!");
 
             Map<String, List<String>> roleMap = JSON.parseObject(roleJson,
-                    new TypeReference<Map<String, List<String>>>() {
-                    });
+                new TypeReference<Map<String, List<String>>>() {
+                });
             // DefaultProfile profile = DefaultProfile.getProfile(
             // cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU,
             // accessKeyId,
@@ -318,11 +327,12 @@ public class SSOController extends BaseController implements InitializingBean {
     public void getSAMLToken(HttpServletRequest request, HttpServletResponse response) {
         String result = new String();
         try {
+            String stsEndpoint = EndpointEnum.STS.getEndpoint();
             // 如果没有传AK信息就默认用自己的AK
             DefaultProfile profile = DefaultProfile.getProfile(
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU,
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeyId,
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
+                CommonConstants.Aliyun_REGION_HANGZHOU,
+                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeyId,
+                cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
             // 获取已经登录用户的信息
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(username);
@@ -356,7 +366,7 @@ public class SSOController extends BaseController implements InitializingBean {
             logger.info("roleArn:" + roleArn);
             logger.info("samlProviderArn:" + samlProviderArn);
 
-            result = RAMSamlHelper.querySAMLToken(profile, samlProviderArn, roleArn, samlAssertion);
+            result = RAMSamlHelper.querySAMLToken(profile, samlProviderArn, roleArn, samlAssertion, stsEndpoint);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();
@@ -373,10 +383,13 @@ public class SSOController extends BaseController implements InitializingBean {
             String accessKeySecret = request.getParameter("accessKeySecret");
             Assert.hasText(accessKeyId, "accessKeyId can not be blank!");
             Assert.hasText(accessKeySecret, "accessKeySecret can not be blank!");
+            String region = systemConfigService.getStringValueFromCache("region");
+            String endpoint = EndpointEnum.RESOURCE_MANAGER.getEndpoint();
+
             DefaultProfile profile = DefaultProfile.getProfile(
-                    cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU, accessKeyId,
-                    accessKeySecret);
-            List<Map<String, String>> list = SPHelper.listAccounts(profile);
+                region, accessKeyId,
+                accessKeySecret);
+            List<Map<String, String>> list = SPHelper.listAccounts(profile, endpoint);
             result.setData(list);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
