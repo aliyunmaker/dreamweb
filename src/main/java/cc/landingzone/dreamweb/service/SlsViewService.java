@@ -1,5 +1,8 @@
 package cc.landingzone.dreamweb.service;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,8 +11,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
@@ -21,11 +26,23 @@ import com.aliyun.openservices.log.request.ListLogStoresRequest;
 import com.aliyun.openservices.log.request.ListProjectRequest;
 import com.aliyun.openservices.log.response.ListLogStoresResponse;
 import com.aliyun.openservices.log.response.ListProjectResponse;
+import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.http.MethodType;
+import com.aliyuncs.http.ProtocolType;
+import com.aliyuncs.profile.DefaultProfile;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +51,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import cc.landingzone.dreamweb.model.Page;
-import cc.landingzone.dreamweb.utils.SlsUtils;
 
 @Service
 public class SlsViewService {
 
-    private static final String SLS_HOST_SUFFIX = ".log.aliyuncs.com";
     private static Logger logger = LoggerFactory.getLogger(SlsViewService.class);
 
     @Autowired
@@ -54,7 +69,7 @@ public class SlsViewService {
     // 5分钟刷新一次
     private LoadingCache<Integer, List<String>> cache = CacheBuilder.newBuilder()
         .maximumSize(100)
-        .refreshAfterWrite(5, TimeUnit.MINUTES)
+        .refreshAfterWrite(1, TimeUnit.MINUTES)
         .build(new CacheLoader<Integer, List<String>>() {
                    @Override
                    public List<String> load(Integer roleId) {
@@ -62,14 +77,13 @@ public class SlsViewService {
                        // 获取当前用户信息，用于saml Assertion的生成
                        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
                        User user = userService.getUserByLoginName(userName);
-                       String region = systemConfigService.getStringValue("region");
-                       String stsHost = systemConfigService.getStringValue("stsHost");
+                       String region = systemConfigService.getStringValueFromCache("region");
                        // 分页，limit最大是500
                        Page page = new Page(0, 500);
 
                        List<String> projectList = new ArrayList<>();
                        try {
-                           projectList = listProjectsInfo(page, region, stsHost, user, userRole);
+                           projectList = listProjectsInfo(page, region, user, userRole);
                        } catch (Exception e) {
                            logger.error(e.getMessage());
                        }
@@ -88,8 +102,10 @@ public class SlsViewService {
      * @return Project名称列表
      * @throws Exception
      */
-    public List<String> listProjectsInfo(Page page, String region, String stsHost, User user, UserRole userRole) throws Exception {
-        String host = region + SLS_HOST_SUFFIX;
+    public List<String> listProjectsInfo(Page page, String region, User user, UserRole userRole)
+        throws Exception {
+        String slsEndpoint = EndpointEnum.SLS.getEndpoint();
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
         String[] roleValue = userRole.getRoleValue().split(",");
@@ -98,12 +114,12 @@ public class SlsViewService {
         String samlAssertion = getSamlAssertion(user, userRole);
 
         // 根据角色Arn和idpArn 获取AK，SK和SecurityToken
-        CommonResponse commonResponse = SlsUtils.requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
-            samlAssertion, stsHost);
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+            samlAssertion, stsEndpoint);
         JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
         JSONObject credentials = assumeRole.getJSONObject("Credentials");
 
-        Client slsClient = new Client(host, credentials.getString("AccessKeyId"),
+        Client slsClient = new Client(slsEndpoint, credentials.getString("AccessKeyId"),
             credentials.getString("AccessKeySecret"));
         slsClient.setSecurityToken(credentials.getString("SecurityToken"));
 
@@ -139,9 +155,10 @@ public class SlsViewService {
      * @return Logstore列表
      * @throws Exception
      */
-    public List<String> listLogstoresInfo(String projectName, Page page, String region, String stsHost, User user, UserRole userRole)
+    public List<String> listLogstoresInfo(String projectName, Page page, String region, User user, UserRole userRole)
         throws Exception {
-        String host = region + SLS_HOST_SUFFIX;
+        String slsEndpoint = EndpointEnum.SLS.getEndpoint();
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
         String[] roleValue = userRole.getRoleValue().split(",");
@@ -150,12 +167,12 @@ public class SlsViewService {
         String samlAssertion = getSamlAssertion(user, userRole);
 
         // 根据角色Arn和idpArn 获取AK，SK和SecurityToken
-        CommonResponse commonResponse = SlsUtils.requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
-            samlAssertion, stsHost);
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+            samlAssertion, stsEndpoint);
         JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
         JSONObject credentials = assumeRole.getJSONObject("Credentials");
 
-        Client slsClient = new Client(host, credentials.getString("AccessKeyId"),
+        Client slsClient = new Client(slsEndpoint, credentials.getString("AccessKeyId"),
             credentials.getString("AccessKeySecret"));
         slsClient.setSecurityToken(credentials.getString("SecurityToken"));
 
@@ -178,10 +195,12 @@ public class SlsViewService {
      * @return 免登录链接
      * @throws Exception
      */
-    public String getNonLoginSlsUrl(String projectName, String logstoreName, String region, String stsHost, User user,
+    public String getNonLoginSlsUrl(String projectName, String logstoreName, String region, User user,
                                     UserRole userRole)
         throws Exception {
         String signInUrl = "";
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
+        String signinEndpoint = EndpointEnum.SIGN_IN.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
         String[] roleValue = userRole.getRoleValue().split(",");
@@ -190,16 +209,16 @@ public class SlsViewService {
         String samlAssertion = getSamlAssertion(user, userRole);
 
         // 访问令牌服务获取临时AK和Token
-        CommonResponse commonResponse = SlsUtils.requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
-            samlAssertion, stsHost);
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+            samlAssertion, stsEndpoint);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
         // 通过临时AK & Token获取登录Token
-        String signInToken = SlsUtils.requestSignInToken(commonResponse);
+        String signInToken = requestSignInToken(commonResponse, signinEndpoint);
         Assert.notNull(signInToken, "signInToken获取失败");
 
         // 通过登录token生成日志服务web访问链接进行跳转
-        signInUrl = SlsUtils.generateSignInUrl(signInToken, projectName, logstoreName);
+        signInUrl = generateSignInUrl(signInToken, projectName, logstoreName, signinEndpoint);
         Assert.notNull(signInUrl, "signInUrl生成失败");
 
         return signInUrl;
@@ -255,6 +274,20 @@ public class SlsViewService {
     }
 
     /**
+     * 刷新缓存中所有数据
+     *
+     * @throws Exception
+     */
+    public void refreshCache() {
+        logger.info("begin refresh");
+        Set<Integer> keys = cache.asMap().keySet();
+        for (Integer key : keys) {
+            cache.refresh(key);
+        }
+        logger.info("finish refresh");
+    }
+
+    /**
      * 生成Saml Assertion
      *
      * @param user     用户
@@ -286,5 +319,100 @@ public class SlsViewService {
         String samlAssertion = SamlGenerator.generateResponse(identifier, replyUrl, nameID, attributes);
 
         return samlAssertion;
+    }
+
+    /**
+     * 访问令牌服务获取临时AK和Token
+     *
+     * @return 临时AK和Token
+     * @throws ClientException
+     */
+    private CommonResponse requestAccessKeyAndSecurityToken(String region, String roleArn, String samlProviderArn,
+                                                            String samlAssertion, String stsEndpoint)
+        throws ClientException {
+        DefaultProfile profile = DefaultProfile.getProfile(region, "", "");
+
+        IAcsClient client = new DefaultAcsClient(profile);
+
+        CommonRequest request = new CommonRequest();
+        request.setSysMethod(MethodType.POST);
+        request.setSysProtocol(ProtocolType.HTTPS);
+        request.setSysDomain(stsEndpoint);
+        request.setSysVersion("2015-04-01");
+        request.setSysAction("AssumeRoleWithSAML");
+
+        request.putQueryParameter("RoleArn", roleArn);
+        request.putQueryParameter("SAMLProviderArn", samlProviderArn);
+        request.putQueryParameter("SAMLAssertion", samlAssertion);
+        CommonResponse response = client.getCommonResponse(request);
+        return response;
+    }
+
+    /**
+     * 通过临时AK & Token获取登录Token
+     *
+     * @param commonResponse 临时AK & Token
+     * @return 登录Token
+     * @throws IOException
+     */
+    private String requestSignInToken(CommonResponse commonResponse, String endpoint) throws IOException {
+        JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
+        JSONObject credentials = assumeRole.getJSONObject("Credentials");
+
+        String signInTokenUrl = endpoint + String.format(
+            "/federation?Action=GetSigninToken"
+                + "&AccessKeyId=%s"
+                + "&AccessKeySecret=%s"
+                + "&SecurityToken=%s&TicketType=mini",
+            URLEncoder.encode(credentials.getString("AccessKeyId"), "utf-8"),
+            URLEncoder.encode(credentials.getString("AccessKeySecret"), "utf-8"),
+            URLEncoder.encode(credentials.getString("SecurityToken"), "utf-8")
+        );
+
+        HttpGet signInGet = new HttpGet(signInTokenUrl);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpResponse httpResponse = httpClient.execute(signInGet);
+        String signInToken = "";
+        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            String signInRes = EntityUtils.toString(httpResponse.getEntity());
+            logger.info("received signInRes: {}", signInRes);
+            signInToken = JSON.parseObject(signInRes).getString("SigninToken");
+
+            if (signInToken == null) {
+                logger.error("Invalid response message, contains no SigninToken: {}", signInRes);
+            }
+        } else {
+            logger.error("Failed to retrieve signInToken");
+        }
+
+        return signInToken;
+    }
+
+    /**
+     * 通过登录token生成日志服务web访问链接进行跳转
+     *
+     * @param signInToken 登录token
+     * @param project     项目名称
+     * @param logstore    日志库名称
+     * @return 免登录Url
+     * @throws UnsupportedEncodingException
+     */
+    private String generateSignInUrl(String signInToken, String project, String logstore, String endpoint)
+        throws UnsupportedEncodingException {
+        String slsUrl = String.format("https://sls4service.console.aliyun.com/next"
+                + "/project/%s"
+                + "/logsearch/%s?hiddenBack=true&hiddenChangeProject=true&hiddenOverview=true&hideTopbar=true",
+            URLEncoder.encode(project, "utf-8"),
+            URLEncoder.encode(logstore, "utf-8"));
+
+        String signInUrl = endpoint + String.format(
+            "/federation?Action=Login"
+                + "&LoginUrl=%s"
+                + "&Destination=%s"
+                + "&SigninToken=%s",
+            URLEncoder.encode("https://www.aliyun.com", "utf-8"),
+            URLEncoder.encode(slsUrl, "utf-8"),
+            URLEncoder.encode(signInToken, "utf-8"));
+        return signInUrl;
     }
 }
