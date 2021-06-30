@@ -26,21 +26,6 @@ public class SolutionConfigController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(SolutionConfigController.class);
 
-    @RequestMapping("/listSolutionConfig.do")
-    public void listSolutionConfig(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            List<SolutionConfig> solutionConfigs = solutionConfigService.listSolutionConfig();
-            result.setTotal(solutionConfigs.size());
-            result.setData(solutionConfigs);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
-    }
-
     @RequestMapping("/getSolutionConfigByName.do")
     public void getSolutionConfigByName(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();

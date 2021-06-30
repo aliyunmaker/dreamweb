@@ -49,6 +49,7 @@ function searchSolution(module) {
             if (result.success) {
                 var solutionNumber = result.data;
                 MYDATA.pages = Math.ceil(solutionNumber / MYDATA.pageSize);
+                MYDATA.pageCurrent = 1;
                 setPagination();
                 loadPage();
             } else {
@@ -81,10 +82,6 @@ function setPagination() {
 }
 
 function loadPage() {
-    var pageCurrent =  $('#pagination>ul>li.active');
-    if (pageCurrent.length > 0) {
-        MYDATA.pageCurrent = parseInt(pageCurrent.text());
-    }
     $.ajax({
         url: "/solutionConfig/searchSolution.do",
         data: {
@@ -335,5 +332,6 @@ $(document).on("click", '.page-item', function () {
         pageNext.removeClass('disabled').css("pointer-events", "auto");
         pageNext.children('a').removeAttr('tabindex');
     }
+    MYDATA.pageCurrent = parseInt(newActive.text());
     loadPage();
 });

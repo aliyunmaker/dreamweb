@@ -31,11 +31,6 @@
         where id = #{id}
     </update>
 
-    <select id="listSolutionConfig" resultType="cc.landingzone.dreamweb.model.SolutionConfig">
-        select *
-        from solution_config
-    </select>
-
     <select id="getSolutionConfigByName" resultType="cc.landingzone.dreamweb.model.SolutionConfig">
         select *
         from solution_config

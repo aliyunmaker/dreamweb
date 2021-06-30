@@ -17,15 +17,6 @@ public class SolutionConfigService {
     private SolutionConfigDao solutionConfigDao;
 
     /**
-     * 获取所有解决方案
-     * 
-     * @return
-     */
-    public List<SolutionConfig> listSolutionConfig() {
-        return solutionConfigDao.listSolutionConfig();
-    }
-
-    /**
      * 通过id获得解决方案
      * 
      * @param id
