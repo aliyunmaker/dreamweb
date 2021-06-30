@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.thread;
 
+import cc.landingzone.dreamweb.common.EndpointConstants;
 import cc.landingzone.dreamweb.utils.SlsUtils;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
@@ -24,9 +25,11 @@ public class LogtailAutoConfigJob implements Callable<String> {
     private List<String> ecsInstanceIdList;
     private String masterUid;
     private StringBuilder result;
+    private String region;
+    private Boolean useVpc;
 
     public LogtailAutoConfigJob(String accountId, String action, IAcsClient client, CountDownLatch countDownLatch,
-                                List<String> ecsInstanceIdList, String masterUid) {
+                                List<String> ecsInstanceIdList, String masterUid, String region, Boolean useVpc) {
         this.accountId = accountId;
         this.action = action;
         this.client = client;
@@ -34,10 +37,14 @@ public class LogtailAutoConfigJob implements Callable<String> {
         this.ecsInstanceIdList = ecsInstanceIdList;
         this.masterUid = masterUid;
         this.result = new StringBuilder();
+        this.region = region;
+        this.useVpc = useVpc;
     }
 
     @Override
     public String call() {
+        String oosEndpoint = EndpointConstants.getOosEndpoint(region, useVpc);
+
         result.append("<b>start " + SlsUtils.drawWithColor(action) + " logtail on account: " + accountId + "</b>");
         result.append(LINE_BREAK);
         result.append("targets: ");
@@ -52,7 +59,6 @@ public class LogtailAutoConfigJob implements Callable<String> {
         }
 
         String resourceIds = resourceIdsBuilder.toString();
-        String region = cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU;
         result.append("- ecs resource ids: " + resourceIds);
         result.append(LINE_BREAK);
         result.append("- region: " + region);
@@ -67,7 +73,7 @@ public class LogtailAutoConfigJob implements Callable<String> {
                 + "\"regionId\":\"cn-hangzhou\","
                 + "\"targets\":{\"Type\":\"ResourceIds\",\"ResourceIds\":[" + resourceIds + "],"
                 + "\"regionId\":\"" + region + "\"}}";
-            String executionId = executeTemplate(logtailTemplate, logtailParameter);
+            String executionId = executeTemplate(logtailTemplate, logtailParameter, oosEndpoint);
             result.append(SlsUtils.drawWithColor(action) + " logtail, executionId: " + executionId);
             result.append(LINE_BREAK);
 
@@ -76,7 +82,7 @@ public class LogtailAutoConfigJob implements Callable<String> {
                 // 每三秒查询一次执行结果
                 Thread.sleep(3000);
 
-                String status = queryExecutionResult(client, executionId);
+                String status = queryExecutionResult(client, executionId, oosEndpoint);
                 if ("Success".equals(status)) {
                     isFinished = true;
                     result.append("* status: " + SlsUtils.drawWithColor(status));
@@ -95,7 +101,7 @@ public class LogtailAutoConfigJob implements Callable<String> {
             result.append(LINE_BREAK);
 
             String crossAccountsTemplate = "slsCrossAccountsTemplate";
-            createCrossAccountsTemplate(crossAccountsTemplate);
+            createCrossAccountsTemplate(crossAccountsTemplate, oosEndpoint);
             logger.info("Thread{}: create crossAccountsTemplate success", accountId);
 
             // 3. 执行模板
@@ -107,7 +113,7 @@ public class LogtailAutoConfigJob implements Callable<String> {
                     "\"action\":\"" + action + "\"," +
                     "\"accountId\":\"" + accountId + "\"" +
                     "}";
-            String configureExecutionId = executeTemplate(crossAccountsTemplate, crossAccountParameters);
+            String configureExecutionId = executeTemplate(crossAccountsTemplate, crossAccountParameters, oosEndpoint);
             result.append("* execute " + crossAccountsTemplate + ", execution id: " + configureExecutionId);
             result.append(LINE_BREAK);
             result.append("* status: " + SlsUtils.drawWithColor("Success"));
@@ -136,10 +142,11 @@ public class LogtailAutoConfigJob implements Callable<String> {
      * @return 执行Id
      * @throws ClientException
      */
-    private String executeTemplate(String templateName, String parameters) throws ClientException {
+    private String executeTemplate(String templateName, String parameters, String endpoint) throws ClientException {
         StartExecutionRequest request = new StartExecutionRequest();
         request.setTemplateName(templateName);
         request.setParameters(parameters);
+        request.setSysEndpoint(endpoint);
 
         StartExecutionResponse response;
         String executionId = "";
@@ -158,9 +165,10 @@ public class LogtailAutoConfigJob implements Callable<String> {
      * @return 成功 or 等待 or 失败 or 取消
      * @throws ClientException
      */
-    private String queryExecutionResult(IAcsClient client, String ExecutionId) throws ClientException {
+    private String queryExecutionResult(IAcsClient client, String ExecutionId, String endpoint) throws ClientException {
         ListExecutionsRequest request = new ListExecutionsRequest();
         request.setExecutionId(ExecutionId);
+        request.setSysEndpoint(endpoint);
 
         ListExecutionsResponse response = client.getAcsResponse(request);
         for (ListExecutionsResponse.Execution execution : response.getExecutions()) {
@@ -197,8 +205,8 @@ public class LogtailAutoConfigJob implements Callable<String> {
      * @param templateName 创建模板名称
      * @throws ClientException
      */
-    private void createCrossAccountsTemplate(String templateName) throws ClientException {
-        if (getTemplateExistStatus(templateName)) {
+    private void createCrossAccountsTemplate(String templateName, String endpoint) throws ClientException {
+        if (getTemplateExistStatus(templateName, endpoint)) {
             result.append("* tips: template already exist");
             result.append(LINE_BREAK);
             return;
@@ -316,6 +324,8 @@ public class LogtailAutoConfigJob implements Callable<String> {
         CreateTemplateRequest request = new CreateTemplateRequest();
         request.setTemplateName(templateName);
         request.setContent(crossAccountsTemplateContent);
+        request.setSysEndpoint(endpoint);
+
         CreateTemplateResponse response = client.getAcsResponse(request);
         result.append("* create configuration template: " + response.getTemplate().getTemplateName());
         result.append(LINE_BREAK);
@@ -328,9 +338,10 @@ public class LogtailAutoConfigJob implements Callable<String> {
      * @return true 存在；false 不存在
      * @throws ClientException
      */
-    private Boolean getTemplateExistStatus(String templateName) throws ClientException {
+    private Boolean getTemplateExistStatus(String templateName, String endpoint) throws ClientException {
         ListTemplatesRequest listTemplatesRequest = new ListTemplatesRequest();
         listTemplatesRequest.setTemplateName(templateName);
+        listTemplatesRequest.setSysEndpoint(endpoint);
 
         ListTemplatesResponse listTemplatesResponse = client.getAcsResponse(listTemplatesRequest);
         for (ListTemplatesResponse.Template template : listTemplatesResponse.getTemplates()) {

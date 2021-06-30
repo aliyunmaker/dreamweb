@@ -3,6 +3,8 @@ package cc.landingzone.dreamweb.controller;
 import cc.landingzone.dreamweb.model.AccountEcsInfo;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.SlsAutoConfigService;
+import cc.landingzone.dreamweb.service.SlsViewService;
+import cc.landingzone.dreamweb.service.SystemConfigService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,12 @@ public class SlsAutoConfigController extends BaseController {
     @Autowired
     SlsAutoConfigService slsAutoConfigService;
 
+    @Autowired
+    SystemConfigService systemConfigService;
+
+    @Autowired
+    SlsViewService slsViewService;
+
     @GetMapping("/getEcsList.do")
     public void getEcsList(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -35,8 +43,10 @@ public class SlsAutoConfigController extends BaseController {
             Assert.hasText(accessKey, "accessKey不能为空!");
             String secretKey = request.getParameter("secretKey");
             Assert.hasText(secretKey, "secretKey不能为空!");
+            String region = systemConfigService.getStringValue("region");
+            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
 
-            List<AccountEcsInfo> ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey);
+            List<AccountEcsInfo> ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey, region, useVpc);
             result.setData(ecsList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -56,16 +66,19 @@ public class SlsAutoConfigController extends BaseController {
             String secretKey = request.getParameter("secretKey");
             Assert.hasText(secretKey, "secretKey不能为空!");
             String ecsListJson = request.getParameter("ecsJson");
+            String region = systemConfigService.getStringValue("region");
+            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
 
             List<AccountEcsInfo> ecsList;
             if (StringUtils.isBlank(ecsListJson)) {
-                ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey);
+                ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey, region, useVpc);
             } else {
                 ecsList = JsonUtils.parseArray(ecsListJson, AccountEcsInfo.class);
             }
 
-            result.append(slsAutoConfigService.initLogtail(ecsList, accessKey, secretKey, INSTALL));
-            result.append(slsAutoConfigService.initSlsService(ecsList, accessKey, secretKey, INSTALL));
+            result.append(slsAutoConfigService.initLogtail(ecsList, accessKey, secretKey, INSTALL, region, useVpc));
+            result.append(slsAutoConfigService.initSlsService(ecsList, accessKey, secretKey, INSTALL, region, useVpc));
+            slsViewService.refreshCache();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.append(e.getMessage());
@@ -83,16 +96,19 @@ public class SlsAutoConfigController extends BaseController {
             String secretKey = request.getParameter("secretKey");
             Assert.hasText(secretKey, "secretKey不能为空!");
             String ecsListJson = request.getParameter("ecsList");
+            String region = systemConfigService.getStringValue("region");
+            Boolean useVpc = systemConfigService.getBoolValue("useVpc");
 
             List<AccountEcsInfo> ecsList;
             if (ecsListJson == null) {
-                ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey);
+                ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey, region, useVpc);
             } else {
                 ecsList = JsonUtils.parseArray(ecsListJson, AccountEcsInfo.class);
             }
 
-            result.append(slsAutoConfigService.initLogtail(ecsList, accessKey, secretKey, UNINSTALL));
-            result.append(slsAutoConfigService.initSlsService(ecsList, accessKey, secretKey, UNINSTALL));
+            result.append(slsAutoConfigService.initLogtail(ecsList, accessKey, secretKey, UNINSTALL, region, useVpc));
+            result.append(slsAutoConfigService.initSlsService(ecsList, accessKey, secretKey, UNINSTALL, region, useVpc));
+            slsViewService.refreshCache();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.append(e.getMessage());

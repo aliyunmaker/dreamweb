@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.sso.sp;
 
+import cc.landingzone.dreamweb.common.EndpointConstants;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -24,7 +25,7 @@ public class SPHelper2 {
         String accessKeySecret = "<your accessKeySecret>";
         String samlMetadata = "<download from IDP,for example: Azure AD>";
         DefaultProfile profile = DefaultProfile.getProfile(region, accessKeyId, accessKeySecret);
-        String result = initSP(profile, idpProviderName, roleName, samlMetadata);
+        String result = initSP(profile, idpProviderName, roleName, samlMetadata, region, false);
         System.out.println(result);
 
     }
@@ -39,10 +40,14 @@ public class SPHelper2 {
      * @return
      * @throws Exception
      */
-    public static String initSP(DefaultProfile profile, String idpProviderName, String roleName, String samlMetadata) throws Exception {
+    public static String initSP(DefaultProfile profile, String idpProviderName, String roleName, String samlMetadata, String region, Boolean useVpc) throws Exception {
         StringBuilder result = new StringBuilder();
 
-        String uid = getUid(profile);
+        String stsEndpoint = EndpointConstants.getStsEndpoint(region, useVpc);
+        String imsEndpoint = EndpointConstants.getImsEndpoint(region, useVpc);
+        String ramEndpoint = EndpointConstants.getRamEndpoint(region, useVpc);
+
+        String uid = getUid(profile, stsEndpoint);
 
         result.append("UID:" + uid);
         result.append(LINE_BREAK);
@@ -69,7 +74,7 @@ public class SPHelper2 {
         result.append("1. add saml provider");
         result.append(LINE_BREAK);
         // 1. add saml provider
-        String addSAMLProviderResult = addSAMLProviders(profile, idpProviderName, samlMetadata);
+        String addSAMLProviderResult = addSAMLProviders(profile, idpProviderName, samlMetadata, imsEndpoint);
         result.append("result: " + addSAMLProviderResult);
         result.append(LINE_BREAK);
         result.append(LINE_BREAK);
@@ -78,7 +83,7 @@ public class SPHelper2 {
         result.append("2. create role");
         result.append(LINE_BREAK);
         // 2. create role
-        String createRoleResult = createRole(profile, roleName, policyDocument);
+        String createRoleResult = createRole(profile, roleName, policyDocument, ramEndpoint);
         result.append("result: " + createRoleResult);
         result.append(LINE_BREAK);
         result.append(LINE_BREAK);
@@ -87,7 +92,7 @@ public class SPHelper2 {
         result.append("3. attach policy to role");
         result.append(LINE_BREAK);
         // 3. attach policy to role
-        String attachPolicyToRoleResult = attachPolicyToRole(profile, policyName, policyType, roleName);
+        String attachPolicyToRoleResult = attachPolicyToRole(profile, policyName, policyType, roleName, ramEndpoint);
         result.append("result: " + attachPolicyToRoleResult);
         result.append(LINE_BREAK);
         result.append(LINE_BREAK);
@@ -100,8 +105,9 @@ public class SPHelper2 {
     }
 
     public static String attachPolicyToRole(DefaultProfile profile, String policyName, String policyType,
-                                            String roleName) throws Exception {
+                                            String roleName, String endpoint) throws Exception {
         AttachPolicyToRoleRequest request = new AttachPolicyToRoleRequest();
+        request.setSysEndpoint(endpoint);
         request.setPolicyName(policyName);
         request.setPolicyType(policyType);
         request.setRoleName(roleName);
@@ -110,10 +116,10 @@ public class SPHelper2 {
         return response.getRequestId();
     }
 
-    public static String createRole(DefaultProfile profile, String roleName, String policyDocument) throws Exception {
+    public static String createRole(DefaultProfile profile, String roleName, String policyDocument, String endpoint) throws Exception {
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
-        request.setSysDomain("ram.aliyuncs.com");
+        request.setSysDomain(endpoint);
         request.setSysVersion("2015-05-01");
         request.setSysAction("CreateRole");
         request.setSysProtocol(ProtocolType.HTTPS);
@@ -123,18 +129,20 @@ public class SPHelper2 {
         return response.getData();
     }
 
-    public static String getUid(DefaultProfile profile) throws Exception {
+    public static String getUid(DefaultProfile profile, String endpoint) throws Exception {
         GetCallerIdentityRequest request = new GetCallerIdentityRequest();
+        request.setSysEndpoint(endpoint);
+
         IAcsClient client = new DefaultAcsClient(profile);
         GetCallerIdentityResponse response = client.getAcsResponse(request);
         return response.getAccountId();
     }
 
-    public static String addSAMLProviders(DefaultProfile profile, String providerName, String samlMetadata)
+    public static String addSAMLProviders(DefaultProfile profile, String providerName, String samlMetadata, String endpoint)
             throws Exception {
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
-        request.setSysDomain("ims.aliyuncs.com");
+        request.setSysDomain(endpoint);
         request.setSysVersion("2019-08-15");
         request.setSysAction("CreateSAMLProvider");
         request.setSysProtocol(ProtocolType.HTTPS);
