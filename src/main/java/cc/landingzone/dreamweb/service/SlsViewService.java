@@ -77,7 +77,7 @@ public class SlsViewService {
                        // 获取当前用户信息，用于saml Assertion的生成
                        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
                        User user = userService.getUserByLoginName(userName);
-                       String region = systemConfigService.getStringValue("region");
+                       String region = systemConfigService.getStringValueFromCache("region");
                        // 分页，limit最大是500
                        Page page = new Page(0, 500);
 

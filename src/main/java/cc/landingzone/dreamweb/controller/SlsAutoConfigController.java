@@ -43,7 +43,7 @@ public class SlsAutoConfigController extends BaseController {
             Assert.hasText(accessKey, "accessKey不能为空!");
             String secretKey = request.getParameter("secretKey");
             Assert.hasText(secretKey, "secretKey不能为空!");
-            String region = systemConfigService.getStringValue("region");
+            String region = systemConfigService.getStringValueFromCache("region");
 
             List<AccountEcsInfo> ecsList = slsAutoConfigService.getEcsList(accessKey, secretKey, region);
             result.setData(ecsList);
@@ -65,7 +65,7 @@ public class SlsAutoConfigController extends BaseController {
             String secretKey = request.getParameter("secretKey");
             Assert.hasText(secretKey, "secretKey不能为空!");
             String ecsListJson = request.getParameter("ecsJson");
-            String region = systemConfigService.getStringValue("region");
+            String region = systemConfigService.getStringValueFromCache("region");
 
             List<AccountEcsInfo> ecsList;
             if (StringUtils.isBlank(ecsListJson)) {
@@ -94,7 +94,7 @@ public class SlsAutoConfigController extends BaseController {
             String secretKey = request.getParameter("secretKey");
             Assert.hasText(secretKey, "secretKey不能为空!");
             String ecsListJson = request.getParameter("ecsList");
-            String region = systemConfigService.getStringValue("region");
+            String region = systemConfigService.getStringValueFromCache("region");
 
             List<AccountEcsInfo> ecsList;
             if (ecsListJson == null) {

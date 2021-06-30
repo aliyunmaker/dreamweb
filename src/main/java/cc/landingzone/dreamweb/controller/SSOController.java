@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
+import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.service.SystemConfigService;
 import com.aliyuncs.profile.DefaultProfile;
@@ -212,12 +213,11 @@ public class SSOController extends BaseController implements InitializingBean {
                 throw new IllegalArgumentException("not support:" + ssoSp);
             }
 
-            String region = systemConfigService.getStringValue("region");
             String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
             // 如果没有传AK信息就默认用自己的AK
             DefaultProfile profile = DefaultProfile.getProfile(
-                region,
+                CommonConstants.Aliyun_REGION_HANGZHOU,
                 cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeyId,
                 cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
             // 获取已经登录用户的信息
@@ -308,8 +308,7 @@ public class SSOController extends BaseController implements InitializingBean {
             // accessKeyId,
             // accessKeySecret);
             // }
-            String region = systemConfigService.getStringValue("region");
-            result = SPHelper.initMultiAccountSP(accessKeyId, accessKeySecret, idpProviderName, roleMap, region);
+            result = SPHelper.initMultiAccountSP(accessKeyId, accessKeySecret, idpProviderName, roleMap);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();
@@ -328,11 +327,10 @@ public class SSOController extends BaseController implements InitializingBean {
     public void getSAMLToken(HttpServletRequest request, HttpServletResponse response) {
         String result = new String();
         try {
-            String region = systemConfigService.getStringValue("region");
             String stsEndpoint = EndpointEnum.STS.getEndpoint();
             // 如果没有传AK信息就默认用自己的AK
             DefaultProfile profile = DefaultProfile.getProfile(
-                region,
+                CommonConstants.Aliyun_REGION_HANGZHOU,
                 cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeyId,
                 cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
             // 获取已经登录用户的信息
