@@ -240,7 +240,7 @@
                         </excludes>
                     </resource>
                     <resource>
-                        <directory>config/local/resources</directory>
+                        <directory>config/dev/resources</directory>
                     </resource>
                 </resources>
             </build>
