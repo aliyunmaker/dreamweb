@@ -227,7 +227,10 @@
 
     <profiles>
         <profile>
-            <id>local</id>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <resources>
                     <resource>
