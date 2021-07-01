@@ -28,9 +28,25 @@
             return paramObj;
         }
 
+        function setIframeHeight(offset) {
+            iframe = document.getElementById("iframe");
+            if (iframe) {
+                var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+                if (iframeWin.document.body) {
+                    let newHeight = iframeWin.document.body.scrollHeight + offset;
+                    iframe.height = newHeight;
+                    iframe.style.height = newHeight;
+                }
+            }
+        };
+
         function loadWebPage(src) {
-            var srcDiv = '<iframe class="embed-responsive-item" src="' + src + '"></iframe>';
+            var srcDiv = '<iframe id="iframe" style="overflow-y:hidden; width:100%;" frameborder="0" width="100%" onload="setIframeHeight(80)" class="embed-responsive-item" src="' + src + '"></iframe>';
             $("#srcDiv").html(srcDiv);
+        }
+
+        window.onresize = function () {
+            setIframeHeight(80);
         }
 
         window.onload = function() {
@@ -42,7 +58,6 @@
             let keys = Object.keys(menu)
             for (let index = 0; index < keys.length; index++) {
                 const key = keys[index];
-                console.log(key);
                 if (index == 0) {
                     menuDiv += '<label class="btn btn-outline-primary active"><input type="radio" name="options" onchange="loadWebPage(&apos;' + menu[key] + '&apos;);" autocomplete="off" checked>' + key + '</label>';
                     loadWebPage(menu[key]);
@@ -65,7 +80,7 @@
         </nav>
     
         <br>
-        <div class="embed-responsive embed-responsive-4by3" id="srcDiv">
+        <div class="content content-full" id="srcDiv">
     
         </div>
     </div>
