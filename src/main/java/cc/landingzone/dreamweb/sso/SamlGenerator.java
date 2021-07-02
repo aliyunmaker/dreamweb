@@ -120,7 +120,8 @@ public class SamlGenerator {
         SingleSignOnServiceBuilder singleSignOnServiceBuilder = new SingleSignOnServiceBuilder();
         SingleSignOnService singleSignOnService = singleSignOnServiceBuilder.buildObject();
         singleSignOnService.setBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        // singleSignOnService.setLocation(CommonConstants.Location);
+        //cloud sso会校验这个字段
+        singleSignOnService.setLocation(SSOConstants.IDP_ENTITY_ID);
         idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);
 
         // output EntityDescriptor

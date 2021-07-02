@@ -24,7 +24,7 @@ public class SamlAssertionProducer {
     private static Logger logger = LoggerFactory.getLogger(SamlAssertionProducer.class);
 
     public static Response createSAMLResponse(String identifier, String replyUrl, String nameID,
-                                              HashMap<String, List<String>> attributes) throws Exception {
+            HashMap<String, List<String>> attributes) throws Exception {
 
         Assert.hasText(identifier, "identifier can not be blank!");
         Assert.hasText(replyUrl, "replyUrl can not be blank!");
@@ -70,6 +70,13 @@ public class SamlAssertionProducer {
                 attributeStatement, samlAssertionDays, identifier);
 
         Response response = createResponse(authenticationTime, responseIssuer, status, assertion);
+
+        // aliyun cloud sso 开启新的校验
+        response.setDestination(replyUrl);
+        // id不能以数字开头,所以统一加"_"
+        response.setID("_" + response.getID());
+        response.getAssertions().get(0).setID("_" + response.getAssertions().get(0).getID());
+
         // aliyun 两种都可以,aws需要把signature放在assertion里
         // response.setSignature(signature);
         response.getAssertions().get(0).setSignature(signature);
@@ -99,7 +106,7 @@ public class SamlAssertionProducer {
     }
 
     private static Response createResponse(final DateTime issueDate, Issuer issuer, Status status,
-                                           Assertion assertion) {
+            Assertion assertion) {
 
         ResponseBuilder responseBuilder = new ResponseBuilder();
         Response response = responseBuilder.buildObject();
@@ -113,8 +120,8 @@ public class SamlAssertionProducer {
     }
 
     private static Assertion createAssertion(final DateTime issueDate, Subject subject, Issuer issuer,
-                                             AuthnStatement authnStatement, AttributeStatement attributeStatement, final Integer samlAssertionDays,
-                                             final String identifier) {
+            AuthnStatement authnStatement, AttributeStatement attributeStatement, final Integer samlAssertionDays,
+            final String identifier) {
         AssertionBuilder assertionBuilder = new AssertionBuilder();
         Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(UUID.randomUUID().toString());
