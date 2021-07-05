@@ -160,6 +160,12 @@ public class SSOController extends BaseController implements InitializingBean {
             // 如果是user sso,需要特殊处理,拆分出uid和nameid,而且不支持多个
             if (SSOSpEnum.aliyun_user.equals(ssoSp) || SSOSpEnum.aws_user.equals(ssoSp)) {
                 UserRole choosedRole = roleList.get(0);
+                for (UserRole userRole : roleList) {
+                    if (StringUtils.isNotBlank(userRoleId) && userRoleId.equals(userRole.getId().toString())) {
+                        choosedRole = userRole;
+                        break;
+                    }
+                }
                 logger.info("user sso choosed:" + choosedRole);
                 replyUrl = choosedRole.getRoleValue().split(",")[0];
                 identifier = choosedRole.getRoleValue().split(",")[1];
