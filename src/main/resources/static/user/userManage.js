@@ -45,7 +45,7 @@ Ext.onReady(function () {
         }]
     });
 
-    var detailWin = null;
+    var detailRole = null;
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'center',
         title: '用户列表',
@@ -181,17 +181,30 @@ Ext.onReady(function () {
                     MyExt.Msg.alert('设置成功!');
                 });
             }
+        }, {
+            text: '查看用户组和角色',
+            iconCls: 'MyExt-check',
+            handler: function () {
+                var select = MyExt.util.SelectGridModel(userGrid, true);
+                if (!select) {
+                    return;
+                }
+                userGroupStore.removeAll();
+                userRoleStore.removeAll();
+                userGroupStore.load();
+                userGroupAndRole.show();
+            }
         }],
         listeners: {
             itemdblclick: function (grid, record) {
-                if (detailWin == null) {
+                if (detailRole == null) {
                     var detailTextArea = new Ext.form.field.TextArea({
                         autoScroll: true,
                         readOnly: true,
                         name: 'value',
                         margin: 0
                     });
-                    detailWin = Ext.create('Ext.window.Window', {
+                    detailRole = Ext.create('Ext.window.Window', {
                         maximizable: true,
                         layout: 'fit',
                         width: 400,
@@ -207,7 +220,7 @@ Ext.onReady(function () {
                         }
                     });
                 }
-                detailWin
+                detailRole
                     .setTextAreaValue(record.get('loginName') + "\n" + record.get('name') +
                         "\n---------------------------------------\n" +
                         MyExt.util.formatToJson(record.get('comment'), false));
@@ -253,6 +266,151 @@ Ext.onReady(function () {
             }
         }
     });
+
+    var userGroupStore = Ext.create('MyExt.Component.SimpleJsonStore', {
+        dataUrl: '../userGroup/getUserGroupsByUserId.do',
+        rootFlag: 'data',
+        pageSize: 200,
+        fields: ['id', 'userId', 'name']
+    });
+
+    var userRoleStore = Ext.create('MyExt.Component.SimpleJsonStore', {
+        dataUrl: '../userRole/getUserRolesByGroupId.do',
+        rootFlag: 'data',
+        pageSize: 200,
+        fields: ['id', 'userGroupId', 'roleType', 'roleName', 'roleValue']
+      });
+
+    userGroupStore.on('beforeload', function (store, options) {
+        var select = MyExt.util.SelectGridModel(userGrid, true);
+        if (!select) {
+            return;
+        }
+        options.params = Ext.apply(options.params || {}, {
+            userId: select[0].data['id']
+        });
+    });
+
+
+    userRoleStore.on('beforeload', function (store, options) {
+        var select = MyExt.util.SelectGridModel(userGroupGrid, true);
+        if (!select) {
+            return;
+        }
+        options.params = Ext.apply(options.params || {}, {
+            userGroupId: select[0].data['id']
+        });
+    });
+
+    var userGroupGrid = Ext.create('MyExt.Component.GridPanel', {
+        region: 'center',
+        title: '用户组列表',
+        store: userGroupStore,
+        columns: [{
+            dataIndex: 'id',
+            header: 'ID',
+            hidden: true
+        }, {
+            dataIndex: 'name',
+            header: "名称",
+            flex: 1
+        }],
+        listeners: {
+          itemclick: function (grid, record) {
+            var select = MyExt.util.SelectGridModel(grid, true);
+            userRoleStore.removeAll();
+            if (!select) {
+              return;
+            }
+            userRoleStore.load();
+          },
+          itemdblclick: function (grid, record) {
+          }
+        }
+    });
+
+    var detailTextArea = new Ext.form.field.TextArea({
+        autoScroll: true,
+        readOnly: true,
+        name: 'value',
+        margin: 0
+    });
+
+    var detailRole = Ext.create('Ext.window.Window', {
+        maximizable: true,
+        layout: 'fit',
+        width: 600,
+        height: 100,
+        modal: true,
+        bodyBorder: false,
+        closeAction: 'hide',
+        border: 0,
+        title: '详情',
+        items: [detailTextArea]
+      });
+
+    var userRoleGrid = Ext.create('MyExt.Component.GridPanel', {
+        region: 'center',
+        split: true,
+        title: '角色列表',
+        store: userRoleStore,
+        columns: [{
+          dataIndex: 'id',
+          header: 'ID',
+          hidden: true
+        }, {
+          dataIndex: 'userGroupId',
+          header: 'userGroupId',
+          hidden: true
+        }, {
+          dataIndex: 'roleType',
+          header: '类型',
+          width: 80
+        }, {
+          header: "角色名称",
+          dataIndex: 'roleName',
+          width: 140
+        }, {
+          header: "value",
+          dataIndex: 'roleValue',
+          flex: 1
+        }],
+        listeners: {
+            itemdblclick: function (grid, record) {
+                var select = MyExt.util.SelectGridModel(grid, false);
+                detailRole.setTitle("角色值");
+                detailTextArea.setValue(select[0].data['roleValue']);
+                detailRole.show();
+            }
+          }
+    });
+
+    var userGroupAndRole = new Ext.Window({
+        layout: 'border',      
+        width: 1000,          //设置窗口大小;
+        height: 500,
+        closeAction: 'hide', //点击右上角关闭按钮后会执行的操作;
+        closable: true,     //隐藏关闭按钮;
+        draggable: true,     //窗口可拖动;
+        constrain: true,     //保证整个窗口不会越过浏览器的边界;
+        constrainHeader: true,   //值保证窗口的顶部不会越过浏览器的边界;
+        modal: true,                //设置弹窗之后屏蔽掉页面上所有的其他组件;
+        plain: true,              //使窗体主体更融于框架颜色;
+        items: [{
+            layout: 'border',
+            border: false,
+            split: true,
+            region: 'west',
+            width: 500,
+            items: [userGroupGrid]
+        }, {
+            layout: 'border',
+            region: 'center',
+            border: false,
+            items: [userRoleGrid]
+        }]
+    });
+
 
     Ext.create('Ext.container.Viewport', {
         layout: 'border',
