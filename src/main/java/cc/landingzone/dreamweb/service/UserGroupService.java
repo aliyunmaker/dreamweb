@@ -47,6 +47,11 @@ public class UserGroupService {
     public List<UserGroup> getAllUserGroups() {
         return userGroupDao.getAllUserGroups();
     }
+
+    public List<UserGroup> getUserGroupsByUserId(Integer userId) {
+        Assert.notNull(userId, "用户id不能为空!");
+        return userGroupDao.getUserGroupsByUserId(userId);
+    }
     
     public UserGroup getUserGroupByName(String name) {
         Assert.hasText(name, "名称不能为空!");

@@ -15,11 +15,11 @@ import cc.landingzone.dreamweb.service.UserGroupAssociateService;
 import cc.landingzone.dreamweb.service.UserGroupService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
-import io.jsonwebtoken.lang.Assert;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -39,6 +39,24 @@ public class UserGroupController extends BaseController {
         WebResult result = new WebResult();
         try {
             List<UserGroup> list = userGroupService.getAllUserGroups();
+            result.setTotal(list.size());
+            result.setData(list);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/getUserGroupsByUserId.do")
+    public void getUserGroupsByUserId(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userIdStr = request.getParameter("userId");
+            Assert.hasText(userIdStr, "用户id不能为空!");
+            Integer userId = Integer.valueOf(userIdStr);
+            List<UserGroup> list = userGroupService.getUserGroupsByUserId(userId);
             result.setTotal(list.size());
             result.setData(list);
         } catch (Exception e) {

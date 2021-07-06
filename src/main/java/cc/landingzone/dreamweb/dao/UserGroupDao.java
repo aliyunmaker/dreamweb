@@ -14,6 +14,8 @@ public interface UserGroupDao {
 
     public List<UserGroup> getAllUserGroups();
 
+    public List<UserGroup> getUserGroupsByUserId(Integer userId);
+
     List<UserGroup> getUserGroupsByNames(List<String> userGroupNames);
 
     public void deleteUserGroup(Integer id);
