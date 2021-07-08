@@ -257,10 +257,7 @@ window.onload = function () {
                 var userRole = result.data;
                 MYDATA.changeable = (userRole.indexOf('ROLE_ADMIN') != -1);
                 if (MYDATA.changeable) {
-                    $('#addSolutionBtn').css('display', 'block');
-                } else {
-                    $('#addSolutionBtn').css('display', 'none');
-                    console.log("You are not super admin, so you can not change the solution config! Your role: " + userRole);
+                    $('#demoTitle').append('<button class="btn btn-success" id="addSolutionBtn" data-toggle="modal" data-target="#addSolutionModal" style="margin-right: 20px;">添加解决方案</button>');
                 }
                 searchSolution();
             }
