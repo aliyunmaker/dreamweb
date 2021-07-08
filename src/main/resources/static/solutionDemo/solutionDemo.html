@@ -18,10 +18,8 @@
   <div class="container-fluid">
     <div>
       <br>
-      <div style="display: flex; justify-content: space-between;">
+      <div style="display: flex; justify-content: space-between;" id="demoTitle">
         <a class="h2">解决方案</a>
-        <button class="btn btn-success" id="addSolutionBtn" data-toggle="modal" data-target="#addSolutionModal"
-          style="margin-right: 20px; display: none;">添加解决方案</button>
       </div>
       <br>
       <form onsubmit="return false">
@@ -47,8 +45,8 @@
             autocomplete="off">合规审计</label>
         <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('运维管理')" name="options"
             autocomplete="off">运维管理</label>
-        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('容器化')" name="options"
-            autocomplete="off">容器化</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('财务管理')" name="options"
+            autocomplete="off">财务管理</label>
         <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('安全防护')" name="options"
             autocomplete="off">安全防护</label>
         <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('网络规划')" name="options"
@@ -62,55 +60,8 @@
 
     </div>
 
-    <!-- <div class="row">
-        <div class="col-md-4 col-6" style="margin-bottom: 20px;">
-          <div class="card mb-4 h-100" style="max-width: 22rem;">
-            <div class="card-body h-100">
-              <div class="row justify-content-between">
-                <div class="col">
-                <h5 class="card-title">自建IDP实现多账号SSO</h5>
-                </div>
-                <div class="col-2" style="margin-right: 10px;">
-                  <button type="button" class="btn btn-default" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="box-shadow: none;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-                      <g transform="translate(0, -6.5)">
-                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-                      </g>
-                    </svg>
-                  </button>
-                  <div class="dropdown-menu text-center" style="min-width: 50%;" aria-labelledby="dropdownMenuButton">
-                    <a role="button" onclick="" class="dropdown-item">更新</a>
-                    <a role="button" onclick="" class="dropdown-item">删除</a>
-                  </div>
-                </div>
-              </div>
-              <p class="card-text">IdP由集团管理，SLA无法满足云运维所需要的响应速度，IdP非标准化无法直接和阿里云配置。本方案通过自建IDP，一次性配置完成多账号的SSO，多账号登录态能在IDP侧统一切换，延续一致的试用体验，延续现有账号管理体系，不存在单独的个人云账号，避免离职等场景的安全隐患</p>
-            </div>
-            <div class="card-body" style="display: flex; justify-content: space-between;">
-              <a href='index_solution.html?name=自建IDP实现多账号SSO&menu=%7B"SSO自动化配置":"/ssoConfig/ssoConfig.html"%7D' class="btn btn-primary">查看详情</a>
-            </div>
-            <div class="card-body">
-              <p class="card-text">
-                <small class="text-muted">创建人：程超</small><br>
-                <small class="text-muted">版本：V0</small>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
     <nav aria-label="Page navigation example" id='pagination'>
       <ul class="pagination justify-content-center">
-        <!-- <li class="page-item page-pre disabled">
-          <a class="page-link" tabindex="-1">&laquo; 上一页</a>
-        </li>
-        <li class="page-item"><a class="page-link">1</a></li>
-        <li class="page-item"><a class="page-link">2</a></li>
-        <li class="page-item"><a class="page-link">3</a></li>
-        <li class="page-item page-next">
-          <a class="page-link">下一页 &raquo;</a>
-        </li>
-      </ul> -->
     </nav>
 
     <div class="modal fade" id="addSolutionModal" tabindex="-1" role="dialog" aria-labelledby="addSolutionModalLabel"
@@ -170,7 +121,7 @@
                   <option>身份权限</option>
                   <option>合规审计</option>
                   <option>运维管理</option>
-                  <option>容器化</option>
+                  <option>财务管理</option>
                   <option>安全防护</option>
                   <option>网络规划</option>
                   <option>自动化</option>
@@ -249,7 +200,7 @@
                   <option>身份权限</option>
                   <option>合规审计</option>
                   <option>运维管理</option>
-                  <option>容器化</option>
+                  <option>财务管理</option>
                   <option>安全防护</option>
                   <option>网络规划</option>
                   <option>自动化</option>
