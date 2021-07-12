@@ -9,8 +9,9 @@ public class SolutionConfig {
     private String intro;
     private String webConfig;
     private String creator;
-    private String version;
     private String module;
+    private Integer customerNum;
+    private Boolean isMVP;
     private Date gmtCreate;
 
     public Integer getId() {
@@ -53,20 +54,28 @@ public class SolutionConfig {
         this.creator = creator;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public String getModule() {
         return module;
     }
 
     public void setModule(String module) {
         this.module = module;
+    }
+    
+    public Integer getCustomerNum() {
+        return customerNum;
+    }
+
+    public void setCustomerNum(Integer customerNum) {
+        this.customerNum = customerNum;
+    }
+
+    public Boolean getIsMVP() {
+        return isMVP;
+    }
+
+    public void setIsMVP(Boolean isMVP) {
+        this.isMVP = isMVP;
     }
 
     public Date getGmtCreate() {
