@@ -106,11 +106,24 @@
                   </div>
                 </div>
                 <div class="form-group col">
-                  <label for="inputVersion">版本</label>
-                  <input type="text" class="form-control" id="inputVersion" required></textarea>
-                  <div class="invalid-feedback">
-                    请输入版本
-                  </div>
+                  <label for="inputCustomerNum">星级</label>
+                  <select class="custom-select form-control" id="inputCustomerNum" required>
+                    <option value="">选择星级</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+                <div class="form-group col">
+                  <label for="inputIsMVP">是否是MVP</label>
+                  <select class="custom-select form-control" id="inputIsMVP" required>
+                    <option value="">选择</option>
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                  </select>
                 </div>
               </div>
               <div class="form-group">
@@ -154,7 +167,7 @@
           </div>
           <div class="modal-body">
             <form class="needs-validation" novalidate id="updateSolutionForm" onsubmit="return false">
-              <div id="updateId" disabled></div>
+              <div id="updateId" hidden></div>
               <div class="form-group">
                 <label for="updateName">名称</label>
                 <input class="form-control" id="updateName" required>
@@ -184,12 +197,32 @@
                     请输入创建人
                   </div>
                 </div>
-                <div class="form-group col">
+                <!-- <div class="form-group col">
                   <label for="updateVersion">版本</label>
                   <input type="text" class="form-control" id="updateVersion" required></textarea>
                   <div class="invalid-feedback">
                     请输入版本
                   </div>
+                </div> -->
+                <div class="form-group col">
+                  <label for="updateCustomerNum">星级</label>
+                  <select class="custom-select form-control" id="updateCustomerNum" required>
+                    <option value="">选择星级</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+                <div class="form-group col">
+                  <label for="updateIsMVP">是否是MVP</label>
+                  <select class="custom-select form-control" id="updateIsMVP" required>
+                    <option value="">选择</option>
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                  </select>
                 </div>
               </div>
               <div class="form-group">
@@ -222,34 +255,6 @@
 
     <div class="modal fade" id="deleteSolutionConfirmModal" tabindex="-1" role="dialog"
       aria-labelledby="deleteSolutionConfirmModal" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content message_align">
-          <div class="modal-header">
-            <h4 class="modal-title" id="updateSolutionModalLabel">提示信息</h4>
-            <button type="button" class="close" data-dismiss="modal">
-              <span aria-hidden="true">×</span><span class="sr-only">Close</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>您确认要删除吗？</p>
-          </div>
-          <div class="modal-footer">
-            <div class="row">
-              <div class="col">
-                <button type="button" class="btn btn-primary" id="deleteSolutionBtn" data-dismiss="modal"
-                  style="width: 80px;">确定</button>
-              </div>
-              <div class="col">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px;">取消</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="detailIntroModal" tabindex="-1" role="dialog"
-      aria-labelledby="detailIntroModal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content message_align">
           <div class="modal-header">

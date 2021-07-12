@@ -57,10 +57,14 @@ public class SolutionConfigController extends BaseController {
             Assert.hasText(webConfig, "网页配置不能为空");
             String creator = request.getParameter("creator");
             Assert.hasText(creator, "创建人不能为空!");
-            String version = request.getParameter("version");
-            Assert.hasText(version, "版本不能为空!");
             String module = request.getParameter("module");
             Assert.hasText(module, "所属模块不能为空!");
+            String customerNumStr = request.getParameter("customerNum");
+            Assert.hasText(customerNumStr, "客户数量不能为空!");
+            Integer customerNum = Integer.valueOf(customerNumStr);
+            String isMVPStr = request.getParameter("isMVP");
+            Assert.hasText(isMVPStr, "是否是MVP不能为空");
+            Boolean isMVP = Boolean.parseBoolean(isMVPStr);
 
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigByName(name);
             Assert.isNull(solutionConfig, "解决方案已存在!");
@@ -69,8 +73,9 @@ public class SolutionConfigController extends BaseController {
             solutionConfig.setIntro(intro);
             solutionConfig.setWebConfig(webConfig);
             solutionConfig.setCreator(creator);
-            solutionConfig.setVersion(version);
             solutionConfig.setModule(module);
+            solutionConfig.setCustomerNum(customerNum);
+            solutionConfig.setIsMVP(isMVP);
             solutionConfigService.addSolutionConfig(solutionConfig);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -95,10 +100,14 @@ public class SolutionConfigController extends BaseController {
             Assert.hasText(webConfig, "网页配置不能为空");
             String creator = request.getParameter("creator");
             Assert.hasText(creator, "创建人不能为空!");
-            String version = request.getParameter("version");
-            Assert.hasText(version, "版本不能为空!");
             String module = request.getParameter("module");
             Assert.hasText(module, "所属模块不能为空!");
+            String customerNumStr = request.getParameter("customerNum");
+            Assert.hasText(customerNumStr, "客户数量不能为空!");
+            Integer customerNum = Integer.valueOf(customerNumStr);
+            String isMVPStr = request.getParameter("isMVP");
+            Assert.hasText(isMVPStr, "是否是MVP不能为空");
+            Boolean isMVP = Boolean.parseBoolean(isMVPStr);
             
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigById(id);
             Assert.notNull(solutionConfig, "解决方案不存在!");
@@ -108,8 +117,9 @@ public class SolutionConfigController extends BaseController {
             solutionConfig.setIntro(intro);
             solutionConfig.setWebConfig(webConfig);
             solutionConfig.setCreator(creator);
-            solutionConfig.setVersion(version);
             solutionConfig.setModule(module);
+            solutionConfig.setCustomerNum(customerNum);
+            solutionConfig.setIsMVP(isMVP);
             solutionConfigService.updateSolutionConfig(solutionConfig);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
