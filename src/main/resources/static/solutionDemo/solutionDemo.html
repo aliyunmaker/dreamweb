@@ -18,10 +18,8 @@
   <div class="container-fluid">
     <div>
       <br>
-      <div style="display: flex; justify-content: space-between;">
+      <div style="display: flex; justify-content: space-between;" id="demoTitle">
         <a class="h2">解决方案</a>
-        <button class="btn btn-success" id="addSolutionBtn" data-toggle="modal" data-target="#addSolutionModal"
-          style="margin-right: 20px; display: none;">添加解决方案</button>
       </div>
       <br>
       <form onsubmit="return false">
@@ -47,8 +45,8 @@
             autocomplete="off">合规审计</label>
         <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('运维管理')" name="options"
             autocomplete="off">运维管理</label>
-        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('容器化')" name="options"
-            autocomplete="off">容器化</label>
+        <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('财务管理')" name="options"
+            autocomplete="off">财务管理</label>
         <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('安全防护')" name="options"
             autocomplete="off">安全防护</label>
         <label class="btn btn-outline-secondary"><input type="radio" onchange="searchSolution('网络规划')" name="options"
@@ -62,55 +60,8 @@
 
     </div>
 
-    <!-- <div class="row">
-        <div class="col-md-4 col-6" style="margin-bottom: 20px;">
-          <div class="card mb-4 h-100" style="max-width: 22rem;">
-            <div class="card-body h-100">
-              <div class="row justify-content-between">
-                <div class="col">
-                <h5 class="card-title">自建IDP实现多账号SSO</h5>
-                </div>
-                <div class="col-2" style="margin-right: 10px;">
-                  <button type="button" class="btn btn-default" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="box-shadow: none;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-                      <g transform="translate(0, -6.5)">
-                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-                      </g>
-                    </svg>
-                  </button>
-                  <div class="dropdown-menu text-center" style="min-width: 50%;" aria-labelledby="dropdownMenuButton">
-                    <a role="button" onclick="" class="dropdown-item">更新</a>
-                    <a role="button" onclick="" class="dropdown-item">删除</a>
-                  </div>
-                </div>
-              </div>
-              <p class="card-text">IdP由集团管理，SLA无法满足云运维所需要的响应速度，IdP非标准化无法直接和阿里云配置。本方案通过自建IDP，一次性配置完成多账号的SSO，多账号登录态能在IDP侧统一切换，延续一致的试用体验，延续现有账号管理体系，不存在单独的个人云账号，避免离职等场景的安全隐患</p>
-            </div>
-            <div class="card-body" style="display: flex; justify-content: space-between;">
-              <a href='index_solution.html?name=自建IDP实现多账号SSO&menu=%7B"SSO自动化配置":"/ssoConfig/ssoConfig.html"%7D' class="btn btn-primary">查看详情</a>
-            </div>
-            <div class="card-body">
-              <p class="card-text">
-                <small class="text-muted">创建人：程超</small><br>
-                <small class="text-muted">版本：V0</small>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
     <nav aria-label="Page navigation example" id='pagination'>
       <ul class="pagination justify-content-center">
-        <!-- <li class="page-item page-pre disabled">
-          <a class="page-link" tabindex="-1">&laquo; 上一页</a>
-        </li>
-        <li class="page-item"><a class="page-link">1</a></li>
-        <li class="page-item"><a class="page-link">2</a></li>
-        <li class="page-item"><a class="page-link">3</a></li>
-        <li class="page-item page-next">
-          <a class="page-link">下一页 &raquo;</a>
-        </li>
-      </ul> -->
     </nav>
 
     <div class="modal fade" id="addSolutionModal" tabindex="-1" role="dialog" aria-labelledby="addSolutionModalLabel"
@@ -155,11 +106,24 @@
                   </div>
                 </div>
                 <div class="form-group col">
-                  <label for="inputVersion">版本</label>
-                  <input type="text" class="form-control" id="inputVersion" required></textarea>
-                  <div class="invalid-feedback">
-                    请输入版本
-                  </div>
+                  <label for="inputCustomerNum">星级</label>
+                  <select class="custom-select form-control" id="inputCustomerNum" required>
+                    <option value="">选择星级</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+                <div class="form-group col">
+                  <label for="inputIsMVP">是否是MVP</label>
+                  <select class="custom-select form-control" id="inputIsMVP" required>
+                    <option value="">选择</option>
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                  </select>
                 </div>
               </div>
               <div class="form-group">
@@ -170,7 +134,7 @@
                   <option>身份权限</option>
                   <option>合规审计</option>
                   <option>运维管理</option>
-                  <option>容器化</option>
+                  <option>财务管理</option>
                   <option>安全防护</option>
                   <option>网络规划</option>
                   <option>自动化</option>
@@ -203,7 +167,7 @@
           </div>
           <div class="modal-body">
             <form class="needs-validation" novalidate id="updateSolutionForm" onsubmit="return false">
-              <div id="updateId" disabled></div>
+              <div id="updateId" hidden></div>
               <div class="form-group">
                 <label for="updateName">名称</label>
                 <input class="form-control" id="updateName" required>
@@ -233,12 +197,32 @@
                     请输入创建人
                   </div>
                 </div>
-                <div class="form-group col">
+                <!-- <div class="form-group col">
                   <label for="updateVersion">版本</label>
                   <input type="text" class="form-control" id="updateVersion" required></textarea>
                   <div class="invalid-feedback">
                     请输入版本
                   </div>
+                </div> -->
+                <div class="form-group col">
+                  <label for="updateCustomerNum">星级</label>
+                  <select class="custom-select form-control" id="updateCustomerNum" required>
+                    <option value="">选择星级</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+                <div class="form-group col">
+                  <label for="updateIsMVP">是否是MVP</label>
+                  <select class="custom-select form-control" id="updateIsMVP" required>
+                    <option value="">选择</option>
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                  </select>
                 </div>
               </div>
               <div class="form-group">
@@ -249,7 +233,7 @@
                   <option>身份权限</option>
                   <option>合规审计</option>
                   <option>运维管理</option>
-                  <option>容器化</option>
+                  <option>财务管理</option>
                   <option>安全防护</option>
                   <option>网络规划</option>
                   <option>自动化</option>
@@ -271,34 +255,6 @@
 
     <div class="modal fade" id="deleteSolutionConfirmModal" tabindex="-1" role="dialog"
       aria-labelledby="deleteSolutionConfirmModal" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content message_align">
-          <div class="modal-header">
-            <h4 class="modal-title" id="updateSolutionModalLabel">提示信息</h4>
-            <button type="button" class="close" data-dismiss="modal">
-              <span aria-hidden="true">×</span><span class="sr-only">Close</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>您确认要删除吗？</p>
-          </div>
-          <div class="modal-footer">
-            <div class="row">
-              <div class="col">
-                <button type="button" class="btn btn-primary" id="deleteSolutionBtn" data-dismiss="modal"
-                  style="width: 80px;">确定</button>
-              </div>
-              <div class="col">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px;">取消</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="detailIntroModal" tabindex="-1" role="dialog"
-      aria-labelledby="detailIntroModal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content message_align">
           <div class="modal-header">
