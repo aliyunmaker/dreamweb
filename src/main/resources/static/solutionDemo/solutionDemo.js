@@ -95,10 +95,9 @@ function loadPage() {
         const solution = solutionMap.get(key.value);
         var url = encodeURI("index_solution.html?name=" + solution.name + "&menu=" + solution.webConfig);
         solutionDiv += '<div class="col-md-auto" style="margin-bottom: 10px; margin-righ: 10px;">';
-        solutionDiv += '<div class="card mb-4 h-100" style="min-width: 20rem; max-width: 20rem; min-height: 30rem; max-height: 30rem;">';
+        solutionDiv += '<div class="card mb-4 h-100" style="min-width: 20rem; max-width: 20rem; min-height: 31rem; max-height: 31rem;">';
         solutionDiv += '<div class="card-header">' + solution.module + "</div>";
         solutionDiv += '<div class="card-body h-100">';
-        // solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
         solutionDiv += '<div class="row justify-content-between">';
         solutionDiv += '<div class="col">';
         solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
@@ -121,17 +120,22 @@ function loadPage() {
         solutionDiv += '</div>';
         solutionDiv += '<p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:8;">' + solution.intro + '</p>';
         solutionDiv += '</div>';
-        solutionDiv += '<div class="card-body" style="display: flex; justify-content: space-between;">';
-        solutionDiv += '<a href="' + url + '" class="btn btn-primary">查看详情</a>';
-        // if (MYDATA.changeable) {
-        //   solutionDiv += '<button onclick="updateSolution(&apos;' + solution.name + '&apos;);" class="btn btn-warning">更新</button>';
-        //   solutionDiv += '<button onclick="deleteSolution(&apos;' + solution.name + '&apos;);" class="btn btn-danger">删除</button>';
-        // }
+        solutionDiv += '<div class="card-body" >';
+        solutionDiv += '<div class="row" style="display: flex; justify-content: space-between;">';
+        solutionDiv += '<div class="ml-3 mb-3">';
+        for (let i = 0; i < solution.customerNum; i++) {
+            solutionDiv += '<image src="Star.png" class="img-responsive" style="width: auto; height: 2rem;"></image>';
+        }
+        solutionDiv += '</div>';
+        if (solution.isMVP) solutionDiv += '<image src="MVP.png" class="img-responsive mr-3" style="width: auto; height: 2rem;"></image>';
+        solutionDiv += '</div>';
+        solutionDiv += '<div class="row">';
+        solutionDiv += '<a href="' + url + '" class="btn btn-primary ml-3">查看详情</a>';
+        solutionDiv += '</div>';
         solutionDiv += '</div>';
         solutionDiv += '<div class="card-footer">';
         solutionDiv += '<p class="card-text">';
         solutionDiv += '<small class="text-muted">创建人：' + solution.creator + '</small><br>';
-        solutionDiv += '<small class="text-muted">版本：' + solution.version + '</small>';
         solutionDiv += '</p>';
         solutionDiv += '</div>';
         solutionDiv += '</div>';
@@ -154,12 +158,13 @@ function addSolution() {
             intro: $('#inputIntro').val(),
             webConfig: $('#inputWebConfig').val(),
             creator: $('#inputCreator').val(),
-            version: $('#inputVersion').val(),
-            module: $('#inputModule').val()
+            module: $('#inputModule').val(),
+            customerNum: $('#inputCustomerNum').val(),
+            isMVP: $('#inputIsMVP').val()
         },
         success: function (result) {
             if (result.success) {
-                form.reset();
+                form.submit();
                 $('#addSolutionModal').modal('hide');
                 location.reload();
             } else {
@@ -171,42 +176,46 @@ function addSolution() {
 
 function updateSolution(id) {
     var solution = solutionMap.get(id);
+    $('#updateId').val(solution.id);
     $('#updateName').val(solution.name);
     $('#updateIntro').val(solution.intro);
     $('#updateWebConfig').val(solution.webConfig);
     $('#updateCreator').val(solution.creator);
-    $('#updateVersion').val(solution.version);
     $('#updateModule').val(solution.module);
-    $('#updateSolutionModal').modal({ backdrop: 'static', keyboard: false })
-        .one('click', '#submitUpdateSolution', function () {
-            let form = document.getElementById('updateSolutionForm');
-            if (form.checkValidity() === false) {
-                form.classList.add('was-validated');
-                return false;
-            }
-            $.ajax({
-                url: "/solutionConfig/updateSolutionConfig.do",
-                data: {
-                    id: id,
-                    name: $('#updateName').val(),
-                    intro: $('#updateIntro').val(),
-                    webConfig: $('#updateWebConfig').val(),
-                    creator: $('#updateCreator').val(),
-                    version: $('#updateVersion').val(),
-                    module: $('#updateModule').val()
-                },
-                success: function (result) {
-                    if (result.success) {
-                        form.reset();
-                        $('#updateSolutionModal').modal('hide');
-                        location.replace(newURL());
-                    } else {
-                        alert("更新失败！" + result.errorMsg);
-                    }
-                }
-            })
-        });
+    $('#updateCustomerNum').val(solution.customerNum);
+    $('#updateIsMVP').val(String(solution.isMVP));
+    $('#updateSolutionModal').modal({ backdrop: 'static', keyboard: false });
 }
+
+$(document).on('click', '#submitUpdateSolution', function () {
+    let form = document.getElementById('updateSolutionForm');
+    if (form.checkValidity() === false) {
+        form.classList.add('was-validated');
+        return false;
+    }
+    $.ajax({
+        url: "/solutionConfig/updateSolutionConfig.do",
+        data: {
+            id: $('#updateId').val(),
+            name: $('#updateName').val(),
+            intro: $('#updateIntro').val(),
+            webConfig: $('#updateWebConfig').val(),
+            creator: $('#updateCreator').val(),
+            module: $('#updateModule').val(),
+            customerNum: $('#updateCustomerNum').val(),
+            isMVP: $('#updateIsMVP').val()
+        },
+        success: function (result) {
+            if (result.success) {
+                form.submit();
+                $('#updateSolutionModal').modal('hide');
+                location.replace(newURL());
+            } else {
+                alert("更新失败！" + result.errorMsg);
+            }
+        }
+    })
+});
 
 function deleteSolution(id) {
     $('#deleteSolutionConfirmModal').modal({ backdrop: 'static', keyboard: false })
@@ -257,10 +266,7 @@ window.onload = function () {
                 var userRole = result.data;
                 MYDATA.changeable = (userRole.indexOf('ROLE_ADMIN') != -1);
                 if (MYDATA.changeable) {
-                    $('#addSolutionBtn').css('display', 'block');
-                } else {
-                    $('#addSolutionBtn').css('display', 'none');
-                    console.log("You are not super admin, so you can not change the solution config! Your role: " + userRole);
+                    $('#demoTitle').append('<button class="btn btn-success" id="addSolutionBtn" data-toggle="modal" data-target="#addSolutionModal" style="margin-right: 20px;">添加解决方案</button>');
                 }
                 searchSolution();
             }

@@ -306,6 +306,7 @@ Ext.onReady(function () {
         region: 'center',
         title: '用户组列表',
         store: userGroupStore,
+        hasBbar: false,             //去掉分页栏
         columns: [{
             dataIndex: 'id',
             header: 'ID',
@@ -354,6 +355,7 @@ Ext.onReady(function () {
         split: true,
         title: '角色列表',
         store: userRoleStore,
+        hasBbar: false,         //去掉分页栏
         columns: [{
           dataIndex: 'id',
           header: 'ID',
@@ -387,8 +389,8 @@ Ext.onReady(function () {
 
     var userGroupAndRole = new Ext.Window({
         layout: 'border',      
-        width: 1000,          //设置窗口大小;
-        height: 500,
+        width: 700,          //设置窗口大小;
+        height: 400,
         closeAction: 'hide', //点击右上角关闭按钮后会执行的操作;
         closable: true,     //隐藏关闭按钮;
         draggable: true,     //窗口可拖动;
@@ -401,7 +403,7 @@ Ext.onReady(function () {
             border: false,
             split: true,
             region: 'west',
-            width: 500,
+            width: 200,
             items: [userGroupGrid]
         }, {
             layout: 'border',
