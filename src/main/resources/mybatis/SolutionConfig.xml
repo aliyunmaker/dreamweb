@@ -8,15 +8,17 @@
          intro,
          web_config,
          creator,
-         version,
          module,
+         customer_num,
+         is_mvp,
          gmt_create)
         values (#{name},
                 #{intro},
                 #{webConfig},
                 #{creator},
-                #{version},
                 #{module},
+                #{customerNum},
+                #{isMVP},
                 now())
     </insert>
 
@@ -26,8 +28,9 @@
             intro           = #{intro},
             web_config      = #{webConfig},
             creator         = #{creator},
-            version         = #{version},
-            module          = #{module}
+            module          = #{module},
+            customer_num    = #{customerNum},
+            is_mvp          = #{isMVP}
         where id = #{id}
     </update>
 
@@ -52,8 +55,7 @@
             </if>
             <if test="!isSearchBlank">
                 and (name like concat('%',#{searchInput},'%') or intro like concat('%',#{searchInput},'%') or 
-                creator like concat('%',#{searchInput},'%') or version like concat('%',#{searchInput},'%') or 
-                module like concat('%',#{searchInput},'%'))
+                creator like concat('%',#{searchInput},'%') or module like concat('%',#{searchInput},'%'))
             </if>
         </where>
     </select>
