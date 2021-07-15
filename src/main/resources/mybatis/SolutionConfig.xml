@@ -11,6 +11,7 @@
          module,
          customer_num,
          is_mvp,
+         has_terraform,
          gmt_create)
         values (#{name},
                 #{intro},
@@ -19,6 +20,7 @@
                 #{module},
                 #{customerNum},
                 #{isMVP},
+                #{hasTerraform},
                 now())
     </insert>
 
@@ -30,7 +32,8 @@
             creator         = #{creator},
             module          = #{module},
             customer_num    = #{customerNum},
-            is_mvp          = #{isMVP}
+            is_mvp          = #{isMVP},
+            has_terraform   = #{hasTerraform}
         where id = #{id}
     </update>
 

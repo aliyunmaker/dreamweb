@@ -95,15 +95,15 @@ function loadPage() {
         const solution = solutionMap.get(key.value);
         var url = encodeURI("index_solution.html?name=" + solution.name + "&menu=" + solution.webConfig);
         solutionDiv += '<div class="col-md-auto" style="margin-bottom: 10px; margin-righ: 10px;">';
-        solutionDiv += '<div class="card mb-4 h-100" style="min-width: 20rem; max-width: 20rem; min-height: 31rem; max-height: 31rem;">';
+        solutionDiv += '<div class="card mb-4 h-100" style="min-width: 22rem; max-width: 22rem; min-height: 33rem; max-height: 33rem;">';
         solutionDiv += '<div class="card-header">' + solution.module + "</div>";
         solutionDiv += '<div class="card-body h-100">';
-        solutionDiv += '<div class="row justify-content-between">';
+        solutionDiv += '<div class="row">';
         solutionDiv += '<div class="col">';
         solutionDiv += '<h5 class="card-title">' + solution.name + '</h5>';
         solutionDiv += '</div>';
         if (MYDATA.changeable) {
-            solutionDiv += '<div class="col-2" style="margin-right: 10px;">';
+            solutionDiv += '<div class="col-2" style="margin-right: 5px;">';
             solutionDiv += '<button type="button" class="btn btn-default" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="box-shadow: none;">';
             solutionDiv += '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">';
             solutionDiv += '<g transform="translate(0, -6.5)">';
@@ -124,13 +124,14 @@ function loadPage() {
         solutionDiv += '<div class="row" style="display: flex; justify-content: space-between;">';
         solutionDiv += '<div class="ml-3 mb-3">';
         for (let i = 0; i < solution.customerNum; i++) {
-            solutionDiv += '<image src="Star.png" class="img-responsive" style="width: auto; height: 2rem;"></image>';
+            solutionDiv += '<image src="/img/Star.png" class="img-responsive" style="width: auto; height: 2rem;"></image>';
         }
         solutionDiv += '</div>';
-        if (solution.isMVP) solutionDiv += '<image src="MVP.png" class="img-responsive mr-3" style="width: auto; height: 2rem;"></image>';
+        if (solution.isMVP) solutionDiv += '<image src="/img/MVP.png" class="img-responsive mr-3" style="width: auto; height: 2rem;"></image>';
         solutionDiv += '</div>';
-        solutionDiv += '<div class="row">';
+        solutionDiv += '<div class="row" style="display: flex; justify-content: space-between;">';
         solutionDiv += '<a href="' + url + '" class="btn btn-primary ml-3">查看详情</a>';
+        if (solution.hasTerraform) solutionDiv += '<image src="/img/terraform.png" class="img-responsive" style="width: auto; height: 2rem; margin-right: 21px;"></image>';
         solutionDiv += '</div>';
         solutionDiv += '</div>';
         solutionDiv += '<div class="card-footer">';
@@ -160,7 +161,8 @@ function addSolution() {
             creator: $('#inputCreator').val(),
             module: $('#inputModule').val(),
             customerNum: $('#inputCustomerNum').val(),
-            isMVP: $('#inputIsMVP').val()
+            isMVP: $('#inputIsMVP').val(),
+            hasTerraform: $('#inputHasTerraform').val()
         },
         success: function (result) {
             if (result.success) {
@@ -184,6 +186,7 @@ function updateSolution(id) {
     $('#updateModule').val(solution.module);
     $('#updateCustomerNum').val(solution.customerNum);
     $('#updateIsMVP').val(String(solution.isMVP));
+    $('#updateHasTerraform').val(String(solution.hasTerraform));
     $('#updateSolutionModal').modal({ backdrop: 'static', keyboard: false });
 }
 
@@ -203,7 +206,8 @@ $(document).on('click', '#submitUpdateSolution', function () {
             creator: $('#updateCreator').val(),
             module: $('#updateModule').val(),
             customerNum: $('#updateCustomerNum').val(),
-            isMVP: $('#updateIsMVP').val()
+            isMVP: $('#updateIsMVP').val(),
+            hasTerraform: $('#updateHasTerraform').val()
         },
         success: function (result) {
             if (result.success) {
