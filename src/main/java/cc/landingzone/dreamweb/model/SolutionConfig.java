@@ -12,6 +12,7 @@ public class SolutionConfig {
     private String module;
     private Integer customerNum;
     private Boolean isMVP;
+    private Boolean hasTerraform;
     private Date gmtCreate;
 
     public Integer getId() {
@@ -76,6 +77,14 @@ public class SolutionConfig {
 
     public void setIsMVP(Boolean isMVP) {
         this.isMVP = isMVP;
+    }
+
+    public Boolean getHasTerraform() {
+        return hasTerraform;
+    }
+
+    public void setHasTerraform(Boolean hasTerraform) {
+        this.hasTerraform = hasTerraform;
     }
 
     public Date getGmtCreate() {

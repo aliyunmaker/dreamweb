@@ -65,6 +65,9 @@ public class SolutionConfigController extends BaseController {
             String isMVPStr = request.getParameter("isMVP");
             Assert.hasText(isMVPStr, "是否是MVP不能为空");
             Boolean isMVP = Boolean.parseBoolean(isMVPStr);
+            String hasTerraformStr = request.getParameter("hasTerraform");
+            Assert.hasText(hasTerraformStr, "是否有Terraform脚本不能为空");
+            Boolean hasTerraform = Boolean.parseBoolean(hasTerraformStr);
 
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigByName(name);
             Assert.isNull(solutionConfig, "解决方案已存在!");
@@ -76,6 +79,7 @@ public class SolutionConfigController extends BaseController {
             solutionConfig.setModule(module);
             solutionConfig.setCustomerNum(customerNum);
             solutionConfig.setIsMVP(isMVP);
+            solutionConfig.setHasTerraform(hasTerraform);
             solutionConfigService.addSolutionConfig(solutionConfig);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -108,6 +112,9 @@ public class SolutionConfigController extends BaseController {
             String isMVPStr = request.getParameter("isMVP");
             Assert.hasText(isMVPStr, "是否是MVP不能为空");
             Boolean isMVP = Boolean.parseBoolean(isMVPStr);
+            String hasTerraformStr = request.getParameter("hasTerraform");
+            Assert.hasText(hasTerraformStr, "是否有Terraform脚本不能为空");
+            Boolean hasTerraform = Boolean.parseBoolean(hasTerraformStr);
             
             SolutionConfig solutionConfig = solutionConfigService.getSolutionConfigById(id);
             Assert.notNull(solutionConfig, "解决方案不存在!");
@@ -120,6 +127,7 @@ public class SolutionConfigController extends BaseController {
             solutionConfig.setModule(module);
             solutionConfig.setCustomerNum(customerNum);
             solutionConfig.setIsMVP(isMVP);
+            solutionConfig.setHasTerraform(hasTerraform);
             solutionConfigService.updateSolutionConfig(solutionConfig);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
