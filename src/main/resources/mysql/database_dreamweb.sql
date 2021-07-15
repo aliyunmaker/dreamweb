@@ -199,7 +199,7 @@ CREATE TABLE `solution_config` (
                             `module` varchar(100) NOT NULL COMMENT '解决方案所属模块',
                             `customer_num` int(11) NOT NULL DEFAULT 0 COMMENT '客户数量',
                             `is_mvp` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是MVP',
-                            `has_terraform` tinyint(1) NOT NULL DEFAULT 0 COMMENT `是否有Terraform脚本`,
+                            `has_terraform` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否有Terraform脚本',
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
