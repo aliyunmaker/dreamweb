@@ -69,13 +69,13 @@ Ext.onReady(function () {
             align: 'center',
             renderer: function (value) {
                 if (value === "NORMAL_LOGIN") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_web.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                    return '<img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_web.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else if (value === "LDAP_LOGIN") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_ldap.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                    return '<img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_ldap.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else if (value === "WEIXIN_LOGIN") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_weixin.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                    return '<img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_weixin.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else if (value === "AUTO_LOGIN") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_api.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                    return '<img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_type_api.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else {
                     return value;
                 }
@@ -96,9 +96,9 @@ Ext.onReady(function () {
             align: 'center',
             renderer: function (value) {
                 if (value === "ROLE_GUEST") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_guest.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                    return '<img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_guest.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else if (value === "ROLE_ADMIN") {
-                    return '<img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_admin.png?x-oss-process=image/resize,h_16,m_lfit" />';
+                    return '<img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/icon/user_admin.png?x-oss-process=image/resize,h_16,m_lfit" />';
                 } else {
                     return value;
                 }

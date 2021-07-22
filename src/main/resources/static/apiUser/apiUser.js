@@ -1,7 +1,7 @@
 Ext.onReady(function () {
   Ext.tip.QuickTipManager.init();
 
-  var oss = 'https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/icon/';
+  var oss = 'https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/icon/';
   var alignStyle = ' style="vertical-align:middle"';
 
   var reload = function () {
