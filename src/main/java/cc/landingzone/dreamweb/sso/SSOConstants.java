@@ -28,8 +28,8 @@ public class SSOConstants {
 
     static {
         Properties properties = CommonConstants.loadProperties();
-        String idpEntityId = properties.getProperty("dreamweb.idp_entity_id");
-        if (StringUtils.isBlank(idpEntityId)) {
+        String idpEntityId = properties.getProperty("dreamweb.idp_entityid");
+        if (StringUtils.isBlank(idpEntityId) || "<your_idp_entityid>".equals(idpEntityId)) {
             IDP_ENTITY_ID = "dreamweb.default";
         } else {
             IDP_ENTITY_ID = idpEntityId;
