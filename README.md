@@ -21,3 +21,6 @@ cc.landingzone.dreamweb.DreamwebApplication
 
 ### 文档
 [通过token实现自动登录](docs/auto_login_by_token.md)
+
+### 配置更新
+2021.08.02：新增配置项dreamweb.idp_entityid=<your_idp_entityid>
