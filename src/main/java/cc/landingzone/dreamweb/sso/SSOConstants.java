@@ -1,7 +1,11 @@
 package cc.landingzone.dreamweb.sso;
 
 
+import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Properties;
 
 public class SSOConstants {
     // 是否自动提交表单,默认为false,方便调试
@@ -20,7 +24,17 @@ public class SSOConstants {
 //            "acs:ram::1764263140474643:role/super2,acs:ram::1764263140474643:saml-provider/superAD");
 
     // IDP_ENTITY_ID 唯一ID,代表IDP
-    public static final String IDP_ENTITY_ID = "https://chengchao.name/b65d76ce4260/";
+    public static final String IDP_ENTITY_ID;
+
+    static {
+        Properties properties = CommonConstants.loadProperties();
+        String idpEntityId = properties.getProperty("dreamweb.idp_entity_id");
+        if (StringUtils.isBlank(idpEntityId)) {
+            IDP_ENTITY_ID = "dreamweb.default";
+        } else {
+            IDP_ENTITY_ID = idpEntityId;
+        }
+    }
 
     public static String getSSOSpIdentifier(SSOSpEnum ssoSp) {
         switch (ssoSp) {
