@@ -22,13 +22,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception { //配置资源和用户权限匹配
         http.csrf().disable();
 //        http.anonymous();
         http
                 .authorizeRequests()
                 .antMatchers("/", "/weixin/**", "/system/getStartInfo.do", "/autoLogin", "/rsakey/getPublicKey.do").permitAll()
-                .antMatchers("/welcome/*", "/user/getUserInfo.do", "/sso/*","/tools/*","/aliyunTools/*.do", "/slsConfig/*", "/slsView/*", "/index.html", "/system/getIndexLogoPage.do").hasAnyRole("GUEST", "ADMIN")
+                .antMatchers("/welcome/*", "/user/getUserInfo.do", "/sso/*","/tools/*","/aliyunTools/*.do", "/slsConfig/*", "/slsView/*","/preView/*", "/task/*", "/apply/*", "/ask/*", "/index.html", "/system/getIndexLogoPage.do").hasAnyRole("GUEST", "ADMIN")
                 .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()

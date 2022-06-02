@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ApplyDao">
+
+    <select id="getApply"
+            resultType="cc.landingzone.dreamweb.model.Apply">
+        select *
+        from myAsk
+        where starterName = #{startername}
+    </select>
+
+    <update id="updateProcessState">
+        update myAsk
+        set processState = #{processstate}
+        where processId = #{processid}
+    </update>
+
+    <update id="updateTask">
+        update myAsk
+        set task = #{task}
+        where processId = #{processid}
+    </update>
+
+    <update id="updateCond">
+        update myAsk
+        set cond = #{cond}
+        where processId = #{processid}
+    </update>
+
+    <update id="updateOpinion">
+        update myAsk
+        set opinion = #{opinion}
+        where processId = #{processid}
+    </update>
+
+    <insert id="addApply"
+            parameterType="cc.landingzone.dreamweb.model.Apply">
+        insert into myAsk
+        (starterName,
+        processTime,
+        processId,
+        processState,
+        processInfo,
+        cond,
+        processDefinitionId)
+        values (#{startername},
+        #{processtime},
+        #{processid},
+        #{processstate},
+        #{processinfo},
+        #{cond},
+        #{processdefinitionid})
+    </insert>
+</mapper>

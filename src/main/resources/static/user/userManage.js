@@ -128,6 +128,7 @@ Ext.onReady(function () {
             iconCls: 'MyExt-modify',
             handler: function () {
                 var select = MyExt.util.SelectGridModel(userGrid);
+                // console.log(select)
                 if (!select) {
                     return;
                 }

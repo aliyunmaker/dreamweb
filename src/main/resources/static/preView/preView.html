@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>test</title>
+
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
+    <script type="text/javascript"
+            src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+    <script type="text/javascript" src="../slsView/bootstrap.bundle.js"></script>
+    <script type="text/javascript" src="preView.js"></script>
+
+</head>
+<body>
+    <div>
+        <h1 class="text-center">选择应用及场景创建产品实例</h1>
+    </div>
+
+    <div>
+        <form class="form-inline">
+            <div class="col">
+                <select class="custom-select" id="select_role">
+                    <option selected>选择角色</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <select class="custom-select" id="select_application">
+                    <option selected>选择应用</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <select class="custom-select" id="select_scenes">
+                    <option selected>选择场景</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <button type="button" id="btn_getProductId" class="btn btn-info">查询产品ID</button>
+            </div>
+
+            <div class="col">
+                <button type="button" id="btn_getExample" class="btn btn-info">生成实例名称</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="embed-responsive embed-responsive-4by3" id="preViewConsoleDiv">
+
+    </div>
+
+    <div class="col">
+        <button type="button" id="btn_startProcess" class="btn btn-info">启动计划申请审批</button>
+    </div>
+    
+</body>
+</html>

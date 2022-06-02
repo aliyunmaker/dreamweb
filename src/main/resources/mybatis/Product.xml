@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ProductDao">
+
+    <select id="getApplication"
+            resultType="String">
+        select distinct application from product
+    </select>
+
+    <select id="getScenes"
+            resultType="String"
+            parameterType="String">
+        select distinct scenes from product where application = #{application}
+    </select>
+
+    <select id="getProductId"
+            resultType="String">
+        select productid from product where application = #{application} and scenes = #{scene};
+    </select>
+
+    <select id="getExampleId"
+            resultType="Integer">
+            select id from example where productid = #{productId} and examplename = #{exampleName};
+    </select>
+
+    <insert id="addExample">
+        insert into example
+        (productid,
+         examplename,
+         gmt_create)
+         values (#{productId},
+                 #{exampleName},
+                 now())
+    </insert>        
+</mapper>
