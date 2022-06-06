@@ -49,8 +49,8 @@ public class PreViewService {
     /**
      * 使用特定角色获取免登录链接
      *
-     * @param projectName  项目名称
-     * @param logstoreName 日志库名称
+     * @param productId  项目ID
+     * @param exampleName 实例名称
      * @param region       地区
      * @param user         用户
      * @param userRole     角色
@@ -69,24 +69,20 @@ public class PreViewService {
         String roleArn = roleValue[0];
         String samlProviderArn = roleValue[1];
         String samlAssertion = getSamlAssertion(user, userRole);
-        // System.out.println("samlAssertion: " + samlAssertion);
 
         // 访问令牌服务获取临时AK和Token
         CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
             samlAssertion, stsEndpoint);
         Assert.notNull(commonResponse, "assumeRole获取失败");
-        // System.out.println("commonResponse: " + commonResponse);
 
         // 通过临时AK & Token获取登录Token
         String signInToken = requestSignInToken(commonResponse, signinEndpoint);
         Assert.notNull(signInToken, "signInToken获取失败");
-        // System.out.println("signInToken: " + signInToken);
 
         // 通过登录token生成日志服务web访问链接进行跳转
         signInUrl = generateSignInUrl(signInToken, productId, exampleName, signinEndpoint);
         Assert.notNull(signInUrl, "signInUrl生成失败");
 
-        // return signInUrl;
         return signInUrl;
     }
 
@@ -209,7 +205,6 @@ public class PreViewService {
                 URLEncoder.encode(exampleName, "utf-8"));
 //        &provisionedProductName=sugar123&hideSidebar=true
 //        String preUrl = "https://pre-servicecatalog4service.console.aliyun.com/products/launch?productId=prod-bp1qbazd242511&provisionedProductName=sugar123&hideSidebar=true";
-        // System.out.println("preUrl: " + preUrl);
         String signInUrl = endpoint + String.format(
                 "/federation?Action=Login"
                         + "&LoginUrl=%s"
