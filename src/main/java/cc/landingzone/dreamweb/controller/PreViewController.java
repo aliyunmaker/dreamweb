@@ -9,6 +9,7 @@ import cc.landingzone.dreamweb.service.PreViewService;
 import cc.landingzone.dreamweb.service.SystemConfigService;
 import cc.landingzone.dreamweb.service.UserRoleService;
 import cc.landingzone.dreamweb.service.UserService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -40,15 +41,11 @@ public class PreViewController extends BaseController{
 
     @GetMapping("/getRoles.do")
     public void getRoles(HttpServletRequest request, HttpServletResponse response) {
-//        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-//        System.out.println(userName);
         WebResult result = new WebResult();
         try {
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();  //拿到用户名
-//            System.out.println(userName);
             User user = userService.getUserByLoginName(userName);
             List<UserRole> userRoleList = userRoleService.getRoleListByUserId(user.getId());
-
             result.setTotal(userRoleList.size());
             result.setData(userRoleList);
         } catch (Exception e) {
@@ -64,9 +61,8 @@ public class PreViewController extends BaseController{
     @GetMapping("/getProduct.do")
     public void getApplication(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        List<String> applicationList = productService.getApplication();
-//        System.out.println("applicationList:" + applicationList);
 
+        List<String> applicationList = productService.getApplication();
         result.setTotal(applicationList.size());
         result.setData(applicationList);
 
@@ -76,13 +72,16 @@ public class PreViewController extends BaseController{
     @GetMapping("/getScenes.do")
     public void getScenes(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String getApplication = request.getParameter("select_Application");
-//        System.out.println("getApplication: " + getApplication);
-        List<String> scenesList = productService.getScenes(getApplication);
-//        System.out.println("scenesList: " + scenesList);
-
-        result.setTotal(scenesList.size());
-        result.setData(scenesList);
+        try {
+            String getApplication = request.getParameter("select_Application");
+            List<String> scenesList = productService.getScenes(getApplication);
+            result.setTotal(scenesList.size());
+            result.setData(scenesList);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
 
         outputToJSON(response, result);
     }
@@ -90,14 +89,20 @@ public class PreViewController extends BaseController{
     @GetMapping("/getProductId.do")
     public void getProductId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String getApplication = request.getParameter("select_Application");
-        String getScene = request.getParameter("select_Scene");
-//        System.out.println("getApplication + getScene ： " + getApplication + getScene);
-        String productId = productService.getProductId(getApplication, getScene);
-//        System.out.println(productId);
-        if (productId == null)
+        try {
+            String getApplication = request.getParameter("select_Application");
+            Assert.hasText(getApplication, "应用不能为空！");
+            String getScene = request.getParameter("select_Scene");
+            Assert.hasText(getScene, "场景不能为空！");
+            String productId = productService.getProductId(getApplication, getScene);
+            Assert.hasText(productId, "未找到对应procuctId！");
+            result.setData(productId);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             result.setSuccess(false);
-        result.setData(productId);
+            result.setErrorMsg(e.getMessage());
+        }
+
         outputToJSON(response, result);
     }
 
@@ -107,24 +112,14 @@ public class PreViewController extends BaseController{
         Random r = new Random();
         String productId = request.getParameter("productId");
         
-        Integer exampleRandom = r.nextInt(1000);
+        Integer exampleRandom = r.nextInt(10000);
         String exampleName = Integer.toString(exampleRandom);
-        // exampleName = "985";
         Integer id = productService.getExampleId(productId, exampleName);
-        // System.out.println("id: " + id);
         while (id != null) {
-            // System.out.println("yes");
-            exampleRandom = r.nextInt(1000);
+            exampleRandom = r.nextInt(10000);
             exampleName = Integer.toString(exampleRandom);
             id = productService.getExampleId(productId, exampleName);
         }
-        // System.out.println((exampleName));
-        // Integer exampleRandom = r.nextInt(1000);
-        // String exampleName = Integer.toString(exampleRandom);
-        // // exampleName = "894";
-        // Integer id = productService.getExampleId(productId, exampleName);
-        // // System.out.println("id:" + id);
-        // Assert.isNull(id, "产品实例名称已存在");
         productService.addExample(productId, exampleName);
         result.setData(exampleName);
         outputToJSON(response, result);
@@ -135,7 +130,6 @@ public class PreViewController extends BaseController{
     public void getExample(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String processid = request.getParameter("processid");
-//        System.out.println(processid);
         productService.getExample(processid);
         Map<String, String> example1 = new HashMap<>();
         example1.put("应用", "application1");
@@ -153,9 +147,7 @@ public class PreViewController extends BaseController{
             String roleIdStr = request.getParameter("roleId");
             Assert.hasText(roleIdStr, "roleId不能为空!");
             String exampleName = request.getParameter("exampleName");
-            // System.out.println("exampleName: " + exampleName);
             Assert.hasText(exampleName, "实例名称不能为空！");
-            // System.out.println("exampleName: " + exampleName);
 
             Integer roleId = Integer.valueOf(roleIdStr);
             String region = systemConfigService.getStringValueFromCache("region");
@@ -166,7 +158,6 @@ public class PreViewController extends BaseController{
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
             String nonLoginPreUrl = preViewService.getNonLoginPreUrl(productId, exampleName, region, user, userRole);
-            // System.out.println(nonLoginPreUrl);
             result.setData(nonLoginPreUrl);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

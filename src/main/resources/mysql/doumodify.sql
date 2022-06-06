@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `myAsk`;
 
 CREATE TABLE `product` (
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                            `productid` varchar(100) NOT NULL COMMENT '产品id',
+                            `productid` varchar(100) COMMENT '产品id',
                             `application` varchar(100) NOT NULL COMMENT '应用',
                             `scenes` varchar(100) NOT NULL COMMENT '场景',
                             `gmt_create` datetime DEFAULT NULL,

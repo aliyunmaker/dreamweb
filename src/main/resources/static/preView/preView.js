@@ -24,7 +24,6 @@ $(document).ready(function(){
                 for (var i = 0; i < applicationList.length; i++){
                     var application = applicationList[i];
                     var option = "<option value='" + application + "'>" + application + "</option>";
-                    //console.log(application); //前端网页控制台打印结果
                     $("#select_application").append(option);
                 }
             } else {
@@ -111,7 +110,8 @@ $(document).ready(function(){
                     var option = "<option value='" + productId + "'>" + productId + "</option>";
                     $("#btn_getProductId").append(option);
                } else {
-                   
+                   var option = "<option value='未找到对应product！'> 未找到对应product！</option>";
+                   $("#btn_getProductId").append(option);
                }
             }
         })
@@ -124,7 +124,6 @@ $(document).ready(function(){
         var roleId = selectedRole.id;
 
         $("#btn_getExample").empty();
-        // $("#btn_getExample").append("<option value='创建实例及名称：'>创建实例及名称：</option>");
         $.ajax({
             url: "../../preView/getExampleName.do",
             data: {
