@@ -33,5 +33,56 @@
          values (#{productId},
                  #{exampleName},
                  now())
-    </insert>        
+    </insert>  
+    
+    <select id="searchProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
+        select * from product order by id desc
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="searchProductTotal" resultType="int" parameterType="map">
+        select count(*) from user
+    </select>    
+    
+    <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
+        select *
+        from product
+        where productid = #{productid}
+    </select>
+
+    <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">
+        select *
+        from product
+        where id = #{id}
+    </select>
+
+    <insert id="addProduct"
+            parameterType="cc.landingzone.dreamweb.model.Product">
+        insert into product
+        (application,
+        scenes,
+        productid,
+        gmt_create)
+        values (#{application},
+                #{scenes},
+                #{productid},
+                now())
+    </insert>
+
+    <update id="updateProduct" parameterType="cc.landingzone.dreamweb.model.Product">
+        update product
+        set application              = #{application},
+            scenes                   = #{scenes},
+            productid                = #{productid}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProduct" parameterType="int">
+        delete
+        from product
+        where id = #{id}
+    </delete>
+
 </mapper>
