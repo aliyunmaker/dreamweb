@@ -247,7 +247,7 @@ VALUES
 ('9','application3','scenes1',now());
 
 
-CREATE TABLE `example`(
+CREATE TABLE `provisioned_product`(
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
                             `examplename` varchar(100) NOT NULL COMMENT '实例名称',
                             `productid` varchar(100) NOT NULL COMMENT '产品id',
@@ -269,6 +269,8 @@ CREATE TABLE `myAsk` (
                             `cond` varchar(50) COMMENT '是否审批通过',
                             `processDefinitionId` varchar(100) NOT NULL COMMENT '流程定义ID',
                             `opinion` varchar(500) COMMENT '审批拒绝意见',
+                            `gmt_create` datetime DEFAULT NULL,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY (`processId`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

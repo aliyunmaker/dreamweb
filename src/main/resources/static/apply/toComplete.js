@@ -190,13 +190,17 @@ Ext.onReady(function () {
                     Ext.Msg.alert('提示','请选择要通过的任务（可多选）');
                 }else{
                     var taskids = [];
+                    var processids = [];
                     Ext.Array.each(select,function(record){
-                        taskids.push(record.raw.taskid)
+                        taskids.push(record.raw.taskid);
+                        processids.push(record.raw.processid)
                     });
                     var taskid = JSON.stringify(taskids);
+                    var processid = JSON.stringify(processids);
                     MyExt.util.MessageConfirm('是否确定通过', function () {
                         MyExt.util.Ajax('../task/complete.do', {
                             taskid: taskid,
+                            processid: processid
                         }, function (data) {
                             reload();
                             MyExt.Msg.alert('通过成功!');
@@ -229,6 +233,7 @@ Ext.onReady(function () {
                             MyExt.util.MessageConfirm('是否确定拒绝', function () {
                                 MyExt.util.Ajax('../task/reject.do', {
                                     taskid: select[0].raw.taskid,
+                                    processid: select[0].raw.processid,
                                     opinion: win.items.items[0].rawValue
                                 }, function (data) {
                                     win.hide();

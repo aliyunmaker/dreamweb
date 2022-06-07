@@ -71,7 +71,7 @@ public class ApplyController extends BaseController{
         // 获取"流程定义"查询器
         ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
 
-        // 这里我们没有设置查询条件，就是查询目前所有的流程，每个流程的最新版本
+        // 这里没有设置查询条件，就是查询目前所有的流程，每个流程的最新版本
         List<ProcessDefinition> processDefinitions = processDefinitionQuery.latestVersion().list();
 
         if(processDefinitions.isEmpty()) {
@@ -116,6 +116,7 @@ public class ApplyController extends BaseController{
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinitionId, variables);
 
+        String task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult().getName();
         Apply apply = new Apply();
         apply.setStartername(username);
         apply.setProcesstime(DateUtil.dateTime2String(processInstance.getStartTime()));
@@ -124,9 +125,9 @@ public class ApplyController extends BaseController{
         apply.setProcessinfo(info);
         apply.setProcessdefinitionid(processDefinitionId);
         apply.setCond("未拒绝");
+        apply.setTask("等待" + task);
         applyService.addApply(apply);
 
-        // System.out.println("流程启动成功，流程实例ID：" + processInstance.getProcessInstanceId());
         result.setData(processInstance.getProcessInstanceId());
         outputToJSON(response, result);
     }
@@ -137,19 +138,19 @@ public class ApplyController extends BaseController{
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 //        System.out.println(username);
         List<Apply> list = applyService.getApply(username);
-        for (Apply apply : list) {
-            ProcessInstance process = runtimeService.createProcessInstanceQuery().processDefinitionId(apply.getProcessdefinitionid()).processInstanceId(apply.getProcessid()).singleResult();
-            if (process == null) {
-                apply.setProcessstate("已结束");
-                applyService.updateProcessState(apply.getProcessid(), "已结束");
-                apply.setTask("无");
-                applyService.updateTask(apply.getProcessid(), "无等待任务");
-            } else {
-                apply.setProcessstate("运行中");
-                apply.setTask("等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName());
-                applyService.updateTask(apply.getProcessid(), apply.getTask());
-            }
-        }
+//        for (Apply apply : list) {
+//            ProcessInstance process = runtimeService.createProcessInstanceQuery().processDefinitionId(apply.getProcessdefinitionid()).processInstanceId(apply.getProcessid()).singleResult();
+//            if (process == null) {
+//                apply.setProcessstate("已结束");
+//                applyService.updateProcessState(apply.getProcessid(), "已结束");
+//                apply.setTask("无");
+//                applyService.updateTask(apply.getProcessid(), "无等待任务");
+//            } else {
+//                apply.setProcessstate("运行中");
+//                apply.setTask("等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName());
+//                applyService.updateTask(apply.getProcessid(), apply.getTask());
+//            }
+//        }
         result.setData(list);
         outputToJSON(response, result);
     }

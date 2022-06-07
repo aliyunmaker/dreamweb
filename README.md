@@ -24,3 +24,4 @@ cc.landingzone.dreamweb.DreamwebApplication
 
 ### 配置更新
 2021.08.02：新增配置项dreamweb.idp_entityid=<your_idp_entityid>
+2022.06.06：新增activiti相关配置

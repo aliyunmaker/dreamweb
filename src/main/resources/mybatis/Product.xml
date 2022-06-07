@@ -22,11 +22,11 @@
 
     <select id="getExampleId"
             resultType="Integer">
-            select id from example where productid = #{productId} and examplename = #{exampleName};
+            select id from provisioned_product where productid = #{productId} and examplename = #{exampleName};
     </select>
 
     <insert id="addExample">
-        insert into example
+        insert into provisioned_product
         (productid,
          examplename,
          gmt_create)

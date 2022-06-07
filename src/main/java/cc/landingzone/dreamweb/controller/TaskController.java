@@ -4,7 +4,9 @@ import cc.landingzone.dreamweb.model.TaskModel;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.ApplyService;
 import org.activiti.engine.HistoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class TaskController extends BaseController{
 
     @Autowired
     private ApplyService applyService;
+
+    @Autowired
+    private RuntimeService runtimeService;
 
     @RequestMapping("/getMyTaskList.do")
     public void myTaskList (HttpServletRequest request, HttpServletResponse response) {
@@ -73,12 +78,14 @@ public class TaskController extends BaseController{
     @RequestMapping("/complete.do")
     public void completeTaskById(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        // System.out.println(request.getParameter("taskid").getClass().toString());   //String
         String taskids = request.getParameter("taskid");
+        String processids = request.getParameter("processid");
         String delimeter = ",";
         String[] taskIds = taskids.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").split(delimeter);
+        String[] processIds = processids.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").split(delimeter);
         for(int i = 0; i < taskIds.length ; i++){
             String taskId = taskIds[i];
+            String processId = processIds[i];
             String processInfo = (String) taskService.getVariable(taskId, "processInfo");
             String starterName = (String) taskService.getVariable(taskId, "starterName");
             Map<String, Object> variables=new HashMap<>();
@@ -86,16 +93,17 @@ public class TaskController extends BaseController{
             variables.put("starterName", starterName);
             variables.put("con", 1);
             taskService.complete(taskId, variables);
+
+            ProcessInstance process = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+            if (process == null) {
+                applyService.updateProcessState(processId, "已结束");
+                applyService.updateTask(processId, "无等待任务");
+            } else {
+                String task = "等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName();
+                applyService.updateTask(processId, task);
+            }
         }
         outputToJSON(response, result);
-        // String processInfo = (String) taskService.getVariable(taskId, "processInfo");
-        // String starterName = (String) taskService.getVariable(taskId, "starterName");
-        // Map<String, Object> variables=new HashMap<>();
-        // variables.put("processInfo", processInfo);
-        // variables.put("starterName", starterName);
-        // variables.put("con", 1);
-        // taskService.complete(taskId, variables);
-        // outputToJSON(response, result);
     }
 
     @RequestMapping("/reject.do")
@@ -104,10 +112,13 @@ public class TaskController extends BaseController{
 
         String opinion = request.getParameter("opinion");
         String taskId = request.getParameter("taskid");
+        String processId = request.getParameter("processid");
 
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         applyService.updateCond(task.getProcessInstanceId(), "拒绝");
         applyService.updateOpinion(task.getProcessInstanceId(), opinion);
+        applyService.updateProcessState(processId, "已结束");
+        applyService.updateTask(processId, "无等待任务");
 
         String processInfo = (String) taskService.getVariable(taskId, "processInfo");
         String starterName = (String) taskService.getVariable(taskId, "starterName");
@@ -116,6 +127,9 @@ public class TaskController extends BaseController{
         variables.put("starterName", starterName);
         variables.put("con", 0);
         taskService.complete(taskId, variables);
+
+
+
         outputToJSON(response, result);
     }
 

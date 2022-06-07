@@ -44,13 +44,17 @@
         processState,
         processInfo,
         cond,
-        processDefinitionId)
+        processDefinitionId,
+        task,
+        gmt_create)
         values (#{startername},
         #{processtime},
         #{processid},
         #{processstate},
         #{processinfo},
         #{cond},
-        #{processdefinitionid})
+        #{processdefinitionid},
+        #{task},
+        now())
     </insert>
 </mapper>
