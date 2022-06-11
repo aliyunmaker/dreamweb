@@ -9,7 +9,7 @@ Ext.onReady(function () {
         dataUrl: '../task/getMyTaskList.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['startername', 'processtime', 'tasktime', 'processinfo', 'taskid', 'taskname', 'processid']
+        fields: ['startername', 'processtime', 'tasktime', 'taskid', 'taskname', 'processid']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -30,10 +30,6 @@ Ext.onReady(function () {
             header: "任务创建时间",
             width: 150
         }, {
-            // dataIndex: 'processinfo',
-            // header: "申请内容",
-            // width: 160,
-            // align: 'center',
             text: '申请内容',
             xtype: 'gridcolumn',
             width: 160,
@@ -50,10 +46,10 @@ Ext.onReady(function () {
                         text: '详细信息',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
-                            MyExt.util.Ajax('../preView/getExample.do', {
+                            MyExt.util.Ajax('../task/getInfo.do', {
                                     processid: id,
                                 }, function (data) {
-                                    // console.log(data.data);
+//                                     console.log(data.data);
                                     // console.log(data.data["应用"]);
                                     // console.log(data.data['场景']);
                                     win = new Ext.Window({
@@ -67,7 +63,7 @@ Ext.onReady(function () {
                                             xtype : 'displayfield',
                                             fieldLabel: '应用',
                                             name: 'home_score',
-                                            value: data.data["应用"]
+                                            value: data.data['应用']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '场景',
@@ -77,28 +73,18 @@ Ext.onReady(function () {
                                             xtype : 'displayfield',
                                             fieldLabel: '产品ID',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
+                                            value: data.data['产品ID']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '实例名称',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
+                                            value: data.data['实例名称']
                                         }, {
                                             xtype : 'displayfield',
-                                            fieldLabel: '参数1',
+                                            fieldLabel: '参数信息',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '参数2',
-                                            name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '参数3',
-                                            name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, ],
+                                            value: data.data['参数信息']
+                                        }],
                                         buttons: [{
                                            text: '确认',
                                            handler: function(){
@@ -109,58 +95,6 @@ Ext.onReady(function () {
                                      });
                                     win.show();
                                 });
-                            // win = new Ext.Window({
-                            //     title:'详细信息',
-                            //     layout:'form',
-                            //     width:400,
-                            //     closeAction:'close',
-                            //     target : document.getElementById('buttonId'),
-                            //     plain: true,
-                            //     items: [{
-                            //         xtype : 'displayfield',
-                            //         fieldLabel: '应用',
-                            //         name: 'home_score',
-                            //         value: yingyong
-                            //     }, {
-                            //         xtype : 'displayfield',
-                            //         fieldLabel: '场景',
-                            //         name: 'home_score',
-                            //         value: changjing
-                            //     }, {
-                            //         xtype : 'displayfield',
-                            //         fieldLabel: '产品ID',
-                            //         name: 'home_score',
-                            //         value: select[0].raw.processid
-                            //     }, {
-                            //         xtype : 'displayfield',
-                            //         fieldLabel: '实例名称',
-                            //         name: 'home_score',
-                            //         value: select[0].raw.processid
-                            //     }, {
-                            //         xtype : 'displayfield',
-                            //         fieldLabel: '参数1',
-                            //         name: 'home_score',
-                            //         value: select[0].raw.processid
-                            //     }, {
-                            //         xtype : 'displayfield',
-                            //         fieldLabel: '参数2',
-                            //         name: 'home_score',
-                            //         value: select[0].raw.processid
-                            //     }, {
-                            //         xtype : 'displayfield',
-                            //         fieldLabel: '参数3',
-                            //         name: 'home_score',
-                            //         value: select[0].raw.processid
-                            //     }, ],
-                            //     buttons: [{
-                            //        text: '确认',
-                            //        handler: function(){
-                            //            win.hide();
-                            //         }
-                            //     }],
-                            //     buttonAlign: 'center',
-                            //  });
-                            // win.show();
                         }
                     });
                 }, 50);
@@ -203,8 +137,19 @@ Ext.onReady(function () {
                             processid: processid
                         }, function (data) {
                             reload();
-                            MyExt.Msg.alert('通过成功!');
-                        });
+                            if (data.data == 1)
+                                MyExt.Msg.alert('通过成功!');
+                            else {
+                                MyExt.Msg.alert('审批通过，开始创建产品实例!');
+                                MyExt.util.Ajax('../task/createProduct.do', {
+                                    processid: processid,
+                                }, function (data) {
+
+                                })
+                            }
+                         });
+//                        reload();
+//                        MyExt.Msg.alert('通过成功!');
                     });
                 }
             }

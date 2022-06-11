@@ -1,9 +1,7 @@
 package cc.landingzone.dreamweb.controller;
 
+import cc.landingzone.dreamweb.model.*;
 import io.jsonwebtoken.lang.Assert;
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.UserRole;
-import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.service.PreViewService;
 import cc.landingzone.dreamweb.service.SystemConfigService;
@@ -110,32 +108,22 @@ public class PreViewController extends BaseController{
         WebResult result = new WebResult();
         Random r = new Random();
         String productId = request.getParameter("productId");
+        String productName = productService.getProductName(productId);
         
-        Integer exampleRandom = r.nextInt(10000);
-        String exampleName = Integer.toString(exampleRandom);
-        Integer id = productService.getExampleId(productId, exampleName);
+        Integer exampleRandom = r.nextInt(10000000);
+        String exampleName = productName + "-" + exampleRandom;
+        Integer id = productService.getExampleId(exampleName);
         while (id != null) {
-            exampleRandom = r.nextInt(10000);
-            exampleName = Integer.toString(exampleRandom);
-            id = productService.getExampleId(productId, exampleName);
+            exampleRandom = r.nextInt(10000000);
+            exampleName = productName + "-" + exampleRandom;
+            id = productService.getExampleId(exampleName);
         }
-        productService.addExample(productId, exampleName);
+//        productService.addExample(productId, exampleName);
         result.setData(exampleName);
         outputToJSON(response, result);
 
     }
 
-    @RequestMapping("/getExample.do")
-    public void getExample(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        String processid = request.getParameter("processid");
-        productService.getExample(processid);
-        Map<String, String> example1 = new HashMap<>();
-        example1.put("应用", "application1");
-        example1.put("场景", "预发");
-        result.setData(example1);
-        outputToJSON(response, result);
-    }
 
     @GetMapping("/getNonLoginPreUrl.do")
     public void getNonLoginPreUrl(HttpServletRequest request, HttpServletResponse response) {
@@ -167,4 +155,46 @@ public class PreViewController extends BaseController{
         outputToJSON(response, result);
     }
 
+    @GetMapping("/listProductsAsEndUser.do")
+    public void listProductsAsEndUser(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String roleIdStr = request.getParameter("roleId");
+
+            Integer roleId = Integer.valueOf(roleIdStr);
+            String region = "cn-hangzhou";
+            // 获取当前用户信息以及所需要使用的ram角色信息
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            User user = userService.getUserByLoginName(userName);
+            UserRole userRole = userRoleService.getUserRoleById(roleId);
+
+            List<String> lists = preViewService.listProductsAsEndUser1(region, user, userRole);
+            result.setData(lists);
+            result.setTotal(lists.size());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+
+     @GetMapping("/searchExample.do")
+     public void searchExample(HttpServletRequest request, HttpServletResponse response) {
+         WebResult result = new WebResult();
+         try {
+             Integer start = Integer.valueOf(request.getParameter("start"));
+             Integer limit = Integer.valueOf(request.getParameter("limit"));
+             Page page = new Page(start, limit);
+             List<Provisioned_product> list = productService.searchExample(page);
+             result.setTotal(page.getTotal());
+             result.setData(list);
+         } catch (Exception e) {
+             logger.error(e.getMessage(), e);
+             result.setSuccess(false);
+             result.setErrorMsg(e.getMessage());
+         }
+         outputToJSON(response, result);
+     }
 }

@@ -147,6 +147,18 @@
         </dependency>
         <!-- aliyun sdk end -->
 
+        <!--服务目录所需依赖-->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea-openapi</artifactId>
+            <version>0.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>servicecatalog20210901</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
         <!-- httpclient 4.5 -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

@@ -9,7 +9,7 @@ Ext.onReady(function () {
         dataUrl: '../apply/getMyAsk.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['startername', 'processtime', 'processid', 'task', 'processstate', 'processinfo', 'cond', 'opinion']
+        fields: ['startername', 'processtime', 'processid', 'task', 'processstate', 'cond', 'opinion']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -34,6 +34,17 @@ Ext.onReady(function () {
             header: "流程状态",
             width: 100,
             align: 'center',
+            renderer: function(v) {
+                if(v == '已拒绝') {
+                    return "<span style='color:red;'>已拒绝</span>";
+                }
+                else if(v == '已通过') {
+                    return "<span style='color:green;'>已通过</span>";
+                }
+                else if(v == '审批中') {
+                    return "<span style='color:black;'>审批中</span>";
+                }
+            }
         }, {
             dataIndex: 'task',
             header: "当前节点",
@@ -44,6 +55,7 @@ Ext.onReady(function () {
             header: "是否拒绝",
             width: 100,
             align: 'center',
+            hidden: true,
         }, {
             text: '申请内容',
             xtype: 'gridcolumn',
@@ -61,7 +73,7 @@ Ext.onReady(function () {
                         text: '详细信息',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
-                            MyExt.util.Ajax('../preView/getExample.do', {
+                            MyExt.util.Ajax('../task/getInfo.do', {
                                     processid: id,
                                 }, function (data) {
                                     // console.log(data.data);
@@ -78,7 +90,7 @@ Ext.onReady(function () {
                                             xtype : 'displayfield',
                                             fieldLabel: '应用',
                                             name: 'home_score',
-                                            value: data.data["应用"]
+                                            value: data.data['应用']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '场景',
@@ -88,28 +100,18 @@ Ext.onReady(function () {
                                             xtype : 'displayfield',
                                             fieldLabel: '产品ID',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
+                                            value: data.data['产品ID']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '实例名称',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
+                                            value: data.data['实例名称']
                                         }, {
                                             xtype : 'displayfield',
-                                            fieldLabel: '参数1',
+                                            fieldLabel: '参数信息',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '参数2',
-                                            name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '参数3',
-                                            name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, ],
+                                            value: data.data['参数信息']
+                                        }],
                                         buttons: [{
                                            text: '确认',
                                            handler: function(){
@@ -133,6 +135,14 @@ Ext.onReady(function () {
        }],
     });
 
+//    userGrid.renderer(3, getColor);
+////    userGrid.setRenderer(3, getColor);
+////    userGrid.setRenderer(4, getColor);
+//    function getColor(val) {
+//      if (val != "") {
+//          return '<font color=blue></font><span style="color:red;">' + Ext.util.Format.usMoney(val) + '</span>';
+//      }
+//    }
 
     Ext.create('Ext.container.Viewport', {
         layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小;为什么加上就没有页码了？

@@ -5,6 +5,10 @@ import java.util.*;
 
 import java.io.IOException;
 
+import cc.landingzone.dreamweb.utils.JsonUtils;
+import com.aliyun.servicecatalog20210901.Client;
+import com.aliyun.servicecatalog20210901.models.*;
+import com.aliyun.teaopenapi.models.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cc.landingzone.dreamweb.common.EndpointEnum;
@@ -86,6 +90,145 @@ public class PreViewService {
         return signInUrl;
     }
 
+    public List<String> listProductsAsEndUser1(String region, User user, UserRole userRole) throws Exception {
+        List<String> lists = new ArrayList<>();
+        Client client = createClient(region, user, userRole);
+        
+//        List<ListPortfoliosResponseBody.ListPortfoliosResponseBodyPortfolioDetails> portfolioDetails = listPortfolios(client);
+//        List<ListProductsAsAdminResponseBody.ListProductsAsAdminResponseBodyProductDetails> productDetails = listProductsAsAdmin(client);
+        List<ListProductsAsEndUserResponseBody.ListProductsAsEndUserResponseBodyProductSummaries> productSummaries = listProductsAsEndUser(client);
+//        System.out.println(JsonUtils.toJsonString(portfolioDetails) + "\n");
+//        System.out.println(JsonUtils.toJsonString(productDetails) + "\n");
+        for(int i = 0; i < productSummaries.size(); i ++){
+//            System.out.println(productSummaries.get(i).getProductId());
+            lists.add(productSummaries.get(i).getProductId());
+        }
+//        System.out.println(JsonUtils.toJsonString(productSummaries));
+        return lists;
+    }
+
+    public Client createClient(String region, User user, UserRole userRole) throws Exception {
+        String stsEndpoint = EndpointEnum.STS.getEndpoint();
+
+        // 得到roleArn和idpArn，生成Saml Assertion
+        String[] roleValue = userRole.getRoleValue().split(",");
+        String roleArn = roleValue[0];
+        String samlProviderArn = roleValue[1];
+        String samlAssertion = getSamlAssertion(user, userRole);
+
+        // 访问令牌服务获取临时AK和Token
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+                samlAssertion, stsEndpoint);
+        Assert.notNull(commonResponse, "assumeRole获取失败");
+
+        JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
+        JSONObject credentials = assumeRole.getJSONObject("Credentials");
+
+        String SecurityToken = credentials.getString("SecurityToken");
+//        System.out.println(SecurityToken);
+        String Access_Key_Id = credentials.getString("AccessKeyId");
+//        System.out.println(Access_Key_Id);
+        String Access_Key_secret = credentials.getString("AccessKeySecret");
+//        System.out.println(Access_Key_secret);
+
+        Config config = new Config();
+        config.setAccessKeyId(Access_Key_Id);
+        config.setAccessKeySecret(Access_Key_secret);
+        config.setRegionId(region);
+        config.setSecurityToken(SecurityToken);
+        Client client = new Client(config);
+        return client;
+    }
+
+
+    public static List<ListPortfoliosResponseBody.ListPortfoliosResponseBodyPortfolioDetails> listPortfolios(Client client) throws Exception {
+        List<ListPortfoliosRequest.ListPortfoliosRequestFilters> filters = new ArrayList<ListPortfoliosRequest.ListPortfoliosRequestFilters>() {{
+            ListPortfoliosRequest.ListPortfoliosRequestFilters filter = new ListPortfoliosRequest.ListPortfoliosRequestFilters();
+            filter.setKey("FullTextSearch");
+            filter.setValue("API");
+            add(filter);
+        }};
+
+        int pageNumber = 1;
+        int pageSize = 2;
+
+        ListPortfoliosRequest request = new ListPortfoliosRequest();
+        request.setFilters(filters);
+        request.setPageNumber(pageNumber);
+        request.setPageSize(pageSize);
+        request.setSortBy("CreateTime");
+        request.setSortOrder("Desc");
+
+        ListPortfoliosResponse response = client.listPortfolios(request);
+        ListPortfoliosResponseBody responseBody = response.getBody();
+        int total = responseBody.getTotalCount();
+
+        List<ListPortfoliosResponseBody.ListPortfoliosResponseBodyPortfolioDetails> portfolioDetails = new ArrayList<>();
+        portfolioDetails.addAll(responseBody.getPortfolioDetails());
+        while (pageNumber * pageSize < total) {
+            pageNumber++;
+            request.setPageNumber(pageNumber);
+            response = client.listPortfolios(request);
+            responseBody = response.getBody();
+            portfolioDetails.addAll(responseBody.getPortfolioDetails());
+        }
+
+        return portfolioDetails;
+    }
+
+    public static List<ListProductsAsAdminResponseBody.ListProductsAsAdminResponseBodyProductDetails> listProductsAsAdmin(Client client) throws Exception {
+        int pageNumber = 1;
+        int pageSize = 2;
+
+        ListProductsAsAdminRequest request = new ListProductsAsAdminRequest();
+        request.setPageNumber(pageNumber);
+        request.setPageSize(pageSize);
+        request.setSortBy("CreateTime");
+        request.setSortOrder("Desc");
+
+        ListProductsAsAdminResponse response = client.listProductsAsAdmin(request);
+        ListProductsAsAdminResponseBody responseBody = response.getBody();
+        int total = responseBody.getTotalCount();
+
+        List<ListProductsAsAdminResponseBody.ListProductsAsAdminResponseBodyProductDetails> productDetails = new ArrayList<>();
+        productDetails.addAll(responseBody.getProductDetails());
+        while (pageNumber * pageSize < total) {
+            pageNumber++;
+            request.setPageNumber(pageNumber);
+            response = client.listProductsAsAdmin(request);
+            responseBody = response.getBody();
+            productDetails.addAll(responseBody.getProductDetails());
+        }
+
+        return productDetails;
+    }
+
+    public static List<ListProductsAsEndUserResponseBody.ListProductsAsEndUserResponseBodyProductSummaries> listProductsAsEndUser(Client client) throws Exception {
+        int pageNumber = 1;
+        int pageSize = 2;
+
+        ListProductsAsEndUserRequest request = new ListProductsAsEndUserRequest();
+        request.setPageNumber(pageNumber);
+        request.setPageSize(pageSize);
+        request.setSortBy("CreateTime");
+        request.setSortOrder("Desc");
+
+        ListProductsAsEndUserResponse response = client.listProductsAsEndUser(request);
+        ListProductsAsEndUserResponseBody responseBody = response.getBody();
+        int total = responseBody.getTotalCount();
+
+        List<ListProductsAsEndUserResponseBody.ListProductsAsEndUserResponseBodyProductSummaries> productSummaries = new ArrayList<>();
+        productSummaries.addAll(responseBody.getProductSummaries());
+        while (pageNumber * pageSize < total) {
+            pageNumber++;
+            request.setPageNumber(pageNumber);
+            response = client.listProductsAsEndUser(request);
+            responseBody = response.getBody();
+            productSummaries.addAll(responseBody.getProductSummaries());
+        }
+
+        return productSummaries;
+    }
 
 
     /**

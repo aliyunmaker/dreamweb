@@ -44,12 +44,6 @@
                                         href: 'userGroup/userGroupManage.html',
                                         hrefTarget: 'mainFrame'
                                     },
-                                    {
-                                        text: "产品管理",
-                                        leaf: true,
-                                        href: 'product/productManage.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
                                     /*[/]*/
                                     {
                                         text: "统一日志查看",
@@ -57,32 +51,6 @@
                                         href: 'slsView/slsView.html',
                                         hrefTarget: 'mainFrame'
                                     },
-                                    {
-                                        text: "服务目录",
-                                        leaf: true,
-                                        href: 'preView/preView.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    {
-                                        text: "待办任务",
-                                        leaf: true,
-                                        href: 'apply/toComplete.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    {
-                                        text: "我的申请",
-                                        leaf: true,
-                                        href: 'ask/myAsk.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    /*[# th:if="${isAdmin}"]*/
-                                    {
-                                        text: "所有任务",
-                                        leaf: true,
-                                        href: 'task/allTask.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    /*[/]*/
                                     {
                                         text: "注销",
                                         leaf: true,
@@ -124,8 +92,57 @@
                                     }
                                     /*[/]*/
                                 ]
-                            }
+                            },
                             /*[/]*/
+                            {
+                                text: "<font style='font-weight: bold;'>服务目录</font>",
+                                iconCls: 'MyExt-menu-sub',
+                                expanded: true,
+                                children: [
+                                    /*[# th:if="${isAdmin}"]*/
+                                    {
+                                        text: "产品管理",
+                                        leaf: true,
+                                        href: 'product/productManage.html',
+                                        hrefTarget: 'mainFrame'
+                                    },
+                                    /*[/]*/
+                                    {
+                                        text: "服务目录",
+                                        leaf: true,
+                                        href: 'preView/preView.html',
+                                        hrefTarget: 'mainFrame'
+                                    },
+                                    /*[# th:if="${isAdmin}"]*/
+                                    {
+                                        text: "待办任务",
+                                        leaf: true,
+                                        href: 'apply/toComplete.html',
+                                        hrefTarget: 'mainFrame'
+                                    },
+                                    /*[/]*/
+                                    {
+                                        text: "我的申请",
+                                        leaf: true,
+                                        href: 'ask/myAsk.html',
+                                        hrefTarget: 'mainFrame'
+                                    },
+                                    /*[# th:if="${isAdmin}"]*/
+                                    {
+                                        text: "所有任务",
+                                        leaf: true,
+                                        href: 'task/allTask.html',
+                                        hrefTarget: 'mainFrame'
+                                    },
+                                    /*[/]*/
+                                    {
+                                        text: "产品实例",
+                                        leaf: true,
+                                        href: 'provisioned_product/provisioned_product.html',
+                                        hrefTarget: 'mainFrame'
+                                    }
+                                ]
+                            }
                         ]
                     }
                 });

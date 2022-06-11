@@ -10,6 +10,16 @@ public class Product {
 
     private String productid;
 
+    private String productname;
+
+    public String getProductname() {
+        return productname;
+    }
+
+    public void setProductname(String productname) {
+        this.productname = productname;
+    }
+
     public Integer getId() {
         return id;
     }

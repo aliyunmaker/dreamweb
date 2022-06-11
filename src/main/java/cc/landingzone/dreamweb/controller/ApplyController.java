@@ -91,28 +91,26 @@ public class ApplyController extends BaseController{
         WebResult result = new WebResult();
         // 流程定义 ID
         String processDefinitionId = request.getParameter("definitionId");
-//        System.out.println(processDefinitionId);
+        String application = request.getParameter("select_Application");
+        String scene = request.getParameter("select_Scene");
+        String productId = request.getParameter("productId");
+        String exampleName = request.getParameter("exampleName");
+        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+
         // 启动流程
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         identityService.setAuthenticatedUserId(username);
 
-//        productService.updateExample();
-
-        String info="asdbkjsankasf";//脑补一下这个是从前台传过来的数据
+        String info="asdbkjsankasf";//用户选择的参数列表
         
-        String text1 = "text1";
-        String text2 = "text2";
-        String text3 = "text3";
-        String text4 = "text4";
-        Map<String, String> info2 = new HashMap<String,String>();
-        info2.put("text1", text1);
-        info2.put("text2", text2);
-        info2.put("text3", text3);
-        info2.put("text4", text4);
-
         Map<String, Object> variables = new HashMap<>();
         variables.put("processInfo", info);//userKey在上文的流程变量中指定了
         variables.put("starterName", username);
+        variables.put("application", application);
+        variables.put("scene", scene);
+        variables.put("productId", productId);
+        variables.put("exampleName", exampleName);
+        variables.put("roleId", roleId);
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinitionId, variables);
 
@@ -121,7 +119,7 @@ public class ApplyController extends BaseController{
         apply.setStartername(username);
         apply.setProcesstime(DateUtil.dateTime2String(processInstance.getStartTime()));
         apply.setProcessid(processInstance.getProcessInstanceId());
-        apply.setProcessstate("运行中");
+        apply.setProcessstate("审批中");
         apply.setProcessinfo(info);
         apply.setProcessdefinitionid(processDefinitionId);
         apply.setCond("未拒绝");

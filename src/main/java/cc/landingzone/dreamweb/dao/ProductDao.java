@@ -1,6 +1,7 @@
 package cc.landingzone.dreamweb.dao;
 
 
+import cc.landingzone.dreamweb.model.Provisioned_product;
 import org.springframework.stereotype.Component;
 
 import cc.landingzone.dreamweb.model.Product;
@@ -19,9 +20,15 @@ public interface ProductDao {
 
     String getProductId(String application, String scene);
 
-    Integer getExampleId(String productId, String exampleName);
+    String getProductName(String productId);
 
-    void addExample(String productId, String exampleName);
+    Integer getExampleId(String exampleName);
+
+    void addExample(Provisioned_product provisioned_product);
+
+    List<Provisioned_product> searchExample(Map<String, Object> map);
+
+    Integer searchExampleTotal(Map<String, Object> map);
 
     Integer searchProductTotal(Map<String, Object> map);
 

@@ -39,10 +39,21 @@ $(document).ready(function(){
                 var definitionId = result.data;
                 $("#btn_startProcess").click(function(){
                     $("#btn_startProcess").empty();
+                    var select_Application = $("#select_application").val();
+                    var select_Scene = $("#select_scenes").val();
+                    var productId = $("#btn_getProductId").text();
+                    var exampleName = $("#btn_getExample").text();
+                    var selectedRole = JSON.parse($("#select_role").val());
+                    var roleId = selectedRole.id;
                     $.ajax({
                         url: "../../apply/startProcessByDefinitionId.do",
                         data: {
-                            definitionId
+                            definitionId,
+                            select_Application,
+                            select_Scene,
+                            productId,
+                            exampleName,
+                            roleId
                         },
                         success: function (result) {
                             var processInstanceId = result.data;
@@ -52,6 +63,26 @@ $(document).ready(function(){
                 })
             }
         }
+    })
+
+    $("#select_role").change(function () {
+        var selectedRole = JSON.parse($(this).val());
+        var roleId = selectedRole.id;
+        $.ajax({
+            url: "../../preView/listProductsAsEndUser.do",
+            data: {
+                roleId
+            },
+            success: function (result) {
+                if(isTrue(result.success)) {
+                    var productIdList = result.data;
+                }
+                for(var i = 0; i < productIdList.length; i++) {
+                    var productId = productIdList[i];
+                    console.log(productId);
+                }
+            }
+        })
     })
 
 
@@ -149,9 +180,7 @@ $(document).ready(function(){
                     }
                 })
             }
-
         })
-        
     })
 })
 

@@ -217,7 +217,7 @@ VALUES
 
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `example`;
+DROP TABLE IF EXISTS `provisioned_product`;
 DROP TABLE IF EXISTS `product`;
 DROP TABLE IF EXISTS `myAsk`;
 
@@ -226,6 +226,7 @@ CREATE TABLE `product` (
                             `productid` varchar(100) COMMENT '产品id',
                             `application` varchar(100) NOT NULL COMMENT '应用',
                             `scenes` varchar(100) NOT NULL COMMENT '场景',
+                            `productname` varchar(100) NOT NULL COMMENT '产品名称',
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
@@ -233,24 +234,30 @@ CREATE TABLE `product` (
                              UNIQUE KEY `application-scenes` (`application`, `scenes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `product` (`productid`, `application`, `scenes`, `gmt_create`)
+INSERT INTO `product` (`productid`, `application`, `scenes`,`productname`, `gmt_create`)
 VALUES
-('prod-bp165aqz2kx5df','application1','日常',now()),
-('prod-bp1n4yee2544b1','application1','预发',now()),
-('prod-bp1c6y7y2wj453','application1','线上',now()),
-('25','application2','日常',now()),
-('prod-bp1qbazd242511','application2','预发',now()),
-('6','application2','线上',now()),
-('65','application3','日常',now()),
-('63','application3','预发',now()),
-('7','application3','线上',now()),
-('9','application3','scenes1',now());
+('prod-bp165aqz2kx5df','application1','日常','asdasda',now()),
+('prod-bp1n4yee2544b1','application1','预发','DEMO-创建ECS（选择VPC）',now()),
+('prod-bp1c6y7y2wj453','application1','线上','DEMO-创建ECS（选择VPC）',now()),
+('25','application2','日常','dfgqdasdas',now()),
+('prod-bp1qbazd242511','application2','预发','sdffedxx',now()),
+('6','application2','线上','dfgewasda',now()),
+('65','application3','日常','sdfrrfe',now()),
+('63','application3','预发','sfsdasd',now()),
+('7','application3','线上','adfsfwefq',now()),
+('9','application3','scenes1','dfwefwefef',now());
 
 
 CREATE TABLE `provisioned_product`(
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
                             `examplename` varchar(100) NOT NULL COMMENT '实例名称',
-                            `productid` varchar(100) NOT NULL COMMENT '产品id',
+                            `productid` varchar(100) NOT NULL COMMENT '产品ID',
+                            `exampleid` varchar(100) NOT NULL COMMENT '实例ID',
+                            `roleid` int(11) NOT NULL COMMENT '角色ID',
+                            `startname` varchar(100) NOT NULL COMMENT '实例申请人',
+                            `status` varchar(100) NOT NULL COMMENT '实例状态',
+                            `parameter` varchar(1000) COMMENT '申请参数',
+                            `outputs` varchar(1000) COMMENT '输出',
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),

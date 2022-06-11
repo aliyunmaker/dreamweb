@@ -7,7 +7,7 @@ public class TaskModel {
 
     private String tasktime;
 
-    private String processinfo;
+//    private String processinfo;
 
     private String taskid;
 
@@ -49,13 +49,13 @@ public class TaskModel {
         this.tasktime = tasktime;
     }
 
-    public String getProcessinfo() {
-        return processinfo;
-    }
+//    public String getProcessinfo() {
+//        return processinfo;
+//    }
 
-    public void setProcessinfo(String processinfo) {
-        this.processinfo = processinfo;
-    }
+//    public void setProcessinfo(String processinfo) {
+//        this.processinfo = processinfo;
+//    }
 
     public String getTaskid() {
         return taskid;

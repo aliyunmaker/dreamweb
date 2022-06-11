@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.fasterxml.jackson.databind.JsonSerializable.Base;
-
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
@@ -64,11 +62,11 @@ public class ProductController extends BaseController {
         try {
             String formString = request.getParameter("formString");
             Product updateProduct = JsonUtils.parseObject(formString, Product.class);
-            System.out.println(formString);
             Product dbProduct = productService.getProductById(updateProduct.getId());
             dbProduct.setProductid(updateProduct.getProductid());
             dbProduct.setApplication(updateProduct.getApplication());
             dbProduct.setScenes(updateProduct.getScenes());
+            dbProduct.setProductname(updateProduct.getProductname());
             productService.updateProduct(dbProduct);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

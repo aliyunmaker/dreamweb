@@ -9,7 +9,7 @@ Ext.onReady(function () {
         dataUrl: '../task/getAllTaskList.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['startername', 'processtime', 'tasktime', 'processinfo', 'taskid', 'taskname', 'processid', 'assignee']
+        fields: ['startername', 'processtime', 'tasktime', 'taskid', 'taskname', 'processid', 'assignee']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -46,7 +46,7 @@ Ext.onReady(function () {
                         text: '详细信息',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
-                            MyExt.util.Ajax('../preView/getExample.do', {
+                            MyExt.util.Ajax('../task/getInfo.do', {
                                     processid: id,
                                 }, function (data) {
                                     // console.log(data.data);
@@ -63,7 +63,7 @@ Ext.onReady(function () {
                                             xtype : 'displayfield',
                                             fieldLabel: '应用',
                                             name: 'home_score',
-                                            value: data.data["应用"]
+                                            value: data.data['应用']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '场景',
@@ -73,28 +73,18 @@ Ext.onReady(function () {
                                             xtype : 'displayfield',
                                             fieldLabel: '产品ID',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
+                                            value: data.data['产品ID']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '实例名称',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
+                                            value: data.data['实例名称']
                                         }, {
                                             xtype : 'displayfield',
-                                            fieldLabel: '参数1',
+                                            fieldLabel: '参数信息',
                                             name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '参数2',
-                                            name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '参数3',
-                                            name: 'home_score',
-                                            value: select[0].raw.processid
-                                        }, ],
+                                            value: data.data['参数信息']
+                                        }],
                                         buttons: [{
                                            text: '确认',
                                            handler: function(){
