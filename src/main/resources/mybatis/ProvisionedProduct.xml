@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ProvisionedProductDao">
+
+    <select id="getExampleId"
+            resultType="Integer">
+        select id from provisioned_product where examplename = #{exampleName};
+    </select>
+
+    <select id="searchExample" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select *from provisioned_product
+    </select>
+
+    <insert id="addExample" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        insert into provisioned_product
+        (examplename,
+        productid,
+        productname,
+        exampleid,
+        roleid,
+        startname,
+        status,
+        parameter,
+        outputs,
+        starttime,
+        gmt_create)
+        values (#{examplename},
+        #{productid},
+        #{productname},
+        #{exampleid},
+        #{roleid},
+        #{startname},
+        #{status},
+        #{parameter},
+        #{outputs},
+        #{starttime},
+        now())
+    </insert>
+
+    <select id="searchExampleTotal" resultType="int" parameterType="map">
+        select count(*) from provisioned_product
+    </select>
+
+    <select id="searchExampleId" resultType="String">
+        select distinct exampleid from provisioned_product where status = 'UnderChange'
+    </select>
+
+    <select id="getUserName" resultType="String">
+        select distinct startname from provisioned_product where exampleid = #{exampleId}
+    </select>
+
+    <select id="getRoleId" resultType="Integer">
+        select distinct roleid from provisioned_product where exampleid = #{exampleId}
+    </select>
+
+    <update id="updateStatus">
+        update provisioned_product
+        set status = #{status}
+        where exampleid = #{exampleId}
+    </update>
+
+    <update id="updateParameter">
+        update provisioned_product
+        set parameter = #{parameter}
+        where exampleid = #{exampleId}
+    </update>
+
+    <update id="updateOutputs">
+        update provisioned_product
+        set outputs = #{outputs}
+        where exampleid = #{exampleId}
+    </update>
+
+</mapper>

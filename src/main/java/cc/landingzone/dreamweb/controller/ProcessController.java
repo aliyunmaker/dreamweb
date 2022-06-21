@@ -14,15 +14,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ * 工作流相关控制操作
+ * @author: laodou
+ * @createDate: 2022/6/21
+ *
+ */
 @Controller
 @RequestMapping("/apply")
-public class ApplyController extends BaseController{
+public class ProcessController extends BaseController{
 
     @Autowired
     private ApplyService applyService;
@@ -42,29 +53,41 @@ public class ApplyController extends BaseController{
     @Autowired
     private ProductService productService;
 
-    public void applyDelopment() {
+    /**
+         * 流程部署
+         *
+         *
+         *
+         * @throws Exception
+         */
+    public void processDelopment() {
         // 创建流程部署工具
         DeploymentBuilder deploymentBuilder = repositoryService.createDeployment();
 
         // bpm 文件路径
-        String bpmnResourcePath = "processes/example/apply/ApplyProcess.bpmn";
-        // png 文件路径
-        String pngResourcePath = "processes/example/apply/ApplyProcess.png";
+        String bpmnResourcePath = "processes/example/apply/ServiceCatalog.bpmn";
+//        // png 文件路径
+//        String pngResourcePath = "processes/example/apply/ApplyProcess.png";
         // 流程名
         String processName = "申请流程";
 
         /*
-         * 流程部署，其中就需要两个文件对应的路径
+         * 流程部署，其中就需要文件对应的路径
          * 同时我们再部署的时候可以给这个流程起一个名字
          * 部署后会返回一个部署对象
          */
-        Deployment deployment = deploymentBuilder.name(processName).addClasspathResource(bpmnResourcePath)
-                .addClasspathResource(pngResourcePath).deploy();
+        Deployment deployment = deploymentBuilder.name(processName).addClasspathResource(bpmnResourcePath).deploy();
 
-        System.out.println("流程部署成功，流程部署ID：" + deployment.getId());
 
     }
 
+    /**
+    * 查询部署的流程最新版本
+    *
+    * 
+    * @param: 流程定义ID
+    * @throws Exception
+    */
     @GetMapping("/processDefinitionQueryFinal.do")
     public void processDefinitionQueryFinal(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -75,7 +98,7 @@ public class ApplyController extends BaseController{
         List<ProcessDefinition> processDefinitions = processDefinitionQuery.latestVersion().list();
 
         if(processDefinitions.isEmpty()) {
-            applyDelopment();
+            processDelopment();
             processDefinitions = processDefinitionQuery.latestVersion().list();
         }
         // 循环结果集
@@ -86,6 +109,13 @@ public class ApplyController extends BaseController{
 
     }
 
+    /**
+         * 启动流程
+         *
+         * @param: 流程定义ID
+         * @return 流程实例ID
+         * @throws Exception
+         */
     @GetMapping("/startProcessByDefinitionId.do")
     public void startProcessByDefinitionId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -93,24 +123,38 @@ public class ApplyController extends BaseController{
         String processDefinitionId = request.getParameter("definitionId");
         String application = request.getParameter("select_Application");
         String scene = request.getParameter("select_Scene");
-        String productId = request.getParameter("productId");
+        String productId = request.getParameter("productId");               //修改此ID为赋权的ID
+
         String exampleName = request.getParameter("exampleName");
         Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+
+        String parameter = request.getParameter("parameter");
+        JSONObject parameters = JSON.parseObject(parameter);
+
+        String region = parameters.getString("stackRegionId");
+        String versionid = parameters.getString("prodocutVersionId");
+        parameters.remove("stackRegionId");
+        parameters.remove("prodocutVersionId");
 
         // 启动流程
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         identityService.setAuthenticatedUserId(username);
 
-        String info="asdbkjsankasf";//用户选择的参数列表
+        String info=parameters.getString("parameters");//用户选择的参数列表
+        //地域
+        //产品版本ID
         
         Map<String, Object> variables = new HashMap<>();
-        variables.put("processInfo", info);//userKey在上文的流程变量中指定了
+        variables.put("parameters", info);//userKey在上文的流程变量中指定了
         variables.put("starterName", username);
         variables.put("application", application);
         variables.put("scene", scene);
         variables.put("productId", productId);
         variables.put("exampleName", exampleName);
         variables.put("roleId", roleId);
+        variables.put("region", region);
+        variables.put("versionid", versionid);
+
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinitionId, variables);
 
@@ -120,7 +164,9 @@ public class ApplyController extends BaseController{
         apply.setProcesstime(DateUtil.dateTime2String(processInstance.getStartTime()));
         apply.setProcessid(processInstance.getProcessInstanceId());
         apply.setProcessstate("审批中");
-        apply.setProcessinfo(info);
+        apply.setParameters(info);
+        apply.setRegion(region);
+        apply.setVersionid(versionid);
         apply.setProcessdefinitionid(processDefinitionId);
         apply.setCond("未拒绝");
         apply.setTask("等待" + task);
@@ -130,25 +176,18 @@ public class ApplyController extends BaseController{
         outputToJSON(response, result);
     }
 
+         /**
+         * 获取我的工作流申请列表
+         *
+         * @param: 当前登录用户名
+         * @return 工作流列表
+         * @throws Exception
+         */
     @GetMapping("/getMyAsk.do")
     public void getMyAsk (HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        System.out.println(username);
         List<Apply> list = applyService.getApply(username);
-//        for (Apply apply : list) {
-//            ProcessInstance process = runtimeService.createProcessInstanceQuery().processDefinitionId(apply.getProcessdefinitionid()).processInstanceId(apply.getProcessid()).singleResult();
-//            if (process == null) {
-//                apply.setProcessstate("已结束");
-//                applyService.updateProcessState(apply.getProcessid(), "已结束");
-//                apply.setTask("无");
-//                applyService.updateTask(apply.getProcessid(), "无等待任务");
-//            } else {
-//                apply.setProcessstate("运行中");
-//                apply.setTask("等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName());
-//                applyService.updateTask(apply.getProcessid(), apply.getTask());
-//            }
-//        }
         result.setData(list);
         outputToJSON(response, result);
     }

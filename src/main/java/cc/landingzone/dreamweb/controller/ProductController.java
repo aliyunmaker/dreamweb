@@ -16,6 +16,13 @@ import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 
+/**
+ *
+ * 管理产品列表
+ * @author: laodou
+ * @createDate: 2022/6/21
+ *
+ */
 @Controller
 @RequestMapping("/product")
 public class ProductController extends BaseController {
@@ -23,6 +30,13 @@ public class ProductController extends BaseController {
     @Autowired
     private ProductService productService;
 
+    /**
+         * 获取所有产品列表
+         *
+         *
+         * @return 产品列表
+         * @throws Exception
+         */
     @RequestMapping("/searchProduct.do")
     public void searchProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -41,6 +55,13 @@ public class ProductController extends BaseController {
         outputToJSON(response, result);
     }
 
+    /**
+         * 增加产品
+         *
+         * @param: 产品ID、应用、场景
+         *
+         * @throws Exception
+         */
     @RequestMapping("/addProduct.do")
     public void addProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -56,6 +77,13 @@ public class ProductController extends BaseController {
         outputToJSON(response, result);
     }
 
+    /**
+         * 更新产品
+         *
+         * @param: 产品ID、应用、场景
+         *
+         * @throws Exception
+         */
     @RequestMapping("/updateProduct.do")
     public void updateProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -76,6 +104,13 @@ public class ProductController extends BaseController {
         outputToJSON(response, result);
     }
 
+    /**
+         * 删除产品
+         *
+         * @param: 产品ID
+         *
+         * @throws Exception
+         */
     @RequestMapping("/deleteProduct.do")
     public void deleteProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();

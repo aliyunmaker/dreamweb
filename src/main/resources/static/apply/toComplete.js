@@ -26,20 +26,17 @@ Ext.onReady(function () {
             header: "申请时间",
             width: 150
         }, {
-            dataIndex: 'tasktime',
-            header: "任务创建时间",
-            width: 150
-        }, {
             text: '申请内容',
             xtype: 'gridcolumn',
-            width: 160,
+            width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
                 var id = record.raw.processid;
+                console.log(record);
                 metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
                 Ext.defer(function () {
                     Ext.widget('button', {
-                        renderTo: id,
+                         renderTo: id,
                         // height: 20,
                         width: 100,
                         // style:"margin-left:5px;background:blue;",
@@ -52,13 +49,10 @@ Ext.onReady(function () {
 //                                     console.log(data.data);
                                     // console.log(data.data["应用"]);
                                     // console.log(data.data['场景']);
-                                    win = new Ext.Window({
-                                        title:'详细信息',
-                                        layout:'form',
-                                        width:400,
-                                        closeAction:'close',
-                                        target : document.getElementById('buttonId'),
-                                        plain: true,
+                                    var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
+                                    // console.log(parameters);
+                                    var form = new Ext.form.FormPanel({
+                                        defaultType:'textfield',
                                         items: [{
                                             xtype : 'displayfield',
                                             fieldLabel: '应用',
@@ -71,28 +65,91 @@ Ext.onReady(function () {
                                             value: data.data['场景']
                                         }, {
                                             xtype : 'displayfield',
+                                            fieldLabel: '地域',
+                                            name: 'home_score',
+                                            value: data.data['地域']
+                                        }, {
+                                            xtype : 'displayfield',
                                             fieldLabel: '产品ID',
                                             name: 'home_score',
                                             value: data.data['产品ID']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '产品版本ID',
+                                            name: 'home_score',
+                                            value: data.data['版本ID']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '实例名称',
                                             name: 'home_score',
                                             value: data.data['实例名称']
                                         }, {
-                                            xtype : 'displayfield',
+                                            xtype : 'textarea',
                                             fieldLabel: '参数信息',
+                                            width: 400,
                                             name: 'home_score',
-                                            value: data.data['参数信息']
-                                        }],
+                                            value: parameters,
+                                            rows:10,
+                                            readOnly:true
+                                        }]
+                                    });
+                                    // win = new Ext.Window({
+                                    //     title:'详细信息',
+                                    //     layout:'form',
+                                    //     width:400,
+                                    //     closeAction:'close',
+                                    //     target : document.getElementById('buttonId'),
+                                    //     plain: true,
+                                    //     items: [form
+                                    //     //     {
+                                    //     //     xtype : 'displayfield',
+                                    //     //     fieldLabel: '应用',
+                                    //     //     name: 'home_score',
+                                    //     //     value: data.data['应用']
+                                    //     // }, {
+                                    //     //     xtype : 'displayfield',
+                                    //     //     fieldLabel: '场景',
+                                    //     //     name: 'home_score',
+                                    //     //     value: data.data['场景']
+                                    //     // }, {
+                                    //     //     xtype : 'displayfield',
+                                    //     //     fieldLabel: '产品ID',
+                                    //     //     name: 'home_score',
+                                    //     //     value: data.data['产品ID']
+                                    //     // }, {
+                                    //     //     xtype : 'displayfield',
+                                    //     //     fieldLabel: '实例名称',
+                                    //     //     name: 'home_score',
+                                    //     //     value: data.data['实例名称']
+                                    //     // }, {
+                                    //     //     xtype : 'displayfield',
+                                    //     //     fieldLabel: '参数信息',
+                                    //     //     name: 'home_score',
+                                    //     //     value: data.data['参数信息']
+                                    //     // }],
+                                    //     // buttons: [{
+                                    //     //    text: '确认',
+                                    //     //    handler: function(){
+                                    //     //        win.hide();
+                                    //     //     }
+                                    //     // }
+                                    //     ],
+                                    //     buttonAlign: 'center',
+                                    //  });
+                                    var win = new Ext.Window({
+                                        layout:'fit',
+                                        title:'详细信息',
+                                        target : document.getElementById('buttonId'),
+                                        width:500,
+                                        items:[form],         //嵌入表单;
                                         buttons: [{
-                                           text: '确认',
-                                           handler: function(){
-                                               win.hide();
+                                            text: '确认',
+                                            handler: function(){
+                                            win.hide();
                                             }
-                                        }],
+                                            }],
                                         buttonAlign: 'center',
-                                     });
+                                        });
                                     win.show();
                                 });
                         }
@@ -105,14 +162,9 @@ Ext.onReady(function () {
             header: "任务ID",
             width: 100,
         }, {
-            dataIndex: 'taskname',
-            header: "任务名称",
-            width: 100,
-        }, {
             dataIndex: 'processid',
             header: "流程实例ID",
             width: 100,
-            align: 'center',
         }],
         tbar: [{
             text: '通过',
@@ -141,11 +193,9 @@ Ext.onReady(function () {
                                 MyExt.Msg.alert('通过成功!');
                             else {
                                 MyExt.Msg.alert('审批通过，开始创建产品实例!');
-                                MyExt.util.Ajax('../task/createProduct.do', {
-                                    processid: processid,
-                                }, function (data) {
-
-                                })
+                                // MyExt.util.Ajax('../task/createProduct.do', {
+                                //     processid: processid,
+                                // })
                             }
                          });
 //                        reload();
@@ -184,6 +234,7 @@ Ext.onReady(function () {
                                     win.hide();
                                     reload();
                                     MyExt.Msg.alert('拒绝成功!');
+                                    // window.location.href = "http://localhost:8080/ask/myAsk.html";
                                 });
                             });
                         }
@@ -207,5 +258,4 @@ Ext.onReady(function () {
         items: [userGrid]
     });
     reload();
-
 })

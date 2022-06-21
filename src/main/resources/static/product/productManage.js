@@ -1,6 +1,4 @@
 Ext.onReady(function () {
-    // Ext.tip.QuickTipManager.init();
-
     var reload = function () {
         userStore.load();
     };

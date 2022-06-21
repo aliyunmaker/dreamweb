@@ -1,13 +1,18 @@
 package cc.landingzone.dreamweb.model;
 
-public class TaskModel {
+/**
+ * 获取登录用户待办任务列表时使用（相比Apply多了当前任务相关信息）
+ *
+ * @author: laodou
+ * @createDate: 2022/6/21
+ *
+ */
+public class Assignment {
     private String startername;
 
     private String processtime;
 
     private String tasktime;
-
-//    private String processinfo;
 
     private String taskid;
 

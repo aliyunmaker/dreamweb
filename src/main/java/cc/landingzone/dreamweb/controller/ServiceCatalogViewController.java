@@ -1,12 +1,8 @@
 package cc.landingzone.dreamweb.controller;
 
 import cc.landingzone.dreamweb.model.*;
+import cc.landingzone.dreamweb.service.*;
 import io.jsonwebtoken.lang.Assert;
-import cc.landingzone.dreamweb.service.ProductService;
-import cc.landingzone.dreamweb.service.PreViewService;
-import cc.landingzone.dreamweb.service.SystemConfigService;
-import cc.landingzone.dreamweb.service.UserRoleService;
-import cc.landingzone.dreamweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,12 +13,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
+/**
+ *
+ * 对服务目录页面请求进行处理
+ * @author: laodou
+ * @createDate: 2022/6/21
+ *
+ */
 @Controller
-@RequestMapping("/preView")
-public class PreViewController extends BaseController{
+@RequestMapping("/serviceCatalogView")
+public class ServiceCatalogViewController extends BaseController{
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProvisionedProductService provisionedProductService;
 
     @Autowired
     private UserService userService;
@@ -34,28 +40,19 @@ public class PreViewController extends BaseController{
     private SystemConfigService systemConfigService;
 
     @Autowired
-    private PreViewService preViewService;
+    private ServiceCatalogViewService serviceCatalogViewService;
 
-    @GetMapping("/getRoles.do")
-    public void getRoles(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String userName = SecurityContextHolder.getContext().getAuthentication().getName();  //拿到用户名
-            User user = userService.getUserByLoginName(userName);
-            List<UserRole> userRoleList = userRoleService.getRoleListByUserId(user.getId());
-            result.setTotal(userRoleList.size());
-            result.setData(userRoleList);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
+    @Autowired
+    private UserProductService userProductService;
 
-        outputToJSON(response, result);
-
-    }
-
-    @GetMapping("/getProduct.do")
+    /**
+         * 获取所有使用应用
+         *
+         *
+         * @return 应用列表
+         * @throws Exception
+         */
+    @GetMapping("/getApplications.do")
     public void getApplication(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
 
@@ -66,6 +63,13 @@ public class PreViewController extends BaseController{
         outputToJSON(response, result);
     }
 
+    /**
+         * 获取某应用对应的所有使用场景
+         *
+         * @param: 应用名称
+         * @return 场景列表
+         * @throws Exception
+         */
     @GetMapping("/getScenes.do")
     public void getScenes(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -83,6 +87,13 @@ public class PreViewController extends BaseController{
         outputToJSON(response, result);
     }
 
+    /**
+         * 根据应用及场景获取指定产品ID
+         *
+         * @param: 应用名称、场景名称
+         * @return 产品ID
+         * @throws Exception
+         */
     @GetMapping("/getProductId.do")
     public void getProductId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -93,7 +104,14 @@ public class PreViewController extends BaseController{
             Assert.hasText(getScene, "场景不能为空！");
             String productId = productService.getProductId(getApplication, getScene);
             Assert.hasText(productId, "未找到对应procuctId！");
-            result.setData(productId);
+
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            List<String> productIds = userProductService.getProductId(username);
+            if(productIds.contains(productId)) {
+                result.setData(productId);
+            } else {
+                result.setSuccess(false);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -103,6 +121,13 @@ public class PreViewController extends BaseController{
         outputToJSON(response, result);
     }
 
+    /**
+         * 根据产品ID查询产品名称并生成产品实例名称
+         *
+         * @param: 产品ID
+         * @return 实例名称
+         * @throws Exception
+         */
     @GetMapping("/getExampleName.do")
     public void getExampleName(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -112,19 +137,24 @@ public class PreViewController extends BaseController{
         
         Integer exampleRandom = r.nextInt(10000000);
         String exampleName = productName + "-" + exampleRandom;
-        Integer id = productService.getExampleId(exampleName);
+        Integer id = provisionedProductService.getExampleId(exampleName);
         while (id != null) {
             exampleRandom = r.nextInt(10000000);
             exampleName = productName + "-" + exampleRandom;
-            id = productService.getExampleId(exampleName);
+            id = provisionedProductService.getExampleId(exampleName);
         }
-//        productService.addExample(productId, exampleName);
         result.setData(exampleName);
         outputToJSON(response, result);
 
     }
 
-
+/**
+     * 获取免密登录URL
+     *
+     * @param: 产品ID、角色ID、实例名称
+     * @return URL
+     * @throws Exception
+     */
     @GetMapping("/getNonLoginPreUrl.do")
     public void getNonLoginPreUrl(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -144,7 +174,7 @@ public class PreViewController extends BaseController{
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            String nonLoginPreUrl = preViewService.getNonLoginPreUrl(productId, exampleName, region, user, userRole);
+            String nonLoginPreUrl = serviceCatalogViewService.getNonLoginPreUrl(productId, exampleName, region, user, userRole);
             result.setData(nonLoginPreUrl);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -155,46 +185,4 @@ public class PreViewController extends BaseController{
         outputToJSON(response, result);
     }
 
-    @GetMapping("/listProductsAsEndUser.do")
-    public void listProductsAsEndUser(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String roleIdStr = request.getParameter("roleId");
-
-            Integer roleId = Integer.valueOf(roleIdStr);
-            String region = "cn-hangzhou";
-            // 获取当前用户信息以及所需要使用的ram角色信息
-            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = userService.getUserByLoginName(userName);
-            UserRole userRole = userRoleService.getUserRoleById(roleId);
-
-            List<String> lists = preViewService.listProductsAsEndUser1(region, user, userRole);
-            result.setData(lists);
-            result.setTotal(lists.size());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
-    }
-
-
-     @GetMapping("/searchExample.do")
-     public void searchExample(HttpServletRequest request, HttpServletResponse response) {
-         WebResult result = new WebResult();
-         try {
-             Integer start = Integer.valueOf(request.getParameter("start"));
-             Integer limit = Integer.valueOf(request.getParameter("limit"));
-             Page page = new Page(start, limit);
-             List<Provisioned_product> list = productService.searchExample(page);
-             result.setTotal(page.getTotal());
-             result.setData(list);
-         } catch (Exception e) {
-             logger.error(e.getMessage(), e);
-             result.setSuccess(false);
-             result.setErrorMsg(e.getMessage());
-         }
-         outputToJSON(response, result);
-     }
 }

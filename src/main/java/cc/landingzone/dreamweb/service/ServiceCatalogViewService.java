@@ -1,54 +1,57 @@
 package cc.landingzone.dreamweb.service;
 
-import java.io.UnsupportedEncodingException;
-import java.util.*;
-
-import java.io.IOException;
-
-import cc.landingzone.dreamweb.utils.JsonUtils;
-import com.aliyun.servicecatalog20210901.Client;
-import com.aliyun.servicecatalog20210901.models.*;
-import com.aliyun.teaopenapi.models.Config;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
+import cc.landingzone.dreamweb.sso.SSOConstants;
 import cc.landingzone.dreamweb.sso.SamlGenerator;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.aliyun.servicecatalog20210901.Client;
+import com.aliyun.teaopenapi.models.Config;
+import com.aliyuncs.CommonRequest;
+import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.aliyuncs.CommonRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import java.net.URLEncoder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import com.aliyuncs.CommonResponse;
-import cc.landingzone.dreamweb.sso.SSOConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.*;
 
 
+/**
+ * 获取服务目录免密登陆URL以及开启产品
+ *
+ * @author: laodou
+ * @createDate: 2022/6/21
+ *
+ */
 @Service
-public class PreViewService {
+public class ServiceCatalogViewService {
 
-    private static Logger logger = LoggerFactory.getLogger(PreViewService.class);
+    private static Logger logger = LoggerFactory.getLogger(ServiceCatalogViewService.class);
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private UserProductService userProductService;
 
     /**
      * 使用特定角色获取免登录链接
@@ -74,12 +77,12 @@ public class PreViewService {
         String samlProviderArn = roleValue[1];
         String samlAssertion = getSamlAssertion(user, userRole);
 
-        // 访问令牌服务获取临时AK和Token
-        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+        // 访问令牌服务获取AK、SK和SecurityToken
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(user.getLoginName(), region, roleArn, samlProviderArn,
             samlAssertion, stsEndpoint);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
-        // 通过临时AK & Token获取登录Token
+        // 通过临时AK、SK以及SecurityToken获取SignInToken
         String signInToken = requestSignInToken(commonResponse, signinEndpoint);
         Assert.notNull(signInToken, "signInToken获取失败");
 
@@ -89,24 +92,13 @@ public class PreViewService {
 
         return signInUrl;
     }
-
-    public List<String> listProductsAsEndUser1(String region, User user, UserRole userRole) throws Exception {
-        List<String> lists = new ArrayList<>();
-        Client client = createClient(region, user, userRole);
-        
-//        List<ListPortfoliosResponseBody.ListPortfoliosResponseBodyPortfolioDetails> portfolioDetails = listPortfolios(client);
-//        List<ListProductsAsAdminResponseBody.ListProductsAsAdminResponseBodyProductDetails> productDetails = listProductsAsAdmin(client);
-        List<ListProductsAsEndUserResponseBody.ListProductsAsEndUserResponseBodyProductSummaries> productSummaries = listProductsAsEndUser(client);
-//        System.out.println(JsonUtils.toJsonString(portfolioDetails) + "\n");
-//        System.out.println(JsonUtils.toJsonString(productDetails) + "\n");
-        for(int i = 0; i < productSummaries.size(); i ++){
-//            System.out.println(productSummaries.get(i).getProductId());
-            lists.add(productSummaries.get(i).getProductId());
-        }
-//        System.out.println(JsonUtils.toJsonString(productSummaries));
-        return lists;
-    }
-
+/**
+     * 获取产品实例之前创建终端
+     *
+     * @param: 地域、用户、角色
+     * @return 终端
+     * @throws Exception
+     */
     public Client createClient(String region, User user, UserRole userRole) throws Exception {
         String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
@@ -117,7 +109,7 @@ public class PreViewService {
         String samlAssertion = getSamlAssertion(user, userRole);
 
         // 访问令牌服务获取临时AK和Token
-        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(user.getLoginName(), region, roleArn, samlProviderArn,
                 samlAssertion, stsEndpoint);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
@@ -125,11 +117,8 @@ public class PreViewService {
         JSONObject credentials = assumeRole.getJSONObject("Credentials");
 
         String SecurityToken = credentials.getString("SecurityToken");
-//        System.out.println(SecurityToken);
         String Access_Key_Id = credentials.getString("AccessKeyId");
-//        System.out.println(Access_Key_Id);
         String Access_Key_secret = credentials.getString("AccessKeySecret");
-//        System.out.println(Access_Key_secret);
 
         Config config = new Config();
         config.setAccessKeyId(Access_Key_Id);
@@ -139,97 +128,6 @@ public class PreViewService {
         Client client = new Client(config);
         return client;
     }
-
-
-    public static List<ListPortfoliosResponseBody.ListPortfoliosResponseBodyPortfolioDetails> listPortfolios(Client client) throws Exception {
-        List<ListPortfoliosRequest.ListPortfoliosRequestFilters> filters = new ArrayList<ListPortfoliosRequest.ListPortfoliosRequestFilters>() {{
-            ListPortfoliosRequest.ListPortfoliosRequestFilters filter = new ListPortfoliosRequest.ListPortfoliosRequestFilters();
-            filter.setKey("FullTextSearch");
-            filter.setValue("API");
-            add(filter);
-        }};
-
-        int pageNumber = 1;
-        int pageSize = 2;
-
-        ListPortfoliosRequest request = new ListPortfoliosRequest();
-        request.setFilters(filters);
-        request.setPageNumber(pageNumber);
-        request.setPageSize(pageSize);
-        request.setSortBy("CreateTime");
-        request.setSortOrder("Desc");
-
-        ListPortfoliosResponse response = client.listPortfolios(request);
-        ListPortfoliosResponseBody responseBody = response.getBody();
-        int total = responseBody.getTotalCount();
-
-        List<ListPortfoliosResponseBody.ListPortfoliosResponseBodyPortfolioDetails> portfolioDetails = new ArrayList<>();
-        portfolioDetails.addAll(responseBody.getPortfolioDetails());
-        while (pageNumber * pageSize < total) {
-            pageNumber++;
-            request.setPageNumber(pageNumber);
-            response = client.listPortfolios(request);
-            responseBody = response.getBody();
-            portfolioDetails.addAll(responseBody.getPortfolioDetails());
-        }
-
-        return portfolioDetails;
-    }
-
-    public static List<ListProductsAsAdminResponseBody.ListProductsAsAdminResponseBodyProductDetails> listProductsAsAdmin(Client client) throws Exception {
-        int pageNumber = 1;
-        int pageSize = 2;
-
-        ListProductsAsAdminRequest request = new ListProductsAsAdminRequest();
-        request.setPageNumber(pageNumber);
-        request.setPageSize(pageSize);
-        request.setSortBy("CreateTime");
-        request.setSortOrder("Desc");
-
-        ListProductsAsAdminResponse response = client.listProductsAsAdmin(request);
-        ListProductsAsAdminResponseBody responseBody = response.getBody();
-        int total = responseBody.getTotalCount();
-
-        List<ListProductsAsAdminResponseBody.ListProductsAsAdminResponseBodyProductDetails> productDetails = new ArrayList<>();
-        productDetails.addAll(responseBody.getProductDetails());
-        while (pageNumber * pageSize < total) {
-            pageNumber++;
-            request.setPageNumber(pageNumber);
-            response = client.listProductsAsAdmin(request);
-            responseBody = response.getBody();
-            productDetails.addAll(responseBody.getProductDetails());
-        }
-
-        return productDetails;
-    }
-
-    public static List<ListProductsAsEndUserResponseBody.ListProductsAsEndUserResponseBodyProductSummaries> listProductsAsEndUser(Client client) throws Exception {
-        int pageNumber = 1;
-        int pageSize = 2;
-
-        ListProductsAsEndUserRequest request = new ListProductsAsEndUserRequest();
-        request.setPageNumber(pageNumber);
-        request.setPageSize(pageSize);
-        request.setSortBy("CreateTime");
-        request.setSortOrder("Desc");
-
-        ListProductsAsEndUserResponse response = client.listProductsAsEndUser(request);
-        ListProductsAsEndUserResponseBody responseBody = response.getBody();
-        int total = responseBody.getTotalCount();
-
-        List<ListProductsAsEndUserResponseBody.ListProductsAsEndUserResponseBodyProductSummaries> productSummaries = new ArrayList<>();
-        productSummaries.addAll(responseBody.getProductSummaries());
-        while (pageNumber * pageSize < total) {
-            pageNumber++;
-            request.setPageNumber(pageNumber);
-            response = client.listProductsAsEndUser(request);
-            responseBody = response.getBody();
-            productSummaries.addAll(responseBody.getProductSummaries());
-        }
-
-        return productSummaries;
-    }
-
 
     /**
      * 生成Saml Assertion
@@ -266,12 +164,12 @@ public class PreViewService {
     }
 
     /**
-     * 访问令牌服务获取临时AK和Token
+     * 访问令牌服务获取AK、SK和SecurityToken(policy自定义权限)
      *
      * @return 临时AK和Token
      * @throws ClientException
      */
-    private CommonResponse requestAccessKeyAndSecurityToken(String region, String roleArn, String samlProviderArn,
+    private CommonResponse requestAccessKeyAndSecurityToken(String userName, String region, String roleArn, String samlProviderArn,
                                                             String samlAssertion, String stsEndpoint)
         throws ClientException {
         DefaultProfile profile = DefaultProfile.getProfile(region, "", "");
@@ -288,12 +186,81 @@ public class PreViewService {
         request.putQueryParameter("RoleArn", roleArn);
         request.putQueryParameter("SAMLProviderArn", samlProviderArn);
         request.putQueryParameter("SAMLAssertion", samlAssertion);
+
+
+        JSONObject policy = new JSONObject();
+
+        JSONObject Statement1 = new JSONObject();
+        JSONObject Statement2 = new JSONObject();
+        JSONObject Statement3 = new JSONObject();
+        JSONObject Statement4 = new JSONObject();
+        String[] Action1 = {"servicecatalog:ListLaunchOptions", "servicecatalog:GetProductVersion",
+        "servicecatalog:ListProductVersions", "servicecatalog:GetTemplate", "servicecatalog:LaunchProduct"};
+
+        List<String> productIds = userProductService.getProductId(userName);
+        List<String> Resource = new ArrayList<>();
+        for (String productId :
+                productIds) {
+            Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:product/" + productId);
+        }
+        Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:provisionedproduct/*");
+
+
+        String[] Action2 = {"ros:GetTemplate",
+                "ros:ValidateTemplate",
+                "ros:CreateStack",
+                "ros:ContinueCreateStack",
+                "ros:GetStack",
+                "ros:UpdateStack",
+                "ros:DeleteStack",
+                "ros:ListStacks",
+                "ros:ListStackEvents",
+                "ros:ListStackResources",
+                "ros:ListChangeSets"};
+        String[] Resource2 = {"*"};
+        String[] Action3 = {
+                "ram:ListUsers",
+                "ros:ValidateTemplate",
+                "ram:ListRoles"};
+        String[] Action4 = {"servicecatalog:GetProvisionedProduct", "servicecatalog:GetTask"};
+        JSONObject ser = new JSONObject();
+        ser.put("servicecatalog:UserLevel", "self");
+        JSONObject StringEquals = new JSONObject();
+        StringEquals.put("StringEquals", ser);
+
+        Statement1.put("Effect", "Allow");
+        Statement1.put("Action", Action1);
+        Statement1.put("Resource", Resource);
+
+
+        Statement2.put("Effect", "Allow");
+        Statement2.put("Action", Action2);
+        Statement2.put("Resource", Resource2);
+
+        Statement3.put("Effect", "Allow");
+        Statement3.put("Action", Action3);
+        Statement3.put("Resource", Resource2);
+
+        Statement4.put("Effect", "Allow");
+        Statement4.put("Action", Action4);
+        Statement4.put("Resource", Resource2);
+        Statement4.put("Condition", StringEquals);
+
+        List<JSONObject> statement = new ArrayList<>();
+        statement.add(Statement1);
+        statement.add(Statement3);
+        statement.add(Statement4);
+
+        policy.put("Version", "1");
+        policy.put("Statement",statement);
+        request.putQueryParameter("Policy", policy.toJSONString());
+
         CommonResponse response = client.getCommonResponse(request);
         return response;
     }
 
     /**
-     * 通过临时AK & Token获取登录Token
+     * 通过临时AK、SK以及SecurityToken获取SignInToken
      *
      * @param commonResponse 临时AK & Token
      * @return 登录Token
@@ -343,11 +310,9 @@ public class PreViewService {
     private String generateSignInUrl(String signInToken, String productId, String exampleName, String endpoint)
             throws UnsupportedEncodingException {
         String preUrl = String.format("https://pre-servicecatalog4service.console.aliyun.com/products"
-                        + "/launch?productId=%s&provisionedProductName=%s&hideSidebar=true",
+                        + "/launch?productId=%s&provisionedProductName=%s&hideSidebar=true&postMessage=true",
                 URLEncoder.encode(productId, "utf-8"),
                 URLEncoder.encode(exampleName, "utf-8"));
-//        &provisionedProductName=sugar123&hideSidebar=true
-//        String preUrl = "https://pre-servicecatalog4service.console.aliyun.com/products/launch?productId=prod-bp1qbazd242511&provisionedProductName=sugar123&hideSidebar=true";
         String signInUrl = endpoint + String.format(
                 "/federation?Action=Login"
                         + "&LoginUrl=%s"

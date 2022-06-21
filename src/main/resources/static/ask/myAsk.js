@@ -1,5 +1,4 @@
 Ext.onReady(function () {
-    // Ext.tip.QuickTipManager.init();
 
     var reload = function () {
         userStore.load();
@@ -13,7 +12,6 @@ Ext.onReady(function () {
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
-    // var userGrid = Ext.create('Ext.grid.Panel', {
         region: 'center',
         title: '我的申请列表',
         store: userStore,
@@ -46,11 +44,6 @@ Ext.onReady(function () {
                 }
             }
         }, {
-            dataIndex: 'task',
-            header: "当前节点",
-            width: 160,
-            align: 'center',
-        }, {
             dataIndex: 'cond',
             header: "是否拒绝",
             width: 100,
@@ -59,7 +52,7 @@ Ext.onReady(function () {
         }, {
             text: '申请内容',
             xtype: 'gridcolumn',
-            width: 160,
+            width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
                 var id = record.raw.processid;
@@ -67,25 +60,16 @@ Ext.onReady(function () {
                 Ext.defer(function () {
                     Ext.widget('button', {
                         renderTo: id,
-                        // height: 20,
                         width: 100,
-                        // style:"margin-left:5px;background:blue;",
                         text: '详细信息',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
                                     processid: id,
                                 }, function (data) {
-                                    // console.log(data.data);
-                                    // console.log(data.data["应用"]);
-                                    // console.log(data.data['场景']);
-                                    win = new Ext.Window({
-                                        title:'详细信息',
-                                        layout:'form',
-                                        width:400,
-                                        closeAction:'close',
-                                        target : document.getElementById('buttonId'),
-                                        plain: true,
+                                    var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
+                                    var form = new Ext.form.FormPanel({
+                                        defaultType:'textfield',
                                         items: [{
                                             xtype : 'displayfield',
                                             fieldLabel: '应用',
@@ -98,20 +82,42 @@ Ext.onReady(function () {
                                             value: data.data['场景']
                                         }, {
                                             xtype : 'displayfield',
+                                            fieldLabel: '地域',
+                                            name: 'home_score',
+                                            value: data.data['地域']
+                                        }, {
+                                            xtype : 'displayfield',
                                             fieldLabel: '产品ID',
                                             name: 'home_score',
                                             value: data.data['产品ID']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '产品版本ID',
+                                            name: 'home_score',
+                                            value: data.data['版本ID']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '实例名称',
                                             name: 'home_score',
                                             value: data.data['实例名称']
                                         }, {
-                                            xtype : 'displayfield',
+                                            xtype : 'textarea',
                                             fieldLabel: '参数信息',
+                                            width: 400,
                                             name: 'home_score',
-                                            value: data.data['参数信息']
-                                        }],
+                                            value: parameters,
+                                            rows:10,
+                                            readOnly:true
+                                        }]
+                                    });
+                                    win = new Ext.Window({
+                                        title:'详细信息',
+                                        layout:'fit',
+                                        width:500,
+                                        closeAction:'close',
+                                        target : document.getElementById('buttonId'),
+                                        plain: true,
+                                        items: [form],
                                         buttons: [{
                                            text: '确认',
                                            handler: function(){
@@ -129,23 +135,13 @@ Ext.onReady(function () {
             }
         }, {
             dataIndex: 'opinion',
-            header: "审批拒绝意见",
+            header: "审批意见",
             width: 200,
-            align: 'center',
        }],
     });
 
-//    userGrid.renderer(3, getColor);
-////    userGrid.setRenderer(3, getColor);
-////    userGrid.setRenderer(4, getColor);
-//    function getColor(val) {
-//      if (val != "") {
-//          return '<font color=blue></font><span style="color:red;">' + Ext.util.Format.usMoney(val) + '</span>';
-//      }
-//    }
-
     Ext.create('Ext.container.Viewport', {
-        layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小;为什么加上就没有页码了？
+        layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小
         items: [userGrid]
     });
     reload();

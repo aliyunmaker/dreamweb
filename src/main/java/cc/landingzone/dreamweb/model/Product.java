@@ -1,6 +1,12 @@
 package cc.landingzone.dreamweb.model;
 
-
+/**
+ * 产品信息
+ *
+ * @author: laodou
+ * @createDate: 2022/6/21
+ *
+ */
 public class Product {
     private Integer id;
 

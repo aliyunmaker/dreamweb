@@ -1,5 +1,12 @@
 package cc.landingzone.dreamweb.model;
 
+/**
+ * 工作流实例创建时存储基本信息
+ *
+ * @author: laodou
+ * @createDate: 2022/6/21
+ *
+ */
 public class Apply {
 
     private String startername;
@@ -12,7 +19,7 @@ public class Apply {
 
     private String processstate;
 
-    private String processinfo;
+    private String parameters;
 
     private String cond;
 
@@ -20,12 +27,40 @@ public class Apply {
 
     private String opinion;
 
+    private String region;
+
+    private String versionid;
+
     public String getOpinion() {
         return opinion;
     }
 
     public void setOpinion(String opinion) {
         this.opinion = opinion;
+    }
+
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getVersionid() {
+        return versionid;
+    }
+
+    public void setVersionid(String versionid) {
+        this.versionid = versionid;
     }
 
     public String getProcessdefinitionid() {
@@ -84,11 +119,4 @@ public class Apply {
         this.processstate = processstate;
     }
 
-    public String getProcessinfo() {
-        return processinfo;
-    }
-
-    public void setProcessinfo(String processinfo) {
-        this.processinfo = processinfo;
-    }
 }

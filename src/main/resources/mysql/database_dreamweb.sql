@@ -220,6 +220,8 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `provisioned_product`;
 DROP TABLE IF EXISTS `product`;
 DROP TABLE IF EXISTS `myAsk`;
+DROP TABLE IF EXISTS `userproduct`;
+
 
 CREATE TABLE `product` (
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -258,6 +260,7 @@ CREATE TABLE `provisioned_product`(
                             `status` varchar(100) NOT NULL COMMENT '实例状态',
                             `parameter` varchar(1000) COMMENT '申请参数',
                             `outputs` varchar(1000) COMMENT '输出',
+                            `starttime` varchar(100) COMMENT '创建时间',
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
@@ -272,7 +275,7 @@ CREATE TABLE `myAsk` (
                             `processId` varchar(100) NOT NULL COMMENT '流程实例ID',
                             `task` varchar(100) COMMENT '当前节点',
                             `processState` varchar(100) NOT NULL COMMENT '流程状态',
-                            `processInfo` varchar(100) NOT NULL COMMENT '流程信息',
+                            `processInfo` varchar(1000) NOT NULL COMMENT '流程信息',
                             `cond` varchar(50) COMMENT '是否审批通过',
                             `processDefinitionId` varchar(100) NOT NULL COMMENT '流程定义ID',
                             `opinion` varchar(500) COMMENT '审批拒绝意见',
@@ -281,6 +284,22 @@ CREATE TABLE `myAsk` (
                             PRIMARY KEY (`id`),
                             UNIQUE KEY (`processId`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `userproduct` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                            `productid` varchar(100) NOT NULL COMMENT '产品ID',
+                            `username` varchar(100) NOT NULL COMMENT '用户名',
+                            `gmt_create` datetime DEFAULT NULL,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `userproduct` (`productid`, `username`, `gmt_create`)
+VALUES
+('prod-bp18r7q127u45k','admin',now()),
+('prod-bp18r7q127u45k','dou',now()),
+('prod-bp1c6y7y2wj453','admin',now()),
+('prod-bp1c6y7y2wj453','dou',now());
 
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

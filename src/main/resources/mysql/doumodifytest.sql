@@ -1,0 +1,1 @@
+delete from provisioned_product where status = "UnderChange";

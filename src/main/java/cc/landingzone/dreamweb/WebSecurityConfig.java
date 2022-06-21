@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "/weixin/**", "/system/getStartInfo.do", "/autoLogin", "/rsakey/getPublicKey.do").permitAll()
-                .antMatchers("/welcome/*", "/user/getUserInfo.do", "/sso/*","/tools/*","/aliyunTools/*.do", "/slsConfig/*", "/slsView/*","/preView/*", "/task/*", "/apply/*", "/ask/*", "/index.html", "/system/getIndexLogoPage.do").hasAnyRole("GUEST", "ADMIN")
+                .antMatchers("/welcome/*", "/user/getUserInfo.do", "/sso/*","/tools/*","/aliyunTools/*.do", "/slsConfig/*", "/slsView/*","/serviceCatalogView/*", "/task/*", "/apply/*", "/ask/*", "/index.html", "/system/getIndexLogoPage.do").hasAnyRole("GUEST", "ADMIN")
                 .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
