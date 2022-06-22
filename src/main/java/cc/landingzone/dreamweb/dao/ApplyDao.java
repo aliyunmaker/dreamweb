@@ -15,15 +15,15 @@ import java.util.List;
 @Component
 public interface ApplyDao {
 
-    void addApply(Apply apply);
+    void saveApply(Apply apply);
 
-    List<Apply> getApply(String startername);
+    List<Apply> listApply(String starterName);
 
-    void updateTask(String processid, String task);
+    void updateTask(String processId, String task);
 
-    void updateProcessState(String processid, String processstate);
+    void updateProcessState(String processId, String processState);
 
-    void updateCond(String processid, String cond);
+    void updateCond(String processId, String cond);
 
-    void updateOpinion(String processid, String opinion);
+    void updateOpinion(String processId, String opinion);
 }

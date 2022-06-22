@@ -9,11 +9,11 @@
         select id from provisioned_product where examplename = #{exampleName};
     </select>
 
-    <select id="searchExample" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+    <select id="listExample" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
         select *from provisioned_product
     </select>
 
-    <insert id="addExample" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+    <insert id="saveExample" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">
         insert into provisioned_product
         (examplename,
         productid,
@@ -26,24 +26,24 @@
         outputs,
         starttime,
         gmt_create)
-        values (#{examplename},
-        #{productid},
-        #{productname},
-        #{exampleid},
-        #{roleid},
-        #{startname},
+        values (#{exampleName},
+        #{productId},
+        #{productName},
+        #{exampleId},
+        #{roleId},
+        #{startName},
         #{status},
         #{parameter},
         #{outputs},
-        #{starttime},
+        #{startTime},
         now())
     </insert>
 
-    <select id="searchExampleTotal" resultType="int" parameterType="map">
+    <select id="getExampleTotal" resultType="int" parameterType="map">
         select count(*) from provisioned_product
     </select>
 
-    <select id="searchExampleId" resultType="String">
+    <select id="listExampleId" resultType="String">
         select distinct exampleid from provisioned_product where status = 'UnderChange'
     </select>
 

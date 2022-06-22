@@ -34,13 +34,13 @@ public class ProductService {
     private ServiceCatalogViewService serviceCatalogViewService;
 
     @Transactional
-    public List<String> getApplication () {
-        return productDao.getApplication();
+    public List<String> listApplication () {
+        return productDao.listApplication();
     }
 
     @Transactional
-    public List<String> getScenes (String application) {
-        return productDao.getScenes(application);
+    public List<String> listScenes (String application) {
+        return productDao.listScenes(application);
     }
 
     @Transactional
@@ -54,13 +54,13 @@ public class ProductService {
     }
 
     @Transactional
-    public List<Product> searchProduct(Page page) {
+    public List<Product> listProduct(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<Product> list = productDao.searchProduct(map);
+        List<Product> list = productDao.listProduct(map);
         if (null != page) {
             if (null != page.getStart() && null != page.getLimit()) {
-                Integer total = productDao.searchProductTotal(map);
+                Integer total = productDao.getProductTotal(map);
                 page.setTotal(total);
             } else {
                 page.setTotal(list.size());
@@ -70,12 +70,12 @@ public class ProductService {
     }
 
     @Transactional
-    public void addProduct(Product product) {
-        Product product2 = getProductByProductId(product.getProductid());
+    public void saveProduct(Product product) {
+        Product product2 = getProductByProductId(product.getProductId());
         if (product2 != null) {
-            throw new IllegalArgumentException("此产品ID(" + product2.getProductid()+ ")已存在");
+            throw new IllegalArgumentException("此产品ID(" + product2.getProductId()+ ")已存在");
         }
-        productDao.addProduct(product);
+        productDao.saveProduct(product);
     }
 
     @Transactional
@@ -92,7 +92,7 @@ public class ProductService {
     @Transactional
     public void updateProduct(Product product) {
         Assert.notNull(product, "数据不能为空!");
-        Assert.hasText(product.getProductid(), "产品ID不能为空!");
+        Assert.hasText(product.getProductId(), "产品ID不能为空!");
         productDao.updateProduct(product);
     }
 

@@ -14,17 +14,9 @@ public class Product {
 
     private String scenes;
 
-    private String productid;
+    private String productId;
 
-    private String productname;
-
-    public String getProductname() {
-        return productname;
-    }
-
-    public void setProductname(String productname) {
-        this.productname = productname;
-    }
+    private String productName;
 
     public Integer getId() {
         return id;
@@ -50,11 +42,19 @@ public class Product {
         this.scenes = scenes;
     }
 
-    public String getProductid() {
-        return productid;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setProductid(String productid) {
-        this.productid = productid;
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

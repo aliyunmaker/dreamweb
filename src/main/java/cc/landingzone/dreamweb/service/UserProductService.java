@@ -20,7 +20,7 @@ public class UserProductService {
     private UserProductDao userProductDao;
 
     @Transactional
-    public List<String> getProductId(String username) {
-        return userProductDao.getProductId(username);
+    public List<String> listProductId(String userName) {
+        return userProductDao.listProductId(userName);
     }
 }

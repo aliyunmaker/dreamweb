@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface UserProductDao {
 
-    List<String> getProductId(String username);
+    List<String> listProductId(String userName);
 }

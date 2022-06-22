@@ -44,7 +44,7 @@ public class ProductController extends BaseController {
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
-            List<Product> list = productService.searchProduct(page);
+            List<Product> list = productService.listProduct(page);
             result.setTotal(page.getTotal());
             result.setData(list);
         } catch (Exception e) {
@@ -68,7 +68,7 @@ public class ProductController extends BaseController {
         try {
             String formString = request.getParameter("formString");
             Product product = JsonUtils.parseObject(formString, Product.class);
-            productService.addProduct(product);
+            productService.saveProduct(product);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -91,10 +91,10 @@ public class ProductController extends BaseController {
             String formString = request.getParameter("formString");
             Product updateProduct = JsonUtils.parseObject(formString, Product.class);
             Product dbProduct = productService.getProductById(updateProduct.getId());
-            dbProduct.setProductid(updateProduct.getProductid());
+            dbProduct.setProductId(updateProduct.getProductId());
             dbProduct.setApplication(updateProduct.getApplication());
             dbProduct.setScenes(updateProduct.getScenes());
-            dbProduct.setProductname(updateProduct.getProductname());
+            dbProduct.setProductName(updateProduct.getProductName());
             productService.updateProduct(dbProduct);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

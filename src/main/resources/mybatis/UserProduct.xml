@@ -5,9 +5,9 @@
 <mapper namespace="cc.landingzone.dreamweb.dao.UserProductDao">
 
 
-    <select id="getProductId"
+    <select id="listProductId"
             resultType="String">
-        select productid from userproduct where username = #{username};
+        select productid from userproduct where username = #{userName};
     </select>
 
 </mapper>

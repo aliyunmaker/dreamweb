@@ -8,66 +8,66 @@ package cc.landingzone.dreamweb.model;
  *
  */
 public class Assignment {
-    private String startername;
+    private String starterName;
 
-    private String processtime;
+    private String processTime;
 
-    private String tasktime;
+    private String taskTime;
 
-    private String taskid;
+    private String taskId;
 
-    private String taskname;
+    private String taskName;
 
-    private String processid;
+    private String processId;
 
     private String assignee;
 
-    public String getTaskname() {
-        return taskname;
+    public String getStarterName() {
+        return starterName;
     }
 
-    public void setTaskname(String taskname) {
-        this.taskname = taskname;
+    public void setStarterName(String starterName) {
+        this.starterName = starterName;
     }
 
-    public String getStartername() {
-        return startername;
+    public String getProcessTime() {
+        return processTime;
     }
 
-    public void setStartername(String startername) {
-        this.startername = startername;
+    public void setProcessTime(String processTime) {
+        this.processTime = processTime;
     }
 
-    public String getProcesstime() {
-        return processtime;
+    public String getTaskTime() {
+        return taskTime;
     }
 
-    public void setProcesstime(String processtime) {
-        this.processtime = processtime;
+    public void setTaskTime(String taskTime) {
+        this.taskTime = taskTime;
     }
 
-    public String getTasktime() {
-        return tasktime;
+    public String getTaskId() {
+        return taskId;
     }
 
-    public void setTasktime(String tasktime) {
-        this.tasktime = tasktime;
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
-    public String getTaskid() {
-        return taskid;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setTaskid(String taskid) {
-        this.taskid = taskid;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
-    public String getProcessid() {
-        return processid;
+    public String getProcessId() {
+        return processId;
     }
 
-    public void setProcessid(String processid) {
-        this.processid = processid;
+    public void setProcessId(String processId) {
+        this.processId = processId;
     }
 
     public String getAssignee() {

@@ -45,10 +45,8 @@ $(document).ready(function(){
         $("#btn_getProductId").empty();
         $("#btn_getExample").empty();
         $("#btn_getExample").append("<option value='创建实例名称'>生成实例名称并进入下一步</option>");
-
         var select_Application = $("#select_application").val();
         var select_Scene = $("#select_scenes").val();
-
         $.ajax({
             url: "../../serviceCatalogView/getProductId.do",
             data: {
@@ -71,7 +69,6 @@ $(document).ready(function(){
     $("#btn_getExample").click(function () {
         var productId = $("#btn_getProductId").text();
         var roleId = 1;
-
         $("#btn_getExample").empty();
         $.ajax({
             url: "../../serviceCatalogView/getExampleName.do",
@@ -115,25 +112,23 @@ window.addEventListener("message", function(event) {
                 var exampleName = $("#btn_getExample").text();
                 var parameter = event.data;
                 var roleId = 1;
-                    $.ajax({
-                        url: "../../apply/startProcessByDefinitionId.do",
-                        data: {
-                            definitionId,
-                            select_Application,
-                            select_Scene,
-                            productId,
-                            exampleName,
-                            roleId,
-                            parameter
-                        },
-                        success: function (result) {
-                            var processInstanceId = result.data;
-                            alert('申请完成，请等待审批，审批ID为：' + processInstanceId + '!');
-                            window.location.href = "http://localhost:8080/ask/myAsk.html";
-                        }
-                    })
-                
-                // })
+                $.ajax({
+                    url: "../../apply/startProcessByDefinitionId.do",
+                    data: {
+                        definitionId,
+                        select_Application,
+                        select_Scene,
+                        productId,
+                        exampleName,
+                        roleId,
+                        parameter
+                    },
+                    success: function (result) {
+                        var processInstanceId = result.data;
+                        alert('申请完成，请等待审批，审批ID为：' + processInstanceId + '!');
+                        window.location.href = "http://localhost:8080/ask/myAsk.html";
+                    }
+                })
             }
         }
     })

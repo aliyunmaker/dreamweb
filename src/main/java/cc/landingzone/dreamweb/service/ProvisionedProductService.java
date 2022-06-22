@@ -58,23 +58,23 @@ public class ProvisionedProductService {
     }
 
     @Transactional
-    public void addExample (ProvisionedProduct provisionedProduct) {
-        provisionedProductDao.addExample(provisionedProduct);
+    public void saveExample (ProvisionedProduct provisionedProduct) {
+        provisionedProductDao.saveExample(provisionedProduct);
     }
 
     @Transactional
-    public List<String> searchExampleId () {
-        return provisionedProductDao.searchExampleId();
+    public List<String> listExampleId () {
+        return provisionedProductDao.listExampleId();
     }
 
     @Transactional
-    public List<ProvisionedProduct> searchExample(Page page) {
+    public List<ProvisionedProduct> listExample(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<ProvisionedProduct> list = provisionedProductDao.searchExample(map);
+        List<ProvisionedProduct> list = provisionedProductDao.listExample(map);
         if (null != page) {
             if (null != page.getStart() && null != page.getLimit()) {
-                Integer total = provisionedProductDao.searchExampleTotal(map);
+                Integer total = provisionedProductDao.getExampleTotal(map);
                 page.setTotal(total);
             } else {
                 page.setTotal(list.size());
@@ -93,7 +93,7 @@ public class ProvisionedProductService {
          * @return
          * @throws Exception
          */
-    public void addProvisionedProduct(Client client, String provisionedProductId, Map<String, Object> example) throws Exception {
+    public void saveProvisionedProduct(Client client, String provisionedProductId, Map<String, Object> example) throws Exception {
 
         ProvisionedProduct provisionedProduct = new ProvisionedProduct();
 
@@ -108,19 +108,19 @@ public class ProvisionedProductService {
         String time = provisionedProductDetail.createTime;
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); //设置时区UTC
         df.setTimeZone(TimeZone.getTimeZone("UTC")); //格式化，转当地时区时间
-        Date timedata = df.parse(time);
+        Date timeData = df.parse(time);
         df.applyPattern("yyyy-MM-dd HH:mm:ss"); //默认时区
         df.setTimeZone(TimeZone.getDefault());
-        provisionedProduct.setStarttime(df.format(timedata));
+        provisionedProduct.setStartTime(df.format(timeData));
 
         lastTaskId = provisionedProductDetail.getLastTaskId();
 
-        provisionedProduct.setExamplename(provisionedProductDetail.getProvisionedProductName());//实例名称
-        provisionedProduct.setProductname(provisionedProductDetail.getProductName());//产品名称
-        provisionedProduct.setProductid(provisionedProductDetail.getProductId());//产品ID
-        provisionedProduct.setExampleid(provisionedProductId);//实例ID
-        provisionedProduct.setRoleid((Integer) example.get("角色ID"));//角色ID
-        provisionedProduct.setStartname((String) example.get("申请人"));//申请人
+        provisionedProduct.setExampleName(provisionedProductDetail.getProvisionedProductName());//实例名称
+        provisionedProduct.setProductName(provisionedProductDetail.getProductName());//产品名称
+        provisionedProduct.setProductId(provisionedProductDetail.getProductId());//产品ID
+        provisionedProduct.setExampleId(provisionedProductId);//实例ID
+        provisionedProduct.setRoleId((Integer) example.get("角色ID"));//角色ID
+        provisionedProduct.setStartName((String) example.get("申请人"));//申请人
 
         GetTaskResponseBody.GetTaskResponseBodyTaskDetail taskDetail = getTask(client, lastTaskId);
         if ("Available".equals(provisionedProductStatus)) {
@@ -130,7 +130,7 @@ public class ProvisionedProductService {
             logger.error(taskDetail.getStatusMessage());
         }
 
-        addExample(provisionedProduct);
+        saveExample(provisionedProduct);
     }
 
     /**
@@ -248,7 +248,7 @@ public class ProvisionedProductService {
     @Scheduled(cron = "0 */1 * * * ?")
     public void updateExample() {
         try {
-            List<String> exampleIds = searchExampleId();
+            List<String> exampleIds = listExampleId();
             if (exampleIds != null) {
                 for (String exampleId : exampleIds) {
                     String region = "cn-hangzhou";

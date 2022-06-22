@@ -11,15 +11,15 @@ public class ProvisionedProduct {
 
     private Integer id;
 
-    private String examplename;
+    private String exampleName;
 
-    private String productid;
+    private String productId;
 
-    private String exampleid;
+    private String exampleId;
 
-    private Integer roleid;
+    private Integer roleId;
 
-    private String startname;
+    private String startName;
 
     private String status;
 
@@ -27,25 +27,10 @@ public class ProvisionedProduct {
 
     private String outputs;
 
-    private String productname;
+    private String productName;
 
-    private String starttime;
+    private String startTime;
 
-    public String getStarttime() {
-        return starttime;
-    }
-
-    public void setStarttime(String starttime) {
-        this.starttime = starttime;
-    }
-
-    public String getProductname() {
-        return productname;
-    }
-
-    public void setProductname(String productname) {
-        this.productname = productname;
-    }
 
     public Integer getId() {
         return id;
@@ -55,44 +40,60 @@ public class ProvisionedProduct {
         this.id = id;
     }
 
-    public String getExamplename() {
-        return examplename;
+    public String getExampleName() {
+        return exampleName;
     }
 
-    public void setExamplename(String examplename) {
-        this.examplename = examplename;
+    public void setExampleName(String exampleName) {
+        this.exampleName = exampleName;
     }
 
-    public String getProductid() {
-        return productid;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setProductid(String productid) {
-        this.productid = productid;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
-    public String getExampleid() {
-        return exampleid;
+    public String getExampleId() {
+        return exampleId;
     }
 
-    public void setExampleid(String exampleid) {
-        this.exampleid = exampleid;
+    public void setExampleId(String exampleId) {
+        this.exampleId = exampleId;
     }
 
-    public Integer getRoleid() {
-        return roleid;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public void setRoleid(Integer roleid) {
-        this.roleid = roleid;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
-    public String getStartname() {
-        return startname;
+    public String getStartName() {
+        return startName;
     }
 
-    public void setStartname(String startname) {
-        this.startname = startname;
+    public void setStartName(String startName) {
+        this.startName = startName;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     public String getStatus() {

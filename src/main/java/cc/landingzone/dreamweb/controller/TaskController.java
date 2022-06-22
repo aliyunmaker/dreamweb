@@ -94,12 +94,12 @@ public class TaskController extends BaseController{
                         .singleResult();
 
                 Assignment assignment = new Assignment();
-                assignment.setStartername(starterName);
-                assignment.setProcesstime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
-                assignment.setTasktime(DateUtil.dateTime2String(task.getCreateTime()));
-                assignment.setTaskid(task.getId());
-                assignment.setTaskname(task.getName());
-                assignment.setProcessid(task.getProcessInstanceId());
+                assignment.setStarterName(starterName);
+                assignment.setProcessTime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
+                assignment.setTaskTime(DateUtil.dateTime2String(task.getCreateTime()));
+                assignment.setTaskId(task.getId());
+                assignment.setTaskName(task.getName());
+                assignment.setProcessId(task.getProcessInstanceId());
                 assignmentList.add(assignment);
             }
         }
@@ -119,8 +119,8 @@ public class TaskController extends BaseController{
     public void completeTaskById(HttpServletRequest request, HttpServletResponse response) {
          WebResult result = new WebResult();
         try {
-            String taskids = request.getParameter("taskid");
-            String processids = request.getParameter("processid");
+            String taskids = request.getParameter("taskId");
+            String processids = request.getParameter("processId");
             String delimeter = ",";
             String[] taskIds = taskids.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").split(delimeter);
             String[] processIds = processids.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").split(delimeter);
@@ -162,10 +162,10 @@ public class TaskController extends BaseController{
          *
          * @throws Exception
          */
-    public void createProduct(String processid) {
+    public void createProduct(String processId) {
         try {
             String region = "cn-hangzhou";
-            Map<String, Object> example = getInfo(processid);
+            Map<String, Object> example = getInfo(processId);
 
             // 获取申请人信息以及所使用的ram角色信息
             String userName = (String) example.get("申请人");
@@ -177,7 +177,7 @@ public class TaskController extends BaseController{
 
             Client client = serviceCatalogViewService.createClient(region, user, userRole);
             String provisionedProductId = provisionedProductService.launchProduct(client, inputs, example);
-            provisionedProductService.addProvisionedProduct(client, provisionedProductId, example);
+            provisionedProductService.saveProvisionedProduct(client, provisionedProductId, example);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -195,8 +195,8 @@ public class TaskController extends BaseController{
         WebResult result = new WebResult();
 
         String opinion = request.getParameter("opinion");
-        String taskId = request.getParameter("taskid");
-        String processId = request.getParameter("processid");
+        String taskId = request.getParameter("taskId");
+        String processId = request.getParameter("processId");
 
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         applyService.updateCond(task.getProcessInstanceId(), "拒绝");
@@ -233,12 +233,12 @@ public class TaskController extends BaseController{
                     .createHistoricProcessInstanceQuery()//创建历史流程实例查询
                     .processInstanceId(task.getProcessInstanceId())//使用流程实例ID查询
                     .singleResult();
-            assignment.setStartername(starterName);
-            assignment.setProcesstime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
-            assignment.setTasktime(DateUtil.dateTime2String(task.getCreateTime()));
-            assignment.setTaskid(task.getId());
-            assignment.setTaskname(task.getName());
-            assignment.setProcessid(task.getProcessInstanceId());
+            assignment.setStarterName(starterName);
+            assignment.setProcessTime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
+            assignment.setTaskTime(DateUtil.dateTime2String(task.getCreateTime()));
+            assignment.setTaskId(task.getId());
+            assignment.setTaskName(task.getName());
+            assignment.setProcessId(task.getProcessInstanceId());
             assignment.setAssignee(task.getAssignee());
             assignmentList.add(assignment);
         });
@@ -256,8 +256,8 @@ public class TaskController extends BaseController{
     @RequestMapping("/getInfo.do")
     public void getInfo(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String processid = request.getParameter("processid");
-        Map<String, Object> example = getInfo(processid);
+        String processId = request.getParameter("processId");
+        Map<String, Object> example = getInfo(processId);
         result.setData(example);
         outputToJSON(response, result);
     }
@@ -269,8 +269,8 @@ public class TaskController extends BaseController{
          * @return 流程实例信息
          * @throws Exception
          */
-    public Map<String, Object> getInfo(String processid) {
-        Task task = taskService.createTaskQuery().processInstanceId(processid).singleResult();
+    public Map<String, Object> getInfo(String processId) {
+        Task task = taskService.createTaskQuery().processInstanceId(processId).singleResult();
         String application = null;
         String scene = null;
         String productId = null;
@@ -289,10 +289,9 @@ public class TaskController extends BaseController{
             starterName = (String) taskService.getVariable(task.getId(), "starterName");
             roleId = (Integer) taskService.getVariable(task.getId(), "roleId");
             region = (String) taskService.getVariable(task.getId(), "region");
-            versionId = (String) taskService.getVariable(task.getId(), "versionid");
-
+            versionId = (String) taskService.getVariable(task.getId(), "versionId");
         } else {
-            List<HistoricVariableInstance> list = historyService.createHistoricVariableInstanceQuery().processInstanceId(processid).list();
+            List<HistoricVariableInstance> list = historyService.createHistoricVariableInstanceQuery().processInstanceId(processId).list();
             for(HistoricVariableInstance historicVariableInstance : list) {
                 if(historicVariableInstance.getVariableName().equals("application")) {
                     if(historicVariableInstance.getValue()!=null){
@@ -324,7 +323,7 @@ public class TaskController extends BaseController{
                         region = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("versionid")) {
+                if(historicVariableInstance.getVariableName().equals("versionId")) {
                     if(historicVariableInstance.getValue()!=null){
                         versionId = (String) historicVariableInstance.getValue();
                     }

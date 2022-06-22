@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 操作产品实例表
+ * 操作数据库产品实例表
  *
  * @author: laodou
  * @createDate: 2022/6/21
@@ -18,13 +18,13 @@ public interface ProvisionedProductDao {
 
     Integer getExampleId(String exampleName);
 
-    List<ProvisionedProduct> searchExample(Map<String, Object> map);
+    List<ProvisionedProduct> listExample(Map<String, Object> map);
 
-    void addExample(ProvisionedProduct provisionedProduct);
+    void saveExample(ProvisionedProduct provisionedProduct);
 
-    Integer searchExampleTotal(Map<String, Object> map);
+    Integer getExampleTotal(Map<String, Object> map);
 
-    List<String> searchExampleId();
+    List<String> listExampleId();
 
     String getUserName(String exampleId);
 

@@ -69,7 +69,7 @@
                         encrypt.setPublicKey(publicKey);
                         let encrypted = encrypt.encrypt($('#passwordInput').val());
                         $('#passwordInput').val(encrypted);
-                        console.log(encrypted);
+<!--                        console.log(encrypted);-->
                         document.getElementById('loginForm').submit();
                     } else {
                         alert("获取公钥失败");

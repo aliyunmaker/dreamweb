@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../provisionedProduct/searchProvisionedProduct.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'examplename', 'productid', 'exampleid', 'roleid', 'startname', 'status', 'parameter', 'outputs', 'productname','starttime']
+        fields: ['id', 'exampleName', 'productId', 'exampleId', 'roleId', 'startName', 'status', 'parameter', 'outputs', 'productName','startTime']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -20,23 +20,23 @@ Ext.onReady(function () {
             header: 'ID',
             hidden: true
         }, {
-            dataIndex: 'productid',
+            dataIndex: 'productId',
             header: '产品ID',
             width: 160
         }, {
-            dataIndex: 'productname',
+            dataIndex: 'productName',
             header: "产品名称",
             width: 150
         }, {
-            dataIndex: 'exampleid',
+            dataIndex: 'exampleId',
             header: "实例ID",
             width: 150
         }, {
-            dataIndex: 'examplename',
+            dataIndex: 'exampleName',
             header: "实例名称",
-            width: 300,
+            width: 250,
         }, {
-            dataIndex: 'startname',
+            dataIndex: 'startName',
             header: "申请人",
             width: 100,
         }, {
@@ -56,7 +56,7 @@ Ext.onReady(function () {
                 }
             }
         }, {
-            dataIndex: 'starttime',
+            dataIndex: 'startTime',
             header: "创建时间",
             width: 150
         }, {
@@ -64,12 +64,10 @@ Ext.onReady(function () {
             width: 220,
             height: 25,
             align: 'center',
-            renderer: function (value, metaData, record,rowIndex,columnLndex,cellmeta,store) {
+            renderer: function (value, metaData, record,rowIndex,store) {
             metaData.tdAttr = 'data-qtip="查看当前申请参数详情"';
             var id = record.id;
             Ext.defer(function () {
-
-
                 Ext.widget('toolbar', {
                     renderTo: id,
                     dock: 'top',

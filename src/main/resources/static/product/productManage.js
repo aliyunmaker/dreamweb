@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../product/searchProduct.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'productid', 'application', 'scenes', 'productname']
+        fields: ['id', 'productId', 'application', 'scenes', 'productName']
     });
 
 
@@ -21,11 +21,11 @@ Ext.onReady(function () {
             header: 'ID',
             hidden: true
         }, {
-            dataIndex: 'productid',
+            dataIndex: 'productId',
             header: "产品ID",
             width: 200
         }, {
-            dataIndex: 'productname',
+            dataIndex: 'productName',
             header: "产品名称",
             width: 200
         }, {
@@ -91,11 +91,11 @@ Ext.onReady(function () {
             allowBlank: false
         }, {
             fieldLabel: '产品ID',
-            name: 'productid',
+            name: 'productId',
             allowBlank: false
         }, {
             fieldLabel: '产品名称',
-            name: 'productname',
+            name: 'productName',
             allowBlank: false
         }],
         submitBtnFn: function () {

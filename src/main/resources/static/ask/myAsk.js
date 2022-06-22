@@ -8,7 +8,7 @@ Ext.onReady(function () {
         dataUrl: '../apply/getMyAsk.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['startername', 'processtime', 'processid', 'task', 'processstate', 'cond', 'opinion']
+        fields: ['starterName', 'processTime', 'processId', 'task', 'processState', 'cond', 'opinion']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -16,19 +16,19 @@ Ext.onReady(function () {
         title: '我的申请列表',
         store: userStore,
         columns: [{
-            dataIndex: 'startername',
+            dataIndex: 'starterName',
             header: '申请人',
             width: 100
         }, {
-            dataIndex: 'processtime',
+            dataIndex: 'processTime',
             header: "申请时间",
             width: 150
         }, {
-            dataIndex: 'processid',
+            dataIndex: 'processId',
             header: "流程实例ID",
             width: 100
         }, {
-            dataIndex: 'processstate',
+            dataIndex: 'processState',
             header: "流程状态",
             width: 100,
             align: 'center',
@@ -55,7 +55,7 @@ Ext.onReady(function () {
             width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.raw.processid;
+                var id = record.raw.processId;
                 metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
                 Ext.defer(function () {
                     Ext.widget('button', {
@@ -65,7 +65,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    processid: id,
+                                    processId: id,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({

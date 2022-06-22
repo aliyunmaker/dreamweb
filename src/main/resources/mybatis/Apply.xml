@@ -4,38 +4,38 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.ApplyDao">
 
-    <select id="getApply"
+    <select id="listApply"
             resultType="cc.landingzone.dreamweb.model.Apply">
         select *
         from myAsk
-        where starterName = #{startername}
+        where starterName = #{starterName}
     </select>
 
     <update id="updateProcessState">
         update myAsk
-        set processState = #{processstate}
-        where processId = #{processid}
+        set processState = #{processState}
+        where processId = #{processId}
     </update>
 
     <update id="updateTask">
         update myAsk
         set task = #{task}
-        where processId = #{processid}
+        where processId = #{processId}
     </update>
 
     <update id="updateCond">
         update myAsk
         set cond = #{cond}
-        where processId = #{processid}
+        where processId = #{processId}
     </update>
 
     <update id="updateOpinion">
         update myAsk
         set opinion = #{opinion}
-        where processId = #{processid}
+        where processId = #{processId}
     </update>
 
-    <insert id="addApply"
+    <insert id="saveApply"
             parameterType="cc.landingzone.dreamweb.model.Apply">
         insert into myAsk
         (starterName,
@@ -49,15 +49,15 @@
         processDefinitionId,
         task,
         gmt_create)
-        values (#{startername},
-        #{processtime},
-        #{processid},
-        #{processstate},
+        values (#{starterName},
+        #{processTime},
+        #{processId},
+        #{processState},
         #{parameters},
         #{region},
-        #{versionid},
+        #{versionId},
         #{cond},
-        #{processdefinitionid},
+        #{processDefinitionId},
         #{task},
         now())
     </insert>

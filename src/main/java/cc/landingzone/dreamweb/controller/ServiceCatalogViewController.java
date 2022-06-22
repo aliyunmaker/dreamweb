@@ -56,7 +56,7 @@ public class ServiceCatalogViewController extends BaseController{
     public void getApplication(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
 
-        List<String> applicationList = productService.getApplication();
+        List<String> applicationList = productService.listApplication();
         result.setTotal(applicationList.size());
         result.setData(applicationList);
 
@@ -75,7 +75,7 @@ public class ServiceCatalogViewController extends BaseController{
         WebResult result = new WebResult();
         try {
             String getApplication = request.getParameter("select_Application");
-            List<String> scenesList = productService.getScenes(getApplication);
+            List<String> scenesList = productService.listScenes(getApplication);
             result.setTotal(scenesList.size());
             result.setData(scenesList);
         } catch (Exception e) {
@@ -103,10 +103,10 @@ public class ServiceCatalogViewController extends BaseController{
             String getScene = request.getParameter("select_Scene");
             Assert.hasText(getScene, "场景不能为空！");
             String productId = productService.getProductId(getApplication, getScene);
-            Assert.hasText(productId, "未找到对应procuctId！");
+            Assert.hasText(productId, "未找到对应productId！");
 
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            List<String> productIds = userProductService.getProductId(username);
+            List<String> productIds = userProductService.listProductId(username);
             if(productIds.contains(productId)) {
                 result.setData(productId);
             } else {

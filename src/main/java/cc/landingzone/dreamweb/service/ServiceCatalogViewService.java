@@ -36,7 +36,7 @@ import java.util.*;
 
 
 /**
- * 获取服务目录免密登陆URL以及开启产品
+ * 获取服务目录免密登陆URL以及开启产品操作
  *
  * @author: laodou
  * @createDate: 2022/6/21
@@ -197,7 +197,7 @@ public class ServiceCatalogViewService {
         String[] Action1 = {"servicecatalog:ListLaunchOptions", "servicecatalog:GetProductVersion",
         "servicecatalog:ListProductVersions", "servicecatalog:GetTemplate", "servicecatalog:LaunchProduct"};
 
-        List<String> productIds = userProductService.getProductId(userName);
+        List<String> productIds = userProductService.listProductId(userName);
         List<String> Resource = new ArrayList<>();
         for (String productId :
                 productIds) {

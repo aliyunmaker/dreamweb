@@ -22,33 +22,33 @@ public class ApplyService {
     private ApplyDao applyDao;
 
     @Transactional
-    public void addApply(Apply apply) {
-        applyDao.addApply(apply);
+    public void saveApply(Apply apply) {
+        applyDao.saveApply(apply);
     }
 
     @Transactional
-    public List<Apply> getApply(String startername) {
-        return applyDao.getApply(startername);
+    public List<Apply> listApply(String starterName) {
+        return applyDao.listApply(starterName);
     }
 
     @Transactional
-    public void updateTask(String processid, String task) {
-        applyDao.updateTask(processid, task);
+    public void updateTask(String processId, String task) {
+        applyDao.updateTask(processId, task);
     }
 
     @Transactional
-    public void updateProcessState(String processid, String processstate) {
-        applyDao.updateProcessState(processid, processstate);
+    public void updateProcessState(String processId, String processState) {
+        applyDao.updateProcessState(processId, processState);
     }
 
     @Transactional
-    public void updateCond(String processid, String cond) {
-        applyDao.updateCond(processid, cond);
+    public void updateCond(String processId, String cond) {
+        applyDao.updateCond(processId, cond);
     }
 
     @Transactional
-    public void updateOpinion(String processid, String opinion) {
-        applyDao.updateOpinion(processid, opinion);
+    public void updateOpinion(String processId, String opinion) {
+        applyDao.updateOpinion(processId, opinion);
     }
 
 }

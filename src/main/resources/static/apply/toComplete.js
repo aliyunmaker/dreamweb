@@ -9,7 +9,7 @@ Ext.onReady(function () {
         dataUrl: '../task/getMyTaskList.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['startername', 'processtime', 'tasktime', 'taskid', 'taskname', 'processid']
+        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -18,11 +18,11 @@ Ext.onReady(function () {
         title: '待处理任务列表',
         store: userStore,
         columns: [{
-            dataIndex: 'startername',
+            dataIndex: 'starterName',
             header: '申请人',
             width: 100
         }, {
-            dataIndex: 'processtime',
+            dataIndex: 'processTime',
             header: "申请时间",
             width: 150
         }, {
@@ -31,8 +31,7 @@ Ext.onReady(function () {
             width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.raw.processid;
-                console.log(record);
+                var id = record.raw.processId;
                 metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
                 Ext.defer(function () {
                     Ext.widget('button', {
@@ -44,13 +43,9 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    processid: id,
+                                    processId: id,
                                 }, function (data) {
-//                                     console.log(data.data);
-                                    // console.log(data.data["应用"]);
-                                    // console.log(data.data['场景']);
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
-                                    // console.log(parameters);
                                     var form = new Ext.form.FormPanel({
                                         defaultType:'textfield',
                                         items: [{
@@ -93,49 +88,6 @@ Ext.onReady(function () {
                                             readOnly:true
                                         }]
                                     });
-                                    // win = new Ext.Window({
-                                    //     title:'详细信息',
-                                    //     layout:'form',
-                                    //     width:400,
-                                    //     closeAction:'close',
-                                    //     target : document.getElementById('buttonId'),
-                                    //     plain: true,
-                                    //     items: [form
-                                    //     //     {
-                                    //     //     xtype : 'displayfield',
-                                    //     //     fieldLabel: '应用',
-                                    //     //     name: 'home_score',
-                                    //     //     value: data.data['应用']
-                                    //     // }, {
-                                    //     //     xtype : 'displayfield',
-                                    //     //     fieldLabel: '场景',
-                                    //     //     name: 'home_score',
-                                    //     //     value: data.data['场景']
-                                    //     // }, {
-                                    //     //     xtype : 'displayfield',
-                                    //     //     fieldLabel: '产品ID',
-                                    //     //     name: 'home_score',
-                                    //     //     value: data.data['产品ID']
-                                    //     // }, {
-                                    //     //     xtype : 'displayfield',
-                                    //     //     fieldLabel: '实例名称',
-                                    //     //     name: 'home_score',
-                                    //     //     value: data.data['实例名称']
-                                    //     // }, {
-                                    //     //     xtype : 'displayfield',
-                                    //     //     fieldLabel: '参数信息',
-                                    //     //     name: 'home_score',
-                                    //     //     value: data.data['参数信息']
-                                    //     // }],
-                                    //     // buttons: [{
-                                    //     //    text: '确认',
-                                    //     //    handler: function(){
-                                    //     //        win.hide();
-                                    //     //     }
-                                    //     // }
-                                    //     ],
-                                    //     buttonAlign: 'center',
-                                    //  });
                                     var win = new Ext.Window({
                                         layout:'fit',
                                         title:'详细信息',
@@ -158,11 +110,11 @@ Ext.onReady(function () {
                 return Ext.String.format('<div id="{0}"></div>', id);
             }
         }, {
-            dataIndex: 'taskid',
+            dataIndex: 'taskId',
             header: "任务ID",
             width: 100,
         }, {
-            dataIndex: 'processid',
+            dataIndex: 'processId',
             header: "流程实例ID",
             width: 100,
         }],
@@ -175,31 +127,26 @@ Ext.onReady(function () {
                 if (select.length == 0) {
                     Ext.Msg.alert('提示','请选择要通过的任务（可多选）');
                 }else{
-                    var taskids = [];
-                    var processids = [];
+                    var taskIds = [];
+                    var processIds = [];
                     Ext.Array.each(select,function(record){
-                        taskids.push(record.raw.taskid);
-                        processids.push(record.raw.processid)
+                        taskIds.push(record.raw.taskId);
+                        processIds.push(record.raw.processId)
                     });
-                    var taskid = JSON.stringify(taskids);
-                    var processid = JSON.stringify(processids);
+                    var taskId = JSON.stringify(taskIds);
+                    var processId = JSON.stringify(processIds);
                     MyExt.util.MessageConfirm('是否确定通过', function () {
                         MyExt.util.Ajax('../task/complete.do', {
-                            taskid: taskid,
-                            processid: processid
+                            taskId: taskId,
+                            processId: processId
                         }, function (data) {
                             reload();
                             if (data.data == 1)
                                 MyExt.Msg.alert('通过成功!');
                             else {
                                 MyExt.Msg.alert('审批通过，开始创建产品实例!');
-                                // MyExt.util.Ajax('../task/createProduct.do', {
-                                //     processid: processid,
-                                // })
                             }
                          });
-//                        reload();
-//                        MyExt.Msg.alert('通过成功!');
                     });
                 }
             }
@@ -227,14 +174,13 @@ Ext.onReady(function () {
                        handler: function(){
                             MyExt.util.MessageConfirm('是否确定拒绝', function () {
                                 MyExt.util.Ajax('../task/reject.do', {
-                                    taskid: select[0].raw.taskid,
-                                    processid: select[0].raw.processid,
+                                    taskId: select[0].raw.taskId,
+                                    processId: select[0].raw.processId,
                                     opinion: win.items.items[0].rawValue
                                 }, function (data) {
                                     win.hide();
                                     reload();
                                     MyExt.Msg.alert('拒绝成功!');
-                                    // window.location.href = "http://localhost:8080/ask/myAsk.html";
                                 });
                             });
                         }

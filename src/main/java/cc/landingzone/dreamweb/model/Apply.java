@@ -9,27 +9,27 @@ package cc.landingzone.dreamweb.model;
  */
 public class Apply {
 
-    private String startername;
+    private String starterName;
 
-    private String processtime;
+    private String processTime;
 
-    private String processid;
+    private String processId;
 
     private String task;
 
-    private String processstate;
+    private String processState;
 
     private String parameters;
 
     private String cond;
 
-    private String processdefinitionid;
+    private String processDefinitionId;
 
     private String opinion;
 
     private String region;
 
-    private String versionid;
+    private String versionId;
 
     public String getOpinion() {
         return opinion;
@@ -55,52 +55,28 @@ public class Apply {
         this.region = region;
     }
 
-    public String getVersionid() {
-        return versionid;
+    public String getStarterName() {
+        return starterName;
     }
 
-    public void setVersionid(String versionid) {
-        this.versionid = versionid;
+    public void setStarterName(String starterName) {
+        this.starterName = starterName;
     }
 
-    public String getProcessdefinitionid() {
-        return processdefinitionid;
+    public String getProcessTime() {
+        return processTime;
     }
 
-    public void setProcessdefinitionid(String processdefinitionid) {
-        this.processdefinitionid = processdefinitionid;
+    public void setProcessTime(String processTime) {
+        this.processTime = processTime;
     }
 
-    public String getStartername() {
-        return startername;
+    public String getProcessId() {
+        return processId;
     }
 
-    public void setStartername(String startername) {
-        this.startername = startername;
-    }
-
-    public String getCond() {
-        return cond;
-    }
-
-    public void setCond(String cond) {
-        this.cond = cond;
-    }
-
-    public String getProcesstime() {
-        return processtime;
-    }
-
-    public void setProcesstime(String processtime) {
-        this.processtime = processtime;
-    }
-
-    public String getProcessid() {
-        return processid;
-    }
-
-    public void setProcessid(String processid) {
-        this.processid = processid;
+    public void setProcessId(String processId) {
+        this.processId = processId;
     }
 
     public String getTask() {
@@ -111,12 +87,35 @@ public class Apply {
         this.task = task;
     }
 
-    public String getProcessstate() {
-        return processstate;
+    public String getProcessState() {
+        return processState;
     }
 
-    public void setProcessstate(String processstate) {
-        this.processstate = processstate;
+    public void setProcessState(String processState) {
+        this.processState = processState;
     }
 
+    public String getCond() {
+        return cond;
+    }
+
+    public void setCond(String cond) {
+        this.cond = cond;
+    }
+
+    public String getProcessDefinitionId() {
+        return processDefinitionId;
+    }
+
+    public void setProcessDefinitionId(String processDefinitionId) {
+        this.processDefinitionId = processDefinitionId;
+    }
+
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
+    }
 }

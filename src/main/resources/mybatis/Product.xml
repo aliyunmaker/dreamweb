@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.ProductDao">
 
-    <select id="getApplication"
+    <select id="listApplication"
             resultType="String">
         select distinct application from product
     </select>
 
-    <select id="getScenes"
+    <select id="listScenes"
             resultType="String"
             parameterType="String">
         select distinct scenes from product where application = #{application}
@@ -25,90 +25,21 @@
         select productname from product where productid = #{productId};
     </select>
 
-<!--    <select id="getExampleId"-->
-<!--            resultType="Integer">-->
-<!--            select id from provisioned_product where examplename = #{exampleName};-->
-<!--    </select>-->
-
-<!--    <select id="searchExample" resultType="cc.landingzone.dreamweb.model.Provisioned_product">-->
-<!--        select *from provisioned_product-->
-<!--    </select>-->
-
-<!--    <insert id="addExample" parameterType="cc.landingzone.dreamweb.model.Provisioned_product">-->
-<!--        insert into provisioned_product-->
-<!--        (examplename,-->
-<!--         productid,-->
-<!--         productname,-->
-<!--         exampleid,-->
-<!--         roleid,-->
-<!--         startname,-->
-<!--         status,-->
-<!--         parameter,-->
-<!--         outputs,-->
-<!--         starttime,-->
-<!--         gmt_create)-->
-<!--         values (#{examplename},-->
-<!--                 #{productid},-->
-<!--                 #{productname},-->
-<!--                 #{exampleid},-->
-<!--                 #{roleid},-->
-<!--                 #{startname},-->
-<!--                 #{status},-->
-<!--                 #{parameter},-->
-<!--                 #{outputs},-->
-<!--                 #{starttime},-->
-<!--                 now())-->
-<!--    </insert>-->
-
-<!--    <select id="searchExampleTotal" resultType="int" parameterType="map">-->
-<!--        select count(*) from provisioned_product-->
-<!--    </select>-->
-
-<!--    <select id="searchExampleId" resultType="String">-->
-<!--        select distinct exampleid from provisioned_product where status = 'UnderChange'-->
-<!--    </select>-->
-
-<!--    <select id="getUserName" resultType="String">-->
-<!--        select distinct startname from provisioned_product where exampleid = #{exampleId}-->
-<!--    </select>-->
-
-<!--    <select id="getRoleId" resultType="Integer">-->
-<!--        select distinct roleid from provisioned_product where exampleid = #{exampleId}-->
-<!--    </select>-->
-
-<!--    <update id="updateStatus">-->
-<!--        update provisioned_product-->
-<!--        set status = #{status}-->
-<!--        where exampleid = #{exampleId}-->
-<!--    </update>-->
-
-<!--    <update id="updateParameter">-->
-<!--        update provisioned_product-->
-<!--        set parameter = #{parameter}-->
-<!--        where exampleid = #{exampleId}-->
-<!--    </update>-->
-
-<!--    <update id="updateOutputs">-->
-<!--        update provisioned_product-->
-<!--        set outputs = #{outputs}-->
-<!--        where exampleid = #{exampleId}-->
-<!--    </update>-->
-
-    <select id="searchProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
+    <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
         select * from product order by id desc
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>
     </select>
 
-    <select id="searchProductTotal" resultType="int" parameterType="map">
+    <select id="getProductTotal" resultType="int" parameterType="map">
         select count(*) from product
     </select>    
     
     <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
         select *
         from product
-        where productid = #{productid}
+        where productid = #{productId}
     </select>
 
     <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">
@@ -117,7 +48,7 @@
         where id = #{id}
     </select>
 
-    <insert id="addProduct"
+    <insert id="saveProduct"
             parameterType="cc.landingzone.dreamweb.model.Product">
         insert into product
         (application,
@@ -127,8 +58,8 @@
         gmt_create)
         values (#{application},
                 #{scenes},
-                #{productid},
-                #{productname},
+                #{productId},
+                #{productName},
                 now())
     </insert>
 
@@ -136,8 +67,8 @@
         update product
         set application              = #{application},
             scenes                   = #{scenes},
-            productid                = #{productid},
-            productname              = #{productname}
+            productid                = #{productId},
+            productname              = #{productName}
         where id = #{id}
     </update>
 

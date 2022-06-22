@@ -60,7 +60,7 @@ public class ProcessController extends BaseController{
          *
          * @throws Exception
          */
-    public void processDelopment() {
+    public void processDeployment() {
         // 创建流程部署工具
         DeploymentBuilder deploymentBuilder = repositoryService.createDeployment();
 
@@ -98,7 +98,7 @@ public class ProcessController extends BaseController{
         List<ProcessDefinition> processDefinitions = processDefinitionQuery.latestVersion().list();
 
         if(processDefinitions.isEmpty()) {
-            processDelopment();
+            processDeployment();
             processDefinitions = processDefinitionQuery.latestVersion().list();
         }
         // 循环结果集
@@ -119,58 +119,47 @@ public class ProcessController extends BaseController{
     @GetMapping("/startProcessByDefinitionId.do")
     public void startProcessByDefinitionId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        // 流程定义 ID
         String processDefinitionId = request.getParameter("definitionId");
         String application = request.getParameter("select_Application");
         String scene = request.getParameter("select_Scene");
-        String productId = request.getParameter("productId");               //修改此ID为赋权的ID
-
+        String productId = request.getParameter("productId");
         String exampleName = request.getParameter("exampleName");
         Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-
         String parameter = request.getParameter("parameter");
         JSONObject parameters = JSON.parseObject(parameter);
-
         String region = parameters.getString("stackRegionId");
-        String versionid = parameters.getString("prodocutVersionId");
+        String versionId = parameters.getString("prodocutVersionId");
         parameters.remove("stackRegionId");
-        parameters.remove("prodocutVersionId");
+        parameters.remove("productVersionId");
 
         // 启动流程
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        identityService.setAuthenticatedUserId(username);
-
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        identityService.setAuthenticatedUserId(userName);
         String info=parameters.getString("parameters");//用户选择的参数列表
-        //地域
-        //产品版本ID
-        
         Map<String, Object> variables = new HashMap<>();
         variables.put("parameters", info);//userKey在上文的流程变量中指定了
-        variables.put("starterName", username);
+        variables.put("starterName", userName);
         variables.put("application", application);
         variables.put("scene", scene);
         variables.put("productId", productId);
         variables.put("exampleName", exampleName);
         variables.put("roleId", roleId);
         variables.put("region", region);
-        variables.put("versionid", versionid);
-
-
+        variables.put("versionId", versionId);
         ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinitionId, variables);
-
         String task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult().getName();
         Apply apply = new Apply();
-        apply.setStartername(username);
-        apply.setProcesstime(DateUtil.dateTime2String(processInstance.getStartTime()));
-        apply.setProcessid(processInstance.getProcessInstanceId());
-        apply.setProcessstate("审批中");
+        apply.setStarterName(userName);
+        apply.setProcessTime(DateUtil.dateTime2String(processInstance.getStartTime()));
+        apply.setProcessId(processInstance.getProcessInstanceId());
+        apply.setProcessState("审批中");
         apply.setParameters(info);
         apply.setRegion(region);
-        apply.setVersionid(versionid);
-        apply.setProcessdefinitionid(processDefinitionId);
+        apply.setVersionId(versionId);
+        apply.setProcessDefinitionId(processDefinitionId);
         apply.setCond("未拒绝");
         apply.setTask("等待" + task);
-        applyService.addApply(apply);
+        applyService.saveApply(apply);
 
         result.setData(processInstance.getProcessInstanceId());
         outputToJSON(response, result);
@@ -186,8 +175,8 @@ public class ProcessController extends BaseController{
     @GetMapping("/getMyAsk.do")
     public void getMyAsk (HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Apply> list = applyService.getApply(username);
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Apply> list = applyService.listApply(userName);
         result.setData(list);
         outputToJSON(response, result);
     }

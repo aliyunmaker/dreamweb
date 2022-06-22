@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
- * 对产品实例操作相关请求的处理
+ * 产品实例相关请求的处理
  *
  * @author: laodou
  * @createDate: 2022/6/21
@@ -40,7 +40,7 @@ public class ProvisionedProductController extends BaseController{
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
-            List<ProvisionedProduct> list = provisionedProductService.searchExample(page);
+            List<ProvisionedProduct> list = provisionedProductService.listExample(page);
             result.setTotal(page.getTotal());
             result.setData(list);
         } catch (Exception e) {

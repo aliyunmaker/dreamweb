@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../task/getAllTaskList.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['startername', 'processtime', 'tasktime', 'taskid', 'taskname', 'processid', 'assignee']
+        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId', 'assignee']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -15,11 +15,11 @@ Ext.onReady(function () {
         title: '所有任务列表',
         store: userStore,
         columns: [{
-            dataIndex: 'startername',
+            dataIndex: 'starterName',
             header: '申请人',
             width: 100
         }, {
-            dataIndex: 'processtime',
+            dataIndex: 'processTime',
             header: "申请时间",
             width: 150
         }, {
@@ -28,7 +28,7 @@ Ext.onReady(function () {
             width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.raw.processid;
+                var id = record.raw.processId;
                 metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
                 Ext.defer(function () {
                     Ext.widget('button', {
@@ -38,7 +38,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    processid: id,
+                                    processId: id,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -107,12 +107,12 @@ Ext.onReady(function () {
                 return Ext.String.format('<div id="{0}"></div>', id);
             }
         }, {
-            dataIndex: 'taskid',
+            dataIndex: 'taskId',
             header: "任务ID",
             width: 200,
             hidden: true
         }, {
-            dataIndex: 'processid',
+            dataIndex: 'processId',
             header: "流程实例ID",
             width: 100,
         }, {
