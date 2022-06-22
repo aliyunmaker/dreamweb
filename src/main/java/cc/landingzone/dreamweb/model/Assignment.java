@@ -54,14 +54,6 @@ public class Assignment {
         this.tasktime = tasktime;
     }
 
-//    public String getProcessinfo() {
-//        return processinfo;
-//    }
-
-//    public void setProcessinfo(String processinfo) {
-//        this.processinfo = processinfo;
-//    }
-
     public String getTaskid() {
         return taskid;
     }

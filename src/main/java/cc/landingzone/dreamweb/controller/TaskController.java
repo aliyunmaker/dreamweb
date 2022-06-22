@@ -78,7 +78,7 @@ public class TaskController extends BaseController{
          * @throws Exception
          */
     @RequestMapping("/getMyTaskList.do")
-    public void myTaskList (HttpServletRequest request, HttpServletResponse response) {
+    public void getMyTaskList (HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
@@ -93,14 +93,14 @@ public class TaskController extends BaseController{
                         .processInstanceId(task.getProcessInstanceId())//使用流程实例ID查询
                         .singleResult();
 
-                Assignment taskmodel = new Assignment();
-                taskmodel.setStartername(starterName);
-                taskmodel.setProcesstime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
-                taskmodel.setTasktime(DateUtil.dateTime2String(task.getCreateTime()));
-                taskmodel.setTaskid(task.getId());
-                taskmodel.setTaskname(task.getName());
-                taskmodel.setProcessid(task.getProcessInstanceId());
-                assignmentList.add(taskmodel);
+                Assignment assignment = new Assignment();
+                assignment.setStartername(starterName);
+                assignment.setProcesstime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
+                assignment.setTasktime(DateUtil.dateTime2String(task.getCreateTime()));
+                assignment.setTaskid(task.getId());
+                assignment.setTaskname(task.getName());
+                assignment.setProcessid(task.getProcessInstanceId());
+                assignmentList.add(assignment);
             }
         }
         result.setData(assignmentList);
@@ -137,10 +137,8 @@ public class TaskController extends BaseController{
                      applyService.updateProcessState(processId, "已通过");
                      applyService.updateTask(processId, "无等待任务");
                      createProduct(processId);  //审批通过后启动产品
-
                      Integer flag = 0;
                      result.setData(flag);
-
                  } else {
                      String task = "等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName();
                      applyService.updateTask(processId, task);
@@ -148,7 +146,6 @@ public class TaskController extends BaseController{
                      Integer flag = 1;
                      result.setData(flag);
                  }
-
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -180,9 +177,7 @@ public class TaskController extends BaseController{
 
             Client client = serviceCatalogViewService.createClient(region, user, userRole);
             String provisionedProductId = provisionedProductService.launchProduct(client, inputs, example);
-
             provisionedProductService.addProvisionedProduct(client, provisionedProductId, example);
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -213,8 +208,6 @@ public class TaskController extends BaseController{
         variables.put("con", 0);
         taskService.complete(taskId, variables);
 
-
-
         outputToJSON(response, result);
     }
 
@@ -234,20 +227,20 @@ public class TaskController extends BaseController{
 
         // 循环结果集
         tasks.forEach(task -> {
-            Assignment taskmodel = new Assignment();
+            Assignment assignment = new Assignment();
             String starterName = (String) taskService.getVariable(task.getId(), "starterName");
             HistoricProcessInstance historicProcessInstance = historyService//与历史数据（历史表）相关的Service
                     .createHistoricProcessInstanceQuery()//创建历史流程实例查询
                     .processInstanceId(task.getProcessInstanceId())//使用流程实例ID查询
                     .singleResult();
-            taskmodel.setStartername(starterName);
-            taskmodel.setProcesstime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
-            taskmodel.setTasktime(DateUtil.dateTime2String(task.getCreateTime()));
-            taskmodel.setTaskid(task.getId());
-            taskmodel.setTaskname(task.getName());
-            taskmodel.setProcessid(task.getProcessInstanceId());
-            taskmodel.setAssignee(task.getAssignee());
-            assignmentList.add(taskmodel);
+            assignment.setStartername(starterName);
+            assignment.setProcesstime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
+            assignment.setTasktime(DateUtil.dateTime2String(task.getCreateTime()));
+            assignment.setTaskid(task.getId());
+            assignment.setTaskname(task.getName());
+            assignment.setProcessid(task.getProcessInstanceId());
+            assignment.setAssignee(task.getAssignee());
+            assignmentList.add(assignment);
         });
         result.setData(assignmentList);
         outputToJSON(response, result);
@@ -286,7 +279,7 @@ public class TaskController extends BaseController{
         String starterName = null;
         Integer roleId = null;
         String region = null;
-        String versionid = null;
+        String versionId = null;
         if (task != null) {
             application = (String) taskService.getVariable(task.getId(), "application");
             scene = (String) taskService.getVariable(task.getId(), "scene");
@@ -296,7 +289,7 @@ public class TaskController extends BaseController{
             starterName = (String) taskService.getVariable(task.getId(), "starterName");
             roleId = (Integer) taskService.getVariable(task.getId(), "roleId");
             region = (String) taskService.getVariable(task.getId(), "region");
-            versionid = (String) taskService.getVariable(task.getId(), "versionid");
+            versionId = (String) taskService.getVariable(task.getId(), "versionid");
 
         } else {
             List<HistoricVariableInstance> list = historyService.createHistoricVariableInstanceQuery().processInstanceId(processid).list();
@@ -333,7 +326,7 @@ public class TaskController extends BaseController{
                 }
                 if(historicVariableInstance.getVariableName().equals("versionid")) {
                     if(historicVariableInstance.getValue()!=null){
-                        versionid = (String) historicVariableInstance.getValue();
+                        versionId = (String) historicVariableInstance.getValue();
                     }
                 }
                 if(historicVariableInstance.getVariableName().equals("starterName")) {
@@ -355,7 +348,7 @@ public class TaskController extends BaseController{
         example.put("实例名称", exampleName);
         example.put("参数信息", parameters);
         example.put("地域", region);
-        example.put("版本ID", versionid);
+        example.put("版本ID", versionId);
         example.put("申请人", starterName);
         example.put("角色ID", roleId);
 
