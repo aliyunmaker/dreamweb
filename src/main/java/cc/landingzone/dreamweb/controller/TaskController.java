@@ -30,19 +30,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * 对工作流任务进行操作
+ *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Controller
 @RequestMapping("/task")
-public class TaskController extends BaseController{
+public class TaskController extends BaseController {
 
     @Autowired
     private TaskService taskService;
-    
+
     @Autowired
     private HistoryService historyService;
 
@@ -71,22 +70,22 @@ public class TaskController extends BaseController{
     private ProvisionedProductService provisionedProductService;
 
     /**
-         * 获取登录用户待办任务列表
-         *
-         * @param: 当前登录人
-         * @return 任务列表
-         * @throws Exception
-         */
+     * 获取登录用户待办任务列表
+     *
+     * @return 任务列表
+     * @throws Exception
+     * @param: 当前登录人
+     */
     @RequestMapping("/getMyTaskList.do")
-    public void getMyTaskList (HttpServletRequest request, HttpServletResponse response) {
+    public void getMyTaskList(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 .taskAssignee(username)//指定个人任务查询
                 .list();
         List<Assignment> assignmentList = new ArrayList<>();
-        if(list!=null && list.size()>0){
-            for(Task task:list){
+        if (list != null && list.size() > 0) {
+            for (Task task : list) {
                 String starterName = (String) taskService.getVariable(task.getId(), "starterName");
                 HistoricProcessInstance historicProcessInstance = historyService//与历史数据（历史表）相关的Service
                         .createHistoricProcessInstanceQuery()//创建历史流程实例查询
@@ -109,15 +108,14 @@ public class TaskController extends BaseController{
     }
 
     /**
-         * 完成任务
-         *
-         * @param: 任务ID、流程实例ID
-         * 
-         * @throws Exception
-         */
+     * 完成任务
+     *
+     * @throws Exception
+     * @param: 任务ID、流程实例ID
+     */
     @RequestMapping("/complete.do")
     public void completeTaskById(HttpServletRequest request, HttpServletResponse response) {
-         WebResult result = new WebResult();
+        WebResult result = new WebResult();
         try {
             String taskids = request.getParameter("taskId");
             String processids = request.getParameter("processId");
@@ -126,42 +124,41 @@ public class TaskController extends BaseController{
             String[] processIds = processids.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").split(delimeter);
 
             for (int i = 0; i < taskIds.length; i++) {
-                 String taskId = taskIds[i];
-                 String processId = processIds[i];
-                 Map<String, Object> variables = new HashMap<>();
-                 variables.put("con", 1);
-                 taskService.complete(taskId, variables);
+                String taskId = taskIds[i];
+                String processId = processIds[i];
+                Map<String, Object> variables = new HashMap<>();
+                variables.put("con", 1);
+                taskService.complete(taskId, variables);
 
-                 ProcessInstance process = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
-                 if (process == null) {
-                     applyService.updateProcessState(processId, "已通过");
-                     applyService.updateTask(processId, "无等待任务");
-                     createProduct(processId);  //审批通过后启动产品
-                     Integer flag = 0;
-                     result.setData(flag);
-                 } else {
-                     String task = "等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName();
-                     applyService.updateTask(processId, task);
+                ProcessInstance process = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+                if (process == null) {
+                    applyService.updateProcessState(processId, "已通过");
+                    applyService.updateTask(processId, "无等待任务");
+                    createProduct(processId);  //审批通过后启动产品
+                    Integer flag = 0;
+                    result.setData(flag);
+                } else {
+                    String task = "等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName();
+                    applyService.updateTask(processId, task);
 
-                     Integer flag = 1;
-                     result.setData(flag);
-                 }
+                    Integer flag = 1;
+                    result.setData(flag);
+                }
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }
-         outputToJSON(response, result);
+        outputToJSON(response, result);
     }
 
     /**
-         * 启动产品
-         *
-         * @param: 工作流流程ID
-         *
-         * @throws Exception
-         */
+     * 启动产品
+     *
+     * @throws Exception
+     * @param: 工作流流程ID
+     */
     public void createProduct(String processId) {
         try {
             String region = "cn-hangzhou";
@@ -175,21 +172,20 @@ public class TaskController extends BaseController{
             String parameters = (String) example.get("参数信息");
             Map<String, String> inputs = (Map<String, String>) JSON.parse(parameters);
 
-            Client client = serviceCatalogViewService.createClient(region, user, userRole);
-            String provisionedProductId = provisionedProductService.launchProduct(client, inputs, example);
-            provisionedProductService.saveProvisionedProduct(client, provisionedProductId, example);
+            Client client = serviceCatalogViewService.createClient(region, user, userRole);// 创建终端
+            String provisionedProductId = provisionedProductService.launchProduct(client, inputs, example);// 启动产品并返回实例ID
+            provisionedProductService.saveProvisionedProduct(client, provisionedProductId, example);// 查询实例信息并存入数据库
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
 
     /**
-         * 拒绝任务
-         *
-         * @param: 任务ID、流程ID、审批意见
-         * 
-         * @throws Exception
-         */
+     * 拒绝任务
+     *
+     * @throws Exception
+     * @param: 任务ID、流程ID、审批意见
+     */
     @RequestMapping("/reject.do")
     public void rejectTaskById(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -204,7 +200,7 @@ public class TaskController extends BaseController{
         applyService.updateProcessState(processId, "已拒绝");
         applyService.updateTask(processId, "无等待任务");
 
-        Map<String, Object> variables=new HashMap<>();
+        Map<String, Object> variables = new HashMap<>();
         variables.put("con", 0);
         taskService.complete(taskId, variables);
 
@@ -212,12 +208,11 @@ public class TaskController extends BaseController{
     }
 
     /**
-         * 获取当前运行的所有工作流任务列表
-         *
-         * 
-         * @return 任务列表
-         * @throws Exception
-         */
+     * 获取当前运行的所有工作流任务列表
+     *
+     * @return 任务列表
+     * @throws Exception
+     */
     @RequestMapping("/getAllTaskList.do")
     public void getAllTaskList(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -247,12 +242,12 @@ public class TaskController extends BaseController{
     }
 
     /**
-         * 获取任务详情
-         *
-         * @param: 流程ID
-         * @return 流程实例信息
-         * @throws Exception
-         */
+     * 获取任务详情
+     *
+     * @return 流程实例信息
+     * @throws Exception
+     * @param: 流程ID
+     */
     @RequestMapping("/getInfo.do")
     public void getInfo(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -263,12 +258,12 @@ public class TaskController extends BaseController{
     }
 
     /**
-         * 获取任务详情
-         *
-         * @param: 流程ID
-         * @return 流程实例信息
-         * @throws Exception
-         */
+     * 获取任务详情
+     *
+     * @return 流程实例信息
+     * @throws Exception
+     * @param: 流程ID
+     */
     public Map<String, Object> getInfo(String processId) {
         Task task = taskService.createTaskQuery().processInstanceId(processId).singleResult();
         String application = null;
@@ -292,49 +287,49 @@ public class TaskController extends BaseController{
             versionId = (String) taskService.getVariable(task.getId(), "versionId");
         } else {
             List<HistoricVariableInstance> list = historyService.createHistoricVariableInstanceQuery().processInstanceId(processId).list();
-            for(HistoricVariableInstance historicVariableInstance : list) {
-                if(historicVariableInstance.getVariableName().equals("application")) {
-                    if(historicVariableInstance.getValue()!=null){
+            for (HistoricVariableInstance historicVariableInstance : list) {
+                if (historicVariableInstance.getVariableName().equals("application")) {
+                    if (historicVariableInstance.getValue() != null) {
                         application = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("scene")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("scene")) {
+                    if (historicVariableInstance.getValue() != null) {
                         scene = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("productId")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("productId")) {
+                    if (historicVariableInstance.getValue() != null) {
                         productId = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("exampleName")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("exampleName")) {
+                    if (historicVariableInstance.getValue() != null) {
                         exampleName = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("parameters")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("parameters")) {
+                    if (historicVariableInstance.getValue() != null) {
                         parameters = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("region")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("region")) {
+                    if (historicVariableInstance.getValue() != null) {
                         region = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("versionId")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("versionId")) {
+                    if (historicVariableInstance.getValue() != null) {
                         versionId = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("starterName")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("starterName")) {
+                    if (historicVariableInstance.getValue() != null) {
                         starterName = (String) historicVariableInstance.getValue();
                     }
                 }
-                if(historicVariableInstance.getVariableName().equals("roleId")) {
-                    if(historicVariableInstance.getValue()!=null){
+                if (historicVariableInstance.getVariableName().equals("roleId")) {
+                    if (historicVariableInstance.getValue() != null) {
                         roleId = (Integer) historicVariableInstance.getValue();
                     }
                 }

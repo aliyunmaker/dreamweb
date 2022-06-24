@@ -100,7 +100,6 @@ public class ProvisionedProductService {
         String provisionedProductStatus;
         String lastTaskId;
 
-
         GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail provisionedProductDetail = getProvisionedProduct(client, provisionedProductId);
         provisionedProductStatus = provisionedProductDetail.getStatus();   //实例状态
         provisionedProduct.setStatus(provisionedProductStatus);
@@ -111,7 +110,7 @@ public class ProvisionedProductService {
         Date timeData = df.parse(time);
         df.applyPattern("yyyy-MM-dd HH:mm:ss"); //默认时区
         df.setTimeZone(TimeZone.getDefault());
-        provisionedProduct.setStartTime(df.format(timeData));
+        provisionedProduct.setStartTime(df.format(timeData));// 实例创建时间
 
         lastTaskId = provisionedProductDetail.getLastTaskId();
 
@@ -123,14 +122,15 @@ public class ProvisionedProductService {
         provisionedProduct.setStartName((String) example.get("申请人"));//申请人
 
         GetTaskResponseBody.GetTaskResponseBodyTaskDetail taskDetail = getTask(client, lastTaskId);
+        provisionedProduct.setParameter(JsonUtils.toJsonString(taskDetail.getParameters()));//申请参数
         if ("Available".equals(provisionedProductStatus)) {
-            provisionedProduct.setParameter(JsonUtils.toJsonString(taskDetail.getParameters()));//申请参数
+//            provisionedProduct.setParameter(JsonUtils.toJsonString(taskDetail.getParameters()));//申请参数
             provisionedProduct.setOutputs(JsonUtils.toJsonString(taskDetail.getOutputs()));//输出
         } else {
             logger.error(taskDetail.getStatusMessage());
         }
 
-        saveExample(provisionedProduct);
+        saveExample(provisionedProduct);// 将产品实例信息存入数据库
     }
 
     /**
@@ -193,11 +193,13 @@ public class ProvisionedProductService {
         System.out.println((String) example.get("产品ID"));
 
         System.out.println((String) example.get("版本ID"));
-        request.setProductVersionId("pv-bp15e79d2614pw");
+
+        request.setPortfolioId("port-bp1yt7582gn4p7");// 产品组合ID，控制启动选项
+        request.setProductVersionId("pv-bp15e79d2614pw");// 产品版本ID
 
         request.setProvisionedProductName((String) example.get("实例名称"));
 
-        request.setStackRegionId("cn-hangzhou");
+        request.setStackRegionId("cn-shanghai");
         System.out.println((String) example.get("地域"));
 
         request.setParameters(parameters);
@@ -242,22 +244,22 @@ public class ProvisionedProductService {
          * 定时任务查询"UnderChange"状态产品实例并更新状态
          *
          *
-         *
          * @throws Exception
          */
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void updateExample() {
         try {
             List<String> exampleIds = listExampleId();
             if (exampleIds != null) {
                 for (String exampleId : exampleIds) {
+                    // 创建终端
                     String region = "cn-hangzhou";
                     String userName = getUserName(exampleId);
                     Integer roleId = getRoleId(exampleId);
                     User user = userService.getUserByLoginName(userName);
                     UserRole userRole = userRoleService.getUserRoleById(roleId);
                     Client client = serviceCatalogViewService.createClient(region, user, userRole);
-
+                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
                     updateProvisionedProduct(client, exampleId);
                 }
             }

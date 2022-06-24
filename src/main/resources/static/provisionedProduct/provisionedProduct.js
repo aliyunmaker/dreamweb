@@ -169,7 +169,7 @@ Ext.onReady(function () {
         run:function(){
             reload();//直接reload
         },
-    interval:30000 //30秒
+    interval:5000 //5秒
     }
     Ext.TaskManager.start(task);
 

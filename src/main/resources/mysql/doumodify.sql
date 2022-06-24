@@ -18,14 +18,14 @@ CREATE TABLE `product` (
 INSERT INTO `product` (`productid`, `application`, `scenes`,`productname`, `gmt_create`)
 VALUES
 ('prod-bp165aqz2kx5df','application1','日常','asdasda',now()),
-('prod-bp1n4yee2544b1','application1','预发','asdasdq',now()),
-('prod-bp1c6y7y2wj453','application1','线上','gdfgdasda',now()),
+('prod-bp1n4yee2544b1','application1','预发','DEMO-创建ECS（选择VPC）',now()),
+('prod-bp1c6y7y2wj453','application1','线上','DEMO-创建ECS（选择VPC）',now()),
 ('25','application2','日常','dfgqdasdas',now()),
 ('prod-bp1qbazd242511','application2','预发','sdffedxx',now()),
 ('6','application2','线上','dfgewasda',now()),
 ('65','application3','日常','sdfrrfe',now()),
 ('63','application3','预发','sfsdasd',now()),
-('7','application3','线上','adfsfwefq',now()),
+('prod-bp18r7q127u45k','application3','线上','adfsfwefq',now()),
 ('9','application3','scenes1','dfwefwefef',now());
 
 
@@ -38,8 +38,8 @@ CREATE TABLE `provisioned_product`(
                             `roleid` int(11) NOT NULL COMMENT '角色ID',
                             `startname` varchar(100) NOT NULL COMMENT '实例申请人',
                             `status` varchar(100) NOT NULL COMMENT '实例状态',
-                            `parameter` varchar(1000) NOT NULL COMMENT '申请参数',
-                            `outputs` varchar(1000) NOT NULL COMMENT '输出',
+                            `parameter` varchar(1000)COMMENT '申请参数',
+                            `outputs` varchar(1000) COMMENT '输出',
                             `starttime` varchar(100) COMMENT '创建时间',
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,

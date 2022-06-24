@@ -169,8 +169,9 @@ public class ServiceCatalogViewService {
      * @return 临时AK和Token
      * @throws ClientException
      */
-    private CommonResponse requestAccessKeyAndSecurityToken(String userName, String region, String roleArn, String samlProviderArn,
-                                                            String samlAssertion, String stsEndpoint)
+    private CommonResponse requestAccessKeyAndSecurityToken(String userName, String region, String roleArn,
+                                                            String samlProviderArn, String samlAssertion,
+                                                            String stsEndpoint)
         throws ClientException {
         DefaultProfile profile = DefaultProfile.getProfile(region, "", "");
 
@@ -194,8 +195,13 @@ public class ServiceCatalogViewService {
         JSONObject Statement2 = new JSONObject();
         JSONObject Statement3 = new JSONObject();
         JSONObject Statement4 = new JSONObject();
-        String[] Action1 = {"servicecatalog:ListLaunchOptions", "servicecatalog:GetProductVersion",
-        "servicecatalog:ListProductVersions", "servicecatalog:GetTemplate", "servicecatalog:LaunchProduct"};
+        String[] Action1 = {"servicecatalog:GetProductAsEndUser",
+                "servicecatalog:ListLaunchOptions",
+                "servicecatalog:GetProductVersion",
+                "servicecatalog:ListProductVersions",
+                "servicecatalog:GetTemplate",
+                "servicecatalog:LaunchProduct",
+                "servicecatalog:CreateProvisionedProductPlan"};
 
         List<String> productIds = userProductService.listProductId(userName);
         List<String> Resource = new ArrayList<>();
@@ -310,9 +316,13 @@ public class ServiceCatalogViewService {
     private String generateSignInUrl(String signInToken, String productId, String exampleName, String endpoint)
             throws UnsupportedEncodingException {
         String preUrl = String.format("https://pre-servicecatalog4service.console.aliyun.com/products"
-                        + "/launch?productId=%s&provisionedProductName=%s&hideSidebar=true&postMessage=true",
+//                        + "/launch?productId=%s&provisionedProductName=%s&productVersionId=%s&portfolioId=%s&controlMode=cmp&stackRegionId=cn-shanghai",
+                        + "/launch?productId=%s&provisionedProductName=%s&productVersionId=%s&portfolioId=%s&hideSidebar=true$postMessage=true&stackRegionId=cn-shanghai",
                 URLEncoder.encode(productId, "utf-8"),
-                URLEncoder.encode(exampleName, "utf-8"));
+                URLEncoder.encode(exampleName, "utf-8"),
+                URLEncoder.encode("pv-bp151yxr2we4jw", "utf-8"),
+                URLEncoder.encode("port-bp193yjz2qv4zu", "utf-8"));
+//                productId, exampleName, "pv-bp151yxr2we4jw", "port-bp193yjz2qv4zu");
         String signInUrl = endpoint + String.format(
                 "/federation?Action=Login"
                         + "&LoginUrl=%s"

@@ -13,4 +13,6 @@ VALUES
 ('prod-bp18r7q127u45k','admin',now()),
 ('prod-bp18r7q127u45k','dou',now()),
 ('prod-bp1c6y7y2wj453','admin',now()),
-('prod-bp1c6y7y2wj453','dou',now());
+('prod-bp1c6y7y2wj453','dou',now()),
+('prod-bp1yfyzf2dp4x7','admin',now()),
+('prod-bp1yfyzf2dp4x7','dou',now());

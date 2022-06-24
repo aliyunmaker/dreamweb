@@ -16,29 +16,29 @@
 # Dump of table user
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user`;
+drop table IF EXISTS `user`;
 
-CREATE TABLE `user` (
+create TABLE `user` (
                         `id` int(11) NOT NULL AUTO_INCREMENT,
-                        `unionid` varchar(100) DEFAULT NULL COMMENT '微信的统一id',
-                        `login_name` varchar(100) NOT NULL DEFAULT '' COMMENT '登录名',
-                        `login_method` varchar(50) DEFAULT NULL COMMENT '登录类型',
+                        `unionid` varchar(100) DEFAULT NULL comment '微信的统一id',
+                        `login_name` varchar(100) NOT NULL DEFAULT '' comment '登录名',
+                        `login_method` varchar(50) DEFAULT NULL comment '登录类型',
                         `name` varchar(200) DEFAULT '',
                         `email` varchar(200) DEFAULT NULL,
                         `password` varchar(100) DEFAULT NULL,
-                        `role` varchar(100) DEFAULT NULL COMMENT '角色',
-                        `phone` varchar(100) DEFAULT NULL COMMENT '手机号码',
+                        `role` varchar(100) DEFAULT NULL comment '角色',
+                        `phone` varchar(100) DEFAULT NULL comment '手机号码',
                         `comment` varchar(1000) DEFAULT NULL,
                         `gmt_create` datetime DEFAULT NULL,
-                        `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                        `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `login_name` (`login_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOCK TABLES `user` WRITE;
+lock TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 
-INSERT INTO `user` (`id`, `unionid`, `login_name`, `name`, `email`, `password`, `role`, `phone`, `comment`, `gmt_create`, `gmt_modified`)
+insert into `user` (`id`, `unionid`, `login_name`, `name`, `email`, `password`, `role`, `phone`, `comment`, `gmt_create`, `gmt_modified`)
 VALUES
 (1,NULL,'admin','管理员',NULL,'304213573cbe4ea1304a1d630e3e7322','ROLE_ADMIN',NULL,NULL,NULL,'2021-01-15 13:56:52'),
 (2,NULL,'test','测试',NULL,'6791018a83aecc125f4e150ac6acefa9','ROLE_GUEST','11111222','','2021-01-15 14:00:06','2021-01-15 14:00:19');
@@ -50,13 +50,13 @@ UNLOCK TABLES;
 # Dump of table user_group
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user_group`;
+drop table IF EXISTS `user_group`;
 
-CREATE TABLE `user_group` (
+create TABLE `user_group` (
                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                               `name` varchar(200) NOT NULL DEFAULT '',
                               `gmt_create` datetime DEFAULT NULL,
-                              `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                              `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -65,14 +65,14 @@ CREATE TABLE `user_group` (
 # Dump of table user_group_associate
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user_group_associate`;
+drop table IF EXISTS `user_group_associate`;
 
-CREATE TABLE `user_group_associate` (
+create TABLE `user_group_associate` (
                                         `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                                         `user_id` int(11) NOT NULL,
                                         `user_group_id` int(11) NOT NULL,
                                         `gmt_create` datetime DEFAULT NULL,
-                                        `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                                        `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                                         PRIMARY KEY (`id`),
                                         UNIQUE KEY `u_user_user_group` (`user_group_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -82,16 +82,16 @@ CREATE TABLE `user_group_associate` (
 # Dump of table user_role
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user_role`;
+drop table IF EXISTS `user_role`;
 
-CREATE TABLE `user_role` (
+create TABLE `user_role` (
                              `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                              `user_group_id` int(11) NOT NULL,
                              `role_name` varchar(100) NOT NULL,
                              `role_value` varchar(200) DEFAULT NULL,
                              `role_type` varchar(100) DEFAULT NULL,
                              `gmt_create` datetime DEFAULT NULL,
-                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                             `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -100,16 +100,16 @@ CREATE TABLE `user_role` (
 # Dump of table api_user
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `api_user`;
+drop table IF EXISTS `api_user`;
 
-CREATE TABLE `api_user` (
+create TABLE `api_user` (
                         `id` int(11) NOT NULL AUTO_INCREMENT,
                         `accessKeyId` varchar(100) NOT NULL,
                         `accessKeySecret` varchar(100) NOT NULL,
                         `comment` varchar(1000) DEFAULT NULL,
-                        `valid` tinyint(1) NOT NULL COMMENT '是否生效',
+                        `valid` tinyint(1) NOT NULL comment '是否生效',
                         `gmt_create` datetime DEFAULT NULL,
-                        `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                        `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `accessKeyId` (`accessKeyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -119,16 +119,16 @@ CREATE TABLE `api_user` (
 # Dump of table login_record
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `login_record`;
+drop table IF EXISTS `login_record`;
 
-CREATE TABLE `login_record` (
+create TABLE `login_record` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
-                            `client_ip_addr` varchar(100) NOT NULL COMMENT '客户端IP地址',
-                            `login_name` varchar(100) NOT NULL COMMENT '登录名',
-                            `login_method` varchar(100) NOT NULL COMMENT '登录方式',
+                            `client_ip_addr` varchar(100) NOT NULL comment '客户端IP地址',
+                            `login_name` varchar(100) NOT NULL comment '登录名',
+                            `login_method` varchar(100) NOT NULL comment '登录方式',
                             `comment` varchar(1000) DEFAULT NULL,
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -137,23 +137,23 @@ CREATE TABLE `login_record` (
 # Dump of table system_config
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `system_config`;
+drop table IF EXISTS `system_config`;
 
-CREATE TABLE `system_config` (
+create TABLE `system_config` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
-                            `config_name` varchar(100) NOT NULL COMMENT '配置名',
-                            `config_value` varchar(5000) DEFAULT NULL COMMENT '配置',
+                            `config_name` varchar(100) NOT NULL comment '配置名',
+                            `config_value` varchar(5000) DEFAULT NULL comment '配置',
                             `comment` varchar(1000) DEFAULT NULL,
-                            `changeable` tinyint(1) NOT NULL DEFAULT TRUE COMMENT '是否可修改',
+                            `changeable` tinyint(1) NOT NULL DEFAULT TRUE comment '是否可修改',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `config_name` (`config_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOCK TABLES `system_config` WRITE;
+lock TABLES `system_config` WRITE;
 
-INSERT INTO `system_config` (`config_name`, `config_value`, `comment`, `changeable`, `gmt_create`)
+insert into `system_config` (`config_name`, `config_value`, `comment`, `changeable`, `gmt_create`)
 VALUES
 ('allowWechatLogin','true','是否允许通过微信登录',TRUE,now()),
 ('allowLDAP','false','是否允许通过LDAP登录',TRUE,now()),
@@ -168,16 +168,16 @@ UNLOCK TABLES;
 # Dump of table sls_config
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `sls_config`;
+drop table IF EXISTS `sls_config`;
 
-CREATE TABLE `sls_config` (
+create TABLE `sls_config` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
-                            `config_name` varchar(100) NOT NULL COMMENT '配置名',
-                            `config_value` varchar(5000) DEFAULT NULL COMMENT '配置',
-                            `config_owner_id` int(11) NOT NULL COMMENT '所有者',
+                            `config_name` varchar(100) NOT NULL comment '配置名',
+                            `config_value` varchar(5000) DEFAULT NULL comment '配置',
+                            `config_owner_id` int(11) NOT NULL comment '所有者',
                             `comment` varchar(1000) DEFAULT NULL,
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `config_name` (`config_name`),
                             UNIQUE KEY `config_owner_id` (`config_owner_id`)
@@ -188,27 +188,27 @@ CREATE TABLE `sls_config` (
 # Dump of table solution_config
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `solution_config`;
+drop table IF EXISTS `solution_config`;
 
-CREATE TABLE `solution_config` (
+create TABLE `solution_config` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
-                            `name` varchar(100) NOT NULL COMMENT '解决方案名称',
-                            `intro` varchar(5000) DEFAULT NULL COMMENT '解决方案简介',
-                            `web_config` varchar(1000) NOT NULL COMMENT '解决方案网页配置',
-                            `creator` varchar(100) NOT NULL COMMENT '解决方案创建人',
-                            `module` varchar(100) NOT NULL COMMENT '解决方案所属模块',
-                            `customer_num` int(11) NOT NULL DEFAULT 0 COMMENT '客户数量',
-                            `is_mvp` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是MVP',
-                            `has_terraform` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否有Terraform脚本',
+                            `name` varchar(100) NOT NULL comment '解决方案名称',
+                            `intro` varchar(5000) DEFAULT NULL comment '解决方案简介',
+                            `web_config` varchar(1000) NOT NULL comment '解决方案网页配置',
+                            `creator` varchar(100) NOT NULL comment '解决方案创建人',
+                            `module` varchar(100) NOT NULL comment '解决方案所属模块',
+                            `customer_num` int(11) NOT NULL DEFAULT 0 comment '客户数量',
+                            `is_mvp` tinyint(1) NOT NULL DEFAULT 0 comment '是否是MVP',
+                            `has_terraform` tinyint(1) NOT NULL DEFAULT 0 comment '是否有Terraform脚本',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-LOCK TABLES `solution_config` WRITE;
+lock TABLES `solution_config` WRITE;
 
-INSERT INTO `solution_config` (`name`, `intro`, `web_config`, `creator`, `module`, `gmt_create`)
+insert into `solution_config` (`name`, `intro`, `web_config`, `creator`, `module`, `gmt_create`)
 VALUES
 ('自建IDP实现多账号SSO', 'IdP由集团管理，SLA无法满足云运维所需要的响应速度，IdP非标准化无法直接和阿里云配置。本方案通过自建IDP，一次性配置完成多账号的SSO，多账号登录态能在IDP侧统一切换，延续一致的试用体验，延续现有账号管理体系，不存在单独的个人云账号，避免离职等场景的安全隐患',
 '{"SSO自动化配置":"/ssoConfig/ssoConfig.html"}', '程超', '身份权限', now()), 
@@ -217,26 +217,26 @@ VALUES
 
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `provisioned_product`;
-DROP TABLE IF EXISTS `product`;
-DROP TABLE IF EXISTS `myAsk`;
-DROP TABLE IF EXISTS `userproduct`;
+drop table IF EXISTS `provisioned_product`;
+drop table IF EXISTS `product`;
+drop table IF EXISTS `myAsk`;
+drop table IF EXISTS `userproduct`;
 
 
-CREATE TABLE `product` (
-                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                            `productid` varchar(100) COMMENT '产品id',
-                            `application` varchar(100) NOT NULL COMMENT '应用',
-                            `scenes` varchar(100) NOT NULL COMMENT '场景',
-                            `productname` varchar(100) NOT NULL COMMENT '产品名称',
+create TABLE `product` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
+                            `productid` varchar(100) comment '产品id',
+                            `application` varchar(100) NOT NULL comment '应用',
+                            `scenes` varchar(100) NOT NULL comment '场景',
+                            `productname` varchar(100) NOT NULL comment '产品名称',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
                              UNIQUE KEY (`productid`),
                              UNIQUE KEY `application-scenes` (`application`, `scenes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `product` (`productid`, `application`, `scenes`,`productname`, `gmt_create`)
+insert into `product` (`productid`, `application`, `scenes`,`productname`, `gmt_create`)
 VALUES
 ('prod-bp165aqz2kx5df','application1','日常','asdasda',now()),
 ('prod-bp1n4yee2544b1','application1','预发','DEMO-创建ECS（选择VPC）',now()),
@@ -246,60 +246,63 @@ VALUES
 ('6','application2','线上','dfgewasda',now()),
 ('65','application3','日常','sdfrrfe',now()),
 ('63','application3','预发','sfsdasd',now()),
-('7','application3','线上','adfsfwefq',now()),
+('prod-bp18r7q127u45k','application3','线上','adfsfwefq',now()),
 ('9','application3','scenes1','dfwefwefef',now());
 
 
-CREATE TABLE `provisioned_product`(
-                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                            `examplename` varchar(100) NOT NULL COMMENT '实例名称',
-                            `productid` varchar(100) NOT NULL COMMENT '产品ID',
-                            `exampleid` varchar(100) NOT NULL COMMENT '实例ID',
-                            `roleid` int(11) NOT NULL COMMENT '角色ID',
-                            `startname` varchar(100) NOT NULL COMMENT '实例申请人',
-                            `status` varchar(100) NOT NULL COMMENT '实例状态',
-                            `parameter` varchar(1000) COMMENT '申请参数',
-                            `outputs` varchar(1000) COMMENT '输出',
-                            `starttime` varchar(100) COMMENT '创建时间',
+create TABLE `provisioned_product`(
+                            `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
+                            `examplename` varchar(100) NOT NULL comment '实例名称',
+                            `productid` varchar(100) NOT NULL comment '产品ID',
+                            `productname` varchar(100) NOT NULL comment '产品名称',
+                            `exampleid` varchar(100) NOT NULL comment '实例ID',
+                            `roleid` int(11) NOT NULL comment '角色ID',
+                            `startname` varchar(100) NOT NULL comment '实例申请人',
+                            `status` varchar(100) NOT NULL comment '实例状态',
+                            `parameter` varchar(1000) comment '申请参数',
+                            `outputs` varchar(1000) comment '输出',
+                            `starttime` varchar(100) comment '创建时间',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
                              UNIQUE KEY (`examplename`),
                              FOREIGN KEY(productid) REFERENCES product(productid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `myAsk` (
-                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                            `starterName` varchar(100) NOT NULL COMMENT '申请人',
-                            `processTime` varchar(100) NOT NULL COMMENT '申请时间',
-                            `processId` varchar(100) NOT NULL COMMENT '流程实例ID',
-                            `task` varchar(100) COMMENT '当前节点',
-                            `processState` varchar(100) NOT NULL COMMENT '流程状态',
-                            `processInfo` varchar(1000) NOT NULL COMMENT '流程信息',
-                            `cond` varchar(50) COMMENT '是否审批通过',
-                            `processDefinitionId` varchar(100) NOT NULL COMMENT '流程定义ID',
-                            `opinion` varchar(500) COMMENT '审批拒绝意见',
+create TABLE `myAsk` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
+                            `starterName` varchar(100) NOT NULL comment '申请人',
+                            `processTime` varchar(100) NOT NULL comment '申请时间',
+                            `processId` varchar(100) NOT NULL comment '流程实例ID',
+                            `task` varchar(100) comment '当前节点',
+                            `processState` varchar(100) NOT NULL comment '流程状态',
+                            `processInfo` varchar(1000) NOT NULL comment '流程信息',
+                            `cond` varchar(50) comment '是否审批通过',
+                            `processDefinitionId` varchar(100) NOT NULL comment '流程定义ID',
+                            `opinion` varchar(500) comment '审批拒绝意见',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY (`processId`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `userproduct` (
-                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                            `productid` varchar(100) NOT NULL COMMENT '产品ID',
-                            `username` varchar(100) NOT NULL COMMENT '用户名',
+create TABLE `userproduct` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
+                            `productid` varchar(100) NOT NULL comment '产品ID',
+                            `username` varchar(100) NOT NULL comment '用户名',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `userproduct` (`productid`, `username`, `gmt_create`)
+insert into `userproduct` (`productid`, `username`, `gmt_create`)
 VALUES
 ('prod-bp18r7q127u45k','admin',now()),
 ('prod-bp18r7q127u45k','dou',now()),
 ('prod-bp1c6y7y2wj453','admin',now()),
-('prod-bp1c6y7y2wj453','dou',now());
+('prod-bp1c6y7y2wj453','dou',now())
+('prod-bp1yfyzf2dp4x7','admin',now()),
+('prod-bp1yfyzf2dp4x7','dou',now());;
 
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

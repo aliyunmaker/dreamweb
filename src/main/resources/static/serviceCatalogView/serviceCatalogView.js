@@ -77,6 +77,7 @@ $(document).ready(function(){
             },
             success: function (result) {
                 var exampleName = result.data;
+                console.log(exampleName);
                 var option = "<option value='" + exampleName + "'>" + exampleName + "</option>";
                 $("#btn_getExample").append(option);
                 $.ajax({
@@ -101,6 +102,8 @@ $(document).ready(function(){
 })
 
 window.addEventListener("message", function(event) {
+    console.log(event);
+    console.log(event.data);
     $.ajax({
         url: "../../apply/processDefinitionQueryFinal.do",
         success: function (result) {
