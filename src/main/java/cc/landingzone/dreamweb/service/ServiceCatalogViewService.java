@@ -8,6 +8,8 @@ import cc.landingzone.dreamweb.sso.SSOConstants;
 import cc.landingzone.dreamweb.sso.SamlGenerator;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import cc.landingzone.dreamweb.utils.JsonUtils;
 import com.aliyun.servicecatalog20210901.Client;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyuncs.CommonRequest;
@@ -32,6 +34,7 @@ import org.springframework.util.Assert;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -315,14 +318,38 @@ public class ServiceCatalogViewService {
      */
     private String generateSignInUrl(String signInToken, String productId, String exampleName, String endpoint)
             throws UnsupportedEncodingException {
-        String preUrl = String.format("https://pre-servicecatalog4service.console.aliyun.com/products"
-//                        + "/launch?productId=%s&provisionedProductName=%s&productVersionId=%s&portfolioId=%s&controlMode=cmp&stackRegionId=cn-shanghai",
-                        + "/launch?productId=%s&provisionedProductName=%s&productVersionId=%s&portfolioId=%s&hideSidebar=true$postMessage=true&stackRegionId=cn-shanghai",
-                URLEncoder.encode(productId, "utf-8"),
-                URLEncoder.encode(exampleName, "utf-8"),
-                URLEncoder.encode("pv-bp151yxr2we4jw", "utf-8"),
-                URLEncoder.encode("port-bp193yjz2qv4zu", "utf-8"));
-//                productId, exampleName, "pv-bp151yxr2we4jw", "port-bp193yjz2qv4zu");
+
+        Map<String, String> planButtonText = new HashMap<>();
+        planButtonText.put("zh-cn", "提交申请");
+
+        Map<String, Object> style = new HashMap<>();
+        style.put("displayMode", "cmp");
+        style.put("planButtonText", planButtonText);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("zone_id", "cn-shanghai-l");
+        parameters.put("vpc_cidr_block", "172.16.1.0/12");
+        parameters.put("vswitch_cidr_block", "172.16.2.0/21");
+        parameters.put("ecs_instance_type", "ecs.s6-c1m1.small");
+
+        Map<String, Object> controlParameters = new HashMap<>();
+        controlParameters.put("style", style);
+        controlParameters.put("provisionedProductName", exampleName);
+        controlParameters.put("portfolioId", "prod-bp18r7q127u45k");
+        controlParameters.put("productVersionId", "pv-bp151yxr2we4jw");
+        //controlParameters.put("portfolioId", "port-bp1yt7582gn4p7");
+        //controlParameters.put("productVersionId", "pv-bp15e79d2614pw");
+        controlParameters.put("stackRegionId", "cn-shanghai");
+        controlParameters.put("parameters", parameters);
+        String controlString = JsonUtils.toJsonString(controlParameters);
+        String base64EncodedControlString = Base64.getUrlEncoder().encodeToString(controlString.getBytes(StandardCharsets.UTF_8));
+
+        //productId = "prod-bp18r7q127u45k";
+        String preUrl = String.format("https://servicecatalog4service.console.aliyun.com/products"
+                + "/launch?productId=%s&controlString=%s",
+            URLEncoder.encode(productId, "utf-8"),
+            URLEncoder.encode(base64EncodedControlString, "utf-8"));
+
         String signInUrl = endpoint + String.format(
                 "/federation?Action=Login"
                         + "&LoginUrl=%s"
