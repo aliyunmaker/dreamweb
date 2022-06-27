@@ -27,9 +27,20 @@ public class Apply {
 
     private String opinion;
 
+    private String productId;
+
     private String region;
 
     private String versionId;
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
 
     public String getOpinion() {
         return opinion;

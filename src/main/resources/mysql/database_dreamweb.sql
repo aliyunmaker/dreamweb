@@ -246,7 +246,7 @@ VALUES
 ('6','application2','线上','dfgewasda',now()),
 ('65','application3','日常','sdfrrfe',now()),
 ('63','application3','预发','sfsdasd',now()),
-('prod-bp18r7q127u45k','application3','线上','adfsfwefq',now()),
+('prod-bp18r7q127u45k','application3','线上','DEMO-创建ECS',now()),
 ('9','application3','scenes1','dfwefwefef',now());
 
 
@@ -269,22 +269,26 @@ create TABLE `provisioned_product`(
                              FOREIGN KEY(productid) REFERENCES product(productid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-create TABLE `myAsk` (
-                            `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
-                            `starterName` varchar(100) NOT NULL comment '申请人',
-                            `processTime` varchar(100) NOT NULL comment '申请时间',
-                            `processId` varchar(100) NOT NULL comment '流程实例ID',
-                            `task` varchar(100) comment '当前节点',
-                            `processState` varchar(100) NOT NULL comment '流程状态',
-                            `processInfo` varchar(1000) NOT NULL comment '流程信息',
-                            `cond` varchar(50) comment '是否审批通过',
-                            `processDefinitionId` varchar(100) NOT NULL comment '流程定义ID',
-                            `opinion` varchar(500) comment '审批拒绝意见',
+CREATE TABLE `myAsk` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                            `starterName` varchar(100) NOT NULL COMMENT '申请人',
+                            `processTime` varchar(100) NOT NULL COMMENT '申请时间',
+                            `processId` varchar(100) NOT NULL COMMENT '流程实例ID',
+                            `task` varchar(100) COMMENT '当前节点',
+                            `processState` varchar(100) NOT NULL COMMENT '流程状态',
+                            `parameters` varchar(1000) NOT NULL COMMENT '流程信息',
+                            `productId` varchar(100) NOT NULL COMMENT '产品ID',
+                            `region` varchar(100) COMMENT '地域',
+                            `versionid` varchar(100) COMMENT '版本ID',
+                            `cond` varchar(50) COMMENT '是否审批通过',
+                            `processDefinitionId` varchar(100) NOT NULL COMMENT '流程定义ID',
+                            `opinion` varchar(500) COMMENT '审批拒绝意见',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY (`processId`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 create TABLE `userproduct` (
                             `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',

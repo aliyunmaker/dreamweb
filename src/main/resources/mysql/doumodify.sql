@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS `provisioned_product`;
 DROP TABLE IF EXISTS `product`;
 DROP TABLE IF EXISTS `myAsk`;
+DROP TABLE IF EXISTS `userproduct`;
 
 CREATE TABLE `product` (
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -25,7 +26,7 @@ VALUES
 ('6','application2','线上','dfgewasda',now()),
 ('65','application3','日常','sdfrrfe',now()),
 ('63','application3','预发','sfsdasd',now()),
-('prod-bp18r7q127u45k','application3','线上','adfsfwefq',now()),
+('prod-bp18r7q127u45k','application3','线上','DEMO-创建ECS',now()),
 ('9','application3','scenes1','dfwefwefef',now());
 
 
@@ -56,6 +57,7 @@ CREATE TABLE `myAsk` (
                             `task` varchar(100) COMMENT '当前节点',
                             `processState` varchar(100) NOT NULL COMMENT '流程状态',
                             `parameters` varchar(1000) NOT NULL COMMENT '流程信息',
+                            `productId` varchar(100) NOT NULL COMMENT '产品ID',
                             `region` varchar(100) COMMENT '地域',
                             `versionid` varchar(100) COMMENT '版本ID',
                             `cond` varchar(50) COMMENT '是否审批通过',
@@ -67,7 +69,6 @@ CREATE TABLE `myAsk` (
                             UNIQUE KEY (`processId`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `userproduct`;
 CREATE TABLE `userproduct` (
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
                             `productid` varchar(100) NOT NULL COMMENT '产品ID',
@@ -82,4 +83,6 @@ VALUES
 ('prod-bp18r7q127u45k','admin',now()),
 ('prod-bp18r7q127u45k','dou',now()),
 ('prod-bp1c6y7y2wj453','admin',now()),
-('prod-bp1c6y7y2wj453','dou',now());
+('prod-bp1c6y7y2wj453','dou',now())
+('prod-bp1yfyzf2dp4x7','admin',now()),
+('prod-bp1yfyzf2dp4x7','dou',now());

@@ -154,6 +154,7 @@ public class ProcessController extends BaseController{
         apply.setProcessId(processInstance.getProcessInstanceId());
         apply.setProcessState("审批中");
         apply.setParameters(info);
+        apply.setProductId(productId);
         apply.setRegion(region);
         apply.setVersionId(versionId);
         apply.setProcessDefinitionId(processDefinitionId);

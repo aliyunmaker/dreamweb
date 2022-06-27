@@ -335,16 +335,18 @@ public class ServiceCatalogViewService {
         Map<String, Object> controlParameters = new HashMap<>();
         controlParameters.put("style", style);
         controlParameters.put("provisionedProductName", exampleName);
-        controlParameters.put("portfolioId", "prod-bp18r7q127u45k");
-        controlParameters.put("productVersionId", "pv-bp151yxr2we4jw");
-        //controlParameters.put("portfolioId", "port-bp1yt7582gn4p7");
-        //controlParameters.put("productVersionId", "pv-bp15e79d2614pw");
+        // controlParameters.put("portfolioId", "port-bp193yjz2qv4zu");
+        // controlParameters.put("productVersionId", "pv-bp151yxr2we4jw");
+        controlParameters.put("portfolioId", "port-bp1yt7582gn4p7");
+        controlParameters.put("productVersionId", "pv-bp15e79d2614pw");
         controlParameters.put("stackRegionId", "cn-shanghai");
         controlParameters.put("parameters", parameters);
         String controlString = JsonUtils.toJsonString(controlParameters);
         String base64EncodedControlString = Base64.getUrlEncoder().encodeToString(controlString.getBytes(StandardCharsets.UTF_8));
 
-        //productId = "prod-bp18r7q127u45k";
+        System.out.println(productId);
+        System.out.println(exampleName);
+        productId = "prod-bp18r7q127u45k";
         String preUrl = String.format("https://servicecatalog4service.console.aliyun.com/products"
                 + "/launch?productId=%s&controlString=%s",
             URLEncoder.encode(productId, "utf-8"),

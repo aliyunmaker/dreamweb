@@ -17,11 +17,8 @@ $(document).ready(function(){
 
     $("#select_application").change(function () {
         $("#select_scenes").empty();
-        $("#select_scenes").append("<option value='选择场景'>选择场景</option>");
-        $("#btn_getProductId").empty();
-        $("#btn_getProductId").append("<option value='查询产品id'>无</option>");
-        $("#btn_getExample").empty();
-        $("#btn_getExample").append("<option value='请选择以上参数'>请选择以上参数</option>");
+        $("#select_scenes").append("<option value='选择环境'>选择环境</option>");
+        $("#btn_getProductId").val("无");
         var select_Application = $(this).val();
         $.ajax({
             url: "../../serviceCatalogView/getScenes.do",
@@ -42,9 +39,6 @@ $(document).ready(function(){
     })
 
     $("#select_scenes").change(function () {
-        $("#btn_getProductId").empty();
-        $("#btn_getExample").empty();
-        $("#btn_getExample").append("<option value='创建实例名称'>生成实例名称并进入下一步</option>");
         var select_Application = $("#select_application").val();
         var select_Scene = $("#select_scenes").val();
         $.ajax({
@@ -56,30 +50,24 @@ $(document).ready(function(){
             success: function (result) {
                 if(isTrue(result.success)) {
                     var productId = result.data;
-                    var option = "<option value='" + productId + "'>" + productId + "</option>";
-                    $("#btn_getProductId").append(option);
+                    $("#btn_getProductId").val(productId);
                } else {
-                   var option = "<option value='未找到对应product！'> 您没有此产品使用权限！</option>";
-                   $("#btn_getProductId").append(option);
+                   $("#btn_getProductId").val("您没有此产品使用权限！");
                }
             }
         })
     })
 
     $("#btn_getExample").click(function () {
-        var productId = $("#btn_getProductId").text();
+        var productId = $("#btn_getProductId").val();
         var roleId = 1;
-        $("#btn_getExample").empty();
         $.ajax({
             url: "../../serviceCatalogView/getExampleName.do",
             data: {
                 productId
             },
             success: function (result) {
-                var exampleName = result.data;
-                console.log(exampleName);
-                var option = "<option value='" + exampleName + "'>" + exampleName + "</option>";
-                $("#btn_getExample").append(option);
+                exampleName = result.data;
                 $.ajax({
                     url: "../../serviceCatalogView/getNonLoginPreUrl.do",
                     data: {
@@ -90,7 +78,7 @@ $(document).ready(function(){
                     success: function (result) {
                         if(isTrue(result.success)) {
                             var nonLoginPreUrl = result.data;
-                            var iframe = '<iframe class="embed-responsive-item" id="iframe_showPreConsole" src="' + nonLoginPreUrl + '"></iframe>';
+                            var iframe = '<iframe style="height:100%;" class="embed-responsive-item" id="iframe_showPreConsole" src="' + nonLoginPreUrl + '"></iframe>';
                             $("#serviceCatalogViewConsoleDiv").html(iframe);
                         }
                     }
@@ -102,8 +90,6 @@ $(document).ready(function(){
 })
 
 window.addEventListener("message", function(event) {
-    console.log(event);
-    console.log(event.data);
     $.ajax({
         url: "../../apply/processDefinitionQueryFinal.do",
         success: function (result) {
@@ -111,8 +97,7 @@ window.addEventListener("message", function(event) {
                 var definitionId = result.data;
                 var select_Application = $("#select_application").val();
                 var select_Scene = $("#select_scenes").val();
-                var productId = $("#btn_getProductId").text();
-                var exampleName = $("#btn_getExample").text();
+                var productId = $("#btn_getProductId").val();
                 var parameter = event.data;
                 var roleId = 1;
                 $.ajax({
@@ -137,6 +122,7 @@ window.addEventListener("message", function(event) {
     })
 }, false)
 
+var exampleName;
 function isTrue(isSuccess) {
     return (isSuccess === "true" || isSuccess === true);
 }

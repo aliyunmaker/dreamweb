@@ -7,6 +7,7 @@ CREATE TABLE `myAsk` (
                             `task` varchar(100) COMMENT '当前节点',
                             `processState` varchar(100) NOT NULL COMMENT '流程状态',
                             `parameters` varchar(1000) NOT NULL COMMENT '流程信息',
+                            `productId` varchar(100) NOT NULL COMMENT '产品ID',
                             `region` varchar(100) COMMENT '地域',
                             `versionid` varchar(100) COMMENT '版本ID',
                             `cond` varchar(50) COMMENT '是否审批通过',

@@ -189,8 +189,10 @@ public class ProvisionedProductService {
 
         LaunchProductRequest request = new LaunchProductRequest();
 
-        request.setProductId("prod-bp18r7q127u45k");
-        System.out.println((String) example.get("产品ID"));
+         request.setProductId("prod-bp18r7q127u45k");
+        // System.out.println((String) example.get("产品ID"));
+//        request.setProductId((String) example.get("产品ID"));
+        
 
         System.out.println((String) example.get("版本ID"));
 
