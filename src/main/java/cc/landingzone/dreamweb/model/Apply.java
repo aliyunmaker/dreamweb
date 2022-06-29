@@ -33,6 +33,56 @@ public class Apply {
 
     private String versionId;
 
+    private String planId;
+
+    private String exampleName;
+
+    private Integer roleId;
+
+    private String application;
+
+    private String scene;
+
+    public String getApplication() {
+        return application;
+    }
+
+    public void setApplication(String application) {
+        this.application = application;
+    }
+
+    public String getScene() {
+        return scene;
+    }
+
+    public void setScene(String scene) {
+        this.scene = scene;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getExampleName() {
+        return exampleName;
+    }
+
+    public void setExampleName(String exampleName) {
+        this.exampleName = exampleName;
+    }
+
+    public String getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(String planId) {
+        this.planId = planId;
+    }
+
     public String getProductId() {
         return productId;
     }

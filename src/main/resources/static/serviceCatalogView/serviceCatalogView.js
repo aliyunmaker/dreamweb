@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    var url = location.search;
+    console.log(url);
     $.ajax({
         url: "../../serviceCatalogView/getApplications.do",
         success: function (result) {
@@ -67,7 +69,7 @@ $(document).ready(function(){
                 productId
             },
             success: function (result) {
-                exampleName = result.data;
+                var exampleName = result.data;
                 $.ajax({
                     url: "../../serviceCatalogView/getNonLoginPreUrl.do",
                     data: {
@@ -98,22 +100,21 @@ window.addEventListener("message", function(event) {
                 var select_Application = $("#select_application").val();
                 var select_Scene = $("#select_scenes").val();
                 var productId = $("#btn_getProductId").val();
-                var parameter = event.data;
+                var PlanId = event.data;
                 var roleId = 1;
                 $.ajax({
-                    url: "../../apply/startProcessByDefinitionId.do",
+                    url: "../../apply/startPlan.do",
                     data: {
                         definitionId,
                         select_Application,
                         select_Scene,
                         productId,
-                        exampleName,
                         roleId,
-                        parameter
+                        PlanId
                     },
                     success: function (result) {
-                        var processInstanceId = result.data;
-                        alert('申请完成，请等待审批，审批ID为：' + processInstanceId + '!');
+                        var planId = result.data;
+                        alert('申请完成，请等待预检，预检ID为：' + planId);
                         window.location.href = "http://localhost:8080/ask/myAsk.html";
                     }
                 })
@@ -122,7 +123,6 @@ window.addEventListener("message", function(event) {
     })
 }, false)
 
-var exampleName;
 function isTrue(isSuccess) {
     return (isSuccess === "true" || isSuccess === true);
 }

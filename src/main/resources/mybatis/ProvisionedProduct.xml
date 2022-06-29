@@ -9,6 +9,10 @@
         select id from provisioned_product where examplename = #{exampleName};
     </select>
 
+    <select id="getProductIdByExampleId" resultType="String">
+        select productid from provisioned_product where exampleid = #{exampleId};
+    </select>
+
     <select id="listExample" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
         select *from provisioned_product
     </select>

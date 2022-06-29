@@ -1,6 +1,5 @@
 package cc.landingzone.dreamweb.demo;
 
-import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
@@ -17,7 +16,6 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.util.*;

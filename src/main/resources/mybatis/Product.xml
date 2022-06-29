@@ -55,11 +55,15 @@
         scenes,
         productid,
         productname,
+        productversionid,
+        portfolioid,
         gmt_create)
         values (#{application},
                 #{scenes},
                 #{productId},
                 #{productName},
+                #{productVersionId},
+                #{portfolioId},
                 now())
     </insert>
 
@@ -68,7 +72,9 @@
         set application              = #{application},
             scenes                   = #{scenes},
             productid                = #{productId},
-            productname              = #{productName}
+            productname              = #{productName},
+            productversionid         = #{productVersionId},
+            portfolioId              = #{portfolioId}
         where id = #{id}
     </update>
 

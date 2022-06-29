@@ -23,12 +23,16 @@ Ext.onReady(function () {
             header: "申请时间",
             width: 150
         }, {
+            dataIndex: 'planId',
+            header: "启动计划ID",
+            width: 150
+        }, {
             text: '申请内容',
             xtype: 'gridcolumn',
             width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.raw.processId;
+                var id = record.raw.planId;
                 metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
                 Ext.defer(function () {
                     Ext.widget('button', {
@@ -38,7 +42,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    processId: id,
+                                    planId: id,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -50,9 +54,9 @@ Ext.onReady(function () {
                                             value: data.data['应用']
                                         }, {
                                             xtype : 'displayfield',
-                                            fieldLabel: '场景',
+                                            fieldLabel: '环境',
                                             name: 'home_score',
-                                            value: data.data['场景']
+                                            value: data.data['环境']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '地域',

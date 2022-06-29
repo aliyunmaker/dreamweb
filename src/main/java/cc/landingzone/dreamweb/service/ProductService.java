@@ -1,11 +1,8 @@
 package cc.landingzone.dreamweb.service;
 
-import cc.landingzone.dreamweb.controller.UserController;
 import cc.landingzone.dreamweb.dao.ProductDao;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.Product;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +22,8 @@ import java.util.Map;
 @Component
 public class ProductService {
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
-
     @Autowired
     private ProductDao productDao;
-
-    @Autowired
-    private ServiceCatalogViewService serviceCatalogViewService;
 
     @Transactional
     public List<String> listApplication () {

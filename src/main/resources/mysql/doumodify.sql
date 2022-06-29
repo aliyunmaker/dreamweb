@@ -3,31 +3,33 @@ DROP TABLE IF EXISTS `product`;
 DROP TABLE IF EXISTS `myAsk`;
 DROP TABLE IF EXISTS `userproduct`;
 
-CREATE TABLE `product` (
-                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                            `productid` varchar(100) COMMENT '产品id',
-                            `application` varchar(100) NOT NULL COMMENT '应用',
-                            `scenes` varchar(100) NOT NULL COMMENT '场景',
-                            `productname` varchar(100) NOT NULL COMMENT '产品名称',
+create TABLE `product` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
+                            `productid` varchar(100) comment '产品id',
+                            `application` varchar(100) NOT NULL comment '应用',
+                            `scenes` varchar(100) NOT NULL comment '场景',
+                            `productname` varchar(100) NOT NULL comment '产品名称',
+                            `productversionid` varchar(100) NOT NULL comment '产品版本ID',
+                            `portfolioid` varchar(100) NOT NULL comment '产品组合ID',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
-                             UNIQUE KEY (`productid`),
-                             UNIQUE KEY `application-scenes` (`application`, `scenes`)
+                             UNIQUE KEY (`productversionid`),
+                             UNIQUE KEY `productversionid-portfolioid` (`productversionid`, `portfolioid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `product` (`productid`, `application`, `scenes`,`productname`, `gmt_create`)
+insert into `product` (`productid`, `application`, `scenes`,`productname`, `productversionid`, `portfolioid`, `gmt_create`)
 VALUES
-('prod-bp165aqz2kx5df','application1','日常','asdasda',now()),
-('prod-bp1n4yee2544b1','application1','预发','DEMO-创建ECS（选择VPC）',now()),
-('prod-bp1c6y7y2wj453','application1','线上','DEMO-创建ECS（选择VPC）',now()),
-('25','application2','日常','dfgqdasdas',now()),
-('prod-bp1qbazd242511','application2','预发','sdffedxx',now()),
-('6','application2','线上','dfgewasda',now()),
-('65','application3','日常','sdfrrfe',now()),
-('63','application3','预发','sfsdasd',now()),
-('prod-bp18r7q127u45k','application3','线上','DEMO-创建ECS',now()),
-('9','application3','scenes1','dfwefwefef',now());
+('prod-bp1c6y7y2wj453','application1','日常','asdasda', 'pv-bp15gfhv2px6th', 'port-bp1u5d8h21c62y', now()),
+('prod-bp1c6y7y2wj453','application1','预发','DEMO-创建ECS（选择VPC）','pv-bp11vd4m26h6uh','port-bp193yjz2qv4zu',now()),
+('prod-bp1c6y7y2wj453','application1','线上','DEMO-创建ECS（选择VPC）','pv-bp151yxr2we4jw','port-bp193yjz2qv4zu',now()),
+('25','application2','日常','dfgqdasdas','asdad','assdsa',now()),
+('prod-bp1qbazd242511','application2','预发','sdffedxx','asdasdasassd','asdasdas',now()),
+('6','application2','线上','dfgewasda','asdasdasdas','sadasd',now()),
+('63','application3','预发','sfsdasd','asdasdasd','asdsadas',now()),
+('prod-bp18r7q127u45k','application3','线上','DEMO-创建ECS','pv-bp15e79d2614pw','port-bp1yt7582gn4p7',now()),
+('prod-bp18r7q127u45k','application3','日常','DEMO-创建ECS','pv-bp1bjeut29963a','port-bp1yt7582gn4p7',now()),
+('9','application3','scenes1','dfwefwefef','asdasdas','asdsada',now());
 
 
 CREATE TABLE `provisioned_product`(
@@ -45,19 +47,23 @@ CREATE TABLE `provisioned_product`(
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
-                             UNIQUE KEY (`examplename`),
-                             FOREIGN KEY(productid) REFERENCES product(productid)
+                             UNIQUE KEY (`examplename`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `myAsk` (
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
                             `starterName` varchar(100) NOT NULL COMMENT '申请人',
+                            `roleId` int(11) NOT NULL COMMENT '角色ID',
+                            `application` varchar(100) NOT NULL COMMENT '应用',
+                            `scene` varchar(100) NOT NULL COMMENT '环境',
                             `processTime` varchar(100) NOT NULL COMMENT '申请时间',
-                            `processId` varchar(100) NOT NULL COMMENT '流程实例ID',
+                            `processId` varchar(100) COMMENT '流程实例ID',
+                            `exampleName` varchar(100) COMMENT '实例名称',
                             `task` varchar(100) COMMENT '当前节点',
                             `processState` varchar(100) NOT NULL COMMENT '流程状态',
                             `parameters` varchar(1000) NOT NULL COMMENT '流程信息',
                             `productId` varchar(100) NOT NULL COMMENT '产品ID',
+                            `planId` varchar(100) NOT NULL COMMENT '启动计划ID',
                             `region` varchar(100) COMMENT '地域',
                             `versionid` varchar(100) COMMENT '版本ID',
                             `cond` varchar(50) COMMENT '是否审批通过',
@@ -73,16 +79,18 @@ CREATE TABLE `userproduct` (
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
                             `productid` varchar(100) NOT NULL COMMENT '产品ID',
                             `username` varchar(100) NOT NULL COMMENT '用户名',
+                            `productname` varchar(100) NOT NULL COMMENT '产品名称',
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-                            PRIMARY KEY (`id`)
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `user-product` (`username`, `productid`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `userproduct` (`productid`, `username`, `gmt_create`)
+INSERT INTO `userproduct` (`productid`, `productname`, `username`, `gmt_create`)
 VALUES
-('prod-bp18r7q127u45k','admin',now()),
-('prod-bp18r7q127u45k','dou',now()),
-('prod-bp1c6y7y2wj453','admin',now()),
-('prod-bp1c6y7y2wj453','dou',now())
-('prod-bp1yfyzf2dp4x7','admin',now()),
-('prod-bp1yfyzf2dp4x7','dou',now());
+('prod-bp18r7q127u45k','DEMO-创建VPC+ECS','admin',now()),
+('prod-bp18r7q127u45k','DEMO-创建VPC+ECS','dou',now()),
+('prod-bp1c6y7y2wj453','创建ECS','admin',now()),
+('prod-bp1c6y7y2wj453','创建ECS','dou',now()),
+('prod-bp1yfyzf2dp4x7','创建RAM角色','admin',now()),
+('prod-bp1yfyzf2dp4x7','创建RAM角色','dou',now());

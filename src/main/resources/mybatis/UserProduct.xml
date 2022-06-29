@@ -10,4 +10,9 @@
         select productid from userproduct where username = #{userName};
     </select>
 
+    <select id="listProduct"
+            resultType="cc.landingzone.dreamweb.model.Product">
+         select * from userproduct where username = #{userName};
+    </select>
+
 </mapper>

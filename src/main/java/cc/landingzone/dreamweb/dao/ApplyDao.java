@@ -19,11 +19,21 @@ public interface ApplyDao {
 
     List<Apply> listApply(String starterName);
 
-    void updateTask(String processId, String task);
+    void updateTaskByProcessId(String processId, String task);
 
     void updateProcessState(String processId, String processState);
 
     void updateCond(String processId, String cond);
 
     void updateOpinion(String processId, String opinion);
+
+    List<Apply> listApplyPreviewInProgress();
+
+    void updateStatusByPlanId(String planId, String status);
+
+    void updateProcessIdByPlanId(String planId, String processId);
+
+    void updateTaskByPlanId(String planId, String task);
+
+    Apply getApplyByPlanId(String planId);
 }

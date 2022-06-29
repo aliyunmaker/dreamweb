@@ -8,7 +8,7 @@ Ext.onReady(function () {
         dataUrl: '../apply/getMyAsk.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['starterName', 'processTime', 'processId', 'task', 'processState', 'cond', 'opinion']
+        fields: ['starterName', 'processTime', 'processId', 'task', 'processState', 'cond', 'opinion', 'planId']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -26,7 +26,11 @@ Ext.onReady(function () {
         }, {
             dataIndex: 'processId',
             header: "流程实例ID",
-            width: 100
+            width: 150
+        }, {
+            dataIndex: 'planId',
+            header: "启动计划ID",
+            width: 150
         }, {
             dataIndex: 'processState',
             header: "流程状态",
@@ -42,6 +46,12 @@ Ext.onReady(function () {
                 else if(v == '审批中') {
                     return "<span style='color:black;'>审批中</span>";
                 }
+                else if(v == '预检中') {
+                    return "<span style='color:blue;'>预检中</span>";
+                }
+                else if(v == '预检失败') {
+                    return "<span style='color:red;'>预检失败</span>";
+                }
             }
         }, {
             dataIndex: 'cond',
@@ -55,7 +65,7 @@ Ext.onReady(function () {
             width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.raw.processId;
+                var id = record.raw.planId;
                 metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
                 Ext.defer(function () {
                     Ext.widget('button', {
@@ -65,7 +75,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    processId: id,
+                                    planId: id,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -77,9 +87,9 @@ Ext.onReady(function () {
                                             value: data.data['应用']
                                         }, {
                                             xtype : 'displayfield',
-                                            fieldLabel: '场景',
+                                            fieldLabel: '环境',
                                             name: 'home_score',
-                                            value: data.data['场景']
+                                            value: data.data['环境']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '地域',
@@ -144,6 +154,14 @@ Ext.onReady(function () {
         layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小
         items: [userGrid]
     });
-    reload();
+
+    //定时刷新store
+    var task={
+        run:function(){
+            reload();//直接reload
+        },
+        interval:3000 //3秒
+    }
+    Ext.TaskManager.start(task);
 
 })

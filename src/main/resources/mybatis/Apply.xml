@@ -11,16 +11,47 @@
         where starterName = #{starterName}
     </select>
 
+    <select id="listApplyPreviewInProgress"
+            resultType="cc.landingzone.dreamweb.model.Apply">
+        select *
+        from myAsk
+        where processState = "预检中"
+    </select>
+
+    <select id="getApplyByPlanId" resultType="cc.landingzone.dreamweb.model.Apply">
+        select *
+        from myAsk
+        where planId = #{planId}
+    </select>
+
     <update id="updateProcessState">
         update myAsk
         set processState = #{processState}
         where processId = #{processId}
     </update>
 
-    <update id="updateTask">
+    <update id="updateTaskByProcessId">
         update myAsk
         set task = #{task}
         where processId = #{processId}
+    </update>
+
+    <update id="updateTaskByPlanId">
+        update myAsk
+        set task = #{task}
+        where planId = #{planId}
+    </update>
+
+    <update id="updateStatusByPlanId">
+        update myAsk
+        set processState = #{status}
+        where planId = #{planId}
+    </update>
+
+    <update id="updateProcessIdByPlanId">
+        update myAsk
+        set processId = #{processId}
+        where planId = #{planId}
     </update>
 
     <update id="updateCond">
@@ -35,32 +66,46 @@
         where processId = #{processId}
     </update>
 
+    <update id="updateStatus">
+        update myAsk
+        set processState = #{status}
+        where planId = #{planId}
+    </update>
+
     <insert id="saveApply"
             parameterType="cc.landingzone.dreamweb.model.Apply">
         insert into myAsk
         (starterName,
+        roleId,
+        application,
+        scene,
         processTime,
         processId,
+        exampleName,
         processState,
         parameters,
         productId,
+        planId,
         region,
         versionid,
         cond,
         processDefinitionId,
-        task,
         gmt_create)
         values (#{starterName},
+        #{roleId},
+        #{application},
+        #{scene},
         #{processTime},
         #{processId},
+        #{exampleName},
         #{processState},
         #{parameters},
         #{productId},
+        #{planId},
         #{region},
         #{versionId},
         #{cond},
         #{processDefinitionId},
-        #{task},
         now())
     </insert>
 </mapper>

@@ -9,11 +9,13 @@ import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.service.ProductService;
+import cc.landingzone.dreamweb.service.UserProductService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 
 /**
@@ -29,6 +31,9 @@ public class ProductController extends BaseController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private UserProductService userProductService;
 
     /**
          * 获取所有产品列表
@@ -46,6 +51,21 @@ public class ProductController extends BaseController {
             Page page = new Page(start, limit);
             List<Product> list = productService.listProduct(page);
             result.setTotal(page.getTotal());
+            result.setData(list);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/searchUserProduct.do")
+    public void searchUserProduct(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            List<Product> list = userProductService.listProduct(userName);
             result.setData(list);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -95,6 +115,8 @@ public class ProductController extends BaseController {
             dbProduct.setApplication(updateProduct.getApplication());
             dbProduct.setScenes(updateProduct.getScenes());
             dbProduct.setProductName(updateProduct.getProductName());
+            dbProduct.setProductVersionId(updateProduct.getProductVersionId());
+            dbProduct.setPortfolioId(updateProduct.getPortfolioId());
             productService.updateProduct(dbProduct);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

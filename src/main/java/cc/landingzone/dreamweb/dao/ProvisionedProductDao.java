@@ -30,6 +30,8 @@ public interface ProvisionedProductDao {
 
     Integer getRoleId(String exampleId);
 
+    String getProductIdByExampleId(String exampleId);
+
     void updateStatus(String status, String exampleId);
 
     void updateParameter(String parameter, String exampleId);

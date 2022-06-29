@@ -1,13 +1,16 @@
 package cc.landingzone.dreamweb.controller;
 
 import cc.landingzone.dreamweb.model.Apply;
-import cc.landingzone.dreamweb.service.ApplyService;
-import cc.landingzone.dreamweb.service.ProductService;
+import cc.landingzone.dreamweb.model.User;
+import cc.landingzone.dreamweb.model.UserRole;
+import cc.landingzone.dreamweb.service.*;
+import com.aliyun.servicecatalog20210901.Client;
+import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanRequest;
+import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanResponse;
+import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanResponseBody;
 import org.activiti.engine.*;
 import cc.landingzone.dreamweb.model.WebResult;
-import cc.landingzone.dreamweb.utils.DateUtil;
 import org.activiti.engine.repository.*;
-import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,46 +23,39 @@ import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
- *
  * 工作流相关控制操作
+ *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Controller
 @RequestMapping("/apply")
-public class ProcessController extends BaseController{
+public class ProcessController extends BaseController {
 
     @Autowired
     private ApplyService applyService;
 
     @Autowired
-    private TaskService taskService;
-
-    @Autowired
-    private IdentityService identityService;
-
-    @Autowired
     private RepositoryService repositoryService;
 
     @Autowired
-    private RuntimeService runtimeService;
+    private UserService userService;
 
     @Autowired
-    private ProductService productService;
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private ServiceCatalogViewService serviceCatalogViewService;
 
     /**
-         * 流程部署
-         *
-         *
-         *
-         * @throws Exception
-         */
+     * 流程部署
+     *
+     * @throws Exception
+     */
     public void processDeployment() {
         // 创建流程部署工具
         DeploymentBuilder deploymentBuilder = repositoryService.createDeployment();
@@ -77,17 +73,14 @@ public class ProcessController extends BaseController{
          * 部署后会返回一个部署对象
          */
         Deployment deployment = deploymentBuilder.name(processName).addClasspathResource(bpmnResourcePath).deploy();
-
-
     }
 
     /**
-    * 查询部署的流程最新版本
-    *
-    * 
-    * @param: 流程定义ID
-    * @throws Exception
-    */
+     * 查询部署的流程最新版本
+     *
+     * @throws Exception
+     * @param: 流程定义ID
+     */
     @GetMapping("/processDefinitionQueryFinal.do")
     public void processDefinitionQueryFinal(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -97,7 +90,7 @@ public class ProcessController extends BaseController{
         // 这里没有设置查询条件，就是查询目前所有的流程，每个流程的最新版本
         List<ProcessDefinition> processDefinitions = processDefinitionQuery.latestVersion().list();
 
-        if(processDefinitions.isEmpty()) {
+        if (processDefinitions.isEmpty()) {
             processDeployment();
             processDefinitions = processDefinitionQuery.latestVersion().list();
         }
@@ -110,71 +103,80 @@ public class ProcessController extends BaseController{
     }
 
     /**
-         * 启动流程
-         *
-         * @param: 流程定义ID
-         * @return 流程实例ID
-         * @throws Exception
-         */
-    @GetMapping("/startProcessByDefinitionId.do")
-    public void startProcessByDefinitionId(HttpServletRequest request, HttpServletResponse response) {
+     * 申请信息存工作流表，开启预检
+     *
+     * @return 流程实例ID
+     * @throws Exception
+     * @param: 流程定义ID
+     */
+    @GetMapping("/startPlan.do")
+    public void startPlan(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String processDefinitionId = request.getParameter("definitionId");
-        String application = request.getParameter("select_Application");
-        String scene = request.getParameter("select_Scene");
-        String productId = request.getParameter("productId");
-        String exampleName = request.getParameter("exampleName");
-        Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-        String parameter = request.getParameter("parameter");
-        JSONObject parameters = JSON.parseObject(parameter);
-        String region = parameters.getString("stackRegionId");
-        String versionId = parameters.getString("prodocutVersionId");
-        parameters.remove("stackRegionId");
-        parameters.remove("productVersionId");
+        try {
+            String processDefinitionId = request.getParameter("definitionId");
+            String application = request.getParameter("select_Application");
+            String scene = request.getParameter("select_Scene");
+            String productId = request.getParameter("productId");
+            Integer roleId = Integer.valueOf(request.getParameter("roleId"));
 
-        // 启动流程
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        identityService.setAuthenticatedUserId(userName);
-        String info=parameters.getString("parameters");//用户选择的参数列表
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("parameters", info);//userKey在上文的流程变量中指定了
-        variables.put("starterName", userName);
-        variables.put("application", application);
-        variables.put("scene", scene);
-        variables.put("productId", productId);
-        variables.put("exampleName", exampleName);
-        variables.put("roleId", roleId);
-        variables.put("region", region);
-        variables.put("versionId", versionId);
-        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinitionId, variables);
-        String task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult().getName();
-        Apply apply = new Apply();
-        apply.setStarterName(userName);
-        apply.setProcessTime(DateUtil.dateTime2String(processInstance.getStartTime()));
-        apply.setProcessId(processInstance.getProcessInstanceId());
-        apply.setProcessState("审批中");
-        apply.setParameters(info);
-        apply.setProductId(productId);
-        apply.setRegion(region);
-        apply.setVersionId(versionId);
-        apply.setProcessDefinitionId(processDefinitionId);
-        apply.setCond("未拒绝");
-        apply.setTask("等待" + task);
-        applyService.saveApply(apply);
+            String PlanId = request.getParameter("PlanId");
+            JSONObject planIdJson = JSON.parseObject(PlanId);
+            String planId = planIdJson.getString("PlanId");
+            GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
+            request1.setPlanId(planId);
+            String region = "cn-hangzhou";
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            User user = userService.getUserByLoginName(userName);
+            UserRole userRole = userRoleService.getUserRoleById(roleId);
+            Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
+            GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
+            JSONObject parameter = new JSONObject();
+            for (GetProvisionedProductPlanResponseBody.GetProvisionedProductPlanResponseBodyPlanDetailParameters para :
+                    response1.getBody().getPlanDetail().parameters) {
+                parameter.put(para.getParameterKey(), para.getParameterValue());
+            }
 
-        result.setData(processInstance.getProcessInstanceId());
-        outputToJSON(response, result);
+            Apply apply = new Apply();
+            apply.setStarterName(userName);
+            apply.setRoleId(roleId);
+            apply.setApplication(application);
+            apply.setScene(scene);
+
+            String time = response1.getBody().getPlanDetail().createTime;
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); //设置时区UTC
+            df.setTimeZone(TimeZone.getTimeZone("UTC")); //格式化，转当地时区时间
+            Date timeData = df.parse(time);
+            df.applyPattern("yyyy-MM-dd HH:mm:ss"); //默认时区
+            df.setTimeZone(TimeZone.getDefault());
+            apply.setProcessTime(df.format(timeData));
+
+            apply.setProcessState("预检中");
+            apply.setParameters(JSON.toJSONString(parameter));
+            apply.setProductId(productId);
+            apply.setRegion(response1.getBody().getPlanDetail().stackRegionId);
+            apply.setVersionId(response1.getBody().getPlanDetail().productVersionId);
+            apply.setProcessDefinitionId(processDefinitionId);
+            apply.setCond("未拒绝");
+            apply.setExampleName(response1.getBody().getPlanDetail().provisionedProductName);
+            apply.setPlanId(planId);
+            applyService.saveApply(apply);
+
+            result.setData(planId);
+            outputToJSON(response, result);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
     }
 
-         /**
-         * 获取我的工作流申请列表
-         *
-         * @param: 当前登录用户名
-         * @return 工作流列表
-         * @throws Exception
-         */
+    /**
+     * 获取我的工作流申请列表
+     *
+     * @return 工作流列表
+     * @throws Exception
+     * @param: 当前登录用户名
+     */
     @GetMapping("/getMyAsk.do")
-    public void getMyAsk (HttpServletRequest request, HttpServletResponse response) {
+    public void getMyAsk(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Apply> list = applyService.listApply(userName);

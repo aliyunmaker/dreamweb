@@ -22,6 +22,16 @@ public class Assignment {
 
     private String assignee;
 
+    private String planId;
+
+    public String getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(String planId) {
+        this.planId = planId;
+    }
+
     public String getStarterName() {
         return starterName;
     }

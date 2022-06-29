@@ -53,9 +53,6 @@ public class ServiceCatalogViewService {
     @Autowired
     private UserRoleService userRoleService;
 
-    @Autowired
-    private UserProductService userProductService;
-
     /**
      * 使用特定角色获取免登录链接
      *
@@ -82,7 +79,7 @@ public class ServiceCatalogViewService {
 
         // 访问令牌服务获取AK、SK和SecurityToken
         CommonResponse commonResponse = requestAccessKeyAndSecurityToken(user.getLoginName(), region, roleArn, samlProviderArn,
-            samlAssertion, stsEndpoint);
+            samlAssertion, stsEndpoint, productId);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
         // 通过临时AK、SK以及SecurityToken获取SignInToken
@@ -102,7 +99,7 @@ public class ServiceCatalogViewService {
      * @return 终端
      * @throws Exception
      */
-    public Client createClient(String region, User user, UserRole userRole) throws Exception {
+    public Client createClient(String region, User user, UserRole userRole, String productId) throws Exception {
         String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
@@ -113,7 +110,7 @@ public class ServiceCatalogViewService {
 
         // 访问令牌服务获取临时AK和Token
         CommonResponse commonResponse = requestAccessKeyAndSecurityToken(user.getLoginName(), region, roleArn, samlProviderArn,
-                samlAssertion, stsEndpoint);
+                samlAssertion, stsEndpoint, productId);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
         JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
@@ -174,7 +171,7 @@ public class ServiceCatalogViewService {
      */
     private CommonResponse requestAccessKeyAndSecurityToken(String userName, String region, String roleArn,
                                                             String samlProviderArn, String samlAssertion,
-                                                            String stsEndpoint)
+                                                            String stsEndpoint, String productId)
         throws ClientException {
         DefaultProfile profile = DefaultProfile.getProfile(region, "", "");
 
@@ -198,22 +195,20 @@ public class ServiceCatalogViewService {
         JSONObject Statement2 = new JSONObject();
         JSONObject Statement3 = new JSONObject();
         JSONObject Statement4 = new JSONObject();
-        String[] Action1 = {"servicecatalog:GetProductAsEndUser",
+        String[] Action1 = {
+                "servicecatalog:GetProductAsEndUser",
                 "servicecatalog:ListLaunchOptions",
-                "servicecatalog:GetProductVersion",
                 "servicecatalog:ListProductVersions",
                 "servicecatalog:GetTemplate",
-                "servicecatalog:LaunchProduct",
-                "servicecatalog:CreateProvisionedProductPlan"};
+                "servicecatalog:GetProvisionedProductPlan",
+                "servicecatalog:ExecuteProvisionedProductPlan",
+                "servicecatalog:CreateProvisionedProductPlan",
+                "servicecatalog:GetProvisionedProduct",
+                "servicecatalog:GetTask"};
 
-        List<String> productIds = userProductService.listProductId(userName);
         List<String> Resource = new ArrayList<>();
-        for (String productId :
-                productIds) {
-            Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:product/" + productId);
-        }
+        Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:product/" + productId);
         Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:provisionedproduct/*");
-
 
         String[] Action2 = {"ros:GetTemplate",
                 "ros:ValidateTemplate",
@@ -327,7 +322,7 @@ public class ServiceCatalogViewService {
         style.put("planButtonText", planButtonText);
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("zone_id", "cn-shanghai-l");
+        parameters.put("zone_id", "cn-hangzhou-h");
         parameters.put("vpc_cidr_block", "172.16.1.0/12");
         parameters.put("vswitch_cidr_block", "172.16.2.0/21");
         parameters.put("ecs_instance_type", "ecs.s6-c1m1.small");
@@ -339,7 +334,7 @@ public class ServiceCatalogViewService {
         // controlParameters.put("productVersionId", "pv-bp151yxr2we4jw");
         controlParameters.put("portfolioId", "port-bp1yt7582gn4p7");
         controlParameters.put("productVersionId", "pv-bp15e79d2614pw");
-        controlParameters.put("stackRegionId", "cn-shanghai");
+        controlParameters.put("stackRegionId", "cn-hangzhou");
         controlParameters.put("parameters", parameters);
         String controlString = JsonUtils.toJsonString(controlParameters);
         String base64EncodedControlString = Base64.getUrlEncoder().encodeToString(controlString.getBytes(StandardCharsets.UTF_8));

@@ -1,10 +1,7 @@
 package cc.landingzone.dreamweb.service;
 
 import cc.landingzone.dreamweb.dao.ProvisionedProductDao;
-import cc.landingzone.dreamweb.model.Page;
-import cc.landingzone.dreamweb.model.ProvisionedProduct;
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.UserRole;
+import cc.landingzone.dreamweb.model.*;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import com.aliyun.servicecatalog20210901.Client;
 import com.aliyun.servicecatalog20210901.models.*;
@@ -17,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 操作产品实例
@@ -58,6 +54,9 @@ public class ProvisionedProductService {
     }
 
     @Transactional
+    public String getProductId(String exampleId) { return provisionedProductDao.getProductIdByExampleId(exampleId); }
+
+    @Transactional
     public void saveExample (ProvisionedProduct provisionedProduct) {
         provisionedProductDao.saveExample(provisionedProduct);
     }
@@ -93,12 +92,17 @@ public class ProvisionedProductService {
          * @return
          * @throws Exception
          */
-    public void saveProvisionedProduct(Client client, String provisionedProductId, Map<String, Object> example) throws Exception {
+    public void saveProvisionedProduct(Client client, String planId, Map<String, Object> example) throws Exception {
 
         ProvisionedProduct provisionedProduct = new ProvisionedProduct();
 
         String provisionedProductStatus;
         String lastTaskId;
+
+        GetProvisionedProductPlanRequest request = new GetProvisionedProductPlanRequest();
+        request.setPlanId(planId);
+        GetProvisionedProductPlanResponse response = client.getProvisionedProductPlan(request);
+        String provisionedProductId = response.getBody().getPlanDetail().provisionedProductId;
 
         GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail provisionedProductDetail = getProvisionedProduct(client, provisionedProductId);
         provisionedProductStatus = provisionedProductDetail.getStatus();   //实例状态
@@ -168,47 +172,60 @@ public class ProvisionedProductService {
 
     }
 
-
     /**
-         * 启动产品
+         * 启动产品计划
          *
-         * @param: 终端、输入、实例map
-         * @return 产品实例ID
+         * @param:
+         * @return
          * @throws Exception
          */
-    public String launchProduct(com.aliyun.servicecatalog20210901.Client client, Map<String, String> inputs, Map<String, Object> example) throws Exception {
+    public void executePlan(com.aliyun.servicecatalog20210901.Client client, String planId) throws Exception {
+        ExecuteProvisionedProductPlanRequest request = new ExecuteProvisionedProductPlanRequest();
+        request.setPlanId(planId);
 
-        List<LaunchProductRequest.LaunchProductRequestParameters> parameters = inputs.entrySet().stream()
-                .map(entry -> {
-                    LaunchProductRequest.LaunchProductRequestParameters parameter = new LaunchProductRequest.LaunchProductRequestParameters();
-                    parameter.setParameterKey(entry.getKey());
-                    parameter.setParameterValue(entry.getValue());
-                    return parameter;
-                })
-                .collect(Collectors.toList());
-
-        LaunchProductRequest request = new LaunchProductRequest();
-
-         request.setProductId("prod-bp18r7q127u45k");
-        // System.out.println((String) example.get("产品ID"));
-//        request.setProductId((String) example.get("产品ID"));
-        
-
-        System.out.println((String) example.get("版本ID"));
-
-        request.setPortfolioId("port-bp1yt7582gn4p7");// 产品组合ID，控制启动选项
-        request.setProductVersionId("pv-bp15e79d2614pw");// 产品版本ID
-
-        request.setProvisionedProductName((String) example.get("实例名称"));
-
-        request.setStackRegionId("cn-shanghai");
-        System.out.println((String) example.get("地域"));
-
-        request.setParameters(parameters);
-
-        LaunchProductResponse response = client.launchProduct(request);
-        return response.getBody().getProvisionedProductId();
+        ExecuteProvisionedProductPlanResponse response = client.executeProvisionedProductPlan(request);
     }
+
+//    /**
+//         * 启动产品
+//         *
+//         * @param: 终端、输入、实例map
+//         * @return 产品实例ID
+//         * @throws Exception
+//         */
+//    public String launchProduct(com.aliyun.servicecatalog20210901.Client client, Map<String, String> inputs, Map<String, Object> example) throws Exception {
+//
+//        List<LaunchProductRequest.LaunchProductRequestParameters> parameters = inputs.entrySet().stream()
+//                .map(entry -> {
+//                    LaunchProductRequest.LaunchProductRequestParameters parameter = new LaunchProductRequest.LaunchProductRequestParameters();
+//                    parameter.setParameterKey(entry.getKey());
+//                    parameter.setParameterValue(entry.getValue());
+//                    return parameter;
+//                })
+//                .collect(Collectors.toList());
+//
+//        LaunchProductRequest request = new LaunchProductRequest();
+//
+//         request.setProductId("prod-bp18r7q127u45k");
+//        // System.out.println((String) example.get("产品ID"));
+////        request.setProductId((String) example.get("产品ID"));
+//
+//
+//        System.out.println((String) example.get("版本ID"));
+//
+//        request.setPortfolioId("port-bp1yt7582gn4p7");// 产品组合ID，控制启动选项
+//        request.setProductVersionId("pv-bp15e79d2614pw");// 产品版本ID
+//
+//        request.setProvisionedProductName((String) example.get("实例名称"));
+//
+//        request.setStackRegionId("cn-shanghai");
+//        System.out.println((String) example.get("地域"));
+//
+//        request.setParameters(parameters);
+//
+//        LaunchProductResponse response = client.launchProduct(request);
+//        return response.getBody().getProvisionedProductId();
+//    }
 
     /**
          * 获取产品实例详细信息
@@ -260,7 +277,8 @@ public class ProvisionedProductService {
                     Integer roleId = getRoleId(exampleId);
                     User user = userService.getUserByLoginName(userName);
                     UserRole userRole = userRoleService.getUserRoleById(roleId);
-                    Client client = serviceCatalogViewService.createClient(region, user, userRole);
+                    String productId = getProductId(exampleId);
+                    Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
                     // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
                     updateProvisionedProduct(client, exampleId);
                 }
@@ -269,6 +287,5 @@ public class ProvisionedProductService {
             logger.error(e.getMessage(), e);
         }
     }
-
 
 }

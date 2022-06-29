@@ -153,10 +153,22 @@
             <artifactId>tea-openapi</artifactId>
             <version>0.2.2</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.aliyun</groupId>-->
+<!--            <artifactId>servicecatalog20210901</artifactId>-->
+<!--            <version>1.1.0</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.aliyun.inner</groupId>
+            <artifactId>servicecatalog20210901</artifactId>
+            <version>1.1.1</version>
+            <scope>system</scope>
+            <systemPath>/Users/doujiale/Downloads/servicecatalog-20210901/target/servicecatalog20210901-1.1.1.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
-            <artifactId>servicecatalog20210901</artifactId>
-            <version>1.1.0</version>
+            <artifactId>endpoint-util</artifactId>
+            <version>0.0.6</version>
         </dependency>
 
         <!-- httpclient 4.5 -->
