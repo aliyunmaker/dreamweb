@@ -20,11 +20,13 @@ public interface ProductDao {
 
     List<Product> listProduct(Map<String, Object> map);
 
-    List<String> listApplication();
+    List<String> listApplication(String productId);
 
-    List<String> listScenes(String application);
+    String getPortfolioId(String productId, String userName);
 
-    String getProductId(String application, String scene);
+    List<String> listScenes(String productId, String application);
+
+    String getProductVersionId(String productId, String application, String scene);
 
     String getProductName(String productId);
 

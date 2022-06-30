@@ -20,7 +20,6 @@ public class Product {
 
     private String productVersionId;
 
-    private String portfolioId;
 
     public String getProductVersionId() {
         return productVersionId;
@@ -28,14 +27,6 @@ public class Product {
 
     public void setProductVersionId(String productVersionId) {
         this.productVersionId = productVersionId;
-    }
-
-    public String getPortfolioId() {
-        return portfolioId;
-    }
-
-    public void setPortfolioId(String portfolioId) {
-        this.portfolioId = portfolioId;
     }
 
     public Integer getId() {

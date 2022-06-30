@@ -26,18 +26,23 @@ public class ProductService {
     private ProductDao productDao;
 
     @Transactional
-    public List<String> listApplication () {
-        return productDao.listApplication();
+    public List<String> listApplication (String productId) {
+        return productDao.listApplication(productId);
     }
 
     @Transactional
-    public List<String> listScenes (String application) {
-        return productDao.listScenes(application);
+    public String getPortfolioId (String productId, String userName) {
+        return productDao.getPortfolioId(productId, userName);
     }
 
     @Transactional
-    public String getProductId (String application, String scene) {
-        return productDao.getProductId(application, scene);
+    public List<String> listScenes (String productId, String application) {
+        return productDao.listScenes(productId, application);
+    }
+
+    @Transactional
+    public String getProductVersionId (String productId, String application, String scene) {
+        return productDao.getProductVersionId(productId, application, scene);
     }
 
     @Transactional

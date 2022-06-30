@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../product/searchProduct.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'productId', 'application', 'scenes', 'productName', 'productVersionId', 'portfolioId']
+        fields: ['id', 'productId', 'application', 'scenes', 'productName', 'productVersionId']
     });
 
 
@@ -34,15 +34,11 @@ Ext.onReady(function () {
             width: 200
         }, {
             dataIndex: 'scenes',
-            header: "场景",
+            header: "环境",
             width: 200
         }, {
             dataIndex: 'productVersionId',
             header: "产品版本ID",
-            width: 200
-        }, {
-            dataIndex: 'portfolioId',
-            header: "产品组合ID",
             width: 200
         }],
         tbar: [{
@@ -94,7 +90,7 @@ Ext.onReady(function () {
             name: 'application',
             allowBlank: false
         }, {
-            fieldLabel: '场景',
+            fieldLabel: '环境',
             name: 'scenes',
             allowBlank: false
         }, {
@@ -108,10 +104,6 @@ Ext.onReady(function () {
         }, {
             fieldLabel: '产品版本ID',
             name: 'productVersionId',
-            allowBlank: false
-        }, {
-            fieldLabel: '产品组合ID',
-            name: 'portfolioId',
             allowBlank: false
         }],
         submitBtnFn: function () {

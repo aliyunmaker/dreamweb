@@ -9,11 +9,22 @@
             src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script type="text/javascript" src="../slsView/bootstrap.bundle.js"></script>
     <script type="text/javascript" src="serviceCatalogView.js"></script>
+    <script type="text/javascript">
+        var search = window.location.search.substring(1);
+        var urlsp = new URLSearchParams(search);
+        var productId = urlsp.get("productId");
+        console.log(productId);
+        var productName = urlsp.get("productName");
+        console.log(productName);
+        window.onload = function() {
+            $("#productname").text(productName);
+        }
+    </script>
 
 </head>
 <body style="background-color: rgb(242, 243, 248);">
     <div>
-        <h5 style=" position: fixed;right: 1%; left: 1%;top: 1%;z-index: 100;" class="text-left">&nbsp;&nbsp;云资源申请</h5>
+        <h5 style=" position: fixed;right: 1%; left: 1.5%;top: 1%;z-index: 100;" class="text-left" id="productname"> </h5>
     </div>
 
     <div style="background-color:white; color:rgb(5, 5, 5);">
@@ -38,8 +49,12 @@
                     </div>
 
                     <div class="block" style="width:50%;height:25%;text-align:center;">
-                        <label style="font-size: 0.7vw;text-align:right;width:30%;;"for="btn_getProductId">服务目录产品ID：</label>
-                        <input style="border-color:rgb(205, 212, 219);border-style: solid;border-width: 0.1ch; font-size: 0.7vw;width:35%;;height:70%;text-align:center;"id="btn_getProductId" value="无" type="text" readonly="readonly"></input>
+                        <label style="font-size: 0.7vw;text-align:right;width:30%;;"for="select_region">地域：</label>
+                        <select style="padding-top: 0%;padding-bottom: 0%;font-size: 0.7vw;width:35%;;height:70%;text-align:center;" class="custom-select" id="select_region">
+                            <option selected="selected">选择地域</option>
+                            <option >杭州</option>
+                            <option >上海</option>
+                        </select>
                     </div>
 
                     <div class="block" style="width:50%;height:25%;text-align:center;">

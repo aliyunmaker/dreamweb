@@ -1,8 +1,31 @@
+var search = window.location.search.substring(1);
+var urlsp = new URLSearchParams(search);
+var productId = urlsp.get("productId");
+var productName = urlsp.get("productName");
+var productVersionId;
+var portfolioId;
+
 $(document).ready(function(){
-    var url = location.search;
-    console.log(url);
+
+    $.ajax({
+        url: "../../serviceCatalogView/getPortfolioId.do",
+        data: {
+            productId
+        },
+        success: function (result) {
+            if(isTrue(result.success)) {
+                portfolioId = result.data;
+            } else {
+                alert(result.errorMsg);
+            }
+        }
+    });
+
     $.ajax({
         url: "../../serviceCatalogView/getApplications.do",
+        data: {
+            productId
+        },
         success: function (result) {
             if(isTrue(result.success)) {
                 var applicationList = result.data;
@@ -20,12 +43,12 @@ $(document).ready(function(){
     $("#select_application").change(function () {
         $("#select_scenes").empty();
         $("#select_scenes").append("<option value='选择环境'>选择环境</option>");
-        $("#btn_getProductId").val("无");
         var select_Application = $(this).val();
         $.ajax({
             url: "../../serviceCatalogView/getScenes.do",
             data: {
-            select_Application
+            select_Application,
+            productId
             },
             success: function (result) {
                 if(isTrue(result.success)) {
@@ -44,24 +67,21 @@ $(document).ready(function(){
         var select_Application = $("#select_application").val();
         var select_Scene = $("#select_scenes").val();
         $.ajax({
-            url: "../../serviceCatalogView/getProductId.do",
+            url: "../../serviceCatalogView/getProductVersionId.do",
             data: {
             select_Application,
-            select_Scene
+            select_Scene,
+            productId
             },
             success: function (result) {
                 if(isTrue(result.success)) {
-                    var productId = result.data;
-                    $("#btn_getProductId").val(productId);
-               } else {
-                   $("#btn_getProductId").val("您没有此产品使用权限！");
+                    productVersionId = result.data;
                }
             }
         })
     })
 
     $("#btn_getExample").click(function () {
-        var productId = $("#btn_getProductId").val();
         var roleId = 1;
         $.ajax({
             url: "../../serviceCatalogView/getExampleName.do",
@@ -70,12 +90,16 @@ $(document).ready(function(){
             },
             success: function (result) {
                 var exampleName = result.data;
+                var region = $("#select_region").val();
                 $.ajax({
                     url: "../../serviceCatalogView/getNonLoginPreUrl.do",
                     data: {
                         productId,
                         roleId,
-                        exampleName
+                        exampleName,
+                        productVersionId,
+                        portfolioId,
+                        region
                     },
                     success: function (result) {
                         if(isTrue(result.success)) {
@@ -99,7 +123,6 @@ window.addEventListener("message", function(event) {
                 var definitionId = result.data;
                 var select_Application = $("#select_application").val();
                 var select_Scene = $("#select_scenes").val();
-                var productId = $("#btn_getProductId").val();
                 var PlanId = event.data;
                 var roleId = 1;
                 $.ajax({

@@ -46,7 +46,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             console.log(select[0].data);
-                            window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"productId="+id+"productName="+nameUrl;
+                            window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"productId="+id+"&productName="+nameUrl;
                             // MyExt.util.Ajax(' ', {
 
                             //     }, function (data) {

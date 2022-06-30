@@ -46,7 +46,7 @@ public class ServiceCatalogViewController extends BaseController{
     private UserProductService userProductService;
 
     /**
-         * 获取所有使用应用
+         * 获取产品ID对应的使用应用
          *
          *
          * @return 应用列表
@@ -55,11 +55,30 @@ public class ServiceCatalogViewController extends BaseController{
     @GetMapping("/getApplications.do")
     public void getApplication(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
+        String productId = request.getParameter("productId");
 
-        List<String> applicationList = productService.listApplication();
+        List<String> applicationList = productService.listApplication(productId);
         result.setTotal(applicationList.size());
         result.setData(applicationList);
 
+        outputToJSON(response, result);
+    }
+
+    /**
+         * 用户 + 产品ID 获取产品组合ID
+         *
+         *
+         * @return 
+         * @throws Exception
+         */
+    @GetMapping("/getPortfolioId.do")
+    public void getPortfolioId(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        String productId = request.getParameter("productId");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        String portfolioId = productService.getPortfolioId(productId, username);
+        result.setData(portfolioId);
         outputToJSON(response, result);
     }
 
@@ -75,7 +94,8 @@ public class ServiceCatalogViewController extends BaseController{
         WebResult result = new WebResult();
         try {
             String getApplication = request.getParameter("select_Application");
-            List<String> scenesList = productService.listScenes(getApplication);
+            String productId = request.getParameter("productId");
+            List<String> scenesList = productService.listScenes(productId, getApplication);
             result.setTotal(scenesList.size());
             result.setData(scenesList);
         } catch (Exception e) {
@@ -94,24 +114,27 @@ public class ServiceCatalogViewController extends BaseController{
          * @return 产品ID
          * @throws Exception
          */
-    @GetMapping("/getProductId.do")
-    public void getProductId(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/getProductVersionId.do")
+    public void getProductVersionId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
             String getApplication = request.getParameter("select_Application");
             Assert.hasText(getApplication, "应用不能为空！");
             String getScene = request.getParameter("select_Scene");
             Assert.hasText(getScene, "场景不能为空！");
-            String productId = productService.getProductId(getApplication, getScene);
-            Assert.hasText(productId, "未找到对应productId！");
+            String getProductId = request.getParameter("productId");
+            Assert.hasText(getProductId, "产品Id不能为空！");
+            String productVersionId = productService.getProductVersionId(getProductId, getApplication, getScene);
+            Assert.hasText(productVersionId, "未找到对应productVersionId！");
 
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            List<String> productIds = userProductService.listProductId(username);
-            if(productIds.contains(productId)) {
-                result.setData(productId);
-            } else {
-                result.setSuccess(false);
-            }
+            // String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            // List<String> productIds = userProductService.listProductId(username);
+            // if(productIds.contains(productId)) {
+            //     result.setData(productId);
+            // } else {
+            //     result.setSuccess(false);
+            // }
+            result.setData(productVersionId);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -166,15 +189,24 @@ public class ServiceCatalogViewController extends BaseController{
             String exampleName = request.getParameter("exampleName");
             Assert.hasText(exampleName, "实例名称不能为空！");
 
+            String productVersionId = request.getParameter("productVersionId");
+            Assert.hasText(productVersionId, "实例名称不能为空！");
+            String portfolioId = request.getParameter("portfolioId");
+            Assert.hasText(portfolioId, "实例名称不能为空！");
+            String regionSelect = request.getParameter("region");
+            Assert.hasText(regionSelect, "实例名称不能为空！");
+
+
             Integer roleId = Integer.valueOf(roleIdStr);
             String region = systemConfigService.getStringValueFromCache("region");
+            System.out.println(region + "222222");
 
             // 获取当前用户信息以及所需要使用的ram角色信息
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            String nonLoginPreUrl = serviceCatalogViewService.getNonLoginPreUrl(productId, exampleName, region, user, userRole);
+            String nonLoginPreUrl = serviceCatalogViewService.getNonLoginPreUrl(productId, exampleName, region, user, userRole, productVersionId, portfolioId, regionSelect);
             result.setData(nonLoginPreUrl);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

@@ -6,23 +6,28 @@
 
     <select id="listApplication"
             resultType="String">
-        select distinct application from product
+        select distinct application from product where productid = #{productId}
+    </select>
+
+    <select id="getPortfolioId" 
+            resultType="String">
+        select portfolioid from userproduct where productid = #{productId} and username = #{userName}
     </select>
 
     <select id="listScenes"
             resultType="String"
             parameterType="String">
-        select distinct scenes from product where application = #{application}
+        select distinct scenes from product where application = #{application} and productid = #{productId}
     </select>
 
-    <select id="getProductId"
+    <select id="getProductVersionId"
             resultType="String">
-        select productid from product where application = #{application} and scenes = #{scene};
+        select productversionid from product where application = #{application} and scenes = #{scene} and productid = #{productId};
     </select>
 
     <select id="getProductName"
             resultType="String">
-        select productname from product where productid = #{productId};
+        select distinct productname from product where productid = #{productId};
     </select>
 
     <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
@@ -56,14 +61,12 @@
         productid,
         productname,
         productversionid,
-        portfolioid,
         gmt_create)
         values (#{application},
                 #{scenes},
                 #{productId},
                 #{productName},
                 #{productVersionId},
-                #{portfolioId},
                 now())
     </insert>
 
@@ -73,8 +76,7 @@
             scenes                   = #{scenes},
             productid                = #{productId},
             productname              = #{productName},
-            productversionid         = #{productVersionId},
-            portfolioId              = #{portfolioId}
+            productversionid         = #{productVersionId}
         where id = #{id}
     </update>
 

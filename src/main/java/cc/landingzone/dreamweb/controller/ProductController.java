@@ -116,7 +116,6 @@ public class ProductController extends BaseController {
             dbProduct.setScenes(updateProduct.getScenes());
             dbProduct.setProductName(updateProduct.getProductName());
             dbProduct.setProductVersionId(updateProduct.getProductVersionId());
-            dbProduct.setPortfolioId(updateProduct.getPortfolioId());
             productService.updateProduct(dbProduct);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
