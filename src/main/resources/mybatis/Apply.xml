@@ -9,6 +9,7 @@
         select *
         from myAsk
         where starterName = #{starterName}
+        order by id desc
     </select>
 
     <select id="listApplyPreviewInProgress"

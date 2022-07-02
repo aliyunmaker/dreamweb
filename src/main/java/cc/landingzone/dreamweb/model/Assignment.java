@@ -7,7 +7,7 @@ package cc.landingzone.dreamweb.model;
  * @createDate: 2022/6/21
  *
  */
-public class Assignment {
+public class Assignment implements Comparable<Assignment>{
     private String starterName;
 
     private String processTime;
@@ -23,6 +23,11 @@ public class Assignment {
     private String assignee;
 
     private String planId;
+
+    @Override
+    public int compareTo(Assignment assignment) {
+        return Integer.parseInt(assignment.getProcessId()) - Integer.parseInt(this.getProcessId());
+    }
 
     public String getPlanId() {
         return planId;

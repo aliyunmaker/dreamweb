@@ -124,6 +124,7 @@ window.addEventListener("message", function(event) {
                 var select_Application = $("#select_application").val();
                 var select_Scene = $("#select_scenes").val();
                 var PlanId = event.data;
+                console.log(event.data);
                 var roleId = 1;
                 $.ajax({
                     url: "../../apply/startPlan.do",
@@ -137,7 +138,7 @@ window.addEventListener("message", function(event) {
                     },
                     success: function (result) {
                         var planId = result.data;
-                        alert('申请完成，请等待预检，预检ID为：' + planId);
+                        alert('已提交，请等待预检，计划ID为：' + planId);
                         window.location.href = "http://localhost:8080/ask/myAsk.html";
                     }
                 })

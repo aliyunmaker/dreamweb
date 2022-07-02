@@ -330,25 +330,17 @@ public class ServiceCatalogViewService {
         Map<String, Object> controlParameters = new HashMap<>();
         controlParameters.put("style", style);
         controlParameters.put("provisionedProductName", exampleName);
-        // controlParameters.put("portfolioId", "port-bp193yjz2qv4zu");
-        // controlParameters.put("productVersionId", "pv-bp151yxr2we4jw");
         controlParameters.put("portfolioId", portfolioId);
-        // controlParameters.put("portfolioId", "port-bp1yt7582gn4p7");
         controlParameters.put("productVersionId", productVersionId);
-        // controlParameters.put("productVersionId", "pv-bp15e79d2614pw");
         if(regionSelect.equals("上海")) {
             controlParameters.put("stackRegionId", "cn-shanghai");
         } else if(regionSelect.equals("杭州")) {
             controlParameters.put("stackRegionId", "cn-hangzhou");
-            System.out.println("!!!!!111");
         }
         // controlParameters.put("parameters", parameters);
         String controlString = JsonUtils.toJsonString(controlParameters);
         String base64EncodedControlString = Base64.getUrlEncoder().encodeToString(controlString.getBytes(StandardCharsets.UTF_8));
 
-        System.out.println(productId);
-        System.out.println(exampleName);
-        // productId = "prod-bp18r7q127u45k";
         String preUrl = String.format("https://servicecatalog4service.console.aliyun.com/products"
                 + "/launch?productId=%s&controlString=%s",
             URLEncoder.encode(productId, "utf-8"),

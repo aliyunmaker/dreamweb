@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../task/getAllTaskList.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId', 'assignee']
+        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId', 'assignee', 'planId']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {

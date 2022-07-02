@@ -14,7 +14,8 @@
     </select>
 
     <select id="listExample" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
-        select *from provisioned_product
+        select *from provisioned_product 
+        order by id desc
     </select>
 
     <insert id="saveExample" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">

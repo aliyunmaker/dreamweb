@@ -146,9 +146,6 @@ public class ApplyService {
                     GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
                     request1.setPlanId(apply.getPlanId());
                     GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
-                    System.out.println(response1.getBody().getPlanDetail().status);
-                    System.out.println(response1.getBody().getPlanDetail().statusMessage);
-                    System.out.println("444444" + apply.getPlanId());
                     if(response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
                         applyDao.updateStatusByPlanId(apply.getPlanId(), "审批中");
                         startProcessByDefinitionId(apply);

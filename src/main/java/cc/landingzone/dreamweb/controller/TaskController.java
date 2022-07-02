@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +95,7 @@ public class TaskController extends BaseController {
                 assignmentList.add(assignment);
             }
         }
+        Collections.sort(assignmentList);
         result.setData(assignmentList);
         outputToJSON(response, result);
 
@@ -215,6 +218,7 @@ public class TaskController extends BaseController {
         tasks.forEach(task -> {
             Assignment assignment = new Assignment();
             String starterName = (String) taskService.getVariable(task.getId(), "starterName");
+            String planId = (String) taskService.getVariable(task.getId(), "planId");
             HistoricProcessInstance historicProcessInstance = historyService//与历史数据（历史表）相关的Service
                     .createHistoricProcessInstanceQuery()//创建历史流程实例查询
                     .processInstanceId(task.getProcessInstanceId())//使用流程实例ID查询
@@ -226,8 +230,10 @@ public class TaskController extends BaseController {
             assignment.setTaskName(task.getName());
             assignment.setProcessId(task.getProcessInstanceId());
             assignment.setAssignee(task.getAssignee());
+            assignment.setPlanId(planId);
             assignmentList.add(assignment);
         });
+        Collections.sort(assignmentList);
         result.setData(assignmentList);
         outputToJSON(response, result);
     }

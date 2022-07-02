@@ -163,6 +163,8 @@ public class ProvisionedProductService {
                     String outputs = JsonUtils.toJsonString(taskDetail.getOutputs());
                     provisionedProductDao.updateOutputs(outputs, provisionedProductId);
                 } else {
+                    String error = taskDetail.getStatusMessage();
+                    provisionedProductDao.updateOutputs(error, provisionedProductId);
                     logger.error(taskDetail.getStatusMessage());
                 }
             }
@@ -185,47 +187,6 @@ public class ProvisionedProductService {
 
         ExecuteProvisionedProductPlanResponse response = client.executeProvisionedProductPlan(request);
     }
-
-//    /**
-//         * 启动产品
-//         *
-//         * @param: 终端、输入、实例map
-//         * @return 产品实例ID
-//         * @throws Exception
-//         */
-//    public String launchProduct(com.aliyun.servicecatalog20210901.Client client, Map<String, String> inputs, Map<String, Object> example) throws Exception {
-//
-//        List<LaunchProductRequest.LaunchProductRequestParameters> parameters = inputs.entrySet().stream()
-//                .map(entry -> {
-//                    LaunchProductRequest.LaunchProductRequestParameters parameter = new LaunchProductRequest.LaunchProductRequestParameters();
-//                    parameter.setParameterKey(entry.getKey());
-//                    parameter.setParameterValue(entry.getValue());
-//                    return parameter;
-//                })
-//                .collect(Collectors.toList());
-//
-//        LaunchProductRequest request = new LaunchProductRequest();
-//
-//         request.setProductId("prod-bp18r7q127u45k");
-//        // System.out.println((String) example.get("产品ID"));
-////        request.setProductId((String) example.get("产品ID"));
-//
-//
-//        System.out.println((String) example.get("版本ID"));
-//
-//        request.setPortfolioId("port-bp1yt7582gn4p7");// 产品组合ID，控制启动选项
-//        request.setProductVersionId("pv-bp15e79d2614pw");// 产品版本ID
-//
-//        request.setProvisionedProductName((String) example.get("实例名称"));
-//
-//        request.setStackRegionId("cn-shanghai");
-//        System.out.println((String) example.get("地域"));
-//
-//        request.setParameters(parameters);
-//
-//        LaunchProductResponse response = client.launchProduct(request);
-//        return response.getBody().getProvisionedProductId();
-//    }
 
     /**
          * 获取产品实例详细信息

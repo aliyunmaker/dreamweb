@@ -62,11 +62,95 @@ Ext.onReady(function () {
         }, {
             text: '申请内容',
             xtype: 'gridcolumn',
+            width: 150,
+            align: 'center',
+            renderer: function (value,metaData, record, rowIndex, columnIndex,cellmeta) {
+                var planId = record.raw.planId;
+                var id = planId + 'shenqingneirong';
+                Ext.defer(function () {
+                    Ext.widget('button', {
+                        renderTo: id,
+                        width: 110,
+                        text: '详细信息',
+                        handler: function () {
+                            var select = MyExt.util.SelectGridModel(userGrid, true);
+                            MyExt.util.Ajax('../task/getInfo.do', {
+                                    planId: planId,
+                                }, function (data) {
+                                    var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
+                                    var form = new Ext.form.FormPanel({
+                                        defaultType:'textfield',
+                                        items: [{
+                                            xtype : 'displayfield',
+                                            fieldLabel: '应用',
+                                            name: 'home_score',
+                                            value: data.data['应用']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '环境',
+                                            name: 'home_score',
+                                            value: data.data['环境']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '地域',
+                                            name: 'home_score',
+                                            value: data.data['地域']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '产品ID',
+                                            name: 'home_score',
+                                            value: data.data['产品ID']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '产品版本ID',
+                                            name: 'home_score',
+                                            value: data.data['版本ID']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '实例名称',
+                                            name: 'home_score',
+                                            value: data.data['实例名称']
+                                        }, {
+                                            xtype : 'textarea',
+                                            fieldLabel: '参数信息',
+                                            width: 400,
+                                            name: 'home_score',
+                                            value: parameters,
+                                            rows:10,
+                                            readOnly:true
+                                        }]
+                                    });
+                                    win = new Ext.Window({
+                                        title:'详细信息',
+                                        layout:'fit',
+                                        width:500,
+                                        closeAction:'close',
+                                        target : document.getElementById('buttonId'),
+                                        plain: true,
+                                        items: [form],
+                                        buttons: [{
+                                           text: '确认',
+                                           handler: function(){
+                                               win.hide();
+                                            }
+                                        }],
+                                        buttonAlign: 'center',
+                                     });
+                                    win.show();
+                                });
+                            }
+                    });
+                }, 50);
+                return Ext.String.format('<div id="{0}"></div>', id);
+            }
+        }, {
+            text: '预检结果',
+            xtype: 'gridcolumn',
             width: 107,
             align: 'center',
-            renderer: function (value, metaData, record) {
-                var id = record.raw.planId;
-                metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
+            renderer: function (value, metaData, record, rawIndex, columnIndex,cellmeta) {
+                var planId = record.raw.planId;
+                var id =planId + 'yujianjieguo';
                 Ext.defer(function () {
                     Ext.widget('button', {
                         renderTo: id,
@@ -75,7 +159,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    planId: id,
+                                    planId: planId,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -155,13 +239,14 @@ Ext.onReady(function () {
         items: [userGrid]
     });
 
-    //定时刷新store
-    var task={
-        run:function(){
-            reload();//直接reload
-        },
-        interval:3000 //3秒
-    }
-    Ext.TaskManager.start(task);
+    reload();
+    // //定时刷新store
+    // var task={
+    //     run:function(){
+    //         reload();//直接reload
+    //     },
+    //     interval:3000 //3秒
+    // }
+    // Ext.TaskManager.start(task);
 
 })
