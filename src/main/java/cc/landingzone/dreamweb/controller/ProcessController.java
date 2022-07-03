@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.controller;
 
+import cc.landingzone.dreamweb.dao.ApplyDao;
 import cc.landingzone.dreamweb.model.Apply;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
@@ -50,6 +52,9 @@ public class ProcessController extends BaseController {
 
     @Autowired
     private ServiceCatalogViewService serviceCatalogViewService;
+
+    @Autowired
+    private ApplyDao applyDao;
 
     /**
      * 流程部署
@@ -118,6 +123,8 @@ public class ProcessController extends BaseController {
             String scene = request.getParameter("select_Scene");
             String productId = request.getParameter("productId");
             Integer roleId = Integer.valueOf(request.getParameter("roleId"));
+            String portfolioId = request.getParameter("portfolioId");
+            String productName = request.getParameter("productName");
 
             String PlanId = request.getParameter("PlanId");
             JSONObject planIdJson = JSON.parseObject(PlanId);
@@ -141,6 +148,8 @@ public class ProcessController extends BaseController {
             apply.setRoleId(roleId);
             apply.setApplication(application);
             apply.setScene(scene);
+            apply.setProductName(productName);
+            apply.setPortfolioId(portfolioId);
 
             String time = response1.getBody().getPlanDetail().createTime;
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); //设置时区UTC
@@ -182,6 +191,52 @@ public class ProcessController extends BaseController {
         List<Apply> list = applyService.listApply(userName);
         result.setData(list);
         outputToJSON(response, result);
+    }
+
+
+    @PostMapping("/updateProcess.do")
+    public void updateProcess(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        System.out.println("111111");
+        String test = request.getParameter("planId");
+        System.out.println(test);
+        try {
+            List<Apply> applys = applyService.listApplyPreviewInProgress(); //查询流程表中"预检中"状态的记录
+            if (applys != null) {
+                for (Apply apply : applys) {
+                    // 更新状态
+                    // 创建终端
+                    String region = "cn-hangzhou";
+                    String userName = apply.getStarterName();
+                    Integer roleId = apply.getRoleId();
+                    User user = userService.getUserByLoginName(userName);
+                    UserRole userRole = userRoleService.getUserRoleById(roleId);
+                    Client client = serviceCatalogViewService.createClient(region, user, userRole, apply.getProductId());
+                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
+                    GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
+                    request1.setPlanId(apply.getPlanId());
+                    GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
+                    if(response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
+                        applyDao.updateStatusByPlanId(apply.getPlanId(), "审批中");
+                        applyDao.updatePlanResultByPlanId(apply.getPlanId(), "预检成功");
+                        applyService.startProcessByDefinitionId(apply);
+                        result.setData("1");
+                        outputToJSON(response, result);
+                    } else if(response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
+                        applyDao.updateStatusByPlanId(apply.getPlanId(), "预检失败");
+                        applyDao.updatePlanResultByPlanId(apply.getPlanId(), response1.getBody().getPlanDetail().statusMessage);
+                        result.setData("1");
+                        outputToJSON(response, result);
+                    }
+                    // 如果状态改变，修改数据库为预检失败 or 修改数据库为预检成功且开启工作流审批
+                }
+            } else {
+                result.setData("0");
+                outputToJSON(response, result);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
 }

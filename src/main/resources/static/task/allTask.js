@@ -69,9 +69,19 @@ Ext.onReady(function () {
                                             value: data.data['产品ID']
                                         }, {
                                             xtype : 'displayfield',
+                                            fieldLabel: '产品名称',
+                                            name: 'home_score',
+                                            value: data.data['产品名称']
+                                        }, {
+                                            xtype : 'displayfield',
                                             fieldLabel: '产品版本ID',
                                             name: 'home_score',
                                             value: data.data['版本ID']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '产品组合ID',
+                                            name: 'home_score',
+                                            value: data.data['产品组合ID']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '实例名称',

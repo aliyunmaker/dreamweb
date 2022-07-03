@@ -134,7 +134,9 @@ window.addEventListener("message", function(event) {
                         select_Scene,
                         productId,
                         roleId,
-                        PlanId
+                        PlanId,
+                        portfolioId,
+                        productName
                     },
                     success: function (result) {
                         var planId = result.data;

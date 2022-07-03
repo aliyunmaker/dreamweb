@@ -43,6 +43,36 @@ public class Apply {
 
     private String scene;
 
+    private String planResult;
+
+    private String productName;
+
+    private String portfolioId;
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getPortfolioId() {
+        return portfolioId;
+    }
+
+    public void setPortfolioId(String portfolioId) {
+        this.portfolioId = portfolioId;
+    }
+
+    public String getPlanResult() {
+        return planResult;
+    }
+
+    public void setPlanResult(String planResult) {
+        this.planResult = planResult;
+    }
+
     public String getApplication() {
         return application;
     }

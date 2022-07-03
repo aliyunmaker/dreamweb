@@ -49,6 +49,12 @@
         where planId = #{planId}
     </update>
 
+    <update id="updatePlanResultByPlanId">
+        update myAsk
+        set planResult = #{planResult}
+        where planId = #{planId}
+    </update>
+
     <update id="updateProcessIdByPlanId">
         update myAsk
         set processId = #{processId}
@@ -83,7 +89,9 @@
         processTime,
         processId,
         exampleName,
+        productName,
         processState,
+        portfolioId,
         parameters,
         productId,
         planId,
@@ -99,7 +107,9 @@
         #{processTime},
         #{processId},
         #{exampleName},
+        #{productName},
         #{processState},
+        #{portfolioId},
         #{parameters},
         #{productId},
         #{planId},

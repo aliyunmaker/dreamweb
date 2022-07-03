@@ -343,6 +343,8 @@ public class TaskController extends BaseController {
         example.put("版本ID", apply.getVersionId());
         example.put("申请人", apply.getStarterName());
         example.put("角色ID", apply.getRoleId());
+        example.put("产品名称", apply.getProductName());
+        example.put("产品组合ID", apply.getPortfolioId());
 
 
         return example;

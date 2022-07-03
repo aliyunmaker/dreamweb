@@ -36,4 +36,6 @@ public interface ApplyDao {
     void updateTaskByPlanId(String planId, String task);
 
     Apply getApplyByPlanId(String planId);
+
+    void updatePlanResultByPlanId(String planId, String planResult);
 }

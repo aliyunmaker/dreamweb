@@ -217,11 +217,10 @@ VALUES
 
 UNLOCK TABLES;
 
-drop table IF EXISTS `provisioned_product`;
-drop table IF EXISTS `product`;
-drop table IF EXISTS `myAsk`;
-drop table IF EXISTS `userproduct`;
-
+DROP TABLE IF EXISTS `provisioned_product`;
+DROP TABLE IF EXISTS `product`;
+DROP TABLE IF EXISTS `myAsk`;
+DROP TABLE IF EXISTS `userproduct`;
 
 create TABLE `product` (
                             `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
@@ -251,23 +250,22 @@ VALUES
 ('prod-bp18r7q127u45k','application3','日常','DEMO-创建VPC+ECS','pv-bp1bjeut29963a',now());
 
 
-create TABLE `provisioned_product`(
-                            `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
-                            `examplename` varchar(100) NOT NULL comment '实例名称',
-                            `productid` varchar(100) NOT NULL comment '产品ID',
-                            `productname` varchar(100) NOT NULL comment '产品名称',
-                            `exampleid` varchar(100) NOT NULL comment '实例ID',
-                            `roleid` int(11) NOT NULL comment '角色ID',
-                            `startname` varchar(100) NOT NULL comment '实例申请人',
-                            `status` varchar(100) NOT NULL comment '实例状态',
-                            `parameter` varchar(1000) comment '申请参数',
-                            `outputs` varchar(1000) comment '输出',
-                            `starttime` varchar(100) comment '创建时间',
+CREATE TABLE `provisioned_product`(
+                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                            `examplename` varchar(100) NOT NULL COMMENT '实例名称',
+                            `productid` varchar(100) NOT NULL COMMENT '产品ID',
+                            `productname` varchar(100) NOT NULL COMMENT '产品名称',
+                            `exampleid` varchar(100) NOT NULL COMMENT '实例ID',
+                            `roleid` int(11) NOT NULL COMMENT '角色ID',
+                            `startname` varchar(100) NOT NULL COMMENT '实例申请人',
+                            `status` varchar(100) NOT NULL COMMENT '实例状态',
+                            `parameter` varchar(1000)COMMENT '申请参数',
+                            `outputs` varchar(1000) COMMENT '输出',
+                            `starttime` varchar(100) COMMENT '创建时间',
                             `gmt_create` datetime DEFAULT NULL,
-                            `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
-                             UNIQUE KEY (`examplename`),
-                             FOREIGN KEY(productid) REFERENCES product(productid)
+                             UNIQUE KEY (`examplename`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `myAsk` (
@@ -279,8 +277,11 @@ CREATE TABLE `myAsk` (
                             `processTime` varchar(100) NOT NULL COMMENT '申请时间',
                             `processId` varchar(100) COMMENT '流程实例ID',
                             `exampleName` varchar(100) COMMENT '实例名称',
+                            `productName` varchar(100) COMMENT '产品名称',
                             `task` varchar(100) COMMENT '当前节点',
                             `processState` varchar(100) NOT NULL COMMENT '流程状态',
+                            `portfolioId` varchar(100) NOT NULL COMMENT '产品组合ID',
+                            `planResult` varchar(1000) COMMENT '预检结果',
                             `parameters` varchar(1000) NOT NULL COMMENT '流程信息',
                             `productId` varchar(100) NOT NULL COMMENT '产品ID',
                             `planId` varchar(100) NOT NULL COMMENT '启动计划ID',
@@ -294,7 +295,6 @@ CREATE TABLE `myAsk` (
                             PRIMARY KEY (`id`),
                             UNIQUE KEY (`processId`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 CREATE TABLE `userproduct` (
                             `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',

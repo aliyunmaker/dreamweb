@@ -1,5 +1,4 @@
 Ext.onReady(function () {
-    // Ext.tip.QuickTipManager.init();
 
     var reload = function () {
         userStore.load();
@@ -13,7 +12,6 @@ Ext.onReady(function () {
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
-    // var userGrid = Ext.create('Ext.grid.Panel', {
         region: 'center',
         title: '待处理任务列表',
         store: userStore,
@@ -40,9 +38,7 @@ Ext.onReady(function () {
                 Ext.defer(function () {
                     Ext.widget('button', {
                          renderTo: id,
-                        // height: 20,
                         width: 100,
-                        // style:"margin-left:5px;background:blue;",
                         text: '详细信息',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
@@ -74,9 +70,19 @@ Ext.onReady(function () {
                                             value: data.data['产品ID']
                                         }, {
                                             xtype : 'displayfield',
+                                            fieldLabel: '产品名称',
+                                            name: 'home_score',
+                                            value: data.data['产品名称']
+                                        }, {
+                                            xtype : 'displayfield',
                                             fieldLabel: '产品版本ID',
                                             name: 'home_score',
                                             value: data.data['版本ID']
+                                        }, {
+                                            xtype : 'displayfield',
+                                            fieldLabel: '产品组合ID',
+                                            name: 'home_score',
+                                            value: data.data['产品组合ID']
                                         }, {
                                             xtype : 'displayfield',
                                             fieldLabel: '实例名称',
