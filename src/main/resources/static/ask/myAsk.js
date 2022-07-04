@@ -4,23 +4,31 @@ Ext.onReady(function () {
         userStore.load();
     };
 
-    function test() {
-        // MyExt.util.Ajax('../apply/updateProcess.do', {
-        //     planId: "222",
-        // }, function (data) {
-        //     console.log(data);
-        // });
-        Ext.Ajax.request({
-            url: '../apply/updateProcess.do',
-            success: function(response, opts) {
-                result = Ext.decode(response.responseText);
-                console.dir(result);
-            },
-            failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+    // function reload2() {
+    //     // userGrid.load('processState');
+    //     console.log(userGrid('processState'));
+    //     console.log("ok");
+    // }
+
+    function test3(PlanId) {
+        console.log(PlanId);
+        MyExt.util.Ajax('../apply/updateProcess.do', {
+            PlanId: PlanId,
+        }, function (data) {
+            if(data.data["flag"] == "success") {
+                return "审批中";
             }
         });
+    }
 
+    function test() {
+        MyExt.util.Ajax('../apply/updateProcess.do', {
+
+        }, function (data) {
+            if(data.data["flag"] == "yes") {
+                reload();
+            }
+        });
     }
 
     var userStore = Ext.create('MyExt.Component.SimpleJsonStore', {
@@ -186,6 +194,7 @@ Ext.onReady(function () {
                         width: 110,
                         text: '预检结果',
                         handler: function () {
+
                             planResultTest = Ext.create('Ext.form.field.TextArea', {
                                 labelAlign:'right',
                                 width: "100%",
@@ -223,29 +232,96 @@ Ext.onReady(function () {
             width: 200,
        }],
     });
-
+    reload();
     Ext.create('Ext.container.Viewport', {
         layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小
         items: [userGrid]
     });
-    reload();
-    //定时刷新store
+    // //定时刷新store
+    // var task={
+    //     run:test,
+    //     interval:3000 //3秒
+    // }
+    // Ext.TaskManager.start(task);
+
+    // var task2={
+    //     run:reload2,
+    //     interval:1000 //3秒
+    // }
+    // Ext.TaskManager.start(task2);
+
+
+    function GetRandomNum() {  
+        for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
+            var  record = userStore.getAt(i);//获取每一条记录
+            if(record.get('processState') == '预检中') {
+                var recordcopy = record;
+                var PlanId = record.get('planId');
+                MyExt.util.Ajax('../apply/updateProcess.do', {
+                    PlanId: PlanId,
+                }, function (data) {
+                    var flag = data.data["flag"];
+                    if(flag == "success") {
+                        var processState = '审批中';
+                        // var planResult = data.data['planResult'];
+                        recordcopy.set('processState', processState);
+                        // record3.commit();
+                        // console.log(data.data['planResult']);
+                        // record3.set('planResult', data.data['planResult']);
+                        console.log(recordcopy);
+                        recordcopy.commit();
+                    } else if(flag == "failed") {
+                        // record.set('processState', '预检失败');
+                        // record.set('planResult', data.data['planResult']);
+                        processState = '审批中';
+                        planResult = data.data['planResult'];
+                        // record.commit();
+                    }
+                });
+                // console.log(result);
+            }
+            // console.log(flag);
+            // if (flag == 'success'){
+            //     console.log(processState);
+            //     record.set('processState', processState);
+            //     // record.set('planResult', planResult);
+            //     // console.log(planResult);
+            //     record.commit();
+            // } else if(flag == 'failed') {
+            //     record.set('processState', processState);
+            //     record.set('planResult', planResult);
+            //     record.commit();
+            // }
+            // record.set('processState', '预检失败');
+            // record.commit();
+            // userGrid.getSelectionModel().select(i);
+            //   record.set('age', Min + Math.round(Math.random() * Range));//修改列的值
+            //   record.commit(); //将修改提交  
+            // console.log(record);
+            // console.log(record.get('processState'));
+            // record.set('processState', '审批中');
+
+            // record.set('starterName', 'test');
+            // record.set('processTime', 'test');
+            // record.set('processId', 'test');
+            // record.set('planId', 'test');
+            // record.commit();
+            // userGrid.getStore().removeAt(i);
+            // userStore.add(record);
+            // userGrid.render('processState');
+        }
+        // userGrid.renderTo('grid-processState');      
+    };
+//    GetRandomNum();
     var task={
-        run:
-            // MyExt.util.Ajax('../apply/updateProcess.do', {
-            //         planId:"2",
-            //     }, function (data) {
-            //         console.log(data);
-            // });
-            // $.ajax({
-            //     url: "../../apply/updateProcess.do",
-            //     success: function (result) {
-            //         console.log(result);
-            //     }
-            // });
-            test,
-            // reload();//直接reload
+        run:GetRandomNum,
         interval:3000 //3秒
     }
     Ext.TaskManager.start(task);
+
 })
+    
+
+function isTrue(isSuccess) {
+    return (isSuccess === "true" || isSuccess === true);
+}

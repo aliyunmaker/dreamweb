@@ -31,6 +31,11 @@
         where processId = #{processId}
     </update>
 
+    <select id="getPlanResultByPlanId">
+        select planResult from myAsk
+        where planId = #{planId}
+    </select>
+
     <update id="updateTaskByProcessId">
         update myAsk
         set task = #{task}

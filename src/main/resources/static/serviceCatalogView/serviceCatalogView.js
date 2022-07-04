@@ -123,8 +123,8 @@ window.addEventListener("message", function(event) {
                 var definitionId = result.data;
                 var select_Application = $("#select_application").val();
                 var select_Scene = $("#select_scenes").val();
-                var PlanId = event.data;
-                console.log(event.data);
+                var data = JSON.parse(event.data);
+                var PlanId = data['PlanId'];
                 var roleId = 1;
                 $.ajax({
                     url: "../../apply/startPlan.do",
