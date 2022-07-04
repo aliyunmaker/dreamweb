@@ -139,8 +139,6 @@ window.addEventListener("message", function(event) {
                         productName
                     },
                     success: function (result) {
-                        var planId = result.data;
-                        alert('已提交，请等待预检，计划ID为：' + planId);
                         window.location.href = "http://localhost:8080/ask/myAsk.html";
                     }
                 })

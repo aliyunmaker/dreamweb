@@ -252,7 +252,6 @@ public class ProcessController extends BaseController {
     public void updateProcess(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String planId = request.getParameter("PlanId");
-        System.out.println(planId + "666666");
         Apply apply = applyService.getApplyByPlanId(planId);
         try {
             String region = "cn-hangzhou";
@@ -271,7 +270,6 @@ public class ProcessController extends BaseController {
                 applyService.startProcessByDefinitionId(apply);
                 Map<String, String> flag = new HashMap<>();
                 flag.put("flag", "success");
-                flag.put("planResult", "预检通过");
                 result.setSuccess(true);
                 result.setData(flag);
                 outputToJSON(response, result);
@@ -280,7 +278,6 @@ public class ProcessController extends BaseController {
                 applyDao.updatePlanResultByPlanId(apply.getPlanId(), response1.getBody().getPlanDetail().statusMessage);
                 Map<String, String> flag = new HashMap<>();
                 flag.put("flag", "failed");
-                flag.put("planResult", response1.getBody().getPlanDetail().statusMessage);
                 result.setSuccess(true);
                 result.setData(flag);
                 outputToJSON(response, result);

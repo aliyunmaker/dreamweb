@@ -164,12 +164,29 @@ Ext.onReady(function () {
         items: [userGrid]
     });
 
+    reload();
+
+    function update() {
+        for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
+            var  record = userStore.getAt(i);//获取每一条记录
+            if(record.get('status') == 'UnderChange') {
+                var exampleId = record.get('exampleId');
+                MyExt.util.Ajax('../provisionedProduct/updateProvisionedProduct.do', {
+                    exampleId: exampleId,
+                }, function (data) {
+                    var flag = data.data;
+                    if(flag != "no") {
+                        reload();
+                    }
+                });
+            }
+        }
+    };
+
     //定时刷新store
     var task={
-        run:function(){
-            reload();//直接reload
-        },
-    interval:5000 //5秒
+        run:update,
+        interval:2000 //2秒
     }
     Ext.TaskManager.start(task);
 

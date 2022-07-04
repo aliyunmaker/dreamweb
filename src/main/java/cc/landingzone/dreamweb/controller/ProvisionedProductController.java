@@ -49,4 +49,14 @@ public class ProvisionedProductController extends BaseController{
         }
         outputToJSON(response, result);
     }
+
+    @RequestMapping("/updateProvisionedProduct.do")
+    public void updateProvisionedProduct(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        String exampleId = request.getParameter("exampleId");
+        String flag = provisionedProductService.updateExample(exampleId);
+        result.setSuccess(true);
+        result.setData(flag);
+        outputToJSON(response, result);
+    }
 }
