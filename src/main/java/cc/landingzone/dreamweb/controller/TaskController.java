@@ -350,6 +350,23 @@ public class TaskController extends BaseController {
         return example;
     }
 
+    @RequestMapping("/getCount.do")
+    public void getCount(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        String flag = "no";
+        String count = request.getParameter("count");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Task> list = taskService.createTaskQuery()//创建任务查询对象
+                .taskAssignee(username)//指定个人任务查询
+                .list();
+        if(list.size() != Integer.parseInt(count)) {
+            flag = "yes";
+        }
+        result.setSuccess(true);
+        result.setData(flag);
+        outputToJSON(response, result);
+    }
+
 
 }
 

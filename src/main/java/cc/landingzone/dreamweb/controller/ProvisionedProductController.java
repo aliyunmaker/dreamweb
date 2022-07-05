@@ -54,7 +54,7 @@ public class ProvisionedProductController extends BaseController{
     public void updateProvisionedProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String exampleId = request.getParameter("exampleId");
-        String flag = provisionedProductService.updateExample(exampleId);
+        String flag = provisionedProductService.searchStatus(exampleId);
         result.setSuccess(true);
         result.setData(flag);
         outputToJSON(response, result);

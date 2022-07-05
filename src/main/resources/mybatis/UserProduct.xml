@@ -15,4 +15,56 @@
          select * from userproduct where username = #{userName};
     </select>
 
+    <select id="listUserProduct" resultType="cc.landingzone.dreamweb.model.UserProduct" parameterType="map">
+        select * from userproduct order by id desc
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="getUserProductTotal" resultType="int" parameterType="map">
+        select count(*) from userproduct
+    </select>
+
+    <insert id="saveUserProduct"
+            parameterType="cc.landingzone.dreamweb.model.UserProduct">
+        insert into userproduct
+        (productid,
+        username,
+        portfolioid,
+        productname,
+        gmt_create)
+        values (#{productId},
+        #{userName},
+        #{portfolioId},
+        #{productName},
+        now())
+    </insert>
+
+    <update id="updateUserProduct" parameterType="cc.landingzone.dreamweb.model.UserProduct">
+        update userproduct
+        set productid              = #{productId},
+        username                   = #{userName},
+        portfolioid                = #{portfolioId},
+        productname              = #{productName}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserProduct" parameterType="int">
+        delete
+        from userproduct
+        where id = #{id}
+    </delete>
+
+    <select id="getUserProduct" resultType="cc.landingzone.dreamweb.model.UserProduct">
+        select * from userproduct
+        where productid = #{productId} and username = #{userName}
+    </select>
+
+    <select id="getUserProductById" resultType="cc.landingzone.dreamweb.model.UserProduct">
+        select *
+        from userproduct
+        where id = #{id}
+    </select>
+
 </mapper>

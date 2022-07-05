@@ -56,6 +56,10 @@
         select distinct startname from provisioned_product where exampleid = #{exampleId}
     </select>
 
+    <select id="getExampleByExampleId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product where exampleid = #{exampleId}
+    </select>
+
     <select id="getRoleId" resultType="Integer">
         select distinct roleid from provisioned_product where exampleid = #{exampleId}
     </select>

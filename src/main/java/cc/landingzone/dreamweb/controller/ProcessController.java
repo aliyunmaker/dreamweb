@@ -191,107 +191,23 @@ public class ProcessController extends BaseController {
         outputToJSON(response, result);
     }
 
-
-    // @RequestMapping("/updateProcess.do")
-    // public void updateProcess(HttpServletRequest request, HttpServletResponse response) {
-    //     WebResult result = new WebResult();
-    //     try {
-    //         List<Apply> applys = applyService.listApplyPreviewInProgress(); //查询流程表中"预检中"状态的记录
-    //         if (!applys.isEmpty()) {
-    //             for (Apply apply : applys) {
-    //                 // 更新状态
-    //                 // 创建终端
-    //                 String region = "cn-hangzhou";
-    //                 String userName = apply.getStarterName();
-    //                 Integer roleId = apply.getRoleId();
-    //                 User user = userService.getUserByLoginName(userName);
-    //                 UserRole userRole = userRoleService.getUserRoleById(roleId);
-    //                 Client client = serviceCatalogViewService.createClient(region, user, userRole, apply.getProductId());
-    //                 // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
-    //                 GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
-    //                 request1.setPlanId(apply.getPlanId());
-    //                 GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
-    //                 if(response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
-    //                     applyDao.updateStatusByPlanId(apply.getPlanId(), "审批中");
-    //                     applyDao.updatePlanResultByPlanId(apply.getPlanId(), "预检通过");
-    //                     applyService.startProcessByDefinitionId(apply);
-    //                     Map<String, String> flag = new HashMap<>();
-    //                     flag.put("flag", "yes");
-    //                     result.setSuccess(true);
-    //                     result.setData(flag);
-    //                     outputToJSON(response, result);
-    //                 } else if(response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
-    //                     applyDao.updateStatusByPlanId(apply.getPlanId(), "预检失败");
-    //                     applyDao.updatePlanResultByPlanId(apply.getPlanId(), response1.getBody().getPlanDetail().statusMessage);
-    //                     Map<String, String> flag = new HashMap<>();
-    //                     flag.put("flag", "yes");
-    //                     result.setSuccess(true);
-    //                     result.setData(flag);
-    //                     outputToJSON(response, result);
-    //                 } else {
-    //                     Map<String, String> flag = new HashMap<>();
-    //                     flag.put("flag", "no");
-    //                     result.setSuccess(true);
-    //                     result.setData(flag);
-    //                     outputToJSON(response, result);
-    //                 }
-    //                 // 如果状态改变，修改数据库为预检失败 or 修改数据库为预检成功且开启工作流审批
-    //             }
-    //         } else {
-    //             Map<String, String> flag = new HashMap<>();
-    //             flag.put("flag", "no");
-    //             result.setSuccess(true);
-    //             result.setData(flag);
-    //             outputToJSON(response, result);
-    //         }
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage(), e);
-    //     }
-    // }
     @RequestMapping("/updateProcess.do")
     public void updateProcess(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String planId = request.getParameter("PlanId");
         Apply apply = applyService.getApplyByPlanId(planId);
-        try {
-            String region = "cn-hangzhou";
-            String userName = apply.getStarterName();
-            Integer roleId = apply.getRoleId();
-            User user = userService.getUserByLoginName(userName);
-            UserRole userRole = userRoleService.getUserRoleById(roleId);
-            Client client = serviceCatalogViewService.createClient(region, user, userRole, apply.getProductId());
-            // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
-            GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
-            request1.setPlanId(apply.getPlanId());
-            GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
-            if(response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
-                applyDao.updateStatusByPlanId(apply.getPlanId(), "审批中");
-                applyDao.updatePlanResultByPlanId(apply.getPlanId(), "预检通过");
-                applyService.startProcessByDefinitionId(apply);
-                Map<String, String> flag = new HashMap<>();
-                flag.put("flag", "success");
-                result.setSuccess(true);
-                result.setData(flag);
-                outputToJSON(response, result);
-            } else if(response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
-                applyDao.updateStatusByPlanId(apply.getPlanId(), "预检失败");
-                applyDao.updatePlanResultByPlanId(apply.getPlanId(), response1.getBody().getPlanDetail().statusMessage);
-                Map<String, String> flag = new HashMap<>();
-                flag.put("flag", "failed");
-                result.setSuccess(true);
-                result.setData(flag);
-                outputToJSON(response, result);
-            } else {
-                Map<String, String> flag = new HashMap<>();
-                flag.put("flag", "no");
-                result.setSuccess(true);
-                result.setData(flag);
-                outputToJSON(response, result);
-            }
-            // 如果状态改变，修改数据库为预检失败 or 修改数据库为预检成功且开启工作流审批
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+        if(!apply.getProcessState().equals("预检中")) {
+            Map<String, String> flag = new HashMap<>();
+            flag.put("flag", "yes");
+            result.setSuccess(true);
+            result.setData(flag);
+            outputToJSON(response, result);
+        } else {
+            Map<String, String> flag = new HashMap<>();
+            flag.put("flag", "no");
+            result.setSuccess(true);
+            result.setData(flag);
+            outputToJSON(response, result);
         }
     }
-
 }

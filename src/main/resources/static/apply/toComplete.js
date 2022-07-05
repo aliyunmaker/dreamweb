@@ -30,20 +30,20 @@ Ext.onReady(function () {
         }, {
             text: '申请内容',
             xtype: 'gridcolumn',
-            width: 107,
+            width: 150,
             align: 'center',
-            renderer: function (value, metaData, record) {
-                var id = record.raw.planId;
-                metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
+            renderer: function (value, metaData, record, rowIndex, columnIndex,cellmeta) {
+                var planId = record.raw.planId;
+                var id = planId + "shenqingneirong";
                 Ext.defer(function () {
                     Ext.widget('button', {
-                         renderTo: id,
-                        width: 100,
+                        renderTo: id,
+                        width: 110,
                         text: '详细信息',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    planId: id,
+                                    planId: planId,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -99,17 +99,19 @@ Ext.onReady(function () {
                                         }]
                                     });
                                     var win = new Ext.Window({
-                                        layout:'fit',
                                         title:'详细信息',
-                                        target : document.getElementById('buttonId'),
+                                        layout:'fit',
                                         width:500,
-                                        items:[form],         //嵌入表单;
+                                        closeAction:'close',
+                                        target : document.getElementById('buttonId'),
+                                        plain: true,
+                                        items: [form],
                                         buttons: [{
-                                            text: '确认',
-                                            handler: function(){
-                                            win.hide();
+                                           text: '确认',
+                                           handler: function(){
+                                               win.hide();
                                             }
-                                            }],
+                                        }],
                                         buttonAlign: 'center',
                                         });
                                     win.show();
@@ -127,6 +129,7 @@ Ext.onReady(function () {
             dataIndex: 'processId',
             header: "流程实例ID",
             width: 100,
+            flex: 1
         }],
         tbar: [{
             text: '通过',
@@ -212,10 +215,32 @@ Ext.onReady(function () {
         }],
     });
 
-
+    reload();
     Ext.create('Ext.container.Viewport', {
         layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小;为什么加上就没有页码了？
         items: [userGrid]
     });
-    reload();
+
+
+    function update() {
+        for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
+            var count = userStore.getCount();
+            MyExt.util.Ajax('../task/getCount.do', {
+                count: count,
+            }, function (data) {
+                var flag = data.data;
+                if(flag != "no") {
+                    reload();
+                }
+            });
+        }
+    };
+
+    //定时刷新store
+    var task={
+        run:update,
+        interval:2000 //2秒
+    }
+    Ext.TaskManager.start(task);
+
 })

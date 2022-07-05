@@ -70,4 +70,25 @@
         where user_group_id = #{userGroupId}
     </delete>
 
+    <insert id="saveUserRole" >
+        insert into userrole
+        (roleid,
+        username,
+        gmt_create)
+        values (#{roleId},
+        #{userName},
+        now())
+    </insert>
+
+    <select id="getRoleIdByUserName" resultType="Integer">
+        select roleid from userrole
+        where username = #{userName}
+    </select>
+
+    <update id="updateUserRole2">
+        update userrole
+        set roleid = #{roleId}
+        where username = #{userName}
+    </update>
+
 </mapper>

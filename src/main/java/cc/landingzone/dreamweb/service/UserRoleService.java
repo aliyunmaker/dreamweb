@@ -77,4 +77,16 @@ public class UserRoleService {
         Assert.notNull(userRoleId, "userRoleName can not be null!");
         return userRoleDao.getUserRoleByName(userRoleId);
     }
+
+    public void saveUserRole(String userName, Integer roleId) {
+        userRoleDao.saveUserRole(userName, roleId);
+    }
+
+    public Integer getRoleIdByUserName(String userName) {
+        return userRoleDao.getRoleIdByUserName(userName);
+    }
+
+    public void updateUserRole2(String userName, Integer roleId) {
+        userRoleDao.updateUserRole2(userName, roleId);
+    }
 }

@@ -199,7 +199,6 @@ public class ServiceCatalogViewController extends BaseController{
 
             Integer roleId = Integer.valueOf(roleIdStr);
             String region = systemConfigService.getStringValueFromCache("region");
-            System.out.println(region + "222222");
 
             // 获取当前用户信息以及所需要使用的ram角色信息
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();

@@ -22,7 +22,7 @@ Ext.onReady(function () {
         }, {
             dataIndex: 'productId',
             header: '产品ID',
-            width: 160
+            width: 150
         }, {
             dataIndex: 'productName',
             header: "产品名称",
@@ -34,15 +34,15 @@ Ext.onReady(function () {
         }, {
             dataIndex: 'exampleName',
             header: "实例名称",
-            width: 250,
+            width: 220,
         }, {
             dataIndex: 'startName',
             header: "申请人",
-            width: 100,
+            width: 80,
         }, {
             dataIndex: 'status',
             header: "实例状态",
-            width: 100,
+            width: 80,
             align: 'center',
             renderer: function(v) {
                 if(v == 'Error') {
@@ -61,7 +61,7 @@ Ext.onReady(function () {
             width: 150
         }, {
             text: '申请参数',
-            width: 140,
+            width: 130,
             align: 'center',
             renderer: function (value, metaData, record) {
                 var id = record.data.exampleId;
@@ -106,7 +106,7 @@ Ext.onReady(function () {
             }
         }, {
             text: '实例输出',
-            width: 140,
+            width: 130,
             align: 'center',
             renderer: function (value, metaData, record,rowIndex,store) {
             var id = record.data.exampleId + 'shilishuchu';
@@ -159,12 +159,11 @@ Ext.onReady(function () {
     }],
 });
 
+    reload();
     Ext.create('Ext.container.Viewport', {
         layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小;
         items: [userGrid]
     });
-
-    reload();
 
     function update() {
         for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据

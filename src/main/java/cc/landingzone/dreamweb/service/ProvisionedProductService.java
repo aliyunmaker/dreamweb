@@ -144,8 +144,7 @@ public class ProvisionedProductService {
          * @return
          * @throws Exception
          */
-    public String updateProvisionedProduct(Client client, String provisionedProductId) {
-        String flag = "no";
+    public void updateProvisionedProduct(Client client, String provisionedProductId) {
         try {
             String provisionedProductStatus;
             String lastTaskId;
@@ -154,7 +153,6 @@ public class ProvisionedProductService {
             provisionedProductStatus = provisionedProductDetail.getStatus();   //实例状态
 
             if(!provisionedProductStatus.equals("UnderChange")) {
-                flag = "yes";
                 provisionedProductDao.updateStatus(provisionedProductStatus, provisionedProductId);
                 lastTaskId = provisionedProductDetail.getLastTaskId();
 
@@ -172,10 +170,7 @@ public class ProvisionedProductService {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-        } finally {
-            return flag;
         }
-
     }
 
     /**
@@ -230,47 +225,36 @@ public class ProvisionedProductService {
          *
          * @throws Exception
          */
-//    @Scheduled(cron = "0/5 * * * * ?")
-//    public void updateExample() {
-//        try {
-//            List<String> exampleIds = listExampleId();
-//            if (exampleIds != null) {
-//                for (String exampleId : exampleIds) {
-//                    // 创建终端
-//                    String region = "cn-hangzhou";
-//                    String userName = getUserName(exampleId);
-//                    Integer roleId = getRoleId(exampleId);
-//                    User user = userService.getUserByLoginName(userName);
-//                    UserRole userRole = userRoleService.getUserRoleById(roleId);
-//                    String productId = getProductId(exampleId);
-//                    Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
-//                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
-//                    updateProvisionedProduct(client, exampleId);
-//                }
-//            }
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//        }
-//    }
-
-    public String updateExample(String exampleId) {
-        String flag = "no";
+    @Scheduled(cron = "0/3 * * * * ?")
+    public void updateExample() {
         try {
-            // 创建终端
-            String region = "cn-hangzhou";
-            String userName = getUserName(exampleId);
-            Integer roleId = getRoleId(exampleId);
-            User user = userService.getUserByLoginName(userName);
-            UserRole userRole = userRoleService.getUserRoleById(roleId);
-            String productId = getProductId(exampleId);
-            Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
-            // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
-            flag = updateProvisionedProduct(client, exampleId);
+            List<String> exampleIds = listExampleId();
+            if (exampleIds != null) {
+                for (String exampleId : exampleIds) {
+                    // 创建终端
+                    String region = "cn-hangzhou";
+                    String userName = getUserName(exampleId);
+                    Integer roleId = getRoleId(exampleId);
+                    User user = userService.getUserByLoginName(userName);
+                    UserRole userRole = userRoleService.getUserRoleById(roleId);
+                    String productId = getProductId(exampleId);
+                    Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
+                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
+                    updateProvisionedProduct(client, exampleId);
+                }
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-        } finally {
-            return flag;
         }
+    }
+
+    public String searchStatus(String exampleId) {
+        String flag = "no";
+        ProvisionedProduct provisionedProduct = provisionedProductDao.getExampleByExampleId(exampleId);
+        if(!provisionedProduct.getStatus().equals("UnderChange")) {
+            flag = "yes";
+        }
+        return flag;
     }
 
 }

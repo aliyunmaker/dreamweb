@@ -4,9 +4,9 @@ var productId = urlsp.get("productId");
 var productName = urlsp.get("productName");
 var productVersionId;
 var portfolioId;
+var roleId = urlsp.get("roleId");
 
 $(document).ready(function(){
-
     $.ajax({
         url: "../../serviceCatalogView/getPortfolioId.do",
         data: {
@@ -82,7 +82,6 @@ $(document).ready(function(){
     })
 
     $("#btn_getExample").click(function () {
-        var roleId = 1;
         $.ajax({
             url: "../../serviceCatalogView/getExampleName.do",
             data: {
@@ -125,7 +124,6 @@ window.addEventListener("message", function(event) {
                 var select_Scene = $("#select_scenes").val();
                 var data = JSON.parse(event.data);
                 var PlanId = data['PlanId'];
-                var roleId = 1;
                 $.ajax({
                     url: "../../apply/startPlan.do",
                     data: {

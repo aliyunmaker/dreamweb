@@ -44,7 +44,17 @@ Ext.onReady(function () {
                         text: '申请实例',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
-                            window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"productId="+id+"&productName="+nameUrl;
+                            MyExt.util.Ajax('../userRole/getRoleIdByUserName.do', {
+
+                                }, function (data) {
+                                    var roleId = data.data;
+                                    if(roleId != null) {
+                                        window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"productId="+id+"&productName="+nameUrl + "&roleId="+ roleId;
+                                    } else {
+                                        alert("您还未选择角色！");
+                                        window.location.href = "http://localhost:8080/product/productManage.html";
+                                    }
+                                });
                         }
                     });
                 }, 50);
@@ -53,11 +63,15 @@ Ext.onReady(function () {
         }]
     });
 
+    reload();
 
     Ext.create('Ext.container.Viewport', {
         layout: 'border',
         items: [userGrid]
     });
-    reload();
 
 })
+
+function isTrue(isSuccess) {
+    return (isSuccess === "true" || isSuccess === true);
+}

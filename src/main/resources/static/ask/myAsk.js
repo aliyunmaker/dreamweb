@@ -203,6 +203,7 @@ Ext.onReady(function () {
             dataIndex: 'opinion',
             header: "审批意见",
             width: 200,
+            flex: 1
        }],
     });
     reload();

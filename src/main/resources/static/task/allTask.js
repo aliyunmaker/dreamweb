@@ -133,6 +133,7 @@ Ext.onReady(function () {
             dataIndex: 'assignee',
             header: "待办理人",
             width: 100,
+            flex: 1
         }],
     });
 

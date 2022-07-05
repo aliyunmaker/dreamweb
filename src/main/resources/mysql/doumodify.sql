@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `provisioned_product`;
 DROP TABLE IF EXISTS `product`;
 DROP TABLE IF EXISTS `myAsk`;
 DROP TABLE IF EXISTS `userproduct`;
+DROP TABLE IF EXISTS `userrole`;
 
 create TABLE `product` (
                             `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
@@ -98,3 +99,13 @@ VALUES
 ('prod-bp1c6y7y2wj453','创建ECS','dou','port-bp1yt7582gn4p7',now()),
 ('prod-bp1p27wj2c94fg','创建RAM角色','admin','port-bp1yt7582gn4p7',now()),
 ('prod-bp1p27wj2c94fg','创建RAM角色','dou','port-bp1yt7582gn4p7',now());
+
+CREATE TABLE `userrole` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                            `roleid` int(11) NOT NULL COMMENT '角色ID',
+                            `username` varchar(100) NOT NULL COMMENT '用户名',
+                            `gmt_create` datetime DEFAULT NULL,
+                            `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `user-role` (`username`, `roleid`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

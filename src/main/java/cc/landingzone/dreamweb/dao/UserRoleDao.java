@@ -21,4 +21,11 @@ public interface UserRoleDao {
     void deleteUserRoleByUserGroupId(Integer userGroupId);
 
     UserRole getUserRoleByName(Integer userRoleId);
+
+    void saveUserRole(String userName, Integer roleId);
+
+    Integer getRoleIdByUserName(String userName);
+
+    void updateUserRole2(String userName, Integer roleId);
+
 }
