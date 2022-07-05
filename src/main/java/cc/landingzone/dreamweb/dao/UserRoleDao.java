@@ -28,4 +28,5 @@ public interface UserRoleDao {
 
     void updateUserRole2(String userName, Integer roleId);
 
+
 }

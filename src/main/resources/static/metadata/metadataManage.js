@@ -7,9 +7,6 @@ Ext.onReady(function () {
         userProductStore.load();
     }
 
-    var reload3 = function () {
-        userRoleStore.load();
-    }
 
     var productStore = Ext.create('MyExt.Component.SimpleJsonStore', {
         dataUrl: '../product/searchProduct.do',
@@ -25,12 +22,20 @@ Ext.onReady(function () {
         fields: ['id', 'productId', 'userName', 'portfolioId', 'productName']
     });
 
+    var userRoleCurrentStore = Ext.create('MyExt.Component.SimpleJsonStore', {
+        dataUrl: '../userRole/getRoleCurrent.do',
+        rootFlag: 'data',
+        pageSize: 200,
+        fields: ['id', 'userGroupId', 'roleType', 'roleName', 'roleValue']
+      });
+
     var userRoleStore = Ext.create('MyExt.Component.SimpleJsonStore', {
         dataUrl: '../userRole/getRolesByUser.do',
         rootFlag: 'data',
         pageSize: 200,
         fields: ['id', 'userGroupId', 'roleType', 'roleName', 'roleValue']
-      });
+    });
+
 
     var productGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'center',
@@ -162,11 +167,57 @@ Ext.onReady(function () {
     });
 
 
+    // var userRoleGrid = Ext.create('MyExt.Component.GridPanel', {
+    //     region: 'south',
+    //     title: '角色列表',
+    //     store: userRoleStore,
+    //     height: 400,
+    //     columns: [{
+    //         dataIndex: 'id',
+    //         header: 'ID',
+    //         hidden: true
+    //     }, {
+    //         dataIndex: 'userGroupId',
+    //         header: "用户组ID",
+    //         width: 100
+    //     }, {
+    //         dataIndex: 'roleType',
+    //         header: "类型",
+    //         width: 80
+    //     }, {
+    //         dataIndex: 'roleName',
+    //         header: "角色名称",
+    //         width: 140
+    //     }, {
+    //         dataIndex: 'roleValue',
+    //         header: "value",
+    //         flex: 1
+    //     }],
+    //     tbar: [{
+    //         text: '选择',
+    //         iconCls: 'MyExt-confirm',
+    //         handler: function () {
+    //             var select = MyExt.util.SelectGridModel(userRoleGrid, true);
+    //             if (!select) {
+    //                 return;
+    //             }
+    //             MyExt.util.MessageConfirm('是否确定选择', function () {
+    //                 MyExt.util.Ajax('../userRole/roleSelect.do', {
+    //                     id: select[0].data["id"],
+    //                 }, function (data) {
+    //                     MyExt.Msg.alert('选择成功!');
+    //                 });
+    //             });
+    //         }
+    //     }],
+    // });
+
     var userRoleGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'south',
-        title: '角色列表',
-        store: userRoleStore,
-        height: 400,
+        split: true,
+        title: '当前使用角色',
+        store: userRoleCurrentStore,
+        height: 300,
         columns: [{
             dataIndex: 'id',
             header: 'ID',
@@ -174,7 +225,7 @@ Ext.onReady(function () {
         }, {
             dataIndex: 'userGroupId',
             header: "用户组ID",
-            width: 100
+            width: 70
         }, {
             dataIndex: 'roleType',
             header: "类型",
@@ -182,29 +233,83 @@ Ext.onReady(function () {
         }, {
             dataIndex: 'roleName',
             header: "角色名称",
-            width: 140
+            width: 100
         }, {
             dataIndex: 'roleValue',
             header: "value",
             flex: 1
         }],
         tbar: [{
-            text: '选择',
-            iconCls: 'MyExt-confirm',
+            text: '角色配置',
+            iconCls: 'MyExt-modify',
             handler: function () {
-                var select = MyExt.util.SelectGridModel(userRoleGrid, true);
-                if (!select) {
-                    return;
-                }
-                MyExt.util.MessageConfirm('是否确定选择', function () {
-                    MyExt.util.Ajax('../userRole/roleSelect.do', {
-                        id: select[0].data["id"],
-                    }, function (data) {
-                        MyExt.Msg.alert('选择成功!');
-                    });
+                userRoleStore.load();
+                var userRoleInfo = Ext.create('MyExt.Component.GridPanel', {
+                    // title: '角色',
+                    store: userRoleStore,
+                    hasBbar: false,
+                    height: 200,
+                    columns: [{
+                        dataIndex: 'id',
+                        header: 'ID',
+                        hidden: true
+                    }, {
+                        dataIndex: 'userGroupId',
+                        header: "用户组ID",
+                        width: 70
+                    }, {
+                        dataIndex: 'roleType',
+                        header: "类型",
+                        width: 80
+                    }, {
+                        dataIndex: 'roleName',
+                        header: "角色名称",
+                        width: 100
+                    }, {
+                        dataIndex: 'roleValue',
+                        header: "value",
+                        flex: 1
+                    }],
+                    tbar: [{
+                        text: '选择',
+                        iconCls: 'MyExt-add',
+                        handler: function () {
+                            var select = MyExt.util.SelectGridModel(userRoleInfo, true);
+                            if (!select) {
+                                return;
+                            }
+                            MyExt.util.MessageConfirm('是否确定选择', function () {
+                                MyExt.util.Ajax('../userRole/roleSelect.do', {
+                                    id: select[0].data["id"],
+                                }, function (data) {
+                                    MyExt.Msg.alert('选择成功!');
+                                    win.hide();
+                                    reload3();
+                                });
+                            });
+                        }
+                    }]
                 });
+                win = new Ext.Window({
+                    title:'可选角色信息',
+                    layout:'form',
+                    width:900,
+                    closeAction:'close',
+                    plain: true,
+                    items: [userRoleInfo],
+                    buttons: [{
+                        text: '关闭',
+                        handler: function(){
+                            win.hide();
+                            reload3();
+                        }
+                    }],
+                    buttonAlign: 'center',
+                });
+                win.show();
             }
         }],
+        listeners: {}
     });
 
     var formWindow = new MyExt.Component.FormWindow({
@@ -289,7 +394,21 @@ Ext.onReady(function () {
 
     reload();
     reload2();
+    userRoleCurrentStore.load();
+    var reload3 = function () {
+        console.log(userRoleCurrentStore.getCount());
+        console.log(userRoleCurrentStore);
+        console.log(userRoleCurrentStore.data);
+        console.log(userRoleCurrentStore.data['items']);
+        console.log(userRoleCurrentStore.data.length);
+        if(userRoleCurrentStore.data.length !== 0) {
+            userRoleCurrentStore.load();
+        }
+        // userRoleCurrentStore.load();
+    }
+    // if(userRoleCurrentStore.data.length !== 0) {
     reload3();
+    // }
 
     Ext.create('Ext.container.Viewport', {
         layout: 'border',

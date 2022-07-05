@@ -2,6 +2,7 @@ package cc.landingzone.dreamweb.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,6 +97,27 @@ public class UserRoleController extends BaseController {
             List<UserRole> userRoleList = userRoleService.getRoleListByUserId(user.getId());
             result.setTotal(userRoleList.size());
             result.setData(userRoleList);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/getRoleCurrent.do")
+    public void getRoleCurrent(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();  //拿到用户名
+            Integer roleId = userRoleService.getRoleIdByUserName(userName);
+            if(roleId != null) {
+                UserRole userRole = userRoleService.getUserRoleById(roleId);
+                result.setTotal(1);
+                result.setData(userRole);
+            } else {
+                result.setSuccess(false);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

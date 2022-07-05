@@ -89,4 +89,5 @@ public class UserRoleService {
     public void updateUserRole2(String userName, Integer roleId) {
         userRoleDao.updateUserRole2(userName, roleId);
     }
+
 }
