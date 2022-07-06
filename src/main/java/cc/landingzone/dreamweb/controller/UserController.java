@@ -93,6 +93,7 @@ public class UserController extends BaseController {
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
+            System.out.println(simpleSearch);
             List<User> list = userService.searchUser(simpleSearch, page);
             result.setTotal(page.getTotal());
             result.setData(list);

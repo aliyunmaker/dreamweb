@@ -52,7 +52,7 @@ Ext.onReady(function () {
                                         window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"productId="+id+"&productName="+nameUrl + "&roleId="+ roleId;
                                     } else {
                                         alert("您还未选择角色！");
-                                        window.location.href = "http://localhost:8080/product/metadataManage.html";
+                                        window.location.href = "http://localhost:8080/metadata/metadataManage.html";
                                     }
                                 });
                         }

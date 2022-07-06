@@ -2,9 +2,7 @@ package cc.landingzone.dreamweb.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
@@ -116,7 +114,7 @@ public class UserRoleController extends BaseController {
                 result.setTotal(1);
                 result.setData(userRole);
             } else {
-                result.setSuccess(false);
+                result.setSuccess(true);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

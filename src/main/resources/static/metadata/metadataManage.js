@@ -7,6 +7,10 @@ Ext.onReady(function () {
         userProductStore.load();
     }
 
+    var reload3 = function () {
+        userRoleCurrentStore.load();
+    }
+
 
     var productStore = Ext.create('MyExt.Component.SimpleJsonStore', {
         dataUrl: '../product/searchProduct.do',
@@ -166,52 +170,6 @@ Ext.onReady(function () {
         }],
     });
 
-
-    // var userRoleGrid = Ext.create('MyExt.Component.GridPanel', {
-    //     region: 'south',
-    //     title: '角色列表',
-    //     store: userRoleStore,
-    //     height: 400,
-    //     columns: [{
-    //         dataIndex: 'id',
-    //         header: 'ID',
-    //         hidden: true
-    //     }, {
-    //         dataIndex: 'userGroupId',
-    //         header: "用户组ID",
-    //         width: 100
-    //     }, {
-    //         dataIndex: 'roleType',
-    //         header: "类型",
-    //         width: 80
-    //     }, {
-    //         dataIndex: 'roleName',
-    //         header: "角色名称",
-    //         width: 140
-    //     }, {
-    //         dataIndex: 'roleValue',
-    //         header: "value",
-    //         flex: 1
-    //     }],
-    //     tbar: [{
-    //         text: '选择',
-    //         iconCls: 'MyExt-confirm',
-    //         handler: function () {
-    //             var select = MyExt.util.SelectGridModel(userRoleGrid, true);
-    //             if (!select) {
-    //                 return;
-    //             }
-    //             MyExt.util.MessageConfirm('是否确定选择', function () {
-    //                 MyExt.util.Ajax('../userRole/roleSelect.do', {
-    //                     id: select[0].data["id"],
-    //                 }, function (data) {
-    //                     MyExt.Msg.alert('选择成功!');
-    //                 });
-    //             });
-    //         }
-    //     }],
-    // });
-
     var userRoleGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'south',
         split: true,
@@ -272,7 +230,7 @@ Ext.onReady(function () {
                     }],
                     tbar: [{
                         text: '选择',
-                        iconCls: 'MyExt-add',
+                        iconCls: 'MyExt-confirm',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userRoleInfo, true);
                             if (!select) {
@@ -301,7 +259,6 @@ Ext.onReady(function () {
                         text: '关闭',
                         handler: function(){
                             win.hide();
-                            reload3();
                         }
                     }],
                     buttonAlign: 'center',
@@ -394,21 +351,7 @@ Ext.onReady(function () {
 
     reload();
     reload2();
-    userRoleCurrentStore.load();
-    var reload3 = function () {
-        console.log(userRoleCurrentStore.getCount());
-        console.log(userRoleCurrentStore);
-        console.log(userRoleCurrentStore.data);
-        console.log(userRoleCurrentStore.data['items']);
-        console.log(userRoleCurrentStore.data.length);
-        if(userRoleCurrentStore.data.length !== 0) {
-            userRoleCurrentStore.load();
-        }
-        // userRoleCurrentStore.load();
-    }
-    // if(userRoleCurrentStore.data.length !== 0) {
     reload3();
-    // }
 
     Ext.create('Ext.container.Viewport', {
         layout: 'border',
