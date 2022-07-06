@@ -37,10 +37,21 @@
         </if>
     </select>
 
+<!--    <select id="listProductDistinct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">-->
+<!--        select distinct * from product order by id desc-->
+<!--        <if test="page != null">-->
+<!--            limit #{page.start},#{page.limit}-->
+<!--        </if>-->
+<!--    </select>-->
+
     <select id="getProductTotal" resultType="int" parameterType="map">
         select count(*) from product
-    </select>    
-    
+    </select>
+
+<!--    <select id="getProductDistinctTotal" resultType="int" parameterType="map">-->
+<!--        select distinct count(*) from product-->
+<!--    </select>-->
+
     <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
         select *
         from product

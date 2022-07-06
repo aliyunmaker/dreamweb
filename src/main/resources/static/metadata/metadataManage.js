@@ -137,7 +137,8 @@ Ext.onReady(function () {
             text: '增加',
             iconCls: 'MyExt-add',
             handler: function () {
-                formWindow2.changeFormUrlAndShow('../userProduct/addUserProduct.do');
+//                formWindow2.changeFormUrlAndShow('../userProduct/addUserProduct.do');
+                  userProductFormWindow.changeFormUrlAndShow('');
             }
         }, {
             text: '修改',
@@ -348,6 +349,84 @@ Ext.onReady(function () {
             }
         }
     });
+
+    var userProductFormWindow = new MyExt.Component.FormWindow({
+        title: '增加权限',
+        width: 500,
+        height: 320,
+        formItems: [{
+          name: 'id',
+          hidden: true
+        }, {
+          xtype: 'autocombobox',
+          emptyText: '产品名称（产品ID）',
+          fieldLabel: '产品',
+          store: Ext.create('MyExt.Component.SimpleJsonStore', {
+            dataUrl: '../product/searchProduct.do',
+            pageSize: 10,
+            fields: ['id', 'productName', 'productId']
+          }),
+          displayField: 'productName',
+          displayTpl: Ext.create('Ext.XTemplate',
+            '<tpl for=".">',
+            '{productName}[{productId}]',
+            '</tpl>'
+          ),
+          valueField: 'id',
+          name: 'productId',
+          listConfig: {
+            getInnerTpl: function () {
+              return '{productName}[{productId}]';
+            }
+          },
+        }, {
+           xtype: 'autocombobox',
+           emptyText: '登录名（姓名）',
+           fieldLabel: '用户',
+           store: Ext.create('MyExt.Component.SimpleJsonStore', {
+             dataUrl: '../user/searchUser.do',
+             pageSize: 10,
+             fields: ['id', 'loginName', 'name']
+           }),
+           displayField: 'loginName',
+           displayTpl: Ext.create('Ext.XTemplate',
+             '<tpl for=".">',
+             '{loginName}[{name}]',
+             '</tpl>'
+           ),
+           valueField: 'id',
+           name: 'userId',
+           listConfig: {
+             getInnerTpl: function () {
+               return '{loginName}[{name}]';
+             }
+           },
+         }, {
+          fieldLabel: '产品组合ID',
+          name: 'portfolioId',
+          allowBlank: false
+        }],
+        submitBtnFn: function () {
+            var form = userProductFormWindow.getFormPanel().getForm();
+            console.log(form.getValues.productId);
+            console.log(form.getValues.userId);
+//          var select = MyExt.util.SelectGridModel(userGroupGrid, true);
+//          if (!select) {
+//            return;
+//          }
+//          var form = userFormWindow.getFormPanel().getForm();
+//          if (form.isValid()) {
+//            MyExt.util.Ajax('../userGroup/addUserGroupAssociate.do', {
+//              userId: form.getValues().userId,
+//              userGroupId: select[0].data["id"]
+//            }, function (data) {
+//              userFormWindow.hide();
+//              userStore.load();
+//              MyExt.Msg.alert('操作成功!');
+//            });
+//          }
+        }
+      });
 
     reload();
     reload2();

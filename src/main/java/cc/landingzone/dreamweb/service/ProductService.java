@@ -66,6 +66,22 @@ public class ProductService {
         return list;
     }
 
+//    @Transactional
+//    public List<Product> listProductDistinct(Page page) {
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("page", page);
+//        List<Product> list = productDao.listProductDistinct(map);
+//        if (null != page) {
+//            if (null != page.getStart() && null != page.getLimit()) {
+//                Integer total = productDao.getProductDistinctTotal(map);
+//                page.setTotal(total);
+//            } else {
+//                page.setTotal(list.size());
+//            }
+//        }
+//        return list;
+//    }
+
     @Transactional
     public void saveProduct(Product product) {
         Product product2 = getProductByProductId(product.getProductId());

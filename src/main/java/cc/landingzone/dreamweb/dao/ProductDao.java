@@ -20,6 +20,8 @@ public interface ProductDao {
 
     List<Product> listProduct(Map<String, Object> map);
 
+//    List<Product> listProductDistinct(Map<String, Object> map);
+
     List<String> listApplication(String productId);
 
     String getPortfolioId(String productId, String userName);
@@ -31,6 +33,8 @@ public interface ProductDao {
     String getProductName(String productId);
 
     Integer getProductTotal(Map<String, Object> map);
+
+//    Integer getProductDistinctTotal(Map<String, Object> map);
 
     Product getProductByProductId(String productId);
 
