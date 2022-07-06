@@ -1,5 +1,5 @@
-drop table IF EXISTS `product`;
-create TABLE `product` (
+drop table IF EXISTS `productversion`;
+create TABLE `productversion` (
                             `id` int(11) NOT NULL AUTO_INCREMENT comment '主键',
                             `productid` varchar(100) comment '产品id',
                             `application` varchar(100) NOT NULL comment '应用',
@@ -12,7 +12,7 @@ create TABLE `product` (
                              UNIQUE KEY (`productversionid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-insert into `product` (`productid`, `application`, `scenes`,`productname`, `productversionid`, `gmt_create`)
+insert into `productversion` (`productid`, `application`, `scenes`,`productname`, `productversionid`, `gmt_create`)
 VALUES
 ('prod-bp1c6y7y2wj453','application1','日常','asdasda', 'pv-bp15gfhv2px6th', now()),
 ('prod-bp1c6y7y2wj453','application1','预发','DEMO-创建ECS（选择VPC）','pv-bp11vd4m26h6uh',now()),

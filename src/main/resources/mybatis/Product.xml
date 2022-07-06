@@ -6,7 +6,7 @@
 
     <select id="listApplication"
             resultType="String">
-        select distinct application from product where productid = #{productId}
+        select distinct application from productversion where productid = #{productId}
     </select>
 
     <select id="getPortfolioId" 
@@ -17,21 +17,21 @@
     <select id="listScenes"
             resultType="String"
             parameterType="String">
-        select distinct scenes from product where application = #{application} and productid = #{productId}
+        select distinct scenes from productversion where application = #{application} and productid = #{productId}
     </select>
 
     <select id="getProductVersionId"
             resultType="String">
-        select productversionid from product where application = #{application} and scenes = #{scene} and productid = #{productId};
+        select productversionid from productversion where application = #{application} and scenes = #{scene} and productid = #{productId};
     </select>
 
     <select id="getProductName"
             resultType="String">
-        select distinct productname from product where productid = #{productId};
+        select distinct productname from productversion where productid = #{productId};
     </select>
 
     <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
-        select * from product order by id desc
+        select * from productversion order by id desc
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>
@@ -45,7 +45,7 @@
 <!--    </select>-->
 
     <select id="getProductTotal" resultType="int" parameterType="map">
-        select count(*) from product
+        select count(*) from productversion
     </select>
 
 <!--    <select id="getProductDistinctTotal" resultType="int" parameterType="map">-->
@@ -54,19 +54,19 @@
 
     <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
         select *
-        from product
+        from productversion
         where productid = #{productId}
     </select>
 
     <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">
         select *
-        from product
+        from productversion
         where id = #{id}
     </select>
 
     <insert id="saveProduct"
             parameterType="cc.landingzone.dreamweb.model.Product">
-        insert into product
+        insert into productversion
         (application,
         scenes,
         productid,
@@ -82,7 +82,7 @@
     </insert>
 
     <update id="updateProduct" parameterType="cc.landingzone.dreamweb.model.Product">
-        update product
+        update productversion
         set application              = #{application},
             scenes                   = #{scenes},
             productid                = #{productId},
@@ -93,7 +93,7 @@
 
     <delete id="deleteProduct" parameterType="int">
         delete
-        from product
+        from productversion
         where id = #{id}
     </delete>
 
