@@ -42,6 +42,24 @@ public class ProductController extends BaseController {
          * @return 产品列表
          * @throws Exception
          */
+    @RequestMapping("/searchProductVersion.do")
+    public void searchProductVersion(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            Integer start = Integer.valueOf(request.getParameter("start"));
+            Integer limit = Integer.valueOf(request.getParameter("limit"));
+            Page page = new Page(start, limit);
+            List<Product> list = productService.listProductVersion(page);
+            result.setTotal(page.getTotal());
+            result.setData(list);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
     @RequestMapping("/searchProduct.do")
     public void searchProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -110,7 +128,7 @@ public class ProductController extends BaseController {
         try {
             String formString = request.getParameter("formString");
             Product updateProduct = JsonUtils.parseObject(formString, Product.class);
-            Product dbProduct = productService.getProductById(updateProduct.getId());
+            Product dbProduct = productService.getProductVersionById(updateProduct.getId());
             dbProduct.setProductId(updateProduct.getProductId());
             dbProduct.setApplication(updateProduct.getApplication());
             dbProduct.setScenes(updateProduct.getScenes());

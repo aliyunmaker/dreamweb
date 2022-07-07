@@ -13,7 +13,7 @@ Ext.onReady(function () {
 
 
     var productStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-        dataUrl: '../product/searchProduct.do',
+        dataUrl: '../product/searchProductVersion.do',
         rootFlag: 'data',
         pageSize: 200,
         fields: ['id', 'productId', 'application', 'scenes', 'productName', 'productVersionId']
@@ -137,7 +137,6 @@ Ext.onReady(function () {
             text: '增加',
             iconCls: 'MyExt-add',
             handler: function () {
-//                formWindow2.changeFormUrlAndShow('../userProduct/addUserProduct.do');
                   userProductFormWindow.changeFormUrlAndShow('');
             }
         }, {
@@ -148,8 +147,8 @@ Ext.onReady(function () {
                 if (!select) {
                     return;
                 }
-                formWindow2.changeFormUrlAndShow('../userProduct/updateUserProduct.do');
-                formWindow2.getFormPanel().getForm().loadRecord(select[0]);
+                userProductFormWindow2.changeFormUrlAndShow('');
+                userProductFormWindow2.getFormPanel().getForm().loadRecord(select[0]);
             }
         }, {
             text: '删除',
@@ -312,43 +311,64 @@ Ext.onReady(function () {
         }
     });
 
-    var formWindow2 = new MyExt.Component.FormWindow({
-        title: '操作',
-        width: 400,
-        height: 320,
-        formItems: [{
-            name: 'id',
-            hidden: true
-        }, {
-            fieldLabel: '产品ID',
-            name: 'productId',
-            allowBlank: false
-        }, {
-            fieldLabel: '产品名称',
-            name: 'productName',
-            allowBlank: false
-        }, {
-            fieldLabel: '用户名',
-            name: 'userName',
-            allowBlank: false
-        }, {
-            fieldLabel: '产品组合ID',
-            name: 'portfolioId',
-            allowBlank: false
-        }],
-        submitBtnFn: function () {
-            var form = formWindow2.getFormPanel().getForm();
-            if (form.isValid()) {
-                MyExt.util.Ajax(formWindow2.getFormPanel().url, {
-                    formString: Ext.JSON.encode(form.getValues())
+    var userProductFormWindow2 = new MyExt.Component.FormWindow({
+            title: '修改权限',
+            width: 500,
+            height: 320,
+            formItems: [{
+              name: 'id',
+              hidden: true
+            }, {
+              xtype: 'autocombobox',
+              fieldLabel: '产品',
+              store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                dataUrl: '../product/searchProduct.do',
+                pageSize: 10,
+                fields: ['id', 'productName', 'productId']
+              }),
+              displayField: 'productId',
+              name: 'productId',
+              listConfig: {
+                getInnerTpl: function () {
+                  return '{productName}[{productId}]';
+                }
+              },
+            }, {
+               xtype: 'autocombobox',
+               fieldLabel: '用户',
+               store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                 dataUrl: '../user/searchUser.do',
+                 pageSize: 10,
+                 fields: ['id', 'loginName', 'name']
+               }),
+               displayField: 'loginName',
+               name: 'userName',
+               listConfig: {
+                 getInnerTpl: function () {
+                   return '{loginName}[{name}]';
+                 }
+               },
+             }, {
+              fieldLabel: '产品组合ID',
+              name: 'portfolioId',
+              allowBlank: false
+            }],
+            submitBtnFn: function () {
+                var form = userProductFormWindow2.getFormPanel().getForm();
+              if (form.isValid()) {
+                MyExt.util.Ajax('../userProduct/updateUserProduct.do', {
+                  id: form.getValues().id,
+                  productId: form.getValues().productId,
+                  userName: form.getValues().userName,
+                  portfolioId: form.getValues().portfolioId
                 }, function (data) {
-                    formWindow2.hide();
-                    reload2();
-                    MyExt.Msg.alert('操作成功!');
+                  userProductFormWindow2.hide();
+                  userProductStore.load();
+                  MyExt.Msg.alert('操作成功!');
                 });
+              }
             }
-        }
-    });
+          });
 
     var userProductFormWindow = new MyExt.Component.FormWindow({
         title: '增加权限',
@@ -408,23 +428,17 @@ Ext.onReady(function () {
         }],
         submitBtnFn: function () {
             var form = userProductFormWindow.getFormPanel().getForm();
-            console.log(form.getValues.productId);
-            console.log(form.getValues.userId);
-//          var select = MyExt.util.SelectGridModel(userGroupGrid, true);
-//          if (!select) {
-//            return;
-//          }
-//          var form = userFormWindow.getFormPanel().getForm();
-//          if (form.isValid()) {
-//            MyExt.util.Ajax('../userGroup/addUserGroupAssociate.do', {
-//              userId: form.getValues().userId,
-//              userGroupId: select[0].data["id"]
-//            }, function (data) {
-//              userFormWindow.hide();
-//              userStore.load();
-//              MyExt.Msg.alert('操作成功!');
-//            });
-//          }
+          if (form.isValid()) {
+            MyExt.util.Ajax('../userProduct/addUserProduct.do', {
+              productId: form.getValues().productId,
+              userId: form.getValues().userId,
+              portfolioId: form.getValues().portfolioId
+            }, function (data) {
+              userProductFormWindow.hide();
+              userProductStore.load();
+              MyExt.Msg.alert('操作成功!');
+            });
+          }
         }
       });
 

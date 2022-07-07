@@ -27,30 +27,30 @@
 
     <select id="getProductName"
             resultType="String">
-        select distinct productname from productversion where productid = #{productId};
+        select productname from product where productid = #{productId};
     </select>
 
-    <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
+    <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
         select * from productversion order by id desc
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>
     </select>
 
-<!--    <select id="listProductDistinct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">-->
-<!--        select distinct * from product order by id desc-->
-<!--        <if test="page != null">-->
-<!--            limit #{page.start},#{page.limit}-->
-<!--        </if>-->
-<!--    </select>-->
-
-    <select id="getProductTotal" resultType="int" parameterType="map">
+    <select id="getProductVersionTotal" resultType="int" parameterType="map">
         select count(*) from productversion
     </select>
 
-<!--    <select id="getProductDistinctTotal" resultType="int" parameterType="map">-->
-<!--        select distinct count(*) from product-->
-<!--    </select>-->
+    <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
+        select * from product order by id desc
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="getProductTotal" resultType="int" parameterType="map">
+        select count(*) from product
+    </select>
 
     <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
         select *
@@ -58,9 +58,15 @@
         where productid = #{productId}
     </select>
 
-    <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">
+    <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.Product">
         select *
         from productversion
+        where id = #{id}
+    </select>
+
+    <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">
+        select *
+        from product
         where id = #{id}
     </select>
 

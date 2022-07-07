@@ -51,6 +51,22 @@ public class ProductService {
     }
 
     @Transactional
+    public List<Product> listProductVersion(Page page) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("page", page);
+        List<Product> list = productDao.listProductVersion(map);
+        if (null != page) {
+            if (null != page.getStart() && null != page.getLimit()) {
+                Integer total = productDao.getProductVersionTotal(map);
+                page.setTotal(total);
+            } else {
+                page.setTotal(list.size());
+            }
+        }
+        return list;
+    }
+
+    @Transactional
     public List<Product> listProduct(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
@@ -95,6 +111,11 @@ public class ProductService {
     public Product getProductByProductId(String productId) {
         Assert.hasText(productId, "产品ID不能为空!");
         return productDao.getProductByProductId(productId);
+    }
+
+    @Transactional
+    public Product getProductVersionById(Integer id) {
+        return productDao.getProductVersionById(id);
     }
 
     @Transactional

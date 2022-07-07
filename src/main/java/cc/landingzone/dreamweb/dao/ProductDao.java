@@ -18,7 +18,13 @@ import java.util.Map;
 @Component
 public interface ProductDao {
 
+    List<Product> listProductVersion(Map<String, Object> map);
+
+    Integer getProductVersionTotal(Map<String, Object> map);
+
     List<Product> listProduct(Map<String, Object> map);
+
+    Integer getProductTotal(Map<String, Object> map);
 
 //    List<Product> listProductDistinct(Map<String, Object> map);
 
@@ -32,8 +38,6 @@ public interface ProductDao {
 
     String getProductName(String productId);
 
-    Integer getProductTotal(Map<String, Object> map);
-
 //    Integer getProductDistinctTotal(Map<String, Object> map);
 
     Product getProductByProductId(String productId);
@@ -41,6 +45,8 @@ public interface ProductDao {
     void saveProduct(Product product);
 
     void updateProduct(Product product);
+
+    Product getProductVersionById(Integer id);
 
     Product getProductById(Integer id);
 
