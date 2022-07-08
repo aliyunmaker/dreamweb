@@ -81,4 +81,9 @@ public class UserProductService {
         userProductDao.deleteUserProduct(id);
     }
 
+    @Transactional
+    public String getPortfolioId (String productId, String userName) {
+        return userProductDao.getPortfolioId(productId, userName);
+    }
+
 }

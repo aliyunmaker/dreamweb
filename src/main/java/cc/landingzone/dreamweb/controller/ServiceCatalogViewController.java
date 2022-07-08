@@ -28,6 +28,9 @@ public class ServiceCatalogViewController extends BaseController{
     private ProductService productService;
 
     @Autowired
+    private ProductVersionService productVersionService;
+
+    @Autowired
     private ProvisionedProductService provisionedProductService;
 
     @Autowired
@@ -57,7 +60,7 @@ public class ServiceCatalogViewController extends BaseController{
         WebResult result = new WebResult();
         String productId = request.getParameter("productId");
 
-        List<String> applicationList = productService.listApplication(productId);
+        List<String> applicationList = productVersionService.listApplication(productId);
         result.setTotal(applicationList.size());
         result.setData(applicationList);
 
@@ -77,7 +80,7 @@ public class ServiceCatalogViewController extends BaseController{
         String productId = request.getParameter("productId");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        String portfolioId = productService.getPortfolioId(productId, username);
+        String portfolioId = userProductService.getPortfolioId(productId, username);
         result.setData(portfolioId);
         outputToJSON(response, result);
     }
@@ -95,7 +98,7 @@ public class ServiceCatalogViewController extends BaseController{
         try {
             String getApplication = request.getParameter("select_Application");
             String productId = request.getParameter("productId");
-            List<String> scenesList = productService.listScenes(productId, getApplication);
+            List<String> scenesList = productVersionService.listScenes(productId, getApplication);
             result.setTotal(scenesList.size());
             result.setData(scenesList);
         } catch (Exception e) {
@@ -124,16 +127,8 @@ public class ServiceCatalogViewController extends BaseController{
             Assert.hasText(getScene, "场景不能为空！");
             String getProductId = request.getParameter("productId");
             Assert.hasText(getProductId, "产品Id不能为空！");
-            String productVersionId = productService.getProductVersionId(getProductId, getApplication, getScene);
+            String productVersionId = productVersionService.getProductVersionId(getProductId, getApplication, getScene);
             Assert.hasText(productVersionId, "未找到对应productVersionId！");
-
-            // String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            // List<String> productIds = userProductService.listProductId(username);
-            // if(productIds.contains(productId)) {
-            //     result.setData(productId);
-            // } else {
-            //     result.setSuccess(false);
-            // }
             result.setData(productVersionId);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

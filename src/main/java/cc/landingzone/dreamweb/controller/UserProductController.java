@@ -11,6 +11,7 @@ import java.util.List;
 import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -47,6 +48,28 @@ public class UserProductController extends BaseController {
             Page page = new Page(start, limit);
             List<UserProduct> list = userProductService.listUserProduct(page);
             result.setTotal(page.getTotal());
+            result.setData(list);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    /**
+     * 元资源申请页面按照用户名搜索产品列表
+     *
+     * @param:
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/searchUserProductByUserName.do")
+    public void searchUserProductByUserName(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            List<Product> list = userProductService.listProduct(userName);
             result.setData(list);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -105,7 +128,7 @@ public class UserProductController extends BaseController {
             String userName = request.getParameter("userName");
             String portfolioId = request.getParameter("portfolioId");
             String productName = productService.getProductName(productId);
-            String test = productService.getPortfolioId(productId, userName);
+            String test = userProductService.getPortfolioId(productId, userName);
             if(test == null || (!test.equals(portfolioId))){
                 UserProduct dbUserProduct = userProductService.getUserProductById(Id);
                 dbUserProduct.setProductId(productId);

@@ -153,9 +153,10 @@ public class ApplyService {
                     } else if(response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
                         applyDao.updateStatusByPlanId(apply.getPlanId(), "预检失败");
                         applyDao.updatePlanResultByPlanId(apply.getPlanId(), response1.getBody().getPlanDetail().statusMessage);
-                    } else {
-                        System.out.println(response1.getBody().getPlanDetail().status);
                     }
+//                    else {
+//                        System.out.println(response1.getBody().getPlanDetail().status);
+//                    }
                     // 如果状态改变，修改数据库为预检失败 or 修改数据库为预检成功且开启工作流审批
                 }
             }

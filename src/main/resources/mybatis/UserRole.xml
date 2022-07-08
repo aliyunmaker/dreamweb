@@ -71,24 +71,23 @@
     </delete>
 
     <insert id="saveUserRole" >
-        insert into userrole
-        (roleid,
-        username,
+        insert into properties
+        (k,
+        v,
         gmt_create)
-        values (#{roleId},
-        #{userName},
+        values (#{key},
+        #{value},
         now())
     </insert>
 
-    <select id="getRoleIdByUserName" resultType="Integer">
-        select roleid from userrole
-        where username = #{userName}
+    <select id="getRoleId" parameterType="String" resultType="String">
+        select v from properties where k = #{key}
     </select>
 
-    <update id="updateUserRole2">
-        update userrole
-        set roleid = #{roleId}
-        where username = #{userName}
+    <update id="updateUserRole2" parameterType="String">
+        update properties
+        set v = #{value}
+        where k = #{key}
     </update>
 
 </mapper>

@@ -26,45 +26,10 @@ public class ProductService {
     private ProductDao productDao;
 
     @Transactional
-    public List<String> listApplication (String productId) {
-        return productDao.listApplication(productId);
-    }
-
-    @Transactional
-    public String getPortfolioId (String productId, String userName) {
-        return productDao.getPortfolioId(productId, userName);
-    }
-
-    @Transactional
-    public List<String> listScenes (String productId, String application) {
-        return productDao.listScenes(productId, application);
-    }
-
-    @Transactional
-    public String getProductVersionId (String productId, String application, String scene) {
-        return productDao.getProductVersionId(productId, application, scene);
-    }
-
-    @Transactional
     public String getProductName (String productId) {
         return productDao.getProductName(productId);
     }
 
-    @Transactional
-    public List<Product> listProductVersion(Page page) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("page", page);
-        List<Product> list = productDao.listProductVersion(map);
-        if (null != page) {
-            if (null != page.getStart() && null != page.getLimit()) {
-                Integer total = productDao.getProductVersionTotal(map);
-                page.setTotal(total);
-            } else {
-                page.setTotal(list.size());
-            }
-        }
-        return list;
-    }
 
     @Transactional
     public List<Product> listProduct(Page page) {
@@ -82,40 +47,14 @@ public class ProductService {
         return list;
     }
 
-//    @Transactional
-//    public List<Product> listProductDistinct(Page page) {
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("page", page);
-//        List<Product> list = productDao.listProductDistinct(map);
-//        if (null != page) {
-//            if (null != page.getStart() && null != page.getLimit()) {
-//                Integer total = productDao.getProductDistinctTotal(map);
-//                page.setTotal(total);
-//            } else {
-//                page.setTotal(list.size());
-//            }
-//        }
-//        return list;
-//    }
 
     @Transactional
     public void saveProduct(Product product) {
-        Product product2 = getProductByProductId(product.getProductId());
-        if (product2 != null) {
-            throw new IllegalArgumentException("此产品ID(" + product2.getProductId()+ ")已存在");
+        Product product1 = productDao.getProductByProductId(product.getProductId());
+        if(product1 != null) {
+            throw new IllegalArgumentException("此产品(" + product.getProductId()+ ")已存在");
         }
         productDao.saveProduct(product);
-    }
-
-    @Transactional
-    public Product getProductByProductId(String productId) {
-        Assert.hasText(productId, "产品ID不能为空!");
-        return productDao.getProductByProductId(productId);
-    }
-
-    @Transactional
-    public Product getProductVersionById(Integer id) {
-        return productDao.getProductVersionById(id);
     }
 
     @Transactional
@@ -127,6 +66,10 @@ public class ProductService {
     public void updateProduct(Product product) {
         Assert.notNull(product, "数据不能为空!");
         Assert.hasText(product.getProductId(), "产品ID不能为空!");
+        Product product1 = productDao.getProductByProductId(product.getProductId());
+        if(product1 != null) {
+            throw new IllegalArgumentException("此产品(" + product.getProductId()+ ")已存在");
+        }
         productDao.updateProduct(product);
     }
 

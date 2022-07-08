@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ProductVersionDao">
+
+        <select id="listApplication"
+                resultType="String">
+            select distinct application from productversion where productid = #{productId}
+        </select>
+
+        <select id="listScenes"
+                resultType="String"
+                parameterType="String">
+            select distinct scenes from productversion where application = #{application} and productid = #{productId}
+        </select>
+
+        <select id="getProductVersionId"
+                resultType="String">
+            select productversionid from productversion where application = #{application} and scenes = #{scene} and productid = #{productId};
+        </select>
+
+        <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
+            select * from productversion order by id desc
+            <if test="page != null">
+                limit #{page.start},#{page.limit}
+            </if>
+        </select>
+
+        <select id="getProductVersionTotal" resultType="int" parameterType="map">
+            select count(*) from productversion
+        </select>
+
+        <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.Product">
+            select *
+            from productversion
+            where id = #{id}
+        </select>
+
+        <insert id="saveProductVersion"
+                parameterType="cc.landingzone.dreamweb.model.Product">
+            insert into productversion
+            (application,
+            scenes,
+            productid,
+            productversionid,
+            gmt_create)
+            values (#{application},
+                    #{scenes},
+                    #{productId},
+                    #{productVersionId},
+                    now())
+        </insert>
+
+        <update id="updateProductVersion" parameterType="cc.landingzone.dreamweb.model.Product">
+            update productversion
+            set application              = #{application},
+                scenes                   = #{scenes},
+                productid                = #{productId},
+                productversionid         = #{productVersionId}
+            where id = #{id}
+        </update>
+
+        <delete id="deleteProductVersion" parameterType="int">
+            delete
+            from productversion
+            where id = #{id}
+        </delete>
+
+
+</mapper>

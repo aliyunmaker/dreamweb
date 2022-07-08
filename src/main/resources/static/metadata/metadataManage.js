@@ -1,6 +1,6 @@
 Ext.onReady(function () {
     var reload = function () {
-        productStore.load();
+        productVersionStore.load();
     };
 
     var reload2 = function () {
@@ -11,12 +11,22 @@ Ext.onReady(function () {
         userRoleCurrentStore.load();
     }
 
+    var reload4 = function () {
+        productStore.load();
+    }
 
-    var productStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-        dataUrl: '../product/searchProductVersion.do',
+    var productVersionStore = Ext.create('MyExt.Component.SimpleJsonStore', {
+        dataUrl: '../productVersion/searchProductVersion.do',
         rootFlag: 'data',
         pageSize: 200,
         fields: ['id', 'productId', 'application', 'scenes', 'productName', 'productVersionId']
+    });
+
+    var productStore = Ext.create('MyExt.Component.SimpleJsonStore', {
+        dataUrl: '../product/searchProduct.do',
+        rootFlag: 'data',
+        pageSize: 200,
+        fields: ['id', 'productId', 'productName']
     });
 
     var userProductStore = Ext.create('MyExt.Component.SimpleJsonStore', {
@@ -41,10 +51,10 @@ Ext.onReady(function () {
     });
 
 
-    var productGrid = Ext.create('MyExt.Component.GridPanel', {
+    var productVersionGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'center',
-        title: '产品列表',
-        store: productStore,
+        title: '产品版本管理',
+        store: productVersionStore,
         columns: [{
             dataIndex: 'id',
             header: 'ID',
@@ -74,7 +84,63 @@ Ext.onReady(function () {
             text: '增加',
             iconCls: 'MyExt-add',
             handler: function () {
-                formWindow.changeFormUrlAndShow('../product/addProduct.do');
+                formWindow.changeFormUrlAndShow('../productVersion/addProductVersion.do');
+            }
+        }, {
+            text: '修改',
+            iconCls: 'MyExt-modify',
+            handler: function () {
+                var select = MyExt.util.SelectGridModel(productVersionGrid);
+                if (!select) {
+                    return;
+                }
+                formWindow.changeFormUrlAndShow('../productVersion/updateProductVersion.do');
+                formWindow.getFormPanel().getForm().loadRecord(select[0]);
+            }
+        }, {
+            text: '删除',
+            iconCls: 'MyExt-delete',
+            handler: function () {
+                var select = MyExt.util.SelectGridModel(productVersionGrid, true);
+                if (!select) {
+                    return;
+                }
+                MyExt.util.MessageConfirm('是否确定删除', function () {
+                    MyExt.util.Ajax('../productVersion/deleteProductVersion.do', {
+                        id: select[0].data["id"],
+                    }, function (data) {
+                        reload();
+                        MyExt.Msg.alert('删除成功!');
+                    });
+                });
+            }
+        }],
+    });
+
+    var productGrid = Ext.create('MyExt.Component.GridPanel', {
+        region: 'south',
+        title: '产品管理',
+        store: productStore,
+        height: 400,
+        columns: [{
+            dataIndex: 'id',
+            header: 'ID',
+            hidden: true
+        }, {
+            dataIndex: 'productId',
+            header: "产品ID",
+            width: 160
+        }, {
+            dataIndex: 'productName',
+            header: "产品名称",
+            width: 200,
+            flex: 1
+        }],
+        tbar: [{
+            text: '增加',
+            iconCls: 'MyExt-add',
+            handler: function () {
+                productFormWindow.changeFormUrlAndShow('../product/addProduct.do');
             }
         }, {
             text: '修改',
@@ -84,8 +150,8 @@ Ext.onReady(function () {
                 if (!select) {
                     return;
                 }
-                formWindow.changeFormUrlAndShow('../product/updateProduct.do');
-                formWindow.getFormPanel().getForm().loadRecord(select[0]);
+                productFormWindow.changeFormUrlAndShow('../product/updateProduct.do');
+                productFormWindow.getFormPanel().getForm().loadRecord(select[0]);
             }
         }, {
             text: '删除',
@@ -100,6 +166,9 @@ Ext.onReady(function () {
                         id: select[0].data["id"],
                     }, function (data) {
                         reload();
+                        reload2();
+                        reload3();
+                        reload4();
                         MyExt.Msg.alert('删除成功!');
                     });
                 });
@@ -109,7 +178,7 @@ Ext.onReady(function () {
 
     var userProductGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'center',
-        title: '权限列表',
+        title: '权限管理',
         store: userProductStore,
         columns: [{
             dataIndex: 'id',
@@ -175,7 +244,7 @@ Ext.onReady(function () {
         split: true,
         title: '当前使用角色',
         store: userRoleCurrentStore,
-        height: 300,
+        height: 400,
         columns: [{
             dataIndex: 'id',
             header: 'ID',
@@ -203,7 +272,6 @@ Ext.onReady(function () {
             handler: function () {
                 userRoleStore.load();
                 var userRoleInfo = Ext.create('MyExt.Component.GridPanel', {
-                    // title: '角色',
                     store: userRoleStore,
                     hasBbar: false,
                     height: 200,
@@ -271,7 +339,7 @@ Ext.onReady(function () {
 
     var formWindow = new MyExt.Component.FormWindow({
         title: '操作',
-        width: 400,
+        width: 500,
         height: 320,
         formItems: [{
             name: 'id',
@@ -285,18 +353,27 @@ Ext.onReady(function () {
             name: 'scenes',
             allowBlank: false
         }, {
-            fieldLabel: '产品ID',
-            name: 'productId',
-            allowBlank: false
-        }, {
-            fieldLabel: '产品名称',
-            name: 'productName',
-            allowBlank: false
-        }, {
             fieldLabel: '产品版本ID',
             name: 'productVersionId',
             allowBlank: false
-        }],
+        }, {
+           xtype: 'autocombobox',
+           emptyText: '产品名称（产品ID）',
+           fieldLabel: '产品',
+           store: Ext.create('MyExt.Component.SimpleJsonStore', {
+             dataUrl: '../product/searchProduct.do',
+             pageSize: 10,
+             fields: ['id', 'productName', 'productId']
+           }),
+           displayField: 'productName',
+           valueField: 'productId',
+           name: 'productId',
+           listConfig: {
+             getInnerTpl: function () {
+               return '{productName}[{productId}]';
+             }
+           },
+         }],
         submitBtnFn: function () {
             var form = formWindow.getFormPanel().getForm();
             if (form.isValid()) {
@@ -442,9 +519,45 @@ Ext.onReady(function () {
         }
       });
 
+
+    var productFormWindow = new MyExt.Component.FormWindow({
+        title: '操作',
+        width: 500,
+        height: 320,
+        formItems: [{
+            name: 'id',
+            hidden: true
+        }, {
+            fieldLabel: '产品ID',
+            name: 'productId',
+            allowBlank: false
+        }, {
+            fieldLabel: '产品名称',
+            name: 'productName',
+            allowBlank: false
+        }],
+        submitBtnFn: function () {
+            var form = productFormWindow.getFormPanel().getForm();
+            if (form.isValid()) {
+                MyExt.util.Ajax(productFormWindow.getFormPanel().url, {
+                    formString: Ext.JSON.encode(form.getValues())
+                }, function (data) {
+                    productFormWindow.hide();
+                    reload();
+                    reload2();
+                    reload3();
+                    reload4();
+                    MyExt.Msg.alert('操作成功!');
+                });
+            }
+        }
+    });
+
+
     reload();
     reload2();
     reload3();
+    reload4();
 
     Ext.create('Ext.container.Viewport', {
         layout: 'border',
@@ -454,7 +567,7 @@ Ext.onReady(function () {
           split: true,
           region: 'west',
           width: 660,
-          items: [productGrid]
+          items: [productVersionGrid, productGrid]
         }, {
           layout: 'border',
           region: 'center',

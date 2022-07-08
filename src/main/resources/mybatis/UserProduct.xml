@@ -67,4 +67,9 @@
         where id = #{id}
     </select>
 
+    <select id="getPortfolioId"
+            resultType="String">
+        select portfolioid from userproduct where productid = #{productId} and username = #{userName}
+    </select>
+
 </mapper>

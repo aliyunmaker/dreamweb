@@ -4,41 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.ProductDao">
 
-    <select id="listApplication"
-            resultType="String">
-        select distinct application from productversion where productid = #{productId}
-    </select>
-
-    <select id="getPortfolioId" 
-            resultType="String">
-        select portfolioid from userproduct where productid = #{productId} and username = #{userName}
-    </select>
-
-    <select id="listScenes"
-            resultType="String"
-            parameterType="String">
-        select distinct scenes from productversion where application = #{application} and productid = #{productId}
-    </select>
-
-    <select id="getProductVersionId"
-            resultType="String">
-        select productversionid from productversion where application = #{application} and scenes = #{scene} and productid = #{productId};
-    </select>
-
     <select id="getProductName"
             resultType="String">
         select productname from product where productid = #{productId};
-    </select>
-
-    <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
-        select * from productversion order by id desc
-        <if test="page != null">
-            limit #{page.start},#{page.limit}
-        </if>
-    </select>
-
-    <select id="getProductVersionTotal" resultType="int" parameterType="map">
-        select count(*) from productversion
     </select>
 
     <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
@@ -52,18 +20,6 @@
         select count(*) from product
     </select>
 
-    <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
-        select *
-        from productversion
-        where productid = #{productId}
-    </select>
-
-    <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.Product">
-        select *
-        from productversion
-        where id = #{id}
-    </select>
-
     <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">
         select *
         from product
@@ -72,34 +28,32 @@
 
     <insert id="saveProduct"
             parameterType="cc.landingzone.dreamweb.model.Product">
-        insert into productversion
-        (application,
-        scenes,
-        productid,
+        insert into product
+        (productid,
         productname,
-        productversionid,
         gmt_create)
-        values (#{application},
-                #{scenes},
-                #{productId},
-                #{productName},
-                #{productVersionId},
-                now())
+        values (
+        #{productId},
+        #{productName},
+        now())
     </insert>
 
+    <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
+        select *
+        from product
+        where productid = #{productId}
+    </select>
+
     <update id="updateProduct" parameterType="cc.landingzone.dreamweb.model.Product">
-        update productversion
-        set application              = #{application},
-            scenes                   = #{scenes},
-            productid                = #{productId},
-            productname              = #{productName},
-            productversionid         = #{productVersionId}
+        update product
+        set productid                = #{productId},
+        productname              = #{productName}
         where id = #{id}
     </update>
 
     <delete id="deleteProduct" parameterType="int">
         delete
-        from productversion
+        from product
         where id = #{id}
     </delete>
 

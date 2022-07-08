@@ -107,10 +107,10 @@ public class UserRoleController extends BaseController {
     public void getRoleCurrent(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String userName = SecurityContextHolder.getContext().getAuthentication().getName();  //拿到用户名
-            Integer roleId = userRoleService.getRoleIdByUserName(userName);
+            String roleId = userRoleService.getRoleId("roleId");
             if(roleId != null) {
-                UserRole userRole = userRoleService.getUserRoleById(roleId);
+                Integer roleid = Integer.valueOf(roleId);
+                UserRole userRole = userRoleService.getUserRoleById(roleid);
                 result.setTotal(1);
                 result.setData(userRole);
             } else {
@@ -128,14 +128,13 @@ public class UserRoleController extends BaseController {
     public void roleSelect(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String userName = SecurityContextHolder.getContext().getAuthentication().getName();  //拿到用户名
-            Integer role = userRoleService.getRoleIdByUserName(userName);//数据库中结果
-            String Id = request.getParameter("id");
-            Integer roleId = Integer.parseInt(Id);
+            String key = "roleId";
+            String role =  userRoleService.getRoleId(key);//数据库中结果
+            String value = request.getParameter("id");
             if(role == null) {
-                userRoleService.saveUserRole(userName, roleId);
+                userRoleService.saveUserRole(key, value);
             } else {
-                userRoleService.updateUserRole2(userName, roleId);
+                userRoleService.updateUserRole2(key, value);
             }
             result.setSuccess(true);
         } catch (Exception e) {
@@ -146,12 +145,10 @@ public class UserRoleController extends BaseController {
         outputToJSON(response, result);
     }
 
-    @RequestMapping("/getRoleIdByUserName.do")
-    public void getRoleIdByUserName(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("/getRoleId.do")
+    public void getRoleId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();  //拿到用户名
-        Integer role = userRoleService.getRoleIdByUserName(userName);//数据库中结果
+        String role = userRoleService.getRoleId("roleId");//数据库中结果
         if(role == null) {
             result.setSuccess(true);
         } else {

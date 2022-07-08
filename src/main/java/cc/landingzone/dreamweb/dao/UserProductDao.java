@@ -32,4 +32,7 @@ public interface UserProductDao {
     UserProduct getUserProduct(String productId, String userName);
 
     UserProduct getUserProductById(Integer id);
+
+    String getPortfolioId(String productId, String userName);
+
 }

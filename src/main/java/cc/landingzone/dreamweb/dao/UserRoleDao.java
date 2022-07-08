@@ -22,11 +22,12 @@ public interface UserRoleDao {
 
     UserRole getUserRoleByName(Integer userRoleId);
 
-    void saveUserRole(String userName, Integer roleId);
 
-    Integer getRoleIdByUserName(String userName);
+    void saveUserRole(String key, String value);
 
-    void updateUserRole2(String userName, Integer roleId);
+    String getRoleId(String key);
+
+    void updateUserRole2(String key, String value);
 
 
 }

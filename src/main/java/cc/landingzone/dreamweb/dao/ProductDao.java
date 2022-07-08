@@ -18,38 +18,20 @@ import java.util.Map;
 @Component
 public interface ProductDao {
 
-    List<Product> listProductVersion(Map<String, Object> map);
-
-    Integer getProductVersionTotal(Map<String, Object> map);
-
     List<Product> listProduct(Map<String, Object> map);
 
     Integer getProductTotal(Map<String, Object> map);
 
-//    List<Product> listProductDistinct(Map<String, Object> map);
-
-    List<String> listApplication(String productId);
-
-    String getPortfolioId(String productId, String userName);
-
-    List<String> listScenes(String productId, String application);
-
-    String getProductVersionId(String productId, String application, String scene);
-
     String getProductName(String productId);
-
-//    Integer getProductDistinctTotal(Map<String, Object> map);
 
     Product getProductByProductId(String productId);
 
-    void saveProduct(Product product);
-
     void updateProduct(Product product);
-
-    Product getProductVersionById(Integer id);
 
     Product getProductById(Integer id);
 
     void deleteProduct(Integer id);
+
+    void saveProduct(Product product);
 
 }

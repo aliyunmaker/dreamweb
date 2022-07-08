@@ -4,7 +4,7 @@ Ext.onReady(function () {
     };
 
     var userStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-        dataUrl: '../product/searchUserProduct.do',
+        dataUrl: '../userProduct/searchUserProductByUserName.do',
         rootFlag: 'data',
         pageSize: 200,
         fields: ['id', 'productId', 'productName']
@@ -44,7 +44,7 @@ Ext.onReady(function () {
                         text: '申请实例',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
-                            MyExt.util.Ajax('../userRole/getRoleIdByUserName.do', {
+                            MyExt.util.Ajax('../userRole/getRoleId.do', {
 
                                 }, function (data) {
                                     var roleId = data.data;
