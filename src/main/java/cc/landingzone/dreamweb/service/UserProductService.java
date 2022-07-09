@@ -37,13 +37,13 @@ public class UserProductService {
     }
 
     @Transactional
-    public List<UserProductAssociate> listUserProduct(Page page) {
+    public List<UserProductAssociate> listUserProductAssociate(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<UserProductAssociate> list = userProductDao.listUserProduct(map);
+        List<UserProductAssociate> list = userProductDao.listUserProductAssociate(map);
         if (null != page) {
             if (null != page.getStart() && null != page.getLimit()) {
-                Integer total = userProductDao.getUserProductTotal(map);
+                Integer total = userProductDao.getUserProductAssociateTotal(map);
                 page.setTotal(total);
             } else {
                 page.setTotal(list.size());
@@ -52,14 +52,14 @@ public class UserProductService {
         return list;
     }
 
-    @Transactional
-    public void saveUserProduct(UserProductAssociate userProductAssociate) {
-        UserProductAssociate userProductAssociate1 = getUserProduct(userProductAssociate.getProductId(), userProductAssociate.getUserName());
-        if (userProductAssociate1 != null) {
-            throw new IllegalArgumentException("此权限已存在！");
-        }
-        userProductDao.saveUserProduct(userProductAssociate);
-    }
+//    @Transactional
+//    public void saveUserProduct(UserProductAssociate userProductAssociate) {
+//        UserProductAssociate userProductAssociate1 = getUserProduct(userProductAssociate.getProductId(), userProductAssociate.getUserName());
+//        if (userProductAssociate1 != null) {
+//            throw new IllegalArgumentException("此权限已存在！");
+//        }
+//        userProductDao.saveUserProduct(userProductAssociate);
+//    }
 
     @Transactional
     public UserProductAssociate getUserProduct(String productId, String userName) {

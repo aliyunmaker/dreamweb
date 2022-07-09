@@ -128,41 +128,41 @@ public class ApplyService {
 
     }
 
-    @Scheduled(cron = "0/3 * * * * ?")
-    public void updateProcess() {
-        try {
-            List<Apply> applys = listApplyPreviewInProgress(); //查询流程表中"预检中"状态的记录
-            if (applys != null) {
-                for (Apply apply : applys) {
-                    // 更新状态
-                    // 创建终端
-                    String region = "cn-hangzhou";
-                    String userName = apply.getStarterName();
-                    Integer roleId = apply.getRoleId();
-                    User user = userService.getUserByLoginName(userName);
-                    UserRole userRole = userRoleService.getUserRoleById(roleId);
-                    Client client = serviceCatalogViewService.createClient(region, user, userRole, apply.getProductId());
-                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
-                    GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
-                    request1.setPlanId(apply.getPlanId());
-                    GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
-                    if(response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
-                        applyDao.updateStatusByPlanId(apply.getPlanId(), "审批中");
-                        applyDao.updatePlanResultByPlanId(apply.getPlanId(), "预检通过");
-                        startProcessByDefinitionId(apply);
-                    } else if(response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
-                        applyDao.updateStatusByPlanId(apply.getPlanId(), "预检失败");
-                        applyDao.updatePlanResultByPlanId(apply.getPlanId(), response1.getBody().getPlanDetail().statusMessage);
-                    }
-//                    else {
-//                        System.out.println(response1.getBody().getPlanDetail().status);
+//    @Scheduled(cron = "0/3 * * * * ?")
+//    public void updateProcess() {
+//        try {
+//            List<Apply> applys = listApplyPreviewInProgress(); //查询流程表中"预检中"状态的记录
+//            if (applys != null) {
+//                for (Apply apply : applys) {
+//                    // 更新状态
+//                    // 创建终端
+//                    String region = "cn-hangzhou";
+//                    String userName = apply.getStarterName();
+//                    Integer roleId = apply.getRoleId();
+//                    User user = userService.getUserByLoginName(userName);
+//                    UserRole userRole = userRoleService.getUserRoleById(roleId);
+//                    Client client = serviceCatalogViewService.createClient(region, user, userRole, apply.getProductId());
+//                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
+//                    GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
+//                    request1.setPlanId(apply.getPlanId());
+//                    GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
+//                    if(response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
+//                        applyDao.updateStatusByPlanId(apply.getPlanId(), "审批中");
+//                        applyDao.updatePlanResultByPlanId(apply.getPlanId(), "预检通过");
+//                        startProcessByDefinitionId(apply);
+//                    } else if(response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
+//                        applyDao.updateStatusByPlanId(apply.getPlanId(), "预检失败");
+//                        applyDao.updatePlanResultByPlanId(apply.getPlanId(), response1.getBody().getPlanDetail().statusMessage);
 //                    }
-                    // 如果状态改变，修改数据库为预检失败 or 修改数据库为预检成功且开启工作流审批
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
+////                    else {
+////                        System.out.println(response1.getBody().getPlanDetail().status);
+////                    }
+//                    // 如果状态改变，修改数据库为预检失败 or 修改数据库为预检成功且开启工作流审批
+//                }
+//            }
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//        }
+//    }
 
 }

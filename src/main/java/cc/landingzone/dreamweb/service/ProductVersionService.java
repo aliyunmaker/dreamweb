@@ -56,12 +56,12 @@ public class ProductVersionService {
     }
 
     @Transactional
-    public void saveProductVersion(Product product) {
-        String productVersion = getProductVersionId(product.getProductId(), product.getApplication(), product.getScenes());
-        if (productVersion != null) {
-            throw new IllegalArgumentException("此产品版本(" + product.getProductVersionId()+ ")已存在");
+    public void saveProductVersion(ProductVersion productVersion) {
+        ProductVersion productVersion1 = productVersionDao.getProductVersionByServicecatalogProductVersionId(productVersion.getServicecatalogProductVersionId());
+        if (productVersion1 != null) {
+            throw new IllegalArgumentException("此产品版本(" + productVersion.getServicecatalogProductVersionId()+ ")已存在");
         }
-        productVersionDao.saveProductVersion(product);
+        productVersionDao.saveProductVersion(productVersion);
     }
 
     @Transactional
@@ -69,15 +69,15 @@ public class ProductVersionService {
         return productVersionDao.getProductVersionById(id);
     }
 
-    @Transactional
-    public void updateProductVersion(Product product) {
-        Assert.notNull(product, "数据不能为空!");
-        String productVersion = getProductVersionId(product.getProductId(), product.getApplication(), product.getScenes());
-        if (productVersion != null) {
-            throw new IllegalArgumentException("此产品版本(" + product.getProductVersionId()+ ")已存在");
-        }
-        productVersionDao.updateProductVersion(product);
-    }
+//    @Transactional
+//    public void updateProductVersion(Product product) {
+//        Assert.notNull(product, "数据不能为空!");
+//        String productVersion = getProductVersionId(product.getProductId(), product.getApplication(), product.getScenes());
+//        if (productVersion != null) {
+//            throw new IllegalArgumentException("此产品版本(" + product.getProductVersionId()+ ")已存在");
+//        }
+//        productVersionDao.updateProductVersion(product);
+//    }
 
     @Transactional
     public void deleteProductVersion(Integer id) {

@@ -225,28 +225,28 @@ public class ProvisionedProductService {
          *
          * @throws Exception
          */
-    @Scheduled(cron = "0/3 * * * * ?")
-    public void updateExample() {
-        try {
-            List<String> exampleIds = listExampleId();
-            if (exampleIds != null) {
-                for (String exampleId : exampleIds) {
-                    // 创建终端
-                    String region = "cn-hangzhou";
-                    String userName = getUserName(exampleId);
-                    Integer roleId = getRoleId(exampleId);
-                    User user = userService.getUserByLoginName(userName);
-                    UserRole userRole = userRoleService.getUserRoleById(roleId);
-                    String productId = getProductId(exampleId);
-                    Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
-                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
-                    updateProvisionedProduct(client, exampleId);
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
+//    @Scheduled(cron = "0/3 * * * * ?")
+//    public void updateExample() {
+//        try {
+//            List<String> exampleIds = listExampleId();
+//            if (exampleIds != null) {
+//                for (String exampleId : exampleIds) {
+//                    // 创建终端
+//                    String region = "cn-hangzhou";
+//                    String userName = getUserName(exampleId);
+//                    Integer roleId = getRoleId(exampleId);
+//                    User user = userService.getUserByLoginName(userName);
+//                    UserRole userRole = userRoleService.getUserRoleById(roleId);
+//                    String productId = getProductId(exampleId);
+//                    Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
+//                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
+//                    updateProvisionedProduct(client, exampleId);
+//                }
+//            }
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//        }
+//    }
 
     public String searchStatus(String exampleId) {
         String flag = "no";

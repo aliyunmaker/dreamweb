@@ -19,18 +19,18 @@ Ext.onReady(function () {
         dataUrl: '../productVersion/searchProductVersion.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'productId', 'application', 'scenes', 'productName', 'productVersionId']
+        fields: ['id', 'servicecatalogProductId', 'app', 'environment', 'productName', 'servicecatalogProductVersionId']
     });
 
     var productStore = Ext.create('MyExt.Component.SimpleJsonStore', {
         dataUrl: '../product/searchProduct.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'productId', 'productName']
+        fields: ['id', 'servicecatalogProductId', 'productName']
     });
 
     var userProductStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-        dataUrl: '../userProduct/searchUserProduct.do',
+        dataUrl: '../userProduct/searchUserProductAssociate.do',
         rootFlag: 'data',
         pageSize: 200,
         fields: ['id', 'productId', 'userName', 'portfolioId', 'productName']
@@ -60,7 +60,7 @@ Ext.onReady(function () {
             header: 'ID',
             hidden: true
         }, {
-            dataIndex: 'productId',
+            dataIndex: 'servicecatalogProductId',
             header: "产品ID",
             width: 160
         }, {
@@ -68,15 +68,15 @@ Ext.onReady(function () {
             header: "产品名称",
             width: 170
         }, {
-            dataIndex: 'application',
+            dataIndex: 'app',
             header: "应用",
             width: 90
         }, {
-            dataIndex: 'scenes',
+            dataIndex: 'environment',
             header: "环境",
             width: 60
         }, {
-            dataIndex: 'productVersionId',
+            dataIndex: 'servicecatalogProductVersionId',
             header: "产品版本ID",
             width: 160
         }],
@@ -127,7 +127,7 @@ Ext.onReady(function () {
             header: 'ID',
             hidden: true
         }, {
-            dataIndex: 'productId',
+            dataIndex: 'servicecatalogProductId',
             header: "产品ID",
             width: 160
         }, {
@@ -346,15 +346,15 @@ Ext.onReady(function () {
             hidden: true
         }, {
             fieldLabel: '应用',
-            name: 'application',
+            name: 'app',
             allowBlank: false
         }, {
             fieldLabel: '环境',
-            name: 'scenes',
+            name: 'environment',
             allowBlank: false
         }, {
             fieldLabel: '产品版本ID',
-            name: 'productVersionId',
+            name: 'servicecatalogProductVersionId',
             allowBlank: false
         }, {
            xtype: 'autocombobox',
@@ -363,14 +363,14 @@ Ext.onReady(function () {
            store: Ext.create('MyExt.Component.SimpleJsonStore', {
              dataUrl: '../product/searchProduct.do',
              pageSize: 10,
-             fields: ['id', 'productName', 'productId']
+             fields: ['id', 'productName', 'servicecatalogProductId']
            }),
            displayField: 'productName',
-           valueField: 'productId',
+           valueField: 'id',
            name: 'productId',
            listConfig: {
              getInnerTpl: function () {
-               return '{productName}[{productId}]';
+               return '{productName}[{servicecatalogProductId}]';
              }
            },
          }],

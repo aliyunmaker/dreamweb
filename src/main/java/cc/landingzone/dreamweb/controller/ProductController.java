@@ -62,45 +62,45 @@ public class ProductController extends BaseController {
          *
          * @throws Exception
          */
-    @RequestMapping("/addProduct.do")
-    public void addProduct(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String formString = request.getParameter("formString");
-            Product product = JsonUtils.parseObject(formString, Product.class);
-            productService.saveProduct(product);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
-    }
+//    @RequestMapping("/addProduct.do")
+//    public void addProduct(HttpServletRequest request, HttpServletResponse response) {
+//        WebResult result = new WebResult();
+//        try {
+//            String formString = request.getParameter("formString");
+//            Product product = JsonUtils.parseObject(formString, Product.class);
+//            productService.saveProduct(product);
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            result.setSuccess(false);
+//            result.setErrorMsg(e.getMessage());
+//        }
+//        outputToJSON(response, result);
+//    }
 
-    /**
-         * 更新产品
-         *
-         * @param: 产品ID、应用、场景
-         *
-         * @throws Exception
-         */
-    @RequestMapping("/updateProduct.do")
-    public void updateProduct(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String formString = request.getParameter("formString");
-            Product updateProduct = JsonUtils.parseObject(formString, Product.class);
-            Product dbProduct = productService.getProductById(updateProduct.getId());
-            dbProduct.setProductId(updateProduct.getProductId());
-            dbProduct.setProductName(updateProduct.getProductName());
-            productService.updateProduct(dbProduct);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
-    }
+//    /**
+//         * 更新产品
+//         *
+//         * @param: 产品ID、应用、场景
+//         *
+//         * @throws Exception
+//         */
+//    @RequestMapping("/updateProduct.do")
+//    public void updateProduct(HttpServletRequest request, HttpServletResponse response) {
+//        WebResult result = new WebResult();
+//        try {
+//            String formString = request.getParameter("formString");
+//            Product updateProduct = JsonUtils.parseObject(formString, Product.class);
+//            Product dbProduct = productService.getProductById(updateProduct.getId());
+//            dbProduct.setProductId(updateProduct.getProductId());
+//            dbProduct.setProductName(updateProduct.getProductName());
+//            productService.updateProduct(dbProduct);
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            result.setSuccess(false);
+//            result.setErrorMsg(e.getMessage());
+//        }
+//        outputToJSON(response, result);
+//    }
 
     /**
          * 删除产品

@@ -53,6 +53,7 @@ public class ProductVersionController extends BaseController{
                 Product product = productService.getProductById(productVersion.getProductId());
                 productVersionVO.setProductName(product.getProductName());
                 productVersionVO.setServicecatalogProductId(product.getServicecatalogProductId());
+                list1.add(productVersionVO);
             }
             result.setTotal(page.getTotal());
             result.setData(list1);
@@ -76,8 +77,8 @@ public class ProductVersionController extends BaseController{
         WebResult result = new WebResult();
         try {
             String formString = request.getParameter("formString");
-            Product product = JsonUtils.parseObject(formString, Product.class);
-            productVersionService.saveProductVersion(product);
+            ProductVersion productVersion = JsonUtils.parseObject(formString, ProductVersion.class);
+            productVersionService.saveProductVersion(productVersion);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -93,25 +94,25 @@ public class ProductVersionController extends BaseController{
          * @return
          * @throws Exception
          */
-    @RequestMapping("/updateProductVersion.do")
-    public void updateProductVersion(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String formString = request.getParameter("formString");
-            Product updateProduct = JsonUtils.parseObject(formString, Product.class);
-            Product dbProduct = productVersionService.getProductVersionById(updateProduct.getId());
-            dbProduct.setProductId(updateProduct.getProductId());
-            dbProduct.setApplication(updateProduct.getApplication());
-            dbProduct.setScenes(updateProduct.getScenes());
-            dbProduct.setProductVersionId(updateProduct.getProductVersionId());
-            productVersionService.updateProductVersion(dbProduct);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
-    }
+//    @RequestMapping("/updateProductVersion.do")
+//    public void updateProductVersion(HttpServletRequest request, HttpServletResponse response) {
+//        WebResult result = new WebResult();
+//        try {
+//            String formString = request.getParameter("formString");
+//            Product updateProduct = JsonUtils.parseObject(formString, Product.class);
+//            Product dbProduct = productVersionService.getProductVersionById(updateProduct.getId());
+//            dbProduct.setProductId(updateProduct.getProductId());
+//            dbProduct.setApplication(updateProduct.getApplication());
+//            dbProduct.setScenes(updateProduct.getScenes());
+//            dbProduct.setProductVersionId(updateProduct.getProductVersionId());
+//            productVersionService.updateProductVersion(dbProduct);
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            result.setSuccess(false);
+//            result.setErrorMsg(e.getMessage());
+//        }
+//        outputToJSON(response, result);
+//    }
 
     /**
          * 删除产品版本

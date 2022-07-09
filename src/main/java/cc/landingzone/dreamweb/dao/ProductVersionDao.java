@@ -22,10 +22,12 @@ public interface ProductVersionDao {
 
     Product getProductVersionById(Integer id);
 
-    void saveProductVersion(Product product);
+    void saveProductVersion(ProductVersion productVersion);
 
     void updateProductVersion(Product product);
 
     void deleteProductVersion(Integer id);
+
+    ProductVersion getProductVersionByServicecatalogProductVersionId(String servicecatalogProductVersionId);
 
 }

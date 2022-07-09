@@ -15,15 +15,15 @@
          select * from userproduct where username = #{userName};
     </select>
 
-    <select id="listUserProduct" resultType="cc.landingzone.dreamweb.model.UserProductAssociate" parameterType="map">
-        select * from userproduct order by id desc
+    <select id="listUserProductAssociate" resultType="cc.landingzone.dreamweb.model.UserProductAssociate" parameterType="map">
+        select * from user_product_associate order by id desc
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>
     </select>
 
-    <select id="getUserProductTotal" resultType="int" parameterType="map">
-        select count(*) from userproduct
+    <select id="getUserProductAssociateTotal" resultType="int" parameterType="map">
+        select count(*) from user_product_associate
     </select>
 
     <insert id="saveUserProduct"

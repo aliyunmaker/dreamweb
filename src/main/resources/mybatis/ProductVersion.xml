@@ -20,7 +20,7 @@
             select productversionid from productversion where application = #{application} and scenes = #{scene} and productid = #{productId};
         </select>
 
-        <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
+        <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.ProductVersion" parameterType="map">
             select * from product_version order by id desc
             <if test="page != null">
                 limit #{page.start},#{page.limit}
@@ -38,17 +38,17 @@
         </select>
 
         <insert id="saveProductVersion"
-                parameterType="cc.landingzone.dreamweb.model.Product">
-            insert into productversion
-            (application,
-            scenes,
-            productid,
-            productversionid,
+                parameterType="cc.landingzone.dreamweb.model.ProductVersion">
+            insert into product_version
+            (app,
+            environment,
+            product_id,
+            servicecatalog_product_version_id,
             gmt_create)
-            values (#{application},
-                    #{scenes},
+            values (#{app},
+                    #{environment},
                     #{productId},
-                    #{productVersionId},
+                    #{servicecatalogProductVersionId},
                     now())
         </insert>
 
@@ -67,5 +67,9 @@
             where id = #{id}
         </delete>
 
+
+        <select id="getProductVersionByServicecatalogProductVersionId" parameterType="String" resultType="ProductVersion">
+            select * from product_version where servicecatalog_product_version_id = #{servicecatalogProductVersionId}
+        </select>
 
 </mapper>
