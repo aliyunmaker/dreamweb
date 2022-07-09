@@ -15,7 +15,7 @@
          select * from userproduct where username = #{userName};
     </select>
 
-    <select id="listUserProduct" resultType="cc.landingzone.dreamweb.model.UserProduct" parameterType="map">
+    <select id="listUserProduct" resultType="cc.landingzone.dreamweb.model.UserProductAssociate" parameterType="map">
         select * from userproduct order by id desc
         <if test="page != null">
             limit #{page.start},#{page.limit}
@@ -27,7 +27,7 @@
     </select>
 
     <insert id="saveUserProduct"
-            parameterType="cc.landingzone.dreamweb.model.UserProduct">
+            parameterType="cc.landingzone.dreamweb.model.UserProductAssociate">
         insert into userproduct
         (productid,
         username,
@@ -41,7 +41,7 @@
         now())
     </insert>
 
-    <update id="updateUserProduct" parameterType="cc.landingzone.dreamweb.model.UserProduct">
+    <update id="updateUserProduct" parameterType="cc.landingzone.dreamweb.model.UserProductAssociate">
         update userproduct
         set productid              = #{productId},
         username                   = #{userName},
@@ -56,12 +56,12 @@
         where id = #{id}
     </delete>
 
-    <select id="getUserProduct" resultType="cc.landingzone.dreamweb.model.UserProduct">
+    <select id="getUserProduct" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
         select * from userproduct
         where productid = #{productId} and username = #{userName}
     </select>
 
-    <select id="getUserProductById" resultType="cc.landingzone.dreamweb.model.UserProduct">
+    <select id="getUserProductById" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
         select *
         from userproduct
         where id = #{id}

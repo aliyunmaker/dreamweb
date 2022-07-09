@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `rsakey`;
+DROP TABLE IF EXISTS `system_config`;
 
 CREATE TABLE `system_config` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -19,7 +20,7 @@ VALUES
 ('allowWechatLogin','true','是否允许通过微信登录',TRUE,now()),
 ('allowLDAP','false','是否允许通过LDAP登录',TRUE,now()),
 ('loginPageTitle','无限梦想','登录页标题',TRUE,now()),
-('allowSolutionDemo','false','解决方案Demo开关',TRUE,now());
+('allowSolutionDemo','true','解决方案Demo开关',TRUE,now());
 
 UPDATE `system_config`
 SET `comment` = '系统密钥'

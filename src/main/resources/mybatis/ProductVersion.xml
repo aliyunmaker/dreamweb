@@ -21,14 +21,14 @@
         </select>
 
         <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
-            select * from productversion order by id desc
+            select * from product_version order by id desc
             <if test="page != null">
                 limit #{page.start},#{page.limit}
             </if>
         </select>
 
         <select id="getProductVersionTotal" resultType="int" parameterType="map">
-            select count(*) from productversion
+            select count(*) from product_version
         </select>
 
         <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.Product">

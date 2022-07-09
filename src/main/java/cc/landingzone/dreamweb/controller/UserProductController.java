@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import cc.landingzone.dreamweb.service.UserProductService;
-import cc.landingzone.dreamweb.utils.JsonUtils;
 
 
 @Controller
@@ -46,7 +45,7 @@ public class UserProductController extends BaseController {
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
-            List<UserProduct> list = userProductService.listUserProduct(page);
+            List<UserProductAssociate> list = userProductService.listUserProduct(page);
             result.setTotal(page.getTotal());
             result.setData(list);
         } catch (Exception e) {
@@ -97,12 +96,12 @@ public class UserProductController extends BaseController {
             String portfolioId = request.getParameter("portfolioId");
             Product product = productService.getProductById(product_Id);
             User user = userService.getUserById(user_Id);
-            UserProduct userProduct = new UserProduct();
-            userProduct.setProductId(product.getProductId());
-            userProduct.setUserName(user.getLoginName());
-            userProduct.setPortfolioId(portfolioId);
-            userProduct.setProductName(product.getProductName());
-            userProductService.saveUserProduct(userProduct);
+            UserProductAssociate userProductAssociate = new UserProductAssociate();
+            userProductAssociate.setProductId(product.getProductId());
+            userProductAssociate.setUserName(user.getLoginName());
+            userProductAssociate.setPortfolioId(portfolioId);
+            userProductAssociate.setProductName(product.getProductName());
+            userProductService.saveUserProduct(userProductAssociate);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -130,12 +129,12 @@ public class UserProductController extends BaseController {
             String productName = productService.getProductName(productId);
             String test = userProductService.getPortfolioId(productId, userName);
             if(test == null || (!test.equals(portfolioId))){
-                UserProduct dbUserProduct = userProductService.getUserProductById(Id);
-                dbUserProduct.setProductId(productId);
-                dbUserProduct.setUserName(userName);
-                dbUserProduct.setPortfolioId(portfolioId);
-                dbUserProduct.setProductName(productName);
-                userProductService.updateUserProduct(dbUserProduct);
+                UserProductAssociate dbUserProductAssociate = userProductService.getUserProductById(Id);
+                dbUserProductAssociate.setProductId(productId);
+                dbUserProductAssociate.setUserName(userName);
+                dbUserProductAssociate.setPortfolioId(portfolioId);
+                dbUserProductAssociate.setProductName(productName);
+                userProductService.updateUserProduct(dbUserProductAssociate);
             }
             else if (test.equals(portfolioId)) {
                 result.setSuccess(false);

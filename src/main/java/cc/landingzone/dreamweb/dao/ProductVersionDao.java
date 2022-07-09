@@ -1,6 +1,7 @@
 package cc.landingzone.dreamweb.dao;
 
 import cc.landingzone.dreamweb.model.Product;
+import cc.landingzone.dreamweb.model.ProductVersion;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,9 +16,9 @@ public interface ProductVersionDao {
 
     String getProductVersionId(String productId, String application, String scene);
 
-    List<Product> listProductVersion(Map<String, Object> map);
+    List<ProductVersion> listProductVersion(Map<String, Object> map); //1
 
-    Integer getProductVersionTotal(Map<String, Object> map);
+    Integer getProductVersionTotal(Map<String, Object> map); //1
 
     Product getProductVersionById(Integer id);
 

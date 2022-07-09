@@ -3,7 +3,7 @@ package cc.landingzone.dreamweb.service;
 import cc.landingzone.dreamweb.dao.UserProductDao;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.Product;
-import cc.landingzone.dreamweb.model.UserProduct;
+import cc.landingzone.dreamweb.model.UserProductAssociate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,10 +37,10 @@ public class UserProductService {
     }
 
     @Transactional
-    public List<UserProduct> listUserProduct(Page page) {
+    public List<UserProductAssociate> listUserProduct(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<UserProduct> list = userProductDao.listUserProduct(map);
+        List<UserProductAssociate> list = userProductDao.listUserProduct(map);
         if (null != page) {
             if (null != page.getStart() && null != page.getLimit()) {
                 Integer total = userProductDao.getUserProductTotal(map);
@@ -53,27 +53,27 @@ public class UserProductService {
     }
 
     @Transactional
-    public void saveUserProduct(UserProduct userProduct) {
-        UserProduct userProduct1 = getUserProduct(userProduct.getProductId(), userProduct.getUserName());
-        if (userProduct1 != null) {
+    public void saveUserProduct(UserProductAssociate userProductAssociate) {
+        UserProductAssociate userProductAssociate1 = getUserProduct(userProductAssociate.getProductId(), userProductAssociate.getUserName());
+        if (userProductAssociate1 != null) {
             throw new IllegalArgumentException("此权限已存在！");
         }
-        userProductDao.saveUserProduct(userProduct);
+        userProductDao.saveUserProduct(userProductAssociate);
     }
 
     @Transactional
-    public UserProduct getUserProduct(String productId, String userName) {
+    public UserProductAssociate getUserProduct(String productId, String userName) {
         return userProductDao.getUserProduct(productId, userName);
     }
 
     @Transactional
-    public UserProduct getUserProductById(Integer id) {
+    public UserProductAssociate getUserProductById(Integer id) {
         return userProductDao.getUserProductById(id);
     }
 
     @Transactional
-    public void updateUserProduct(UserProduct userProduct) {
-        userProductDao.updateUserProduct(userProduct);
+    public void updateUserProduct(UserProductAssociate userProductAssociate) {
+        userProductDao.updateUserProduct(userProductAssociate);
     }
 
     @Transactional

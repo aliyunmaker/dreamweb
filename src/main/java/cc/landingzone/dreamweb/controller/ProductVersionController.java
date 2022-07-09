@@ -1,8 +1,6 @@
 package cc.landingzone.dreamweb.controller;
 
-import cc.landingzone.dreamweb.model.Page;
-import cc.landingzone.dreamweb.model.Product;
-import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.model.*;
 import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.service.ProductVersionService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,12 +43,19 @@ public class ProductVersionController extends BaseController{
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
-            List<Product> list = productVersionService.listProductVersion(page);
-            for (Product product: list) {
-                product.setProductName(productService.getProductName(product.getProductId()));
+            List<ProductVersion> list = productVersionService.listProductVersion(page);
+            List<ProductVersionVO> list1 = new ArrayList<>();
+            for (ProductVersion productVersion: list) {
+                ProductVersionVO productVersionVO = new ProductVersionVO();
+                productVersionVO.setServicecatalogProductVersionId(productVersion.getServicecatalogProductVersionId());
+                productVersionVO.setApp(productVersion.getApp());
+                productVersionVO.setEnvironment(productVersion.getEnvironment());
+                Product product = productService.getProductById(productVersion.getProductId());
+                productVersionVO.setProductName(product.getProductName());
+                productVersionVO.setServicecatalogProductId(product.getServicecatalogProductId());
             }
             result.setTotal(page.getTotal());
-            result.setData(list);
+            result.setData(list1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

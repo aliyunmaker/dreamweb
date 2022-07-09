@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.service;
 import cc.landingzone.dreamweb.dao.ProductVersionDao;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.Product;
+import cc.landingzone.dreamweb.model.ProductVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,10 +40,10 @@ public class ProductVersionService {
     }
 
     @Transactional
-    public List<Product> listProductVersion(Page page) {
+    public List<ProductVersion> listProductVersion(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<Product> list = productVersionDao.listProductVersion(map);
+        List<ProductVersion> list = productVersionDao.listProductVersion(map);
         if (null != page) {
             if (null != page.getStart() && null != page.getLimit()) {
                 Integer total = productVersionDao.getProductVersionTotal(map);

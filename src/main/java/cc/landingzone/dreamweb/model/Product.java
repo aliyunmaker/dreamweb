@@ -10,24 +10,9 @@ package cc.landingzone.dreamweb.model;
 public class Product {
     private Integer id;
 
-    private String application;
-
-    private String scenes;
-
-    private String productId;
+    private String servicecatalogProductId;
 
     private String productName;
-
-    private String productVersionId;
-
-
-    public String getProductVersionId() {
-        return productVersionId;
-    }
-
-    public void setProductVersionId(String productVersionId) {
-        this.productVersionId = productVersionId;
-    }
 
     public Integer getId() {
         return id;
@@ -37,28 +22,12 @@ public class Product {
         this.id = id;
     }
 
-    public String getApplication() {
-        return application;
+    public String getServicecatalogProductId() {
+        return servicecatalogProductId;
     }
 
-    public void setApplication(String application) {
-        this.application = application;
-    }
-
-    public String getScenes() {
-        return scenes;
-    }
-
-    public void setScenes(String scenes) {
-        this.scenes = scenes;
-    }
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setServicecatalogProductId(String servicecatalogProductId) {
+        this.servicecatalogProductId = servicecatalogProductId;
     }
 
     public String getProductName() {

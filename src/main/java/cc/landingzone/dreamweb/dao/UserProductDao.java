@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import cc.landingzone.dreamweb.model.Product;
-import cc.landingzone.dreamweb.model.UserProduct;
+import cc.landingzone.dreamweb.model.UserProductAssociate;
 
 /**
  * 操作用户-产品权限表
@@ -19,19 +19,19 @@ public interface UserProductDao {
 
     List<Product> listProduct(String userName);
 
-    List<UserProduct> listUserProduct(Map<String, Object> map);
+    List<UserProductAssociate> listUserProduct(Map<String, Object> map);
 
     Integer getUserProductTotal(Map<String, Object> map);
 
-    void saveUserProduct(UserProduct userProduct);
+    void saveUserProduct(UserProductAssociate userProductAssociate);
 
-    void updateUserProduct(UserProduct userProduct);
+    void updateUserProduct(UserProductAssociate userProductAssociate);
 
     void deleteUserProduct(Integer id);
 
-    UserProduct getUserProduct(String productId, String userName);
+    UserProductAssociate getUserProduct(String productId, String userName);
 
-    UserProduct getUserProductById(Integer id);
+    UserProductAssociate getUserProductById(Integer id);
 
     String getPortfolioId(String productId, String userName);
 
