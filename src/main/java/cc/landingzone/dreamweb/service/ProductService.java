@@ -48,30 +48,30 @@ public class ProductService {
     }
 
 
-//    @Transactional
-//    public void saveProduct(Product product) {
-//        Product product1 = productDao.getProductByProductId(product.getProductId());
-//        if(product1 != null) {
-//            throw new IllegalArgumentException("此产品(" + product.getProductId()+ ")已存在");
-//        }
-//        productDao.saveProduct(product);
-//    }
+    @Transactional
+    public void saveProduct(Product product) {
+        Product product1 = productDao.getProductByServicecatalogProductId(product.getServicecatalogProductId());
+        if(product1 != null) {
+            throw new IllegalArgumentException("此产品(" + product.getServicecatalogProductId()+ ")已存在");
+        }
+        productDao.saveProduct(product);
+    }
 
     @Transactional
     public Product getProductById(Integer id) {
         return productDao.getProductById(id);
     }
 
-//    @Transactional
-//    public void updateProduct(Product product) {
-//        Assert.notNull(product, "数据不能为空!");
-//        Assert.hasText(product.getProductId(), "产品ID不能为空!");
-//        Product product1 = productDao.getProductByProductId(product.getProductId());
-//        if(product1 != null) {
-//            throw new IllegalArgumentException("此产品(" + product.getProductId()+ ")已存在");
-//        }
-//        productDao.updateProduct(product);
-//    }
+    @Transactional
+    public void updateProduct(Product product) {
+        Assert.notNull(product, "数据不能为空!");
+        Assert.hasText(product.getServicecatalogProductId(), "产品ID不能为空!");
+        Product product1 = productDao.getProductByServicecatalogProductId(product.getServicecatalogProductId());
+        if(product1 != null && product1.getId() != product.getId()) {
+            throw new IllegalArgumentException("此产品(" + product.getServicecatalogProductId()+ ")已存在");
+        }
+        productDao.updateProduct(product);
+    }
 
     @Transactional
     public void deleteProduct(Integer id) {

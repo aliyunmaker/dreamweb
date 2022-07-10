@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.service;
 
+import cc.landingzone.dreamweb.dao.ProductDao;
 import cc.landingzone.dreamweb.dao.UserProductDao;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.Product;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +28,23 @@ public class UserProductService {
     @Autowired
     private UserProductDao userProductDao;
 
+    @Autowired
+    private ProductDao productDao;
+
     @Transactional
     public List<String> listProductId(String userName) {
         return userProductDao.listProductId(userName);
     }
 
     @Transactional
-    public List<Product> listProduct(String userName) {
-        return userProductDao.listProduct(userName);
+    public List<Product> listProductByUserId(Integer userId) {
+        List<Integer> productIds = userProductDao.listProductIdsByUserId(userId);
+        List<Product> products = new ArrayList<>();
+        for (Integer productId: productIds ) {
+            Product product = productDao.getProductById(productId);
+            products.add(product);
+        }
+        return products;
     }
 
     @Transactional
@@ -52,18 +63,18 @@ public class UserProductService {
         return list;
     }
 
-//    @Transactional
-//    public void saveUserProduct(UserProductAssociate userProductAssociate) {
-//        UserProductAssociate userProductAssociate1 = getUserProduct(userProductAssociate.getProductId(), userProductAssociate.getUserName());
-//        if (userProductAssociate1 != null) {
-//            throw new IllegalArgumentException("此权限已存在！");
-//        }
-//        userProductDao.saveUserProduct(userProductAssociate);
-//    }
+    @Transactional
+    public void saveUserProductAssociate(UserProductAssociate userProductAssociate) {
+        UserProductAssociate userProductAssociate1 = getUserProductAssociateByProductIdAndUserId(userProductAssociate.getProductId(), userProductAssociate.getUserId());
+        if (userProductAssociate1 != null) {
+            throw new IllegalArgumentException("此权限已存在！");
+        }
+        userProductDao.saveUserProductAssociate(userProductAssociate);
+    }
 
     @Transactional
-    public UserProductAssociate getUserProduct(String productId, String userName) {
-        return userProductDao.getUserProduct(productId, userName);
+    public UserProductAssociate getUserProductAssociateByProductIdAndUserId(Integer productId, Integer userId) {
+        return userProductDao.getUserProductAssociateByProductIdAndUserId(productId, userId);
     }
 
     @Transactional
@@ -72,13 +83,17 @@ public class UserProductService {
     }
 
     @Transactional
-    public void updateUserProduct(UserProductAssociate userProductAssociate) {
-        userProductDao.updateUserProduct(userProductAssociate);
+    public void updateUserProductAssociate(UserProductAssociate userProductAssociate) {
+        UserProductAssociate userProductAssociate1 = getUserProductAssociateByProductIdAndUserId(userProductAssociate.getProductId(), userProductAssociate.getUserId());
+        if (userProductAssociate1 != null) {
+            throw new IllegalArgumentException("此权限已存在！");
+        }
+        userProductDao.updateUserProductAssociate(userProductAssociate);
     }
 
     @Transactional
-    public void deleteUserProduct(Integer id) {
-        userProductDao.deleteUserProduct(id);
+    public void deleteUserProductAssociate(Integer id) {
+        userProductDao.deleteUserProductAssociate(id);
     }
 
     @Transactional

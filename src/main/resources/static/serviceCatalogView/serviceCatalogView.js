@@ -1,6 +1,6 @@
 var search = window.location.search.substring(1);
 var urlsp = new URLSearchParams(search);
-var productId = urlsp.get("productId");
+var servicecatalogProductId = urlsp.get("servicecatalogProductId");
 var productName = urlsp.get("productName");
 var productVersionId;
 var portfolioId;

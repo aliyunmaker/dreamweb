@@ -1,3 +1,7 @@
+delete from product;
+delete from product_version;
+delete from user_product_associate;
+
 insert into `product` (`servicecatalog_product_id`, `product_name`, `gmt_create`)
 VALUES
 ('prod-bp1c6y7y2wj453','DEMO-创建ECS（选择VPC）',now()),
@@ -21,11 +25,8 @@ VALUES
 (3,'application3','日常','pv-bp1bjeut29963a',now());
 
 
--- INSERT INTO `userproduct` (`productid`, `productname`, `username`, `portfolioid`, `gmt_create`)
--- VALUES
--- ('prod-bp18r7q127u45k','DEMO-创建VPC+ECS','admin','port-bp1yt7582gn4p7',now()),
--- ('prod-bp18r7q127u45k','DEMO-创建VPC+ECS','dou','port-bp1yt7582gn4p7',now()),
--- ('prod-bp1c6y7y2wj453','创建ECS','admin','port-bp1yt7582gn4p7',now()),
--- ('prod-bp1c6y7y2wj453','创建ECS','dou','port-bp1yt7582gn4p7',now()),
--- ('prod-bp1p27wj2c94fg','创建RAM角色','admin','port-bp1yt7582gn4p7',now()),
--- ('prod-bp1p27wj2c94fg','创建RAM角色','dou','port-bp1yt7582gn4p7',now());
+INSERT INTO `user_product_associate` (`product_id`, `user_id`, `servicecatalog_portfolio_id`, `gmt_create`)
+VALUES
+(3, 1,'port-bp1yt7582gn4p7',now()),
+(1, 1,'port-bp1yt7582gn4p7',now()),
+(4, 1,'port-bp1yt7582gn4p7',now());

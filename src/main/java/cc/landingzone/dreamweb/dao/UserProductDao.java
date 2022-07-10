@@ -25,16 +25,18 @@ public interface UserProductDao {
 
     Integer getUserProductAssociateTotal(Map<String, Object> map);
 
-    void saveUserProduct(UserProductAssociate userProductAssociate);
+    void saveUserProductAssociate(UserProductAssociate userProductAssociate);
 
-    void updateUserProduct(UserProductAssociate userProductAssociate);
+    void updateUserProductAssociate(UserProductAssociate userProductAssociate);
 
-    void deleteUserProduct(Integer id);
+    void deleteUserProductAssociate(Integer id);
 
-    UserProductAssociate getUserProduct(String productId, String userName);
+    UserProductAssociate getUserProductAssociateByProductIdAndUserId(Integer productId, Integer userId);
 
     UserProductAssociate getUserProductById(Integer id);
 
     String getPortfolioId(String productId, String userName);
+
+    List<Integer> listProductIdsByUserId(Integer userId);
 
 }

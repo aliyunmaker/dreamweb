@@ -20,11 +20,11 @@ public interface ProductVersionDao {
 
     Integer getProductVersionTotal(Map<String, Object> map); //1
 
-    Product getProductVersionById(Integer id);
+    ProductVersion getProductVersionById(Integer id);
 
     void saveProductVersion(ProductVersion productVersion);
 
-    void updateProductVersion(Product product);
+    void updateProductVersion(ProductVersion productVersion);
 
     void deleteProductVersion(Integer id);
 

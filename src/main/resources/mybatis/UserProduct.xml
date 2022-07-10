@@ -26,39 +26,36 @@
         select count(*) from user_product_associate
     </select>
 
-    <insert id="saveUserProduct"
+    <insert id="saveUserProductAssociate"
             parameterType="cc.landingzone.dreamweb.model.UserProductAssociate">
-        insert into userproduct
-        (productid,
-        username,
-        portfolioid,
-        productname,
+        insert into user_product_associate
+        (product_id,
+        user_id,
+        servicecatalog_portfolio_id,
         gmt_create)
         values (#{productId},
-        #{userName},
-        #{portfolioId},
-        #{productName},
+        #{userId},
+        #{servicecatalogPortfolioId},
         now())
     </insert>
 
-    <update id="updateUserProduct" parameterType="cc.landingzone.dreamweb.model.UserProductAssociate">
-        update userproduct
-        set productid              = #{productId},
-        username                   = #{userName},
-        portfolioid                = #{portfolioId},
-        productname              = #{productName}
+    <update id="updateUserProductAssociate" parameterType="cc.landingzone.dreamweb.model.UserProductAssociate">
+        update user_product_associate
+        set product_id                             = #{productId},
+        user_id                                    = #{userId},
+        servicecatalog_portfolio_id                = #{servicecatalogPortfolioId}
         where id = #{id}
     </update>
 
-    <delete id="deleteUserProduct" parameterType="int">
+    <delete id="deleteUserProductAssociate" parameterType="int">
         delete
-        from userproduct
+        from user_product_associate
         where id = #{id}
     </delete>
 
-    <select id="getUserProduct" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
-        select * from userproduct
-        where productid = #{productId} and username = #{userName}
+    <select id="getUserProductAssociateByProductIdAndUserId" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
+        select * from user_product_associate
+        where product_id = #{productId} and user_id = #{userId}
     </select>
 
     <select id="getUserProductById" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
@@ -70,6 +67,11 @@
     <select id="getPortfolioId"
             resultType="String">
         select portfolioid from userproduct where productid = #{productId} and username = #{userName}
+    </select>
+
+    <select id="listProductIdsByUserId" resultType="Integer">
+        select product_id from user_product_associate
+        where user_id = #{userId}
     </select>
 
 </mapper>

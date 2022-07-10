@@ -29,25 +29,25 @@
     <insert id="saveProduct"
             parameterType="cc.landingzone.dreamweb.model.Product">
         insert into product
-        (productid,
-        productname,
+        (servicecatalog_product_id,
+        product_name,
         gmt_create)
         values (
-        #{productId},
+        #{servicecatalogProductId},
         #{productName},
         now())
     </insert>
 
-    <select id="getProductByProductId" resultType="cc.landingzone.dreamweb.model.Product">
+    <select id="getProductByServicecatalogProductId" resultType="cc.landingzone.dreamweb.model.Product">
         select *
         from product
-        where productid = #{productId}
+        where servicecatalog_product_id = #{servicecatalogProductId}
     </select>
 
     <update id="updateProduct" parameterType="cc.landingzone.dreamweb.model.Product">
         update product
-        set productid                = #{productId},
-        productname              = #{productName}
+        set servicecatalog_product_id                = #{servicecatalogProductId},
+        product_name                                 = #{productName}
         where id = #{id}
     </update>
 

@@ -65,19 +65,20 @@ public class ProductVersionService {
     }
 
     @Transactional
-    public Product getProductVersionById(Integer id) {
+    public ProductVersion getProductVersionById(Integer id) {
         return productVersionDao.getProductVersionById(id);
     }
 
-//    @Transactional
-//    public void updateProductVersion(Product product) {
-//        Assert.notNull(product, "数据不能为空!");
-//        String productVersion = getProductVersionId(product.getProductId(), product.getApplication(), product.getScenes());
-//        if (productVersion != null) {
-//            throw new IllegalArgumentException("此产品版本(" + product.getProductVersionId()+ ")已存在");
-//        }
-//        productVersionDao.updateProductVersion(product);
-//    }
+    @Transactional
+    public void updateProductVersion(ProductVersion productVersion) {
+        Assert.notNull(productVersion, "数据不能为空!");
+        Assert.notNull(productVersion.getProductId(), "产品不能为空!");
+        ProductVersion productVersion1 = productVersionDao.getProductVersionByServicecatalogProductVersionId(productVersion.getServicecatalogProductVersionId());
+        if (productVersion1 != null && productVersion1.getId()!=productVersion.getId()) {
+            throw new IllegalArgumentException("此产品版本(" + productVersion.getServicecatalogProductVersionId()+ ")已存在");
+        }
+        productVersionDao.updateProductVersion(productVersion);
+    }
 
     @Transactional
     public void deleteProductVersion(Integer id) {

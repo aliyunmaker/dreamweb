@@ -24,7 +24,7 @@ public interface ProductDao {
 
     String getProductName(String productId);
 
-    Product getProductByProductId(String productId);
+    Product getProductByServicecatalogProductId(String servicecatalogProductId);
 
     void updateProduct(Product product);
 

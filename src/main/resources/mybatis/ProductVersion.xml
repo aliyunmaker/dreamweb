@@ -33,7 +33,7 @@
 
         <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.Product">
             select *
-            from productversion
+            from product_version
             where id = #{id}
         </select>
 
@@ -52,23 +52,23 @@
                     now())
         </insert>
 
-        <update id="updateProductVersion" parameterType="cc.landingzone.dreamweb.model.Product">
-            update productversion
-            set application              = #{application},
-                scenes                   = #{scenes},
-                productid                = #{productId},
-                productversionid         = #{productVersionId}
+        <update id="updateProductVersion" parameterType="cc.landingzone.dreamweb.model.ProductVersion">
+            update product_version
+            set app                                       = #{app},
+                environment                               = #{environment},
+                product_id                                = #{productId},
+                servicecatalog_product_version_id         = #{servicecatalogProductVersionId}
             where id = #{id}
         </update>
 
         <delete id="deleteProductVersion" parameterType="int">
             delete
-            from productversion
+            from product_version
             where id = #{id}
         </delete>
 
 
-        <select id="getProductVersionByServicecatalogProductVersionId" parameterType="String" resultType="ProductVersion">
+        <select id="getProductVersionByServicecatalogProductVersionId" parameterType="String" resultType="cc.landingzone.dreamweb.model.ProductVersion">
             select * from product_version where servicecatalog_product_version_id = #{servicecatalogProductVersionId}
         </select>
 

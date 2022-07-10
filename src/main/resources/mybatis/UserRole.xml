@@ -71,9 +71,9 @@
     </delete>
 
     <insert id="saveUserRole" >
-        insert into properties
-        (k,
-        v,
+        insert into property
+        (property_key,
+        property_value,
         gmt_create)
         values (#{key},
         #{value},
@@ -81,13 +81,13 @@
     </insert>
 
     <select id="getRoleId" parameterType="String" resultType="String">
-        select v from properties where k = #{key}
+        select property_value from property where property_key = #{key}
     </select>
 
     <update id="updateUserRole2" parameterType="String">
-        update properties
-        set v = #{value}
-        where k = #{key}
+        update property
+        set property_value = #{value}
+        where property_key = #{key}
     </update>
 
 </mapper>

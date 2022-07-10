@@ -7,11 +7,10 @@ Ext.onReady(function () {
         dataUrl: '../userProduct/searchUserProductByUserName.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'productId', 'productName']
+        fields: ['id', 'servicecatalogProductId', 'productName']
     });
 
 
-    var detailRole = null;
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'center',
         title: '产品列表',
@@ -21,7 +20,7 @@ Ext.onReady(function () {
             header: 'ID',
             hidden: true
         }, {
-            dataIndex: 'productId',
+            dataIndex: 'servicecatalogProductId',
             header: "产品ID",
             width: 400
         }, {
@@ -34,7 +33,7 @@ Ext.onReady(function () {
             width: 250,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.data["productId"];
+                var id = record.data["servicecatalogProductId"];
                 var name = record.data["productName"];
                 var nameUrl = encodeURIComponent(name);
                 Ext.defer(function () {
@@ -49,7 +48,7 @@ Ext.onReady(function () {
                                 }, function (data) {
                                     var roleId = data.data;
                                     if(roleId != null) {
-                                        window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"productId="+id+"&productName="+nameUrl + "&roleId="+ roleId;
+                                        window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"servicecatalogProductId="+id+"&productName="+nameUrl + "&roleId="+ roleId;
                                     } else {
                                         alert("您还未选择角色！");
                                         window.location.href = "http://localhost:8080/metadata/metadataManage.html";
@@ -71,7 +70,3 @@ Ext.onReady(function () {
     });
 
 })
-
-function isTrue(isSuccess) {
-    return (isSuccess === "true" || isSuccess === true);
-}
