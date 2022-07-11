@@ -25,6 +25,7 @@
         product_id,
         role_id,
         starter_id,
+        status,
         parameter,
         outputs,
         create_time,
@@ -45,7 +46,7 @@
         select distinct servicecatalog_provisioned_product_id from provisioned_product where status = 'UnderChange'
     </select>
 
-    <select id="getProvisionedProductByProvisionedProductId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+    <select id="getProvisionedProductByServicecatalogProvisionedProductId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
         select * from provisioned_product where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
     </select>
 

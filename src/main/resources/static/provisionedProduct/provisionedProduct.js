@@ -42,7 +42,7 @@ Ext.onReady(function () {
         }, {
             dataIndex: 'status',
             header: "实例状态",
-            width: 80,
+            width: 115,
             align: 'center',
             renderer: function(v) {
                 if(v == 'Error') {

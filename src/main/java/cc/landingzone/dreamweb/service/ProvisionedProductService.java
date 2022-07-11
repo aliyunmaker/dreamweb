@@ -223,7 +223,7 @@ public class ProvisionedProductService {
                 for (String provisionedProductId : provisionedProductIds) {
                     // 创建终端
                     String region = "cn-hangzhou";
-                    ProvisionedProduct provisionedProduct = provisionedProductDao.getServicecatalogProvisionedProductByProvisionedProductId(provisionedProductId);
+                    ProvisionedProduct provisionedProduct = provisionedProductDao.getProvisionedProductByServicecatalogProvisionedProductId(provisionedProductId);
                     User user = userService.getUserById(provisionedProduct.getStarterId());
                     UserRole userRole = userRoleService.getUserRoleById(provisionedProduct.getRoleId());
                     String servicecatalogProductId = productService.getProductById(provisionedProduct.getProductId()).getServicecatalogProductId();
@@ -239,7 +239,7 @@ public class ProvisionedProductService {
 
     public String searchStatus(String servicecatalogProvisionedProductId) {
         String flag = "no";
-        ProvisionedProduct provisionedProduct = provisionedProductDao.getServicecatalogProvisionedProductByProvisionedProductId(servicecatalogProvisionedProductId);
+        ProvisionedProduct provisionedProduct = provisionedProductDao.getProvisionedProductByServicecatalogProvisionedProductId(servicecatalogProvisionedProductId);
         if(!provisionedProduct.getStatus().equals("UnderChange")) {
             flag = "yes";
         }

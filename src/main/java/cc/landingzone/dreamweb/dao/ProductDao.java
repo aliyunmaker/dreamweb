@@ -22,7 +22,7 @@ public interface ProductDao {
 
     Integer getProductTotal(Map<String, Object> map);
 
-    String getProductName(String productId);
+//    String getProductName(String productId);
 
     Product getProductByServicecatalogProductId(String servicecatalogProductId);
 

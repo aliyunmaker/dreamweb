@@ -87,7 +87,9 @@ public class TaskController extends BaseController {
         if (list != null && list.size() > 0) {
             for (Task task : list) {
                 Integer applicationId = (Integer) taskService.getVariable(task.getId(), "applicationId");
+                System.out.println(applicationId);
                 Application application = applicationService.getApplicationById(applicationId);
+                System.out.println(application.getStarterId());
                 String starterName = userService.getUserById(application.getStarterId()).getLoginName();
                 String servicecatalogPlanId = application.getServicecatalogPlanId();
 
@@ -143,6 +145,8 @@ public class TaskController extends BaseController {
                 if (process == null) {
                     applicationService.updateProcessStateByProcessId(processId, "已通过");
                     applicationService.updateTaskByProcessId(processId, "无等待任务");
+                    System.out.println("111111111");
+                    System.out.println(planId);
                     createProduct(planId);  //审批通过后启动产品
                     Integer flag = 0;
                     result.setData(flag);

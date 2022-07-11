@@ -72,17 +72,17 @@
         where id = #{id}
     </update>
 
-<!--    <update id="updateCond">-->
-<!--        update myAsk-->
-<!--        set cond = #{cond}-->
-<!--        where processId = #{processId}-->
-<!--    </update>-->
+    <update id="updateCondByProcessId">
+        update application
+        set cond = #{cond}
+        where process_id = #{processId}
+    </update>
 
-<!--    <update id="updateOpinion">-->
-<!--        update myAsk-->
-<!--        set opinion = #{opinion}-->
-<!--        where processId = #{processId}-->
-<!--    </update>-->
+    <update id="updateOpinionByProcessId">
+        update application
+        set opinion = #{opinion}
+        where process_id = #{processId}
+    </update>
 
 <!--    <update id="updateStatus">-->
 <!--        update myAsk-->

@@ -26,7 +26,7 @@ public interface ApplicationDao {
     void updateCondByProcessId(String processId, String cond);
 
     void updateOpinionByProcessId(String processId, String opinion);
-//
+
     List<Application> listApplicationPreviewInProgress();
 
     void updateStatusById(Integer id, String processStatus);

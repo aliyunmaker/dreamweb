@@ -146,7 +146,7 @@ Ext.onReady(function () {
                     Ext.Array.each(select,function(record){
                         taskIds.push(record.raw.taskId);
                         processIds.push(record.raw.processId);
-                        planIds.push(record.raw.planId);
+                        planIds.push(record.raw.servicecatalogPlanId);
                     });
                     var taskId = JSON.stringify(taskIds);
                     var processId = JSON.stringify(processIds);
@@ -155,7 +155,7 @@ Ext.onReady(function () {
                         MyExt.util.Ajax('../task/complete.do', {
                             taskId: taskId,
                             processId: processId,
-                            planId: planIds
+                            planId: planId
                         }, function (data) {
                             reload();
                             if (data.data == 1)
@@ -223,7 +223,7 @@ Ext.onReady(function () {
 
 
     function update() {
-        for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
+        // for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
             var count = userStore.getCount();
             MyExt.util.Ajax('../task/getCount.do', {
                 count: count,
@@ -233,7 +233,7 @@ Ext.onReady(function () {
                     reload();
                 }
             });
-        }
+        // }
     };
 
     //定时刷新store

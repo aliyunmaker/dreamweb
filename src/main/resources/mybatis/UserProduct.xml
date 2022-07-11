@@ -5,15 +5,15 @@
 <mapper namespace="cc.landingzone.dreamweb.dao.UserProductDao">
 
 
-    <select id="listProductId"
-            resultType="String">
-        select productid from userproduct where username = #{userName};
-    </select>
+<!--    <select id="listProductId"-->
+<!--            resultType="String">-->
+<!--        select productid from userproduct where username = #{userName};-->
+<!--    </select>-->
 
-    <select id="listProduct"
-            resultType="cc.landingzone.dreamweb.model.Product">
-         select * from userproduct where username = #{userName};
-    </select>
+<!--    <select id="listProduct"-->
+<!--            resultType="cc.landingzone.dreamweb.model.Product">-->
+<!--         select * from userproduct where username = #{userName};-->
+<!--    </select>-->
 
     <select id="listUserProductAssociate" resultType="cc.landingzone.dreamweb.model.UserProductAssociate" parameterType="map">
         select * from user_product_associate order by id desc
@@ -58,11 +58,11 @@
         where product_id = #{productId} and user_id = #{userId}
     </select>
 
-    <select id="getUserProductById" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
-        select *
-        from userproduct
-        where id = #{id}
-    </select>
+<!--    <select id="getUserProductById" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">-->
+<!--        select *-->
+<!--        from userproduct-->
+<!--        where id = #{id}-->
+<!--    </select>-->
 
     <select id="getServicecatalogPortfolioId"
             resultType="String">

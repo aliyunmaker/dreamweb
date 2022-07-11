@@ -27,7 +27,7 @@ public interface ProvisionedProductDao {
 
     List<String> listServicecatalogProvisionedProductIdUnderChange();
 
-    ProvisionedProduct getServicecatalogProvisionedProductByProvisionedProductId(String servicecatalogProvisionedProductId);
+    ProvisionedProduct getProvisionedProductByServicecatalogProvisionedProductId(String servicecatalogProvisionedProductId);
 
     void updateStatusByServicecatalogProvisionedProductId(String status, String servicecatalogProvisionedProductId);
 
