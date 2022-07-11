@@ -1,20 +1,22 @@
 var search = window.location.search.substring(1);
 var urlsp = new URLSearchParams(search);
-var servicecatalogProductId = urlsp.get("servicecatalogProductId");
+var productId = urlsp.get("productId");
 var productName = urlsp.get("productName");
-var productVersionId;
-var portfolioId;
+console.log(productId);
+console.log(productName);
+var servicecatalogProductVersionId;
+var servicecatalogPortfolioId;
 var roleId = urlsp.get("roleId");
 
 $(document).ready(function(){
     $.ajax({
-        url: "../../serviceCatalogView/getPortfolioId.do",
+        url: "../../serviceCatalogView/getServicecatalogPortfolioId.do",
         data: {
             productId
         },
         success: function (result) {
             if(isTrue(result.success)) {
-                portfolioId = result.data;
+                servicecatalogPortfolioId = result.data;
             } else {
                 alert(result.errorMsg);
             }
@@ -22,17 +24,17 @@ $(document).ready(function(){
     });
 
     $.ajax({
-        url: "../../serviceCatalogView/getApplications.do",
+        url: "../../serviceCatalogView/getApps.do",
         data: {
             productId
         },
         success: function (result) {
             if(isTrue(result.success)) {
-                var applicationList = result.data;
-                for (var i = 0; i < applicationList.length; i++){
-                    var application = applicationList[i];
-                    var option = "<option value='" + application + "'>" + application + "</option>";
-                    $("#select_application").append(option);
+                var appList = result.data;
+                for (var i = 0; i < appList.length; i++){
+                    var app = appList[i];
+                    var option = "<option value='" + app + "'>" + app + "</option>";
+                    $("#select_app").append(option);
                 }
             } else {
                 alert(result.errorMsg);
@@ -40,42 +42,45 @@ $(document).ready(function(){
         }
     });
 
-    $("#select_application").change(function () {
-        $("#select_scenes").empty();
-        $("#select_scenes").append("<option value='选择环境'>选择环境</option>");
-        var select_Application = $(this).val();
+    $("#select_app").change(function () {
+        $("#select_environment").empty();
+        $("#select_environment").append("<option value='选择环境'>选择环境</option>");
+        var select_app = $(this).val();
         $.ajax({
-            url: "../../serviceCatalogView/getScenes.do",
+            url: "../../serviceCatalogView/getEnvironment.do",
             data: {
-            select_Application,
+            select_app,
             productId
             },
             success: function (result) {
+                console.log(result);
                 if(isTrue(result.success)) {
-                    var scenesList = result.data;
+                    var environmentList = result.data;
+                    console.log(environmentList);
                 }
-                for(var i = 0; i < scenesList.length; i++) {
-                    var scene = scenesList[i];
-                    var option = "<option value='" + scene + "'>" + scene + "</option>";
-                    $('#select_scenes').append(option);
+                for(var i = 0; i < environmentList.length; i++) {
+                    var environment = environmentList[i];
+                    var option = "<option value='" + environment + "'>" + environment + "</option>";
+                    $('#select_environment').append(option);
                 }
             }
         })
     })
 
-    $("#select_scenes").change(function () {
-        var select_Application = $("#select_application").val();
-        var select_Scene = $("#select_scenes").val();
+    $("#select_environment").change(function () {
+        var select_app = $("#select_app").val();
+        var select_environment = $("#select_environment").val();
         $.ajax({
-            url: "../../serviceCatalogView/getProductVersionId.do",
+            url: "../../serviceCatalogView/getServicecatalogProductVersionId.do",
             data: {
-            select_Application,
-            select_Scene,
+            select_app,
+            select_environment,
             productId
             },
             success: function (result) {
                 if(isTrue(result.success)) {
-                    productVersionId = result.data;
+                    console.log(result.data);
+                    servicecatalogProductVersionId = result.data;
                }
             }
         })
@@ -88,16 +93,17 @@ $(document).ready(function(){
                 productId
             },
             success: function (result) {
-                var exampleName = result.data;
+                var provisionedProductName = result.data;
+                console.log(provisionedProductName);
                 var region = $("#select_region").val();
                 $.ajax({
                     url: "../../serviceCatalogView/getNonLoginPreUrl.do",
                     data: {
                         productId,
                         roleId,
-                        exampleName,
-                        productVersionId,
-                        portfolioId,
+                        provisionedProductName,
+                        servicecatalogProductVersionId,
+                        servicecatalogPortfolioId,
                         region
                     },
                     success: function (result) {
@@ -116,28 +122,22 @@ $(document).ready(function(){
 
 window.addEventListener("message", function(event) {
     $.ajax({
-        url: "../../apply/processDefinitionQueryFinal.do",
+        url: "../../application/processDefinitionQueryFinal.do",
         success: function (result) {
             if(isTrue(result.success)) {
                 var definitionId = result.data;
-                var select_Application = $("#select_application").val();
-                var select_Scene = $("#select_scenes").val();
                 var data = JSON.parse(event.data);
-                var PlanId = data['PlanId'];
+                var servicecatalogPlanId = data['PlanId'];
                 $.ajax({
-                    url: "../../apply/startPlan.do",
+                    url: "../../application/startPlan.do",
                     data: {
                         definitionId,
-                        select_Application,
-                        select_Scene,
                         productId,
                         roleId,
-                        PlanId,
-                        portfolioId,
-                        productName
+                        servicecatalogPlanId
                     },
                     success: function (result) {
-                        window.location.href = "http://localhost:8080/ask/myAsk.html";
+                        window.location.href = "http://localhost:8080/application/myApplication.html";
                     }
                 })
             }

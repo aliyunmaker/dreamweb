@@ -82,6 +82,7 @@ public class UserProductController extends BaseController {
         WebResult result = new WebResult();
         try {
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            System.out.println(userName);
             User user = userService.getUserByLoginName(userName);
             List<Product> list = userProductService.listProductByUserId(user.getId());
             result.setData(list);

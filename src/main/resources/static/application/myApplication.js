@@ -5,10 +5,10 @@ Ext.onReady(function () {
     };
 
     var userStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-        dataUrl: '../apply/getMyAsk.do',
+        dataUrl: '../application/getMyApplication.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['starterName', 'processTime', 'processId', 'task', 'processState', 'cond', 'opinion', 'planId', 'planResult']
+        fields: ['starterName', 'createTime', 'processId', 'processState', 'cond', 'opinion', 'servicecatalogPlanId', 'planResult']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -20,7 +20,7 @@ Ext.onReady(function () {
             header: '申请人',
             width: 100
         }, {
-            dataIndex: 'processTime',
+            dataIndex: 'createTime',
             header: "申请时间",
             width: 150
         }, {
@@ -28,7 +28,7 @@ Ext.onReady(function () {
             header: "流程实例ID",
             width: 150
         }, {
-            dataIndex: 'planId',
+            dataIndex: 'servicecatalogPlanId',
             header: "启动计划ID",
             width: 150
         }, {
@@ -65,8 +65,8 @@ Ext.onReady(function () {
             width: 150,
             align: 'center',
             renderer: function (value,metaData, record, rowIndex, columnIndex,cellmeta) {
-                var planId = record.raw.planId;
-                var id = planId + 'shenqingneirong';
+                var servicecatalogPlanId = record.raw.servicecatalogPlanId;
+                var id = servicecatalogPlanId + 'shenqingneirong';
                 Ext.defer(function () {
                     Ext.widget('button', {
                         renderTo: id,
@@ -75,7 +75,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    planId: planId,
+                                    servicecatalogPlanId: servicecatalogPlanId,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -158,8 +158,8 @@ Ext.onReady(function () {
             width: 140,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var planId = record.raw.planId;
-                var id = planId + 'yujianjieguo';
+                var servicecatalogPlanId = record.raw.servicecatalogPlanId;
+                var id = servicecatalogPlanId + 'yujianjieguo';
                 var planResult = record.data.planResult;
                 Ext.defer(function () {
                     Ext.widget('button', {
@@ -167,7 +167,6 @@ Ext.onReady(function () {
                         width: 110,
                         text: '预检结果',
                         handler: function () {
-
                             planResultTest = Ext.create('Ext.form.field.TextArea', {
                                 labelAlign:'right',
                                 width: "100%",
@@ -216,9 +215,9 @@ Ext.onReady(function () {
         for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
             var  record = userStore.getAt(i);//获取每一条记录
             if(record.get('processState') == '预检中') {
-                var PlanId = record.get('planId');
-                MyExt.util.Ajax('../apply/updateProcess.do', {
-                    PlanId: PlanId,
+                var servicecatalogPlanId = record.get('servicecatalogPlanId');
+                MyExt.util.Ajax('../application/updateProcess.do', {
+                    servicecatalogPlanId: servicecatalogPlanId,
                 }, function (data) {
                     var flag = data.data["flag"];
                     if(flag != "no") {

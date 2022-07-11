@@ -97,8 +97,8 @@ public class UserProductService {
     }
 
     @Transactional
-    public String getPortfolioId (String productId, String userName) {
-        return userProductDao.getPortfolioId(productId, userName);
+    public String getServicecatalogPortfolioId (Integer productId, Integer userId) {
+        return userProductDao.getServicecatalogPortfolioId(productId, userId);
     }
 
 }

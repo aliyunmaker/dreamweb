@@ -6,8 +6,8 @@ import com.aliyun.servicecatalog20210901.Client;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,7 @@ public class TaskController extends BaseController {
     private HistoryService historyService;
 
     @Autowired
-    private ApplyService applyService;
+    private ApplicationService applicationService;
 
     @Autowired
     private RuntimeService runtimeService;
@@ -59,6 +58,16 @@ public class TaskController extends BaseController {
 
     @Autowired
     private ProvisionedProductService provisionedProductService;
+
+    @Autowired
+    private ProductVersionService productVersionService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private UserProductService userProductService;
+
 
     /**
      * 获取登录用户待办任务列表
@@ -77,15 +86,18 @@ public class TaskController extends BaseController {
         List<Assignment> assignmentList = new ArrayList<>();
         if (list != null && list.size() > 0) {
             for (Task task : list) {
-                String starterName = (String) taskService.getVariable(task.getId(), "starterName");
-                String planId = (String) taskService.getVariable(task.getId(), "planId");
+                Integer applicationId = (Integer) taskService.getVariable(task.getId(), "applicationId");
+                Application application = applicationService.getApplicationById(applicationId);
+                String starterName = userService.getUserById(application.getStarterId()).getLoginName();
+                String servicecatalogPlanId = application.getServicecatalogPlanId();
+
                 HistoricProcessInstance historicProcessInstance = historyService//与历史数据（历史表）相关的Service
                         .createHistoricProcessInstanceQuery()//创建历史流程实例查询
                         .processInstanceId(task.getProcessInstanceId())//使用流程实例ID查询
                         .singleResult();
 
                 Assignment assignment = new Assignment();
-                assignment.setPlanId(planId);
+                assignment.setServicecatalogPlanId(servicecatalogPlanId);
                 assignment.setStarterName(starterName);
                 assignment.setProcessTime(DateUtil.dateTime2String(historicProcessInstance.getStartTime()));
                 assignment.setTaskTime(DateUtil.dateTime2String(task.getCreateTime()));
@@ -129,14 +141,14 @@ public class TaskController extends BaseController {
 
                 ProcessInstance process = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
                 if (process == null) {
-                    applyService.updateProcessState(processId, "已通过");
-                    applyService.updateTaskByProcessId(processId, "无等待任务");
+                    applicationService.updateProcessStateByProcessId(processId, "已通过");
+                    applicationService.updateTaskByProcessId(processId, "无等待任务");
                     createProduct(planId);  //审批通过后启动产品
                     Integer flag = 0;
                     result.setData(flag);
                 } else {
                     String task = "等待" + taskService.createTaskQuery().processInstanceId(process.getId()).singleResult().getName();
-                    applyService.updateTaskByProcessId(processId, task);
+                    applicationService.updateTaskByProcessId(processId, task);
 
                     Integer flag = 1;
                     result.setData(flag);
@@ -189,10 +201,10 @@ public class TaskController extends BaseController {
         String processId = request.getParameter("processId");
 
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-        applyService.updateCond(task.getProcessInstanceId(), "拒绝");
-        applyService.updateOpinion(task.getProcessInstanceId(), opinion);
-        applyService.updateProcessState(processId, "已拒绝");
-        applyService.updateTaskByProcessId(processId, "无等待任务");
+        applicationService.updateCondByProcessId(task.getProcessInstanceId(), "拒绝");
+        applicationService.updateOpinionByProcessId(task.getProcessInstanceId(), opinion);
+        applicationService.updateProcessStateByProcessId(processId, "已拒绝");
+        applicationService.updateTaskByProcessId(processId, "无等待任务");
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("con", 0);
@@ -217,8 +229,11 @@ public class TaskController extends BaseController {
         // 循环结果集
         tasks.forEach(task -> {
             Assignment assignment = new Assignment();
-            String starterName = (String) taskService.getVariable(task.getId(), "starterName");
-            String planId = (String) taskService.getVariable(task.getId(), "planId");
+            Integer applicationId = (Integer) taskService.getVariable(task.getId(), "applicationId");
+            Application application = applicationService.getApplicationById(applicationId);
+            String starterName = userService.getUserById(application.getStarterId()).getLoginName();
+            String servicecatalogPlanId = application.getServicecatalogPlanId();
+
             HistoricProcessInstance historicProcessInstance = historyService//与历史数据（历史表）相关的Service
                     .createHistoricProcessInstanceQuery()//创建历史流程实例查询
                     .processInstanceId(task.getProcessInstanceId())//使用流程实例ID查询
@@ -230,7 +245,7 @@ public class TaskController extends BaseController {
             assignment.setTaskName(task.getName());
             assignment.setProcessId(task.getProcessInstanceId());
             assignment.setAssignee(task.getAssignee());
-            assignment.setPlanId(planId);
+            assignment.setServicecatalogPlanId(servicecatalogPlanId);
             assignmentList.add(assignment);
         });
         Collections.sort(assignmentList);
@@ -248,8 +263,8 @@ public class TaskController extends BaseController {
     @RequestMapping("/getInfo.do")
     public void getInfo(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String planId = request.getParameter("planId");
-        Map<String, Object> example = getInfo(planId);
+        String servicecatalogPlanId = request.getParameter("servicecatalogPlanId");
+        Map<String, Object> example = getInfo(servicecatalogPlanId);
         result.setData(example);
         outputToJSON(response, result);
     }
@@ -261,91 +276,26 @@ public class TaskController extends BaseController {
      * @throws Exception
      * @param: 流程ID
      */
-    public Map<String, Object> getInfo(String planId) {
-        Apply apply = applyService.getApplyByPlanId(planId);
-//        Task task = taskService.createTaskQuery().processInstanceId(processId).singleResult();
-//        String application = null;
-//        String scene = null;
-//        String productId = null;
-//        String exampleName = null;
-//        String parameters = null;
-//        String starterName = null;
-//        Integer roleId = null;
-//        String region = null;
-//        String versionId = null;
-//        if (task != null) {
-//            application = (String) taskService.getVariable(task.getId(), "application");
-//            scene = (String) taskService.getVariable(task.getId(), "scene");
-//            productId = (String) taskService.getVariable(task.getId(), "productId");
-//            exampleName = (String) taskService.getVariable(task.getId(), "exampleName");
-//            parameters = (String) taskService.getVariable(task.getId(), "parameters");
-//            starterName = (String) taskService.getVariable(task.getId(), "starterName");
-//            roleId = (Integer) taskService.getVariable(task.getId(), "roleId");
-//            region = (String) taskService.getVariable(task.getId(), "region");
-//            versionId = (String) taskService.getVariable(task.getId(), "versionId");
-//        } else {
-//            List<HistoricVariableInstance> list = historyService.createHistoricVariableInstanceQuery().processInstanceId(processId).list();
-//            for (HistoricVariableInstance historicVariableInstance : list) {
-//                if (historicVariableInstance.getVariableName().equals("application")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        application = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("scene")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        scene = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("productId")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        productId = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("exampleName")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        exampleName = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("parameters")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        parameters = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("region")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        region = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("versionId")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        versionId = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("starterName")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        starterName = (String) historicVariableInstance.getValue();
-//                    }
-//                }
-//                if (historicVariableInstance.getVariableName().equals("roleId")) {
-//                    if (historicVariableInstance.getValue() != null) {
-//                        roleId = (Integer) historicVariableInstance.getValue();
-//                    }
-//                }
-//            }
-//        }
+    public Map<String, Object> getInfo(String servicecatalogPlanId) {
+        System.out.println(servicecatalogPlanId);
+        Application application = applicationService.getApplicationByServicecatalogPlanId(servicecatalogPlanId);
+        System.out.println(application.getProductVersionId());
+        ProductVersion productVersion = productVersionService.getProductVersionById(application.getProductVersionId());
+        Product product = productService.getProductById(application.getProductId());
+        User user = userService.getUserById(application.getStarterId());
+        String servicecatalogPortfolioId = userProductService.getServicecatalogPortfolioId(application.getProductId(), application.getStarterId());
         Map<String, Object> example = new HashMap<>();
-        example.put("应用", apply.getApplication());
-        example.put("环境", apply.getScene());
-        example.put("产品ID", apply.getProductId());
-        example.put("实例名称", apply.getExampleName());
-        example.put("参数信息", apply.getParameters());
-        example.put("地域", apply.getRegion());
-        example.put("版本ID", apply.getVersionId());
-        example.put("申请人", apply.getStarterName());
-        example.put("角色ID", apply.getRoleId());
-        example.put("产品名称", apply.getProductName());
-        example.put("产品组合ID", apply.getPortfolioId());
-
+        example.put("应用", productVersion.getApp());
+        example.put("环境", productVersion.getEnvironment());
+        example.put("产品ID", product.getServicecatalogProductId());
+        example.put("实例名称", application.getProvisionedProductName());
+        example.put("参数信息", application.getParameters());
+        example.put("地域", application.getRegion());
+        example.put("版本ID", productVersion.getServicecatalogProductVersionId());
+        example.put("申请人", user.getLoginName());
+        example.put("角色ID", application.getRoleId());
+        example.put("产品名称", product.getProductName());
+        example.put("产品组合ID", servicecatalogPortfolioId);
 
         return example;
     }

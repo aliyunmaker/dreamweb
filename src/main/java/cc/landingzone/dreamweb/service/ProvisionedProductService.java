@@ -36,44 +36,34 @@ public class ProvisionedProductService {
     private UserRoleService userRoleService;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private ServiceCatalogViewService serviceCatalogViewService;
 
     @Transactional
-    public String getUserName (String exampleId) {
-        return provisionedProductDao.getUserName(exampleId);
+    public ProvisionedProduct getProvisionedProductByProvisionedProductName (String provisionedProductName) {
+        return provisionedProductDao.getProvisionedProductByProvisionedProductName(provisionedProductName);
     }
 
     @Transactional
-    public Integer getRoleId (String exampleId) {
-        return provisionedProductDao.getRoleId(exampleId);
+    public void saveProvisionedProduct (ProvisionedProduct provisionedProduct) {
+        provisionedProductDao.saveProvisionedProduct(provisionedProduct);
     }
 
     @Transactional
-    public Integer getExampleId (String exampleName) {
-        return provisionedProductDao.getExampleId(exampleName);
+    public List<String> listServicecatalogProvisionedProductIdUnderChange () {
+        return provisionedProductDao.listServicecatalogProvisionedProductIdUnderChange();
     }
 
     @Transactional
-    public String getProductId(String exampleId) { return provisionedProductDao.getProductIdByExampleId(exampleId); }
-
-    @Transactional
-    public void saveExample (ProvisionedProduct provisionedProduct) {
-        provisionedProductDao.saveExample(provisionedProduct);
-    }
-
-    @Transactional
-    public List<String> listExampleId () {
-        return provisionedProductDao.listExampleId();
-    }
-
-    @Transactional
-    public List<ProvisionedProduct> listExample(Page page) {
+    public List<ProvisionedProduct> listProvisionedProducts(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<ProvisionedProduct> list = provisionedProductDao.listExample(map);
+        List<ProvisionedProduct> list = provisionedProductDao.listProvisionedProducts(map);
         if (null != page) {
             if (null != page.getStart() && null != page.getLimit()) {
-                Integer total = provisionedProductDao.getExampleTotal(map);
+                Integer total = provisionedProductDao.getProvisionedProductTotal(map);
                 page.setTotal(total);
             } else {
                 page.setTotal(list.size());
@@ -114,27 +104,27 @@ public class ProvisionedProductService {
         Date timeData = df.parse(time);
         df.applyPattern("yyyy-MM-dd HH:mm:ss"); //默认时区
         df.setTimeZone(TimeZone.getDefault());
-        provisionedProduct.setStartTime(df.format(timeData));// 实例创建时间
+        provisionedProduct.setCreateTime(df.format(timeData));// 实例创建时间
 
         lastTaskId = provisionedProductDetail.getLastTaskId();
 
-        provisionedProduct.setExampleName(provisionedProductDetail.getProvisionedProductName());//实例名称
-        provisionedProduct.setProductName(provisionedProductDetail.getProductName());//产品名称
-        provisionedProduct.setProductId(provisionedProductDetail.getProductId());//产品ID
-        provisionedProduct.setExampleId(provisionedProductId);//实例ID
+        provisionedProduct.setProvisionedProductName(provisionedProductDetail.getProvisionedProductName());//实例名称
+        Product product = productService.getProductByServicecatalogProductId(provisionedProductDetail.getProductId());
+        provisionedProduct.setProductId(product.getId());//产品ID
+        provisionedProduct.setServicecatalogProvisionedProductId(provisionedProductId);//实例ID
         provisionedProduct.setRoleId((Integer) example.get("角色ID"));//角色ID
-        provisionedProduct.setStartName((String) example.get("申请人"));//申请人
+        User user = userService.getUserByLoginName((String) example.get("申请人"));
+        provisionedProduct.setStarterId(user.getId());//申请人ID
 
         GetTaskResponseBody.GetTaskResponseBodyTaskDetail taskDetail = getTask(client, lastTaskId);
         provisionedProduct.setParameter(JsonUtils.toJsonString(taskDetail.getParameters()));//申请参数
         if ("Available".equals(provisionedProductStatus)) {
-//            provisionedProduct.setParameter(JsonUtils.toJsonString(taskDetail.getParameters()));//申请参数
             provisionedProduct.setOutputs(JsonUtils.toJsonString(taskDetail.getOutputs()));//输出
         } else {
             logger.error(taskDetail.getStatusMessage());
         }
 
-        saveExample(provisionedProduct);// 将产品实例信息存入数据库
+        saveProvisionedProduct(provisionedProduct);// 将产品实例信息存入数据库
     }
 
     /**
@@ -153,18 +143,18 @@ public class ProvisionedProductService {
             provisionedProductStatus = provisionedProductDetail.getStatus();   //实例状态
 
             if(!provisionedProductStatus.equals("UnderChange")) {
-                provisionedProductDao.updateStatus(provisionedProductStatus, provisionedProductId);
+                provisionedProductDao.updateStatusByServicecatalogProvisionedProductId(provisionedProductStatus, provisionedProductId);
                 lastTaskId = provisionedProductDetail.getLastTaskId();
 
                 GetTaskResponseBody.GetTaskResponseBodyTaskDetail taskDetail = getTask(client, lastTaskId);
                 if ("Available".equals(provisionedProductStatus)) {
                     String parameter = JsonUtils.toJsonString(taskDetail.getParameters());
-                    provisionedProductDao.updateParameter(parameter, provisionedProductId);
+                    provisionedProductDao.updateParameterByServicecatalogProvisionedProductId(parameter, provisionedProductId);
                     String outputs = JsonUtils.toJsonString(taskDetail.getOutputs());
-                    provisionedProductDao.updateOutputs(outputs, provisionedProductId);
+                    provisionedProductDao.updateOutputsByServicecatalogProvisionedProductId(outputs, provisionedProductId);
                 } else {
                     String error = taskDetail.getStatusMessage();
-                    provisionedProductDao.updateOutputs(error, provisionedProductId);
+                    provisionedProductDao.updateOutputsByServicecatalogProvisionedProductId(error, provisionedProductId);
                     logger.error(taskDetail.getStatusMessage());
                 }
             }
@@ -225,32 +215,31 @@ public class ProvisionedProductService {
          *
          * @throws Exception
          */
-//    @Scheduled(cron = "0/3 * * * * ?")
-//    public void updateExample() {
-//        try {
-//            List<String> exampleIds = listExampleId();
-//            if (exampleIds != null) {
-//                for (String exampleId : exampleIds) {
-//                    // 创建终端
-//                    String region = "cn-hangzhou";
-//                    String userName = getUserName(exampleId);
-//                    Integer roleId = getRoleId(exampleId);
-//                    User user = userService.getUserByLoginName(userName);
-//                    UserRole userRole = userRoleService.getUserRoleById(roleId);
-//                    String productId = getProductId(exampleId);
-//                    Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
-//                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
-//                    updateProvisionedProduct(client, exampleId);
-//                }
-//            }
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//        }
-//    }
+    @Scheduled(cron = "0/3 * * * * ?")
+    public void updateProvisionedProduct() {
+        try {
+            List<String> provisionedProductIds = listServicecatalogProvisionedProductIdUnderChange();
+            if (provisionedProductIds != null) {
+                for (String provisionedProductId : provisionedProductIds) {
+                    // 创建终端
+                    String region = "cn-hangzhou";
+                    ProvisionedProduct provisionedProduct = provisionedProductDao.getServicecatalogProvisionedProductByProvisionedProductId(provisionedProductId);
+                    User user = userService.getUserById(provisionedProduct.getStarterId());
+                    UserRole userRole = userRoleService.getUserRoleById(provisionedProduct.getRoleId());
+                    String servicecatalogProductId = productService.getProductById(provisionedProduct.getProductId()).getServicecatalogProductId();
+                    Client client = serviceCatalogViewService.createClient(region, user, userRole, servicecatalogProductId);
+                    // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
+                    updateProvisionedProduct(client, provisionedProductId);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
 
-    public String searchStatus(String exampleId) {
+    public String searchStatus(String servicecatalogProvisionedProductId) {
         String flag = "no";
-        ProvisionedProduct provisionedProduct = provisionedProductDao.getExampleByExampleId(exampleId);
+        ProvisionedProduct provisionedProduct = provisionedProductDao.getServicecatalogProvisionedProductByProvisionedProductId(servicecatalogProvisionedProductId);
         if(!provisionedProduct.getStatus().equals("UnderChange")) {
             flag = "yes";
         }

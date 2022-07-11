@@ -35,7 +35,7 @@ public interface UserProductDao {
 
     UserProductAssociate getUserProductById(Integer id);
 
-    String getPortfolioId(String productId, String userName);
+    String getServicecatalogPortfolioId(Integer productId, Integer userId);
 
     List<Integer> listProductIdsByUserId(Integer userId);
 

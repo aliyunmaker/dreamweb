@@ -33,12 +33,13 @@ Ext.onReady(function () {
             width: 250,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.data["servicecatalogProductId"];
+                var id = record.data["id"];
+                var servicecatalogProductId = record.data["servicecatalogProductId"];
                 var name = record.data["productName"];
                 var nameUrl = encodeURIComponent(name);
                 Ext.defer(function () {
                     Ext.widget('button', {
-                        renderTo: id,
+                        renderTo: servicecatalogProductId,
                         width: 170,
                         text: '申请实例',
                         handler: function () {
@@ -48,7 +49,7 @@ Ext.onReady(function () {
                                 }, function (data) {
                                     var roleId = data.data;
                                     if(roleId != null) {
-                                        window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"servicecatalogProductId="+id+"&productName="+nameUrl + "&roleId="+ roleId;
+                                        window.location.href = "http://localhost:8080/serviceCatalogView/serviceCatalogView.html?"+"productId="+id+"&productName="+nameUrl + "&roleId="+ roleId;
                                     } else {
                                         alert("您还未选择角色！");
                                         window.location.href = "http://localhost:8080/metadata/metadataManage.html";
@@ -57,7 +58,7 @@ Ext.onReady(function () {
                         }
                     });
                 }, 50);
-                return Ext.String.format('<div id="{0}"></div>', id);
+                return Ext.String.format('<div id="{0}"></div>', servicecatalogProductId);
             }
         }]
     });

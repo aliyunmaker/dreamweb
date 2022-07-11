@@ -63,6 +63,11 @@ public class ProductService {
     }
 
     @Transactional
+    public Product getProductByServicecatalogProductId (String servicecatalogProductId) {
+        return productDao.getProductByServicecatalogProductId(servicecatalogProductId);
+    }
+
+    @Transactional
     public void updateProduct(Product product) {
         Assert.notNull(product, "数据不能为空!");
         Assert.hasText(product.getServicecatalogProductId(), "产品ID不能为空!");

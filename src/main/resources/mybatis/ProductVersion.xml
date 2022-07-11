@@ -4,20 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.ProductVersionDao">
 
-        <select id="listApplication"
+        <select id="listApps"
                 resultType="String">
-            select distinct application from productversion where productid = #{productId}
+            select distinct app from product_version where product_id = #{productId}
         </select>
 
-        <select id="listScenes"
-                resultType="String"
-                parameterType="String">
-            select distinct scenes from productversion where application = #{application} and productid = #{productId}
+        <select id="listEnvironments"
+                resultType="String">
+            select distinct environment from product_version where app = #{app} and product_id = #{productId}
         </select>
 
-        <select id="getProductVersionId"
+        <select id="getServicecatalogProductVersionId"
                 resultType="String">
-            select productversionid from productversion where application = #{application} and scenes = #{scene} and productid = #{productId};
+            select servicecatalog_product_version_id from product_version where app = #{app} and environment = #{environment} and product_id = #{productId};
         </select>
 
         <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.ProductVersion" parameterType="map">
@@ -31,7 +30,7 @@
             select count(*) from product_version
         </select>
 
-        <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.Product">
+        <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.ProductVersion">
             select *
             from product_version
             where id = #{id}

@@ -16,28 +16,23 @@ import java.util.Map;
 @Component
 public interface ProvisionedProductDao {
 
-    Integer getExampleId(String exampleName);
+    ProvisionedProduct getProvisionedProductByProvisionedProductName(String provisionedProductName);
 
-    List<ProvisionedProduct> listExample(Map<String, Object> map);
+    List<ProvisionedProduct> listProvisionedProducts(Map<String, Object> map);
 
-    void saveExample(ProvisionedProduct provisionedProduct);
+    Integer getProvisionedProductTotal(Map<String, Object> map);
 
-    Integer getExampleTotal(Map<String, Object> map);
 
-    List<String> listExampleId();
+    void saveProvisionedProduct(ProvisionedProduct provisionedProduct);
 
-    String getUserName(String exampleId);
+    List<String> listServicecatalogProvisionedProductIdUnderChange();
 
-    Integer getRoleId(String exampleId);
+    ProvisionedProduct getServicecatalogProvisionedProductByProvisionedProductId(String servicecatalogProvisionedProductId);
 
-    String getProductIdByExampleId(String exampleId);
+    void updateStatusByServicecatalogProvisionedProductId(String status, String servicecatalogProvisionedProductId);
 
-    ProvisionedProduct getExampleByExampleId(String exampleId);
+    void updateParameterByServicecatalogProvisionedProductId(String parameter, String servicecatalogProvisionedProductId);
 
-    void updateStatus(String status, String exampleId);
-
-    void updateParameter(String parameter, String exampleId);
-
-    void updateOutputs(String outputs, String exampleId);
+    void updateOutputsByServicecatalogProvisionedProductId(String outputs, String servicecatalogProvisionedProductId);
 
 }

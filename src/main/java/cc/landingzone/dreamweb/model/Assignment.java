@@ -1,7 +1,7 @@
 package cc.landingzone.dreamweb.model;
 
 /**
- * 获取登录用户待办任务列表时使用（相比Apply多了当前任务相关信息）
+ * 获取登录用户待办任务列表时使用（相比Application多了当前任务相关信息）
  *
  * @author: laodou
  * @createDate: 2022/6/21
@@ -22,19 +22,19 @@ public class Assignment implements Comparable<Assignment>{
 
     private String assignee;
 
-    private String planId;
+    private String servicecatalogPlanId;
 
     @Override
     public int compareTo(Assignment assignment) {
         return Integer.parseInt(assignment.getProcessId()) - Integer.parseInt(this.getProcessId());
     }
 
-    public String getPlanId() {
-        return planId;
+    public String getServicecatalogPlanId() {
+        return servicecatalogPlanId;
     }
 
-    public void setPlanId(String planId) {
-        this.planId = planId;
+    public void setServicecatalogPlanId(String servicecatalogPlanId) {
+        this.servicecatalogPlanId = servicecatalogPlanId;
     }
 
     public String getStarterName() {

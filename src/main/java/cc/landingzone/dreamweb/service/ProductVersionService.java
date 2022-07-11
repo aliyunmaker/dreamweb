@@ -25,18 +25,18 @@ public class ProductVersionService {
     private ProductVersionDao productVersionDao;
 
     @Transactional
-    public List<String> listApplication (String productId) {
-        return productVersionDao.listApplication(productId);
+    public List<String> listApps(Integer productId) {
+        return productVersionDao.listApps(productId);
     }
 
     @Transactional
-    public List<String> listScenes (String productId, String application) {
-        return productVersionDao.listScenes(productId, application);
+    public List<String> listEnvironments (Integer productId, String app) {
+        return productVersionDao.listEnvironments(productId, app);
     }
 
     @Transactional
-    public String getProductVersionId (String productId, String application, String scene) {
-        return productVersionDao.getProductVersionId(productId, application, scene);
+    public String getServicecatalogProductVersionId (Integer productId, String app, String environment) {
+        return productVersionDao.getServicecatalogProductVersionId(productId, app, environment);
     }
 
     @Transactional
@@ -67,6 +67,11 @@ public class ProductVersionService {
     @Transactional
     public ProductVersion getProductVersionById(Integer id) {
         return productVersionDao.getProductVersionById(id);
+    }
+
+    @Transactional
+    public ProductVersion getProductVersionByServicecatalogProductVersionId (String servicecatalogProductVersionId) {
+        return productVersionDao.getProductVersionByServicecatalogProductVersionId(servicecatalogProductVersionId);
     }
 
     @Transactional

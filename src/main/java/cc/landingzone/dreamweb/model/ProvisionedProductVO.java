@@ -1,13 +1,11 @@
 package cc.landingzone.dreamweb.model;
 
 /**
- * 产品实例
- *
+ * @description:
  * @author: laodou
- * @createDate: 2022/6/21
- *
+ * @createDate: 2022/7/11
  */
-public class ProvisionedProduct {
+public class ProvisionedProductVO {
 
     private Integer id;
 
@@ -15,11 +13,13 @@ public class ProvisionedProduct {
 
     private String provisionedProductName;
 
-    private Integer productId;
+    private String servicecatalogProductId;
+
+    private String productName;
 
     private Integer roleId;
 
-    private Integer starterId;
+    private String starterName;
 
     private String status;
 
@@ -53,12 +53,20 @@ public class ProvisionedProduct {
         this.provisionedProductName = provisionedProductName;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public String getServicecatalogProductId() {
+        return servicecatalogProductId;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setServicecatalogProductId(String servicecatalogProductId) {
+        this.servicecatalogProductId = servicecatalogProductId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public Integer getRoleId() {
@@ -69,12 +77,12 @@ public class ProvisionedProduct {
         this.roleId = roleId;
     }
 
-    public Integer getStarterId() {
-        return starterId;
+    public String getStarterName() {
+        return starterName;
     }
 
-    public void setStarterId(Integer starterId) {
-        this.starterId = starterId;
+    public void setStarterName(String starterName) {
+        this.starterName = starterName;
     }
 
     public String getStatus() {

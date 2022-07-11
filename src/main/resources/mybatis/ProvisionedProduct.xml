@@ -4,82 +4,67 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.ProvisionedProductDao">
 
-    <select id="getExampleId"
-            resultType="Integer">
-        select id from provisioned_product where examplename = #{exampleName};
+    <select id="getProvisionedProductByProvisionedProductName"
+            resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product where provisioned_product_name = #{provisionedProductName};
     </select>
 
-    <select id="getProductIdByExampleId" resultType="String">
-        select productid from provisioned_product where exampleid = #{exampleId};
-    </select>
-
-    <select id="listExample" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
-        select *from provisioned_product 
+    <select id="listProvisionedProducts" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select *from provisioned_product
         order by id desc
     </select>
 
-    <insert id="saveExample" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">
-        insert into provisioned_product
-        (examplename,
-        productid,
-        productname,
-        exampleid,
-        roleid,
-        startname,
-        status,
-        parameter,
-        outputs,
-        starttime,
-        gmt_create)
-        values (#{exampleName},
-        #{productId},
-        #{productName},
-        #{exampleId},
-        #{roleId},
-        #{startName},
-        #{status},
-        #{parameter},
-        #{outputs},
-        #{startTime},
-        now())
-    </insert>
-
-    <select id="getExampleTotal" resultType="int" parameterType="map">
+    <select id="getProvisionedProductTotal" resultType="int" parameterType="map">
         select count(*) from provisioned_product
     </select>
 
-    <select id="listExampleId" resultType="String">
-        select distinct exampleid from provisioned_product where status = 'UnderChange'
+    <insert id="saveProvisionedProduct" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        insert into provisioned_product
+        (servicecatalog_provisioned_product_id,
+        provisioned_product_name,
+        product_id,
+        role_id,
+        starter_id,
+        parameter,
+        outputs,
+        create_time,
+        gmt_create)
+        values (#{servicecatalogProvisionedProductId},
+        #{provisionedProductName},
+        #{productId},
+        #{roleId},
+        #{starterId},
+        #{status},
+        #{parameter},
+        #{outputs},
+        #{createTime},
+        now())
+    </insert>
+
+    <select id="listServicecatalogProvisionedProductIdUnderChange" resultType="String">
+        select distinct servicecatalog_provisioned_product_id from provisioned_product where status = 'UnderChange'
     </select>
 
-    <select id="getUserName" resultType="String">
-        select distinct startname from provisioned_product where exampleid = #{exampleId}
+    <select id="getProvisionedProductByProvisionedProductId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
     </select>
 
-    <select id="getExampleByExampleId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
-        select * from provisioned_product where exampleid = #{exampleId}
-    </select>
-
-    <select id="getRoleId" resultType="Integer">
-        select distinct roleid from provisioned_product where exampleid = #{exampleId}
-    </select>
-
-    <update id="updateStatus">
+    <update id="updateStatusByServicecatalogProvisionedProductId">
         update provisioned_product
         set status = #{status}
-        where exampleid = #{exampleId}
+        where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
     </update>
 
-    <update id="updateParameter">
+    <update id="updateParameterByServicecatalogProvisionedProductId">
         update provisioned_product
         set parameter = #{parameter}
-        where exampleid = #{exampleId}
+        where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
     </update>
 
-    <update id="updateOutputs">
+    <update id="updateOutputsByServicecatalogProvisionedProductId">
         update provisioned_product
         set outputs = #{outputs}
-        where exampleid = #{exampleId}
+        where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
     </update>
 
 </mapper>

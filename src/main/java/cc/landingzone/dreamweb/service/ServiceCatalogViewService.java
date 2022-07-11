@@ -56,16 +56,16 @@ public class ServiceCatalogViewService {
     /**
      * 使用特定角色获取免登录链接
      *
-     * @param productId  项目ID
-     * @param exampleName 实例名称
+     * @param servicecatalogProductId  产品ID
+     * @param provisionedProductName 实例名称
      * @param region       地区
      * @param user         用户
      * @param userRole     角色
      * @return 免登录链接
      * @throws Exception
      */
-    public String getNonLoginPreUrl(String productId, String exampleName, String region, User user,
-                                    UserRole userRole, String productVersionId, String portfolioId, String regionSelect)
+    public String getNonLoginPreUrl(String servicecatalogProductId, String provisionedProductName, String region, User user,
+                                    UserRole userRole, String servicecatalogProductVersionId, String servicecatalogPortfolioId, String regionSelect)
         throws Exception {
         String signInUrl = "";
         String stsEndpoint = EndpointEnum.STS.getEndpoint();
@@ -78,8 +78,8 @@ public class ServiceCatalogViewService {
         String samlAssertion = getSamlAssertion(user, userRole);
 
         // 访问令牌服务获取AK、SK和SecurityToken
-        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(user.getLoginName(), region, roleArn, samlProviderArn,
-            samlAssertion, stsEndpoint, productId);
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+            samlAssertion, stsEndpoint, servicecatalogProductId);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
         // 通过临时AK、SK以及SecurityToken获取SignInToken
@@ -87,7 +87,7 @@ public class ServiceCatalogViewService {
         Assert.notNull(signInToken, "signInToken获取失败");
 
         // 通过登录token生成日志服务web访问链接进行跳转
-        signInUrl = generateSignInUrl(signInToken, productId, exampleName, signinEndpoint, productVersionId, portfolioId, regionSelect);
+        signInUrl = generateSignInUrl(signInToken, servicecatalogProductId, provisionedProductName, signinEndpoint, servicecatalogProductVersionId, servicecatalogPortfolioId, regionSelect);
         Assert.notNull(signInUrl, "signInUrl生成失败");
 
         return signInUrl;
@@ -99,7 +99,7 @@ public class ServiceCatalogViewService {
      * @return 终端
      * @throws Exception
      */
-    public Client createClient(String region, User user, UserRole userRole, String productId) throws Exception {
+    public Client createClient(String region, User user, UserRole userRole, String servicecatalogProductId) throws Exception {
         String stsEndpoint = EndpointEnum.STS.getEndpoint();
 
         // 得到roleArn和idpArn，生成Saml Assertion
@@ -109,8 +109,8 @@ public class ServiceCatalogViewService {
         String samlAssertion = getSamlAssertion(user, userRole);
 
         // 访问令牌服务获取临时AK和Token
-        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(user.getLoginName(), region, roleArn, samlProviderArn,
-                samlAssertion, stsEndpoint, productId);
+        CommonResponse commonResponse = requestAccessKeyAndSecurityToken(region, roleArn, samlProviderArn,
+                samlAssertion, stsEndpoint, servicecatalogProductId);
         Assert.notNull(commonResponse, "assumeRole获取失败");
 
         JSONObject assumeRole = JSONObject.parseObject(commonResponse.getData());
@@ -169,9 +169,9 @@ public class ServiceCatalogViewService {
      * @return 临时AK和Token
      * @throws ClientException
      */
-    private CommonResponse requestAccessKeyAndSecurityToken(String userName, String region, String roleArn,
+    private CommonResponse requestAccessKeyAndSecurityToken( String region, String roleArn,
                                                             String samlProviderArn, String samlAssertion,
-                                                            String stsEndpoint, String productId)
+                                                            String stsEndpoint, String servicecatalogProductId)
         throws ClientException {
         DefaultProfile profile = DefaultProfile.getProfile(region, "", "");
 
@@ -207,7 +207,7 @@ public class ServiceCatalogViewService {
                 "servicecatalog:GetTask"};
 
         List<String> Resource = new ArrayList<>();
-        Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:product/" + productId);
+        Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:product/" + servicecatalogProductId);
         Resource.add("acs:servicecatalog:cn-hangzhou:1466115886172051:provisionedproduct/*");
 
         String[] Action2 = {"ros:GetTemplate",
@@ -311,7 +311,7 @@ public class ServiceCatalogViewService {
      * @return 免登录Url
      * @throws UnsupportedEncodingException
      */
-    private String generateSignInUrl(String signInToken, String productId, String exampleName, String endpoint, String productVersionId, String portfolioId, String regionSelect)
+    private String generateSignInUrl(String signInToken, String servicecatalogProductId, String provisionedProductName, String endpoint, String servicecatalogProductVersionId, String servicecatalogPortfolioId, String regionSelect)
             throws UnsupportedEncodingException {
 
         Map<String, String> planButtonText = new HashMap<>();
@@ -321,29 +321,22 @@ public class ServiceCatalogViewService {
         style.put("displayMode", "cmp");
         style.put("planButtonText", planButtonText);
 
-        // Map<String, String> parameters = new HashMap<>();
-        // parameters.put("zone_id", "cn-hangzhou-h");
-        // parameters.put("vpc_cidr_block", "172.16.1.0/12");
-        // parameters.put("vswitch_cidr_block", "172.16.2.0/21");
-        // parameters.put("ecs_instance_type", "ecs.s6-c1m1.small");
-
         Map<String, Object> controlParameters = new HashMap<>();
         controlParameters.put("style", style);
-        controlParameters.put("provisionedProductName", exampleName);
-        controlParameters.put("portfolioId", portfolioId);
-        controlParameters.put("productVersionId", productVersionId);
+        controlParameters.put("provisionedProductName", provisionedProductName);
+        controlParameters.put("portfolioId", servicecatalogPortfolioId);
+        controlParameters.put("productVersionId", servicecatalogProductVersionId);
         if(regionSelect.equals("上海")) {
             controlParameters.put("stackRegionId", "cn-shanghai");
         } else if(regionSelect.equals("杭州")) {
             controlParameters.put("stackRegionId", "cn-hangzhou");
         }
-        // controlParameters.put("parameters", parameters);
         String controlString = JsonUtils.toJsonString(controlParameters);
         String base64EncodedControlString = Base64.getUrlEncoder().encodeToString(controlString.getBytes(StandardCharsets.UTF_8));
 
         String preUrl = String.format("https://servicecatalog4service.console.aliyun.com/products"
                 + "/launch?productId=%s&controlString=%s",
-            URLEncoder.encode(productId, "utf-8"),
+            URLEncoder.encode(servicecatalogProductId, "utf-8"),
             URLEncoder.encode(base64EncodedControlString, "utf-8"));
 
         String signInUrl = endpoint + String.format(

@@ -10,11 +10,11 @@ import java.util.Map;
 @Component
 public interface ProductVersionDao {
 
-    List<String> listApplication(String productId);
+    List<String> listApps(Integer productId);
 
-    List<String> listScenes(String productId, String application);
+    List<String> listEnvironments(Integer productId, String app);
 
-    String getProductVersionId(String productId, String application, String scene);
+    String getServicecatalogProductVersionId(Integer productId, String app, String environment);
 
     List<ProductVersion> listProductVersion(Map<String, Object> map); //1
 

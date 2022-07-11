@@ -1,22 +1,18 @@
 package cc.landingzone.dreamweb.controller;
 
-import cc.landingzone.dreamweb.dao.ApplyDao;
-import cc.landingzone.dreamweb.model.Apply;
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.UserRole;
+import cc.landingzone.dreamweb.dao.ApplicationDao;
+import cc.landingzone.dreamweb.model.*;
 import cc.landingzone.dreamweb.service.*;
 import com.aliyun.servicecatalog20210901.Client;
 import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanRequest;
 import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanResponse;
 import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanResponseBody;
 import org.activiti.engine.*;
-import cc.landingzone.dreamweb.model.WebResult;
 import org.activiti.engine.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
@@ -35,11 +31,11 @@ import java.util.*;
  * @createDate: 2022/6/21
  */
 @Controller
-@RequestMapping("/apply")
+@RequestMapping("/application")
 public class ProcessController extends BaseController {
 
     @Autowired
-    private ApplyService applyService;
+    private ApplicationService applicationService;
 
     @Autowired
     private RepositoryService repositoryService;
@@ -54,7 +50,13 @@ public class ProcessController extends BaseController {
     private ServiceCatalogViewService serviceCatalogViewService;
 
     @Autowired
-    private ApplyDao applyDao;
+    private ApplicationDao applicationDao;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductVersionService productVersionService;
 
     /**
      * 流程部署
@@ -119,21 +121,18 @@ public class ProcessController extends BaseController {
         WebResult result = new WebResult();
         try {
             String processDefinitionId = request.getParameter("definitionId");
-            String application = request.getParameter("select_Application");
-            String scene = request.getParameter("select_Scene");
-            String productId = request.getParameter("productId");
+            Integer productId = Integer.valueOf(request.getParameter("productId"));
+            String servicecatalogProductId = productService.getProductById(productId).getServicecatalogProductId();
             Integer roleId = Integer.valueOf(request.getParameter("roleId"));
-            String portfolioId = request.getParameter("portfolioId");
-            String productName = request.getParameter("productName");
 
-            String planId = request.getParameter("PlanId");
+            String servicecatalogPlanId = request.getParameter("servicecatalogPlanId");
             GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
-            request1.setPlanId(planId);
+            request1.setPlanId(servicecatalogPlanId);
             String region = "cn-hangzhou";
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
-            Client client = serviceCatalogViewService.createClient(region, user, userRole, productId);
+            Client client = serviceCatalogViewService.createClient(region, user, userRole, servicecatalogProductId);
             GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
             JSONObject parameter = new JSONObject();
             for (GetProvisionedProductPlanResponseBody.GetProvisionedProductPlanResponseBodyPlanDetailParameters para :
@@ -141,13 +140,14 @@ public class ProcessController extends BaseController {
                 parameter.put(para.getParameterKey(), para.getParameterValue());
             }
 
-            Apply apply = new Apply();
-            apply.setStarterName(userName);
-            apply.setRoleId(roleId);
-            apply.setApplication(application);
-            apply.setScene(scene);
-            apply.setProductName(productName);
-            apply.setPortfolioId(portfolioId);
+            Application application = new Application();
+            application.setStarterId(user.getId());
+            application.setRoleId(roleId);
+
+            ProductVersion productVersion = productVersionService.getProductVersionByServicecatalogProductVersionId(response1.getBody().getPlanDetail().productVersionId);
+            application.setProductVersionId(productVersion.getId());
+
+            application.setProductId(productId);
 
             String time = response1.getBody().getPlanDetail().createTime;
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); //设置时区UTC
@@ -155,20 +155,19 @@ public class ProcessController extends BaseController {
             Date timeData = df.parse(time);
             df.applyPattern("yyyy-MM-dd HH:mm:ss"); //默认时区
             df.setTimeZone(TimeZone.getDefault());
-            apply.setProcessTime(df.format(timeData));
+            application.setCreateTime(df.format(timeData));
 
-            apply.setProcessState("预检中");
-            apply.setParameters(JSON.toJSONString(parameter));
-            apply.setProductId(productId);
-            apply.setRegion(response1.getBody().getPlanDetail().stackRegionId);
-            apply.setVersionId(response1.getBody().getPlanDetail().productVersionId);
-            apply.setProcessDefinitionId(processDefinitionId);
-            apply.setCond("未拒绝");
-            apply.setExampleName(response1.getBody().getPlanDetail().provisionedProductName);
-            apply.setPlanId(planId);
-            applyService.saveApply(apply);
+            application.setProcessState("预检中");
+            application.setParameters(JSON.toJSONString(parameter));
+            application.setServicecatalogPlanId(servicecatalogPlanId);
+            application.setRegion(response1.getBody().getPlanDetail().stackRegionId);
+            application.setCond("未拒绝");
 
-            result.setData(planId);
+            application.setProcessDefinitionId(processDefinitionId);
+            application.setProvisionedProductName(response1.getBody().getPlanDetail().provisionedProductName);
+            applicationService.saveApplication(application);
+
+            result.setData(servicecatalogPlanId);
             outputToJSON(response, result);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -182,21 +181,37 @@ public class ProcessController extends BaseController {
      * @throws Exception
      * @param: 当前登录用户名
      */
-    @GetMapping("/getMyAsk.do")
+    @GetMapping("/getMyApplication.do")
     public void getMyAsk(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Apply> list = applyService.listApply(userName);
-        result.setData(list);
+        User user = userService.getUserByLoginName(userName);
+        List<Application> list = applicationService.listApplicationsByStarterId(user.getId());
+        List<MyApplicationVO> list1 = new ArrayList<>();
+        for (Application application : list) {
+            MyApplicationVO myApplicationVO = new MyApplicationVO();
+            myApplicationVO.setId(application.getId());
+            User user1 = userService.getUserById(application.getStarterId());
+            myApplicationVO.setStarterName(user1.getLoginName());
+            myApplicationVO.setCreateTime(application.getCreateTime());
+            myApplicationVO.setProcessId(application.getProcessId());
+            myApplicationVO.setProcessState(application.getProcessState());
+            myApplicationVO.setCond(application.getCond());
+            myApplicationVO.setOpinion(application.getOpinion());
+            myApplicationVO.setServicecatalogPlanId(application.getServicecatalogPlanId());
+            myApplicationVO.setPlanResult(application.getPlanResult());
+            list1.add(myApplicationVO);
+        }
+        result.setData(list1);
         outputToJSON(response, result);
     }
 
     @RequestMapping("/updateProcess.do")
     public void updateProcess(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String planId = request.getParameter("PlanId");
-        Apply apply = applyService.getApplyByPlanId(planId);
-        if(!apply.getProcessState().equals("预检中")) {
+        String servicecatalogPlanId = request.getParameter("servicecatalogPlanId");
+        Application application = applicationService.getApplicationByServicecatalogPlanId(servicecatalogPlanId);
+        if(!application.getProcessState().equals("预检中")) {
             Map<String, String> flag = new HashMap<>();
             flag.put("flag", "yes");
             result.setSuccess(true);

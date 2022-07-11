@@ -1,9 +1,9 @@
 package cc.landingzone.dreamweb.controller;
 
-import cc.landingzone.dreamweb.model.Page;
-import cc.landingzone.dreamweb.model.ProvisionedProduct;
-import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.model.*;
+import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.service.ProvisionedProductService;
+import cc.landingzone.dreamweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +26,12 @@ public class ProvisionedProductController extends BaseController{
 
     @Autowired
     private ProvisionedProductService provisionedProductService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private UserService userService;
     /**
      * 获取所有产品实例信息
      *
@@ -39,9 +46,30 @@ public class ProvisionedProductController extends BaseController{
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
-            List<ProvisionedProduct> list = provisionedProductService.listExample(page);
+            List<ProvisionedProduct> list = provisionedProductService.listProvisionedProducts(page);
+            List<ProvisionedProductVO> list1 = new ArrayList<>();
+            for (ProvisionedProduct provisionedProduct : list) {
+                ProvisionedProductVO provisionedProductVO = new ProvisionedProductVO();
+                provisionedProductVO.setId(provisionedProduct.getId());
+                provisionedProductVO.setServicecatalogProvisionedProductId(provisionedProduct.getServicecatalogProvisionedProductId());
+                provisionedProductVO.setProvisionedProductName(provisionedProduct.getProvisionedProductName());
+
+                Product product = productService.getProductById(provisionedProduct.getProductId());
+                provisionedProductVO.setServicecatalogProductId(product.getServicecatalogProductId());
+                provisionedProductVO.setProductName(product.getProductName());
+
+                provisionedProductVO.setRoleId(provisionedProduct.getRoleId());
+
+                User user = userService.getUserById(provisionedProduct.getStarterId());
+                provisionedProductVO.setStarterName(user.getLoginName());
+                provisionedProductVO.setStatus(provisionedProduct.getStatus());
+                provisionedProductVO.setParameter(provisionedProduct.getParameter());
+                provisionedProductVO.setOutputs(provisionedProduct.getOutputs());
+                provisionedProductVO.setCreateTime(provisionedProduct.getCreateTime());
+                list1.add(provisionedProductVO);
+            }
             result.setTotal(page.getTotal());
-            result.setData(list);
+            result.setData(list1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -53,8 +81,8 @@ public class ProvisionedProductController extends BaseController{
     @RequestMapping("/updateProvisionedProduct.do")
     public void updateProvisionedProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String exampleId = request.getParameter("exampleId");
-        String flag = provisionedProductService.searchStatus(exampleId);
+        String servicecatalogProvisionedProductId = request.getParameter("servicecatalogProvisionedProductId");
+        String flag = provisionedProductService.searchStatus(servicecatalogProvisionedProductId);
         result.setSuccess(true);
         result.setData(flag);
         outputToJSON(response, result);

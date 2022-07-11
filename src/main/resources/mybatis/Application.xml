@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ApplicationDao">
+
+    <select id="listApplicationsByStarterId"
+            resultType="cc.landingzone.dreamweb.model.Application">
+        select *
+        from application
+        where starter_id = #{starterId}
+        order by id desc
+    </select>
+
+    <select id="listApplicationPreviewInProgress"
+            resultType="cc.landingzone.dreamweb.model.Application">
+        select *
+        from application
+        where process_state = "预检中"
+    </select>
+
+    <select id="getApplicationByServicecatalogPlanId" resultType="cc.landingzone.dreamweb.model.Application">
+        select *
+        from application
+        where servicecatalog_plan_id = #{servicecatalogPlanId}
+    </select>
+
+    <select id="getApplicationById" resultType="cc.landingzone.dreamweb.model.Application">
+        select *
+        from application
+        where id = #{id}
+    </select>
+
+    <update id="updateProcessStateByProcessId">
+        update application
+        set process_state = #{processState}
+        where process_id = #{processId}
+    </update>
+
+<!--    <select id="getPlanResultByPlanId">-->
+<!--        select planResult from myAsk-->
+<!--        where planId = #{planId}-->
+<!--    </select>-->
+
+    <update id="updateTaskByProcessId">
+        update application
+        set task = #{task}
+        where process_id = #{processId}
+    </update>
+
+    <update id="updateTaskById">
+        update application
+        set task = #{task}
+        where id = #{id}
+    </update>
+
+    <update id="updateStatusById">
+        update application
+        set process_state = #{processStatus}
+        where id = #{id}
+    </update>
+
+    <update id="updatePlanResultById">
+        update application
+        set plan_result = #{planResult}
+        where id = #{id}
+    </update>
+
+    <update id="updateProcessIdById">
+        update application
+        set process_id = #{processId}
+        where id = #{id}
+    </update>
+
+<!--    <update id="updateCond">-->
+<!--        update myAsk-->
+<!--        set cond = #{cond}-->
+<!--        where processId = #{processId}-->
+<!--    </update>-->
+
+<!--    <update id="updateOpinion">-->
+<!--        update myAsk-->
+<!--        set opinion = #{opinion}-->
+<!--        where processId = #{processId}-->
+<!--    </update>-->
+
+<!--    <update id="updateStatus">-->
+<!--        update myAsk-->
+<!--        set processState = #{status}-->
+<!--        where planId = #{planId}-->
+<!--    </update>-->
+
+    <insert id="saveApplication"
+            parameterType="cc.landingzone.dreamweb.model.Application">
+        insert into application
+        (starter_id,
+        role_id,
+        product_version_id,
+        product_id,
+        create_time,
+        process_state,
+        parameters,
+        servicecatalog_plan_id,
+        region,
+        cond,
+        process_definition_id,
+        provisioned_product_name,
+        gmt_create)
+        values (#{starterId},
+        #{roleId},
+        #{productVersionId},
+        #{productId},
+        #{createTime},
+        #{processState},
+        #{parameters},
+        #{servicecatalogPlanId},
+        #{region},
+        #{cond},
+        #{processDefinitionId},
+        #{provisionedProductName},
+        now())
+    </insert>
+</mapper>

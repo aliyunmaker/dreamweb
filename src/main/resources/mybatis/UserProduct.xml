@@ -64,9 +64,9 @@
         where id = #{id}
     </select>
 
-    <select id="getPortfolioId"
+    <select id="getServicecatalogPortfolioId"
             resultType="String">
-        select portfolioid from userproduct where productid = #{productId} and username = #{userName}
+        select servicecatalog_portfolio_id from user_product_associate where product_id = #{productId} and user_id = #{userId}
     </select>
 
     <select id="listProductIdsByUserId" resultType="Integer">

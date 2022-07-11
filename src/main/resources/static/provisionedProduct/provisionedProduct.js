@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../provisionedProduct/searchProvisionedProduct.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'exampleName', 'productId', 'exampleId', 'roleId', 'startName', 'status', 'parameter', 'outputs', 'productName','startTime']
+        fields: ['id', 'provisionedProductName', 'servicecatalogProductId', 'servicecatalogProvisionedProductId', 'roleId', 'starterName', 'status', 'parameter', 'outputs', 'productName','createTime']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -20,7 +20,7 @@ Ext.onReady(function () {
             header: 'ID',
             hidden: true
         }, {
-            dataIndex: 'productId',
+            dataIndex: 'servicecatalogProductId',
             header: '产品ID',
             width: 150
         }, {
@@ -28,15 +28,15 @@ Ext.onReady(function () {
             header: "产品名称",
             width: 150
         }, {
-            dataIndex: 'exampleId',
+            dataIndex: 'servicecatalogProvisionedProductId',
             header: "实例ID",
             width: 150
         }, {
-            dataIndex: 'exampleName',
+            dataIndex: 'provisionedProductName',
             header: "实例名称",
             width: 220,
         }, {
-            dataIndex: 'startName',
+            dataIndex: 'starterName',
             header: "申请人",
             width: 80,
         }, {
@@ -56,15 +56,11 @@ Ext.onReady(function () {
                 }
             }
         }, {
-            dataIndex: 'startTime',
-            header: "创建时间",
-            width: 150
-        }, {
             text: '申请参数',
             width: 130,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.data.exampleId;
+                var id = record.data.servicecatalogProvisionedProductId;
                 Ext.defer(function () {
                     Ext.widget('button', {
                         renderTo: id,
@@ -109,7 +105,7 @@ Ext.onReady(function () {
             width: 130,
             align: 'center',
             renderer: function (value, metaData, record,rowIndex,store) {
-            var id = record.data.exampleId + 'shilishuchu';
+            var id = record.data.servicecatalogProvisionedProductId + 'shilishuchu';
             Ext.defer(function () {
                 Ext.widget('button', {
                     renderTo: id,
@@ -156,7 +152,11 @@ Ext.onReady(function () {
             }, 50);
             return Ext.String.format('<div id="{0}"></div>', id);
         }
-    }],
+    }, {
+                 dataIndex: 'createTime',
+                 header: "创建时间",
+                 width: 150
+             }],
 });
 
     reload();
@@ -169,9 +169,9 @@ Ext.onReady(function () {
         for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
             var  record = userStore.getAt(i);//获取每一条记录
             if(record.get('status') == 'UnderChange') {
-                var exampleId = record.get('exampleId');
+                var servicecatalogProvisionedProductId = record.get('servicecatalogProvisionedProductId');
                 MyExt.util.Ajax('../provisionedProduct/updateProvisionedProduct.do', {
-                    exampleId: exampleId,
+                    servicecatalogProvisionedProductId: servicecatalogProvisionedProductId,
                 }, function (data) {
                     var flag = data.data;
                     if(flag != "no") {

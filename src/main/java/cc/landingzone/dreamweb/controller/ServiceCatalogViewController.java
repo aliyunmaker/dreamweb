@@ -55,14 +55,16 @@ public class ServiceCatalogViewController extends BaseController{
          * @return 应用列表
          * @throws Exception
          */
-    @GetMapping("/getApplications.do")
-    public void getApplication(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/getApps.do")
+    public void getApps(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String productId = request.getParameter("productId");
+        String Id = request.getParameter("productId");
+        Integer productId = Integer.valueOf(Id);
+        System.out.println(productId);
 
-        List<String> applicationList = productVersionService.listApplication(productId);
-        result.setTotal(applicationList.size());
-        result.setData(applicationList);
+        List<String> appList = productVersionService.listApps(productId);
+        result.setTotal(appList.size());
+        result.setData(appList);
 
         outputToJSON(response, result);
     }
@@ -74,13 +76,15 @@ public class ServiceCatalogViewController extends BaseController{
          * @return 
          * @throws Exception
          */
-    @GetMapping("/getPortfolioId.do")
-    public void getPortfolioId(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/getServicecatalogPortfolioId.do")
+    public void getServicecatalogPortfolioId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String productId = request.getParameter("productId");
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String Id = request.getParameter("productId");
+        Integer productId = Integer.valueOf(Id);
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByLoginName(userName);
 
-        String portfolioId = userProductService.getPortfolioId(productId, username);
+        String portfolioId = userProductService.getServicecatalogPortfolioId(productId, user.getId());
         result.setData(portfolioId);
         outputToJSON(response, result);
     }
@@ -92,15 +96,15 @@ public class ServiceCatalogViewController extends BaseController{
          * @return 场景列表
          * @throws Exception
          */
-    @GetMapping("/getScenes.do")
-    public void getScenes(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/getEnvironment.do")
+    public void getEnvironment(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String getApplication = request.getParameter("select_Application");
-            String productId = request.getParameter("productId");
-            List<String> scenesList = productVersionService.listScenes(productId, getApplication);
-            result.setTotal(scenesList.size());
-            result.setData(scenesList);
+            String getApp = request.getParameter("select_app");
+            Integer productId = Integer.valueOf(request.getParameter("productId"));
+            List<String> environmentsList = productVersionService.listEnvironments(productId, getApp);
+            result.setTotal(environmentsList.size());
+            result.setData(environmentsList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -117,19 +121,20 @@ public class ServiceCatalogViewController extends BaseController{
          * @return 产品ID
          * @throws Exception
          */
-    @GetMapping("/getProductVersionId.do")
-    public void getProductVersionId(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/getServicecatalogProductVersionId.do")
+    public void getServicecatalogProductVersionId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String getApplication = request.getParameter("select_Application");
-            Assert.hasText(getApplication, "应用不能为空！");
-            String getScene = request.getParameter("select_Scene");
-            Assert.hasText(getScene, "场景不能为空！");
+            String getApp = request.getParameter("select_app");
+            Assert.hasText(getApp, "应用不能为空！");
+            String getEnvironment = request.getParameter("select_environment");
+            Assert.hasText(getEnvironment, "场景不能为空！");
             String getProductId = request.getParameter("productId");
             Assert.hasText(getProductId, "产品Id不能为空！");
-            String productVersionId = productVersionService.getProductVersionId(getProductId, getApplication, getScene);
-            Assert.hasText(productVersionId, "未找到对应productVersionId！");
-            result.setData(productVersionId);
+            Integer productId = Integer.valueOf(getProductId);
+            String servicecatalogProductVersionId = productVersionService.getServicecatalogProductVersionId(productId, getApp, getEnvironment);
+            Assert.hasText(servicecatalogProductVersionId, "未找到对应servicecatalogProductVersionId！");
+            result.setData(servicecatalogProductVersionId);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -150,18 +155,19 @@ public class ServiceCatalogViewController extends BaseController{
     public void getExampleName(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         Random r = new Random();
-        String productId = request.getParameter("productId");
-        String productName = productService.getProductName(productId);
+        String Id = request.getParameter("productId");
+        Integer productId = Integer.valueOf(Id);
+        String productName = productService.getProductById(productId).getProductName();
         
         Integer exampleRandom = r.nextInt(10000000);
-        String exampleName = productName + "-" + exampleRandom;
-        Integer id = provisionedProductService.getExampleId(exampleName);
-        while (id != null) {
+        String provisionedProductName = productName + "-" + exampleRandom;
+        ProvisionedProduct provisionedProduct = provisionedProductService.getProvisionedProductByProvisionedProductName(provisionedProductName);
+        while (provisionedProduct != null) {
             exampleRandom = r.nextInt(10000000);
-            exampleName = productName + "-" + exampleRandom;
-            id = provisionedProductService.getExampleId(exampleName);
+            provisionedProductName = productName + "-" + exampleRandom;
+            provisionedProduct = provisionedProductService.getProvisionedProductByProvisionedProductName(provisionedProductName);
         }
-        result.setData(exampleName);
+        result.setData(provisionedProductName);
         outputToJSON(response, result);
 
     }
@@ -177,21 +183,29 @@ public class ServiceCatalogViewController extends BaseController{
     public void getNonLoginPreUrl(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String productId = request.getParameter("productId");
-            Assert.hasText(productId, "产品号不能为空!");
+            String Id = request.getParameter("productId");
+            System.out.println(Id);
+            Assert.hasText(Id, "产品号不能为空!");
             String roleIdStr = request.getParameter("roleId");
+            System.out.println(roleIdStr);
             Assert.hasText(roleIdStr, "roleId不能为空!");
-            String exampleName = request.getParameter("exampleName");
-            Assert.hasText(exampleName, "实例名称不能为空！");
+            String provisionedProductName = request.getParameter("provisionedProductName");
+            System.out.println(provisionedProductName);
+            Assert.hasText(provisionedProductName, "实例名称不能为空！");
 
-            String productVersionId = request.getParameter("productVersionId");
-            Assert.hasText(productVersionId, "实例名称不能为空！");
-            String portfolioId = request.getParameter("portfolioId");
-            Assert.hasText(portfolioId, "实例名称不能为空！");
+            String servicecatalogProductVersionId = request.getParameter("servicecatalogProductVersionId");
+            System.out.println(servicecatalogProductVersionId);
+            Assert.hasText(servicecatalogProductVersionId, "产品版本ID不能为空！");
+            String servicecatalogPortfolioId = request.getParameter("servicecatalogPortfolioId");
+            System.out.println(servicecatalogPortfolioId);
+            Assert.hasText(servicecatalogPortfolioId, "产品组合ID不能为空！");
             String regionSelect = request.getParameter("region");
-            Assert.hasText(regionSelect, "实例名称不能为空！");
+            System.out.println(regionSelect);
+            Assert.hasText(regionSelect, "地域不能为空！");
 
-
+            Integer productId = Integer.valueOf(Id);
+            Product product = productService.getProductById(productId);
+            String servicecatalogProductId = product.getServicecatalogProductId();
             Integer roleId = Integer.valueOf(roleIdStr);
             String region = systemConfigService.getStringValueFromCache("region");
 
@@ -200,7 +214,7 @@ public class ServiceCatalogViewController extends BaseController{
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            String nonLoginPreUrl = serviceCatalogViewService.getNonLoginPreUrl(productId, exampleName, region, user, userRole, productVersionId, portfolioId, regionSelect);
+            String nonLoginPreUrl = serviceCatalogViewService.getNonLoginPreUrl(servicecatalogProductId, provisionedProductName, region, user, userRole, servicecatalogProductVersionId, servicecatalogPortfolioId, regionSelect);
             result.setData(nonLoginPreUrl);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../task/getAllTaskList.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId', 'assignee', 'planId']
+        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId', 'assignee', 'servicecatalogPlanId']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -23,7 +23,7 @@ Ext.onReady(function () {
             header: "申请时间",
             width: 150
         }, {
-            dataIndex: 'planId',
+            dataIndex: 'servicecatalogPlanId',
             header: "启动计划ID",
             width: 150
         }, {
@@ -32,17 +32,17 @@ Ext.onReady(function () {
             width: 107,
             align: 'center',
             renderer: function (value, metaData, record) {
-                var id = record.raw.planId;
+                var servicecatalogPlanId = record.raw.servicecatalogPlanId;
                 metaData.tdAttr = 'data-qtip="查看当前申请内容详情"';
                 Ext.defer(function () {
                     Ext.widget('button', {
-                        renderTo: id,
+                        renderTo: servicecatalogPlanId,
                         width: 100,
                         text: '详细信息',
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    planId: id,
+                                    servicecatalogPlanId: servicecatalogPlanId,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -118,7 +118,7 @@ Ext.onReady(function () {
                         }
                     });
                 }, 50);
-                return Ext.String.format('<div id="{0}"></div>', id);
+                return Ext.String.format('<div id="{0}"></div>', servicecatalogPlanId);
             }
         }, {
             dataIndex: 'taskId',

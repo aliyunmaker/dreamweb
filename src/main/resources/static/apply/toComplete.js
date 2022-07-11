@@ -8,7 +8,7 @@ Ext.onReady(function () {
         dataUrl: '../task/getMyTaskList.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId', 'planId']
+        fields: ['starterName', 'processTime', 'taskTime', 'taskId', 'taskName', 'processId', 'servicecatalogPlanId']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -24,7 +24,7 @@ Ext.onReady(function () {
             header: "申请时间",
             width: 150
         }, {
-            dataIndex: 'planId',
+            dataIndex: 'servicecatalogPlanId',
             header: "启动计划ID",
             width: 150
         }, {
@@ -33,8 +33,8 @@ Ext.onReady(function () {
             width: 150,
             align: 'center',
             renderer: function (value, metaData, record, rowIndex, columnIndex,cellmeta) {
-                var planId = record.raw.planId;
-                var id = planId + "shenqingneirong";
+                var servicecatalogPlanId = record.raw.servicecatalogPlanId;
+                var id = servicecatalogPlanId + "shenqingneirong";
                 Ext.defer(function () {
                     Ext.widget('button', {
                         renderTo: id,
@@ -43,7 +43,7 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    planId: planId,
+                                    servicecatalogPlanId: servicecatalogPlanId,
                                 }, function (data) {
                                     var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
                                     var form = new Ext.form.FormPanel({
@@ -217,7 +217,7 @@ Ext.onReady(function () {
 
     reload();
     Ext.create('Ext.container.Viewport', {
-        layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小;为什么加上就没有页码了？
+        layout: 'border',    //使用BorderLayout的布局方式(边界布局);可以自动检测浏览器的大小变化和自动调整布局中每个部分的大小
         items: [userGrid]
     });
 
