@@ -1,14 +1,28 @@
-var search = window.location.search.substring(1);
-var urlsp = new URLSearchParams(search);
-var productId = urlsp.get("productId");
-var productName = urlsp.get("productName");
-console.log(productId);
-console.log(productName);
-var servicecatalogProductVersionId;
-var servicecatalogPortfolioId;
-var roleId = urlsp.get("roleId");
+// var search = window.location.search.substring(1);
+// var urlsp = new URLSearchParams(search);
+// var productId = urlsp.get("productId");
+// var productName = urlsp.get("productName");
+// console.log(productId);
+// console.log(productName);
+// var servicecatalogProductVersionId;
+// var servicecatalogPortfolioId;
+// var roleId = urlsp.get("roleId");
+
+$(function(){
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        // 获取已激活的标签页的名称
+        var activeTab = $(e.target).text();
+        // 获取前一个激活的标签页的名称
+        var previousTab = $(e.relatedTarget).text();
+        // $(".active-tab span").html(activeTab);
+        // $(".previous-tab span").html(previousTab);
+        console.log(activeTab);
+        console.log(previousTab);
+    });
+});
 
 $(document).ready(function(){
+
     $.ajax({
         url: "../../serviceCatalogView/getServicecatalogPortfolioId.do",
         data: {

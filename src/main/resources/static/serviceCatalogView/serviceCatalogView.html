@@ -4,25 +4,38 @@
     <!-- <meta charset="utf-8">  -->
 	<!-- <title>test</title> -->
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<!-- <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script> -->
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>test</title>
 
     <!-- <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet"> -->
-    <script type="text/javascript"
-            src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+    <!-- <script type="text/javascript"
+            src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script> -->
     <!-- <script type="text/javascript" src="../slsView/bootstrap.bundle.js"></script> -->
     <script type="text/javascript" src="serviceCatalogView.js"></script>
     <script type="text/javascript">
-        var search = window.location.search.substring(1);
-        var urlsp = new URLSearchParams(search);
-        var productId = urlsp.get("productId");
-        var productName = urlsp.get("productName");
-        window.onload = function() {
-            $("#productname").text(productName);
-        }
+        // var search = window.location.search.substring(1);
+        // var urlsp = new URLSearchParams(search);
+        // var productId = urlsp.get("productId");
+        // var productName = urlsp.get("productName");
+        var productId;
+        var roleId;
 
+        window.onload = function() {
+            $.ajax({
+                url:'../userRole/getRoleId.do',
+                success: function (result) {
+                    console.log(result);
+                    roleId = result.data;
+                    if(roleId == null) {
+                        alert("您还未选择角色！");
+                        window.location.href = "http://localhost:8080/metadata/metadataManage.html";
+                    }
+                }
+            })
+
+        }
         var data;
         $.ajax({
             url: "../../userProduct/searchUserProductByUserName.do",
@@ -31,11 +44,53 @@
                     data= result.data;
                     console.log(data);
                     console.log(data[0]);
+                    console.log(data[0].productName);
+                    console.log(data.length);
+                    var count = data.length;
+                    for(var i = 0; i < count;i++) {
+                        console.log(data[i].productName);
+                        console.log(data[i].id);
+                        console.log(data[i].servicecatalogProductId);
+
+                        var servicecatalogProductId = data[i].servicecatalogProductId;
+                        var productName = data[i].productName;
+
+                        var li;
+                        if(i == 0) {
+                            li = $("<li />", {"class":"active"});
+                        } else {
+                            li = $("<li />", {});
+                        }
+                        console.log(li);
+                        var a = $("<a />", {
+                        "href": "#basic",
+                        "text": data[i].productName,
+                        "data-toggle":"tab" ,
+                        "style":"font-size: medium;",
+                        "test":servicecatalogProductId,
+                        "click": function (e) {
+                            console.log(e);
+                            // productId = t;
+                            // console.log(productId);
+                        }
+                        });
+                        li.append(a);
+                        $('#myTab').append(li);
+
+                    }
+                    // var li = $("<li />", {"id": options.id + "-li",});
                 } else {
                     alert(result.errorMsg);
                 }
             }
         })
+
+
+
+        console.log(roleId);
+        console.log(productId);
+
+
     </script>
 
 </head>
@@ -47,11 +102,19 @@
     </div>
 
     <ul id="myTab" class="nav nav-tabs"style="height: auto;width:auto;position: fixed;right: 10px; left: 10px;top: 50px;">
-        <li class="active">
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                ECS
+        <!-- <c:forEach items="${data}" var="product" >
+            <li>
+                <a href="#basic" data-toggle="tab" style="font-size: medium;" >
+                    ${product.productName}
+                </a>
+            </li>
+
+        </c:forEach> -->
+        <!-- <li class="active">
+            <a href="#basic" data-toggle="tab" style="font-size: medium;" id="test">
+                
             </a>
-        </li>
+        </li> -->
         <li>
             <a href="#basic" data-toggle="tab" style="font-size: medium;">
                 SLB
@@ -143,22 +206,6 @@
             </a>
         </li>
     </ul>
-    <!-- <div id="myTabContent" class="tab-content">
-        <div class="tab-pane fade in active" id="home">
-            <p>菜鸟教程是一个提供最新的web技术站点，本站免费提供了建站相关的技术文档，帮助广大web技术爱好者快速入门并建立自己的网站。菜鸟先飞早入行——学的不仅是技术，更是梦想。</p>
-        </div>
-        <div class="tab-pane fade" id="ios">
-            <p>iOS 是一个由苹果公司开发和发布的手机操作系统。最初是于 2007 年首次发布 iPhone、iPod Touch 和 Apple
-                TV。iOS 派生自 OS X，它们共享 Darwin 基础。OS X 操作系统是用在苹果电脑上，iOS 是苹果的移动版本。</p>
-        </div>
-        <div class="tab-pane fade" id="jmeter">
-            <p>jMeter 是一款开源的测试软件。它是 100% 纯 Java 应用程序，用于负载和性能测试。</p>
-        </div>
-        <div class="tab-pane fade" id="ejb">
-            <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
-            </p>
-        </div>
-    </div> -->
 
     <div id="myTabContent" class="tab-content" style="margin-right: 10px;">
         <div class="tab-pane fade in active alert alert-warning alert-dismissble" id="basic" style="color:black;height:210px;width: auto;position: fixed;right: 10px; left: 10px;top: 100px;">
@@ -171,21 +218,21 @@
             <div class="block" style="width: 100%;height: 90%;margin-top: 25px;">
 
                 <div class="block" style="width:50%;height:24%;text-align:center;">
-                    <label style="font-size: medium; text-align:right;width: 25%;" for="select_app">应用：</label>
+                    <label style="font-size: medium; text-align:right;width: 250px;" for="select_app">应用：</label>
                     <select style="padding-top: 0%;padding-bottom: 0%; font-size: medium;width:250px;height:28px;text-align:center;" class="custom-select" id="select_app">
                         <option selected>选择应用</option>
                     </select>
                 </div>
 
                 <div class="block" style="width:50%;height:24%;text-align:center;">
-                    <label style="font-size: medium;text-align:right;width: 25%;" for="select_environment">环境：</label>
+                    <label style="font-size: medium;text-align:right;width: 250px;" for="select_environment">环境：</label>
                     <select style="padding-top: 0%;padding-bottom: 0%;font-size: medium;width:250px;height:28px;text-align:center;" class="custom-select" id="select_environment">
                         <option selected>选择环境</option>
                     </select>
                 </div>
 
                 <div class="block" style="width:50%;height:24%;text-align:center;">
-                    <label style="font-size: medium;text-align:right;width: 25%;"for="select_region">地域：</label>
+                    <label style="font-size: medium;text-align:right;width: 250px;"for="select_region">地域：</label>
                     <select style="padding-top: 0%;padding-bottom: 0%;font-size: medium;width:250px;height:28px;text-align:center;" class="custom-select" id="select_region">
                         <option selected="selected">选择地域</option>
                         <option >杭州</option>
@@ -194,8 +241,8 @@
                 </div>
 
                 <div class="block" style="width:50%;height:24%;text-align:center;">
-                    <label style="font-size: medium;text-align:right;width: 25%;"for="btn_getExample"></label>
-                    <button style="padding-top: 0%;padding-bottom: 0%;font-size: medium;height:28px;background-color: cornflowerblue; color:white;width:250px;"type="button" id="btn_getExample" class="btn btn-info">下一步</button>
+                    <label style="font-size: medium;text-align:right;width: 80px;"for="btn_getExample"></label>
+                    <button style="padding-top: 0%;padding-bottom: 0%;font-size: medium;height:28px;background-color: cornflowerblue; color:white;width:80px;"type="button" id="btn_getExample" class="btn btn-info">下一步</button>
                 </div>
 
             </div>
@@ -214,5 +261,19 @@
     </div>
 </div>
 
+<script>
+    console.log(22222);
+    $(function(){
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            console.log(111111111);
+            // 获取已激活的标签页的名称
+            var activeTab = $(e.target).text(); 
+            // 获取前一个激活的标签页的名称
+            var previousTab = $(e.relatedTarget).text(); 
+            $(".active-tab span").html(activeTab);
+            $(".previous-tab span").html(previousTab);
+        });
+    });
+</script>
 </body>
 </html>
