@@ -4,62 +4,162 @@
 // var productName = urlsp.get("productName");
 // console.log(productId);
 // console.log(productName);
-// var servicecatalogProductVersionId;
-// var servicecatalogPortfolioId;
+var servicecatalogProductVersionId;
+var servicecatalogPortfolioId;
+var productId;
+var roleId;
 // var roleId = urlsp.get("roleId");
 
-$(function(){
-    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-        // 获取已激活的标签页的名称
-        var activeTab = $(e.target).text();
-        // 获取前一个激活的标签页的名称
-        var previousTab = $(e.relatedTarget).text();
-        // $(".active-tab span").html(activeTab);
-        // $(".previous-tab span").html(previousTab);
-        console.log(activeTab);
-        console.log(previousTab);
-    });
-});
 
 $(document).ready(function(){
-
     $.ajax({
-        url: "../../serviceCatalogView/getServicecatalogPortfolioId.do",
-        data: {
-            productId
-        },
+        url:'../userRole/getRoleId.do',
         success: function (result) {
-            if(isTrue(result.success)) {
-                servicecatalogPortfolioId = result.data;
-            } else {
-                alert(result.errorMsg);
+            console.log(result);
+            roleId = result.data;
+            if(roleId == null) {
+                alert("您还未选择角色！");
+                window.location.href = "http://localhost:8080/metadata/metadataManage.html";
             }
         }
-    });
-
+    })
     $.ajax({
-        url: "../../serviceCatalogView/getApps.do",
-        data: {
-            productId
-        },
+        url: "../../userProduct/searchUserProductByUserName.do",
         success: function (result) {
             if(isTrue(result.success)) {
-                var appList = result.data;
-                for (var i = 0; i < appList.length; i++){
-                    var app = appList[i];
-                    var option = "<option value='" + app + "'>" + app + "</option>";
-                    $("#select_app").append(option);
+                var data= result.data;
+                // console.log(data);
+                // console.log(data[0]);
+                // console.log(data[0].productName);
+                // console.log(data.length);
+                var count = data.length;
+                for(var i = 0; i < count;i++) {
+                    // console.log(data[i].productName);
+                    // console.log(data[i].id);
+                    // console.log(data[i].servicecatalogProductId);
+                    console.log(data[i]);
+                    productId = data[i].id;
+                    console.log(productId);
+                    var li;
+                    if(i == 0) {
+                        productId = data[i].id;
+                        console.log(productId);
+                        console.log(productId)
+                        test1(productId);
+                        test2(productId);
+                        li = $("<li />", {"class":"active"});
+                    } else {
+                        li = $("<li />", {});
+                    }
+                    // console.log(li);
+                    console.log(productId);
+                    var a = $("<a />", {
+                        "href": "#basic",
+                        "text": data[i].productName,
+                        "data-toggle":"tab" ,
+                        "style":"font-size: medium;",
+                        "test":productId,
+                        "click": function (e) {
+                            // console.log(e);
+                            // console.log(e.target.attributes.test.value);
+                            productId = e.target.attributes.test.value;
+                            console.log(productId);
+                            test1(productId);
+                            test2(productId);
+                        }
+                    });
+                    li.append(a);
+                    $('#myTab').append(li);
+                    if (i == count-1) {
+                        productId = data[0].id;
+                    }
                 }
+                // var li = $("<li />", {"id": options.id + "-li",});
             } else {
                 alert(result.errorMsg);
             }
         }
-    });
+    })
+    function test1(productId) {
+        $.ajax({
+            url: "../../serviceCatalogView/getServicecatalogPortfolioId.do",
+            data: {
+                productId
+            },
+            success: function (result) {
+                if(isTrue(result.success)) {
+                    console.log(productId);
+                    servicecatalogPortfolioId = result.data;
+                } else {
+                    alert(result.errorMsg);
+                }
+            }
+        });
+
+    }
+    // $.ajax({
+    //     url: "../../serviceCatalogView/getServicecatalogPortfolioId.do",
+    //     data: {
+    //         productId
+    //     },
+    //     success: function (result) {
+    //         if(isTrue(result.success)) {
+    //             console.log(productId);
+    //             servicecatalogPortfolioId = result.data;
+    //         } else {
+    //             alert(result.errorMsg);
+    //         }
+    //     }
+    // });
+
+    function test2(productId) {
+        $.ajax({
+            url: "../../serviceCatalogView/getApps.do",
+            data: {
+                productId
+            },
+            success: function (result) {
+                if(isTrue(result.success)) {
+                    var appList = result.data;
+                    $("#select_app").empty();
+                    var option1 = "<option value='选择应用'>" + "选择应用" + "</option>";
+                    $("#select_app").append(option1)
+                    for (var i = 0; i < appList.length; i++){
+                        var app = appList[i];
+                        var option = "<option value='" + app + "'>" + app + "</option>";
+                        $("#select_app").append(option);
+                    }
+                } else {
+                    alert(result.errorMsg);
+                }
+            }
+        });
+    }
+    // $.ajax({
+    //     url: "../../serviceCatalogView/getApps.do",
+    //     data: {
+    //         productId
+    //     },
+    //     success: function (result) {
+    //         if(isTrue(result.success)) {
+    //             var appList = result.data;
+    //             for (var i = 0; i < appList.length; i++){
+    //                 var app = appList[i];
+    //                 var option = "<option value='" + app + "'>" + app + "</option>";
+    //                 $("#select_app").append(option);
+    //             }
+    //         } else {
+    //             alert(result.errorMsg);
+    //         }
+    //     }
+    // });
 
     $("#select_app").change(function () {
         $("#select_environment").empty();
         $("#select_environment").append("<option value='选择环境'>选择环境</option>");
         var select_app = $(this).val();
+        console.log(productId);
+        console.log(select_app);
         $.ajax({
             url: "../../serviceCatalogView/getEnvironment.do",
             data: {
@@ -68,6 +168,7 @@ $(document).ready(function(){
             },
             success: function (result) {
                 console.log(result);
+                console.log(productId);
                 if(isTrue(result.success)) {
                     var environmentList = result.data;
                     console.log(environmentList);

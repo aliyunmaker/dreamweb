@@ -80,6 +80,7 @@ public class ServiceCatalogViewController extends BaseController{
     public void getServicecatalogPortfolioId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String Id = request.getParameter("productId");
+        System.out.println(Id);
         Integer productId = Integer.valueOf(Id);
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByLoginName(userName);

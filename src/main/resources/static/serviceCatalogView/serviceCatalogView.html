@@ -14,84 +14,74 @@
             src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script> -->
     <!-- <script type="text/javascript" src="../slsView/bootstrap.bundle.js"></script> -->
     <script type="text/javascript" src="serviceCatalogView.js"></script>
-    <script type="text/javascript">
-        // var search = window.location.search.substring(1);
-        // var urlsp = new URLSearchParams(search);
-        // var productId = urlsp.get("productId");
-        // var productName = urlsp.get("productName");
-        var productId;
-        var roleId;
+<!--    <script type="text/javascript">-->
+<!--        var productId;-->
+<!--        var roleId;-->
+<!--        window.onload = function() {-->
+<!--            $.ajax({-->
+<!--                url:'../userRole/getRoleId.do',-->
+<!--                success: function (result) {-->
+<!--                    console.log(result);-->
+<!--                    roleId = result.data;-->
+<!--                    if(roleId == null) {-->
+<!--                        alert("您还未选择角色！");-->
+<!--                        window.location.href = "http://localhost:8080/metadata/metadataManage.html";-->
+<!--                    }-->
+<!--                }-->
+<!--            })-->
 
-        window.onload = function() {
-            $.ajax({
-                url:'../userRole/getRoleId.do',
-                success: function (result) {
-                    console.log(result);
-                    roleId = result.data;
-                    if(roleId == null) {
-                        alert("您还未选择角色！");
-                        window.location.href = "http://localhost:8080/metadata/metadataManage.html";
-                    }
-                }
-            })
+<!--        }-->
+<!--        var data;-->
+<!--        $.ajax({-->
+<!--            url: "../../userProduct/searchUserProductByUserName.do",-->
+<!--            success: function (result) {-->
+<!--                if(isTrue(result.success)) {-->
+<!--                    data= result.data;-->
+<!--                    console.log(data);-->
+<!--                    console.log(data[0]);-->
+<!--                    console.log(data[0].productName);-->
+<!--                    console.log(data.length);-->
+<!--                    var count = data.length;-->
+<!--                    for(var i = 0; i < count;i++) {-->
+<!--                        console.log(data[i].productName);-->
+<!--                        console.log(data[i].id);-->
+<!--                        console.log(data[i].servicecatalogProductId);-->
 
-        }
-        var data;
-        $.ajax({
-            url: "../../userProduct/searchUserProductByUserName.do",
-            success: function (result) {
-                if(isTrue(result.success)) {
-                    data= result.data;
-                    console.log(data);
-                    console.log(data[0]);
-                    console.log(data[0].productName);
-                    console.log(data.length);
-                    var count = data.length;
-                    for(var i = 0; i < count;i++) {
-                        console.log(data[i].productName);
-                        console.log(data[i].id);
-                        console.log(data[i].servicecatalogProductId);
+<!--                        var servicecatalogProductId = data[i].servicecatalogProductId;-->
+<!--                        var productName = data[i].productName;-->
 
-                        var servicecatalogProductId = data[i].servicecatalogProductId;
-                        var productName = data[i].productName;
+<!--                        var li;-->
+<!--                        if(i == 0) {-->
+<!--                            li = $("<li />", {"class":"active"});-->
+<!--                        } else {-->
+<!--                            li = $("<li />", {});-->
+<!--                        }-->
+<!--                        console.log(li);-->
+<!--                        var a = $("<a />", {-->
+<!--                        "href": "#basic",-->
+<!--                        "text": data[i].productName,-->
+<!--                        "data-toggle":"tab" ,-->
+<!--                        "style":"font-size: medium;",-->
+<!--                        "test":servicecatalogProductId,-->
+<!--                        "click": function (e) {-->
+<!--                            console.log(e);-->
+<!--                            console.log(e.target.attributes.test.value);-->
+<!--                            productId = e.target.attributes.test.value;-->
+<!--                            console.log(productId);-->
+<!--                        }-->
+<!--                        });-->
+<!--                        li.append(a);-->
+<!--                        $('#myTab').append(li);-->
 
-                        var li;
-                        if(i == 0) {
-                            li = $("<li />", {"class":"active"});
-                        } else {
-                            li = $("<li />", {});
-                        }
-                        console.log(li);
-                        var a = $("<a />", {
-                        "href": "#basic",
-                        "text": data[i].productName,
-                        "data-toggle":"tab" ,
-                        "style":"font-size: medium;",
-                        "test":servicecatalogProductId,
-                        "click": function (e) {
-                            console.log(e);
-                            // productId = t;
-                            // console.log(productId);
-                        }
-                        });
-                        li.append(a);
-                        $('#myTab').append(li);
+<!--                    }-->
+<!--                    // var li = $("<li />", {"id": options.id + "-li",});-->
+<!--                } else {-->
+<!--                    alert(result.errorMsg);-->
+<!--                }-->
+<!--            }-->
+<!--        })-->
 
-                    }
-                    // var li = $("<li />", {"id": options.id + "-li",});
-                } else {
-                    alert(result.errorMsg);
-                }
-            }
-        })
-
-
-
-        console.log(roleId);
-        console.log(productId);
-
-
-    </script>
+<!--    </script>-->
 
 </head>
 <body>
@@ -115,96 +105,96 @@
                 
             </a>
         </li> -->
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                SLB
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                RDS
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                容器服务
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                OSS
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                SLS
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                KMS
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                DRDS
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                AnalyticDB
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                DMS企业版
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                HBase
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                DTS
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                云企业网CEN
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                NAS
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                MongoDB
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                PrivateZone
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                EIP
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                磁盘
-            </a>
-        </li>
-        <li>
-            <a href="#basic" data-toggle="tab" style="font-size: medium;">
-                镜像
-            </a>
-        </li>
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                SLB-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                RDS-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                容器服务-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                OSS-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                SLS-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                KMS-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                DRDS-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                AnalyticDB-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                DMS企业版-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                HBase-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                DTS-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                云企业网CEN-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                NAS-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                MongoDB-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                PrivateZone-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                EIP-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                磁盘-->
+<!--            </a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="#basic" data-toggle="tab" style="font-size: medium;">-->
+<!--                镜像-->
+<!--            </a>-->
+<!--        </li>-->
     </ul>
 
     <div id="myTabContent" class="tab-content" style="margin-right: 10px;">
