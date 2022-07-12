@@ -109,7 +109,7 @@ $(document).ready(function(){
                     success: function (result) {
                         if(isTrue(result.success)) {
                             var nonLoginPreUrl = result.data;
-                            var iframe = '<iframe style="height:100%;" class="embed-responsive-item" id="iframe_showPreConsole" src="' + nonLoginPreUrl + '"></iframe>';
+                            var iframe = '<iframe class="embed-responsive-item" id="iframe_showPreConsole" src="' + nonLoginPreUrl + '"></iframe>';
                             $("#serviceCatalogViewConsoleDiv").html(iframe);
                         }
                     }

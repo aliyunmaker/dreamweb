@@ -31,11 +31,6 @@ public class UserProductService {
     @Autowired
     private ProductDao productDao;
 
-//    @Transactional
-//    public List<String> listProductId(String userName) {
-//        return userProductDao.listProductId(userName);
-//    }
-
     @Transactional
     public List<Product> listProductByUserId(Integer userId) {
         List<Integer> productIds = userProductDao.listProductIdsByUserId(userId);
@@ -77,10 +72,10 @@ public class UserProductService {
         return userProductDao.getUserProductAssociateByProductIdAndUserId(productId, userId);
     }
 
-//    @Transactional
-//    public UserProductAssociate getUserProductById(Integer id) {
-//        return userProductDao.getUserProductById(id);
-//    }
+    @Transactional
+    public UserProductAssociate getUserProductAssociateById(Integer id) {
+        return userProductDao.getUserProductAssociateById(id);
+    }
 
     @Transactional
     public void updateUserProductAssociate(UserProductAssociate userProductAssociate) {

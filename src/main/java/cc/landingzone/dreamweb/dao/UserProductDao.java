@@ -17,10 +17,6 @@ import org.springframework.stereotype.Component;
 @Component
 public interface UserProductDao {
 
-//    List<String> listProductId(String userName);
-//
-//    List<Product> listProduct(String userName);
-
     List<UserProductAssociate> listUserProductAssociate(Map<String, Object> map);
 
     Integer getUserProductAssociateTotal(Map<String, Object> map);
@@ -33,7 +29,7 @@ public interface UserProductDao {
 
     UserProductAssociate getUserProductAssociateByProductIdAndUserId(Integer productId, Integer userId);
 
-//    UserProductAssociate getUserProductById(Integer id);
+    UserProductAssociate getUserProductAssociateById(Integer id);
 
     String getServicecatalogPortfolioId(Integer productId, Integer userId);
 

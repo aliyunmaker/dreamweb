@@ -37,11 +37,6 @@
         where process_id = #{processId}
     </update>
 
-<!--    <select id="getPlanResultByPlanId">-->
-<!--        select planResult from myAsk-->
-<!--        where planId = #{planId}-->
-<!--    </select>-->
-
     <update id="updateTaskByProcessId">
         update application
         set task = #{task}
@@ -83,12 +78,6 @@
         set opinion = #{opinion}
         where process_id = #{processId}
     </update>
-
-<!--    <update id="updateStatus">-->
-<!--        update myAsk-->
-<!--        set processState = #{status}-->
-<!--        where planId = #{planId}-->
-<!--    </update>-->
 
     <insert id="saveApplication"
             parameterType="cc.landingzone.dreamweb.model.Application">

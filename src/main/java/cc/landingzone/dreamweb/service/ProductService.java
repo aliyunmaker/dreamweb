@@ -25,12 +25,6 @@ public class ProductService {
     @Autowired
     private ProductDao productDao;
 
-//    @Transactional
-//    public String getProductName (String productId) {
-//        return productDao.getProductName(productId);
-//    }
-
-
     @Transactional
     public List<Product> listProduct(Page page) {
         Map<String, Object> map = new HashMap<>();

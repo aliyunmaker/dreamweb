@@ -1,6 +1,5 @@
 package cc.landingzone.dreamweb.dao;
 
-import cc.landingzone.dreamweb.model.Product;
 import cc.landingzone.dreamweb.model.ProductVersion;
 import org.springframework.stereotype.Component;
 
