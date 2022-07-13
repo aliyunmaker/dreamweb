@@ -57,6 +57,11 @@ public class ProductService {
     }
 
     @Transactional
+    public Product getProductByProductName(String productName) {
+        return productDao.getProductByProductName(productName);
+    }
+
+    @Transactional
     public Product getProductByServicecatalogProductId (String servicecatalogProductId) {
         return productDao.getProductByServicecatalogProductId(servicecatalogProductId);
     }

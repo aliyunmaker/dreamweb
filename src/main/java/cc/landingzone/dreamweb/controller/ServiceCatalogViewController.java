@@ -60,7 +60,6 @@ public class ServiceCatalogViewController extends BaseController{
         WebResult result = new WebResult();
         String Id = request.getParameter("productId");
         Integer productId = Integer.valueOf(Id);
-        System.out.println(productId);
 
         List<String> appList = productVersionService.listApps(productId);
         result.setTotal(appList.size());
@@ -80,7 +79,6 @@ public class ServiceCatalogViewController extends BaseController{
     public void getServicecatalogPortfolioId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         String Id = request.getParameter("productId");
-        System.out.println(Id);
         Integer productId = Integer.valueOf(Id);
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByLoginName(userName);
@@ -185,23 +183,17 @@ public class ServiceCatalogViewController extends BaseController{
         WebResult result = new WebResult();
         try {
             String Id = request.getParameter("productId");
-            System.out.println(Id);
             Assert.hasText(Id, "产品号不能为空!");
             String roleIdStr = request.getParameter("roleId");
-            System.out.println(roleIdStr);
             Assert.hasText(roleIdStr, "roleId不能为空!");
             String provisionedProductName = request.getParameter("provisionedProductName");
-            System.out.println(provisionedProductName);
             Assert.hasText(provisionedProductName, "实例名称不能为空！");
 
             String servicecatalogProductVersionId = request.getParameter("servicecatalogProductVersionId");
-            System.out.println(servicecatalogProductVersionId);
             Assert.hasText(servicecatalogProductVersionId, "产品版本ID不能为空！");
             String servicecatalogPortfolioId = request.getParameter("servicecatalogPortfolioId");
-            System.out.println(servicecatalogPortfolioId);
             Assert.hasText(servicecatalogPortfolioId, "产品组合ID不能为空！");
             String regionSelect = request.getParameter("region");
-            System.out.println(regionSelect);
             Assert.hasText(regionSelect, "地域不能为空！");
 
             Integer productId = Integer.valueOf(Id);

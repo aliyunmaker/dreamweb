@@ -223,17 +223,15 @@ Ext.onReady(function () {
 
 
     function update() {
-        // for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
-            var count = userStore.getCount();
-            MyExt.util.Ajax('../task/getCount.do', {
-                count: count,
-            }, function (data) {
-                var flag = data.data;
-                if(flag != "no") {
-                    reload();
-                }
-            });
-        // }
+        var count = userStore.totalCount;
+        MyExt.util.Ajax('../task/getCount.do', {
+            count: count,
+        }, function (data) {
+            var flag = data.data;
+            if(flag != "no") {
+                reload();
+            }
+        });
     };
 
     //定时刷新store

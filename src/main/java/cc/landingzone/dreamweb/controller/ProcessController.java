@@ -182,11 +182,14 @@ public class ProcessController extends BaseController {
      * @param: 当前登录用户名
      */
     @GetMapping("/getMyApplication.do")
-    public void getMyAsk(HttpServletRequest request, HttpServletResponse response) {
+    public void getMyApplication(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer limit = Integer.valueOf(request.getParameter("limit"));
+        Page page = new Page(start, limit);
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByLoginName(userName);
-        List<Application> list = applicationService.listApplicationsByStarterId(user.getId());
+        List<Application> list = applicationService.listApplicationsByStarterId(user.getId(), page);
         List<MyApplicationVO> list1 = new ArrayList<>();
         for (Application application : list) {
             MyApplicationVO myApplicationVO = new MyApplicationVO();
@@ -203,6 +206,7 @@ public class ProcessController extends BaseController {
             list1.add(myApplicationVO);
         }
         result.setData(list1);
+        result.setTotal(page.getTotal());
         outputToJSON(response, result);
     }
 

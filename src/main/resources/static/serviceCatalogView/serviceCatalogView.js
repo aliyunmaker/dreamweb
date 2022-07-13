@@ -1,25 +1,27 @@
-// var search = window.location.search.substring(1);
-// var urlsp = new URLSearchParams(search);
-// var productId = urlsp.get("productId");
-// var productName = urlsp.get("productName");
-// console.log(productId);
-// console.log(productName);
 var servicecatalogProductVersionId;
 var servicecatalogPortfolioId;
 var productId;
 var roleId;
-// var roleId = urlsp.get("roleId");
-
 
 $(document).ready(function(){
     $.ajax({
         url:'../userRole/getRoleId.do',
         success: function (result) {
-            console.log(result);
             roleId = result.data;
             if(roleId == null) {
-                alert("您还未选择角色！");
-                window.location.href = "http://localhost:8080/metadata/metadataManage.html";
+                $.ajax({
+                    url:'../userRole/getUserRole.do',
+                    success:function (result) {
+                        userRole = result.data;
+                        if(userRole == 'ROLE_ADMIN') {
+                            alert("您还未选择角色！");
+                            window.location.href = "http://localhost:8080/metadata/metadataManage.html";
+                        } else {
+                            alert("您还未选择角色！");
+                            window.location.href = "http://localhost:8080/welcome/welcome.html";
+                        }
+                    }
+                })
             }
         }
     })
@@ -28,31 +30,18 @@ $(document).ready(function(){
         success: function (result) {
             if(isTrue(result.success)) {
                 var data= result.data;
-                // console.log(data);
-                // console.log(data[0]);
-                // console.log(data[0].productName);
-                // console.log(data.length);
                 var count = data.length;
                 for(var i = 0; i < count;i++) {
-                    // console.log(data[i].productName);
-                    // console.log(data[i].id);
-                    // console.log(data[i].servicecatalogProductId);
-                    console.log(data[i]);
                     productId = data[i].id;
-                    console.log(productId);
                     var li;
                     if(i == 0) {
                         productId = data[i].id;
-                        console.log(productId);
-                        console.log(productId)
                         test1(productId);
                         test2(productId);
                         li = $("<li />", {"class":"active"});
                     } else {
                         li = $("<li />", {});
                     }
-                    // console.log(li);
-                    console.log(productId);
                     var a = $("<a />", {
                         "href": "#basic",
                         "text": data[i].productName,
@@ -60,10 +49,7 @@ $(document).ready(function(){
                         "style":"font-size: medium;",
                         "test":productId,
                         "click": function (e) {
-                            // console.log(e);
-                            // console.log(e.target.attributes.test.value);
                             productId = e.target.attributes.test.value;
-                            console.log(productId);
                             test1(productId);
                             test2(productId);
                         }
@@ -74,7 +60,6 @@ $(document).ready(function(){
                         productId = data[0].id;
                     }
                 }
-                // var li = $("<li />", {"id": options.id + "-li",});
             } else {
                 alert(result.errorMsg);
             }
@@ -88,7 +73,6 @@ $(document).ready(function(){
             },
             success: function (result) {
                 if(isTrue(result.success)) {
-                    console.log(productId);
                     servicecatalogPortfolioId = result.data;
                 } else {
                     alert(result.errorMsg);
@@ -97,21 +81,6 @@ $(document).ready(function(){
         });
 
     }
-    // $.ajax({
-    //     url: "../../serviceCatalogView/getServicecatalogPortfolioId.do",
-    //     data: {
-    //         productId
-    //     },
-    //     success: function (result) {
-    //         if(isTrue(result.success)) {
-    //             console.log(productId);
-    //             servicecatalogPortfolioId = result.data;
-    //         } else {
-    //             alert(result.errorMsg);
-    //         }
-    //     }
-    // });
-
     function test2(productId) {
         $.ajax({
             url: "../../serviceCatalogView/getApps.do",
@@ -135,31 +104,10 @@ $(document).ready(function(){
             }
         });
     }
-    // $.ajax({
-    //     url: "../../serviceCatalogView/getApps.do",
-    //     data: {
-    //         productId
-    //     },
-    //     success: function (result) {
-    //         if(isTrue(result.success)) {
-    //             var appList = result.data;
-    //             for (var i = 0; i < appList.length; i++){
-    //                 var app = appList[i];
-    //                 var option = "<option value='" + app + "'>" + app + "</option>";
-    //                 $("#select_app").append(option);
-    //             }
-    //         } else {
-    //             alert(result.errorMsg);
-    //         }
-    //     }
-    // });
-
     $("#select_app").change(function () {
         $("#select_environment").empty();
         $("#select_environment").append("<option value='选择环境'>选择环境</option>");
         var select_app = $(this).val();
-        console.log(productId);
-        console.log(select_app);
         $.ajax({
             url: "../../serviceCatalogView/getEnvironment.do",
             data: {
@@ -167,11 +115,8 @@ $(document).ready(function(){
             productId
             },
             success: function (result) {
-                console.log(result);
-                console.log(productId);
                 if(isTrue(result.success)) {
                     var environmentList = result.data;
-                    console.log(environmentList);
                 }
                 for(var i = 0; i < environmentList.length; i++) {
                     var environment = environmentList[i];
@@ -194,7 +139,6 @@ $(document).ready(function(){
             },
             success: function (result) {
                 if(isTrue(result.success)) {
-                    console.log(result.data);
                     servicecatalogProductVersionId = result.data;
                }
             }
@@ -209,7 +153,6 @@ $(document).ready(function(){
             },
             success: function (result) {
                 var provisionedProductName = result.data;
-                console.log(provisionedProductName);
                 var region = $("#select_region").val();
                 $.ajax({
                     url: "../../serviceCatalogView/getNonLoginPreUrl.do",

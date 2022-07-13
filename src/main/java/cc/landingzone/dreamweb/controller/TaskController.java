@@ -9,6 +9,7 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -79,6 +80,8 @@ public class TaskController extends BaseController {
     @RequestMapping("/getMyTaskList.do")
     public void getMyTaskList(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer limit = Integer.valueOf(request.getParameter("limit"));
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 .taskAssignee(username)//指定个人任务查询
@@ -87,9 +90,7 @@ public class TaskController extends BaseController {
         if (list != null && list.size() > 0) {
             for (Task task : list) {
                 Integer applicationId = (Integer) taskService.getVariable(task.getId(), "applicationId");
-                System.out.println(applicationId);
                 Application application = applicationService.getApplicationById(applicationId);
-                System.out.println(application.getStarterId());
                 String starterName = userService.getUserById(application.getStarterId()).getLoginName();
                 String servicecatalogPlanId = application.getServicecatalogPlanId();
 
@@ -110,7 +111,12 @@ public class TaskController extends BaseController {
             }
         }
         Collections.sort(assignmentList);
-        result.setData(assignmentList);
+        if(assignmentList.size() > (start + limit)) {
+            result.setData(assignmentList.subList(start, start + limit));
+        } else if(assignmentList.size() > start){
+            result.setData(assignmentList.subList(start, assignmentList.size()));
+        }
+        result.setTotal(assignmentList.size());
         outputToJSON(response, result);
 
     }
@@ -145,8 +151,6 @@ public class TaskController extends BaseController {
                 if (process == null) {
                     applicationService.updateProcessStateByProcessId(processId, "已通过");
                     applicationService.updateTaskByProcessId(processId, "无等待任务");
-                    System.out.println("111111111");
-                    System.out.println(planId);
                     createProduct(planId);  //审批通过后启动产品
                     Integer flag = 0;
                     result.setData(flag);
@@ -226,6 +230,8 @@ public class TaskController extends BaseController {
     @RequestMapping("/getAllTaskList.do")
     public void getAllTaskList(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer limit = Integer.valueOf(request.getParameter("limit"));
         // 获取“任务”查询器
         List<Task> tasks = taskService.createTaskQuery().list();
         List<Assignment> assignmentList = new ArrayList<>();
@@ -253,7 +259,12 @@ public class TaskController extends BaseController {
             assignmentList.add(assignment);
         });
         Collections.sort(assignmentList);
-        result.setData(assignmentList);
+        if(assignmentList.size() > (start + limit)) {
+            result.setData(assignmentList.subList(start, start + limit));
+        } else if(assignmentList.size() > start){
+            result.setData(assignmentList.subList(start, assignmentList.size()));
+        }
+        result.setTotal(assignmentList.size());
         outputToJSON(response, result);
     }
 
@@ -281,9 +292,7 @@ public class TaskController extends BaseController {
      * @param: 流程ID
      */
     public Map<String, Object> getInfo(String servicecatalogPlanId) {
-        System.out.println(servicecatalogPlanId);
         Application application = applicationService.getApplicationByServicecatalogPlanId(servicecatalogPlanId);
-        System.out.println(application.getProductVersionId());
         ProductVersion productVersion = productVersionService.getProductVersionById(application.getProductVersionId());
         Product product = productService.getProductById(application.getProductId());
         User user = userService.getUserById(application.getStarterId());
@@ -313,7 +322,9 @@ public class TaskController extends BaseController {
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 .taskAssignee(username)//指定个人任务查询
                 .list();
-        if(list.size() != Integer.parseInt(count)) {
+        if(StringUtils.isBlank(count)) {
+            flag = "no";
+        } else if(list.size() != Integer.parseInt(count)) {
             flag = "yes";
         }
         result.setSuccess(true);

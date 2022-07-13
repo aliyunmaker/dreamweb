@@ -32,4 +32,6 @@ public interface ProductDao {
 
     void saveProduct(Product product);
 
+    Product getProductByProductName(String productName);
+
 }

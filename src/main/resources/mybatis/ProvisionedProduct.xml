@@ -12,6 +12,9 @@
     <select id="listProvisionedProducts" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
         select *from provisioned_product
         order by id desc
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
     </select>
 
     <select id="getProvisionedProductTotal" resultType="int" parameterType="map">

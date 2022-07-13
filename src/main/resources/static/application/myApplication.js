@@ -26,7 +26,7 @@ Ext.onReady(function () {
         }, {
             dataIndex: 'processId',
             header: "流程实例ID",
-            width: 150
+            width: 100
         }, {
             dataIndex: 'servicecatalogPlanId',
             header: "启动计划ID",

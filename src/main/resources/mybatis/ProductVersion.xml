@@ -20,7 +20,7 @@
         </select>
 
         <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.ProductVersion" parameterType="map">
-            select * from product_version order by id desc
+            select * from product_version order by id
             <if test="page != null">
                 limit #{page.start},#{page.limit}
             </if>

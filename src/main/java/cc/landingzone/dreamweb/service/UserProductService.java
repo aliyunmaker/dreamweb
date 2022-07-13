@@ -80,7 +80,7 @@ public class UserProductService {
     @Transactional
     public void updateUserProductAssociate(UserProductAssociate userProductAssociate) {
         UserProductAssociate userProductAssociate1 = getUserProductAssociateByProductIdAndUserId(userProductAssociate.getProductId(), userProductAssociate.getUserId());
-        if (userProductAssociate1 != null) {
+        if (userProductAssociate1 != null && userProductAssociate1.getId() != userProductAssociate.getId()) {
             throw new IllegalArgumentException("此权限已存在！");
         }
         userProductDao.updateUserProductAssociate(userProductAssociate);

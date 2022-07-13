@@ -99,8 +99,17 @@ public class ProductVersionController extends BaseController{
     public void updateProductVersion(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String formString = request.getParameter("formString");
-            ProductVersion productVersion = JsonUtils.parseObject(formString, ProductVersion.class);
+            String id = request.getParameter("id");
+            String productName = request.getParameter("productName");
+            String servicecatalogProductVersionId = request.getParameter("servicecatalogProductVersionId");
+            String environment = request.getParameter("environment");
+            String app = request.getParameter("app");
+            Product product = productService.getProductByProductName(productName);
+            ProductVersion productVersion = productVersionService.getProductVersionById(Integer.valueOf(id));
+            productVersion.setApp(app);
+            productVersion.setEnvironment(environment);
+            productVersion.setProductId(product.getId());
+            productVersion.setServicecatalogProductVersionId(servicecatalogProductVersionId);
             productVersionService.updateProductVersion(productVersion);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

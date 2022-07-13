@@ -5,11 +5,19 @@
 <mapper namespace="cc.landingzone.dreamweb.dao.ApplicationDao">
 
     <select id="listApplicationsByStarterId"
-            resultType="cc.landingzone.dreamweb.model.Application">
+            resultType="cc.landingzone.dreamweb.model.Application" parameterType="map">
         select *
         from application
         where starter_id = #{starterId}
         order by id desc
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="searchApplicationsByStarterIdTotal" resultType="int" parameterType="map">
+        select count(*) from application
+        where starter_id = #{starterId}
     </select>
 
     <select id="listApplicationPreviewInProgress"

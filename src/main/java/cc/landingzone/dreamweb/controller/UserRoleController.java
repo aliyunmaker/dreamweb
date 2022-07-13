@@ -4,9 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import cc.landingzone.dreamweb.model.SystemConfig;
 import cc.landingzone.dreamweb.model.User;
 import cc.landingzone.dreamweb.model.UserRole;
 import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.service.SystemConfigService;
 import cc.landingzone.dreamweb.service.UserRoleService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
@@ -23,6 +25,9 @@ public class UserRoleController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SystemConfigService systemConfigService;
 
     @RequestMapping("/getUserRolesByGroupId.do")
     public void getUserRolesByGroupId(HttpServletRequest request, HttpServletResponse response) {
@@ -107,9 +112,9 @@ public class UserRoleController extends BaseController {
     public void getRoleCurrent(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String roleId = userRoleService.getRoleId("roleId");
-            if(roleId != null) {
-                Integer roleid = Integer.valueOf(roleId);
+            SystemConfig systemConfig = systemConfigService.getSystemConfigByName("roleId");
+            if(systemConfig != null) {
+                Integer roleid = Integer.valueOf(systemConfig.getConfigValue());
                 UserRole userRole = userRoleService.getUserRoleById(roleid);
                 result.setTotal(1);
                 result.setData(userRole);
@@ -129,12 +134,18 @@ public class UserRoleController extends BaseController {
         WebResult result = new WebResult();
         try {
             String key = "roleId";
-            String role =  userRoleService.getRoleId(key);//数据库中结果
+            SystemConfig systemConfig =  systemConfigService.getSystemConfigByName(key);//数据库中结果
             String value = request.getParameter("id");
-            if(role == null) {
-                userRoleService.saveUserRole(key, value);
+            if(systemConfig == null) {
+                SystemConfig systemConfig1 = new SystemConfig();
+                systemConfig1.setConfigName(key);
+                systemConfig1.setConfigValue(value);
+                systemConfig1.setComment("关联角色");
+                systemConfig1.setChangeable(true);
+                systemConfigService.addSystemConfig(systemConfig1);
             } else {
-                userRoleService.updateUserRole2(key, value);
+                systemConfig.setConfigValue(value);
+                systemConfigService.updateSystemConfig(systemConfig);
             }
             result.setSuccess(true);
         } catch (Exception e) {
@@ -148,13 +159,26 @@ public class UserRoleController extends BaseController {
     @RequestMapping("/getRoleId.do")
     public void getRoleId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        String role = userRoleService.getRoleId("roleId");//数据库中结果
-        if(role == null) {
+        String key = "roleId";
+        SystemConfig systemConfig = systemConfigService.getSystemConfigByName(key);
+        if(systemConfig == null) {
             result.setSuccess(true);
         } else {
+            String role = systemConfig.getConfigValue();//数据库中结果
             result.setData(role);
             result.setSuccess(true);
         }
+        outputToJSON(response, result);
+    }
+
+    @RequestMapping("/getUserRole.do")
+    public void getUserRole(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByLoginName(userName);
+        String role = user.getRole();
+        result.setData(role);
+        result.setSuccess(true);
         outputToJSON(response, result);
     }
 }

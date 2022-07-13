@@ -70,24 +70,4 @@
         where user_group_id = #{userGroupId}
     </delete>
 
-    <insert id="saveUserRole" >
-        insert into property
-        (property_key,
-        property_value,
-        gmt_create)
-        values (#{key},
-        #{value},
-        now())
-    </insert>
-
-    <select id="getRoleId" parameterType="String" resultType="String">
-        select property_value from property where property_key = #{key}
-    </select>
-
-    <update id="updateUserRole2" parameterType="String">
-        update property
-        set property_value = #{value}
-        where property_key = #{key}
-    </update>
-
 </mapper>

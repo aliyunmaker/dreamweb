@@ -1,10 +1,7 @@
 package cc.landingzone.dreamweb.service;
 
 import cc.landingzone.dreamweb.dao.ApplicationDao;
-import cc.landingzone.dreamweb.model.Application;
-import cc.landingzone.dreamweb.model.Product;
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.UserRole;
+import cc.landingzone.dreamweb.model.*;
 import com.aliyun.servicecatalog20210901.Client;
 import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanRequest;
 import com.aliyun.servicecatalog20210901.models.GetProvisionedProductPlanResponse;
@@ -65,8 +62,13 @@ public class ApplicationService {
     }
 
     @Transactional
-    public List<Application> listApplicationsByStarterId(Integer starterId) {
-        return applicationDao.listApplicationsByStarterId(starterId);
+    public List<Application> listApplicationsByStarterId(Integer starterId, Page page) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("page", page);
+        map.put("starterId", starterId);
+        Integer total = applicationDao.searchApplicationsByStarterIdTotal(map);
+        page.setTotal(total);
+        return applicationDao.listApplicationsByStarterId(map);
     }
 
     @Transactional

@@ -5,7 +5,7 @@
 <mapper namespace="cc.landingzone.dreamweb.dao.UserProductDao">
 
     <select id="listUserProductAssociate" resultType="cc.landingzone.dreamweb.model.UserProductAssociate" parameterType="map">
-        select * from user_product_associate order by id desc
+        select * from user_product_associate order by id
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>

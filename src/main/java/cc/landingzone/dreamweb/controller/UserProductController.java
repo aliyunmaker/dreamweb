@@ -82,7 +82,6 @@ public class UserProductController extends BaseController {
         WebResult result = new WebResult();
         try {
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-            System.out.println(userName);
             User user = userService.getUserByLoginName(userName);
             List<Product> list = userProductService.listProductByUserId(user.getId());
             result.setData(list);
@@ -127,8 +126,16 @@ public class UserProductController extends BaseController {
     public void updateUserProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String formString = request.getParameter("formString");
-            UserProductAssociate userProductAssociate = JsonUtils.parseObject(formString, UserProductAssociate.class);
+            String id = request.getParameter("id");
+            String productName = request.getParameter("productName");
+            String loginName = request.getParameter("loginName");
+            String servicecatalogPortfolioId = request.getParameter("servicecatalogPortfolioId");
+            UserProductAssociate userProductAssociate = userProductService.getUserProductAssociateById(Integer.valueOf(id));
+            User user = userService.getUserByLoginName(loginName);
+            Product product = productService.getProductByProductName(productName);
+            userProductAssociate.setProductId(product.getId());
+            userProductAssociate.setServicecatalogPortfolioId(servicecatalogPortfolioId);
+            userProductAssociate.setUserId(user.getId());
             userProductService.updateUserProductAssociate(userProductAssociate);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

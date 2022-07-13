@@ -4,6 +4,7 @@ import cc.landingzone.dreamweb.model.Application;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 操作工作流申请
@@ -17,7 +18,9 @@ public interface ApplicationDao {
 
     void saveApplication(Application application);
 
-    List<Application> listApplicationsByStarterId(Integer starterId);
+    List<Application> listApplicationsByStarterId(Map<String, Object> map);
+
+    Integer searchApplicationsByStarterIdTotal(Map <String, Object> map);
 
     void updateTaskByProcessId(String processId, String task);
 

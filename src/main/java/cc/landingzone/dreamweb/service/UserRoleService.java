@@ -78,16 +78,4 @@ public class UserRoleService {
         return userRoleDao.getUserRoleByName(userRoleId);
     }
 
-    public void saveUserRole(String key, String value) {
-        userRoleDao.saveUserRole(key, value);
-    }
-
-    public String getRoleId(String key) {
-        return userRoleDao.getRoleId(key);
-    }
-
-    public void updateUserRole2(String key, String value) {
-        userRoleDao.updateUserRole2(key, value);
-    }
-
 }
