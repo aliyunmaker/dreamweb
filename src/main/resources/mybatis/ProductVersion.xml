@@ -66,6 +66,12 @@
             where id = #{id}
         </delete>
 
+    <delete id="deleteProductVersionByProductId" parameterType="int">
+        delete
+        from product_version
+        where product_id = #{productId}
+    </delete>
+
 
         <select id="getProductVersionByServicecatalogProductVersionId" parameterType="String" resultType="cc.landingzone.dreamweb.model.ProductVersion">
             select * from product_version where servicecatalog_product_version_id = #{servicecatalogProductVersionId}

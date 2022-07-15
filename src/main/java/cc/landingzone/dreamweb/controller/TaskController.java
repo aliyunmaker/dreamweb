@@ -21,12 +21,16 @@ import cc.landingzone.dreamweb.utils.DateUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+=======
+import java.util.*;
+>>>>>>> 397dbda (删除数据库外键)
 
 /**
  * 对工作流任务进行操作
@@ -308,16 +312,16 @@ public class TaskController extends BaseController {
         User user = userService.getUserById(application.getStarterId());
         String servicecatalogPortfolioId = userProductService.getServicecatalogPortfolioId(application.getProductId(), application.getStarterId());
         Map<String, Object> example = new HashMap<>();
-        example.put("应用", productVersion.getApp());
-        example.put("环境", productVersion.getEnvironment());
-        example.put("产品ID", product.getServicecatalogProductId());
+        example.put("应用", Optional.ofNullable(productVersion).map(ProductVersion::getApp).orElse(null));
+        example.put("环境", Optional.ofNullable(productVersion).map(ProductVersion::getEnvironment).orElse(null));
+        example.put("产品ID", Optional.ofNullable(product).map(Product::getServicecatalogProductId).orElse(null));
         example.put("实例名称", application.getProvisionedProductName());
         example.put("参数信息", application.getParameters());
         example.put("地域", application.getRegion());
-        example.put("版本ID", productVersion.getServicecatalogProductVersionId());
-        example.put("申请人", user.getLoginName());
+        example.put("版本ID", Optional.ofNullable(productVersion).map(ProductVersion::getServicecatalogProductVersionId).orElse(null));
+        example.put("申请人", Optional.ofNullable(user).map(User::getLoginName).orElse(null));
         example.put("角色ID", application.getRoleId());
-        example.put("产品名称", product.getProductName());
+        example.put("产品名称", Optional.ofNullable(product).map(Product::getProductName).orElse(null));
         example.put("产品组合ID", servicecatalogPortfolioId);
 
         return example;

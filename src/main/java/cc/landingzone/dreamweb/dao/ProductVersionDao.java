@@ -29,4 +29,5 @@ public interface ProductVersionDao {
 
     ProductVersion getProductVersionByServicecatalogProductVersionId(String servicecatalogProductVersionId);
 
+    void deleteProductVersionByProductId(Integer productId);
 }

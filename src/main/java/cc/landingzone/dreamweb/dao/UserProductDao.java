@@ -35,4 +35,6 @@ public interface UserProductDao {
 
     List<Integer> listProductIdsByUserId(Integer userId);
 
+    void deleteUserProductAssociateByProductId(Integer productId);
+
 }

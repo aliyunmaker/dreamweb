@@ -92,6 +92,11 @@ public class UserProductService {
     }
 
     @Transactional
+    public void deleteUserProductAssociateByProductId(Integer productId) {
+        userProductDao.deleteUserProductAssociateByProductId(productId);
+    }
+
+    @Transactional
     public String getServicecatalogPortfolioId (Integer productId, Integer userId) {
         return userProductDao.getServicecatalogPortfolioId(productId, userId);
     }

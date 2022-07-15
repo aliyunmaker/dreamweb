@@ -42,6 +42,12 @@
         where id = #{id}
     </delete>
 
+    <delete id="deleteUserProductAssociateByProductId" parameterType="int">
+        delete
+        from user_product_associate
+        where product_id = #{productId}
+    </delete>
+
     <select id="getUserProductAssociateByProductIdAndUserId" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
         select * from user_product_associate
         where product_id = #{productId} and user_id = #{userId}

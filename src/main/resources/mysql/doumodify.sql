@@ -24,8 +24,7 @@ create TABLE `product_version` (
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON update CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
-                             UNIQUE KEY `uk_servicecatalog_product_version_id` (`servicecatalog_product_version_id`),
-                             foreign key(`product_id`) references product(`id`) on delete cascade
+                             UNIQUE KEY `uk_servicecatalog_product_version_id` (`servicecatalog_product_version_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `provisioned_product`(
@@ -43,8 +42,7 @@ CREATE TABLE `provisioned_product`(
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                              PRIMARY KEY (`id`),
                              UNIQUE KEY `uk_servicecatalog_provisioned_product_id` (`servicecatalog_provisioned_product_id`),
-                             UNIQUE KEY `uk_provisioned_product_name` (`provisioned_product_name`),
-                             foreign key(`product_id`) references product(`id`) on delete cascade
+                             UNIQUE KEY `uk_provisioned_product_name` (`provisioned_product_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `application` (
@@ -69,8 +67,7 @@ CREATE TABLE `application` (
                          `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                          PRIMARY KEY (`id`),
                          UNIQUE KEY `uk_process_id` (`process_id`),
-                         UNIQUE KEY `uk_servicecatalog_plan_id` (`servicecatalog_plan_id`),
-                         foreign key(`product_id`) references product(`id`) on delete cascade
+                         UNIQUE KEY `uk_servicecatalog_plan_id` (`servicecatalog_plan_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `user_product_associate` (
@@ -81,6 +78,5 @@ CREATE TABLE `user_product_associate` (
                             `gmt_create` datetime DEFAULT NULL,
                             `gmt_modified` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                             PRIMARY KEY (`id`),
-                            UNIQUE KEY `uk_user_id_product_id` (`user_id`, `product_id`),
-                            foreign key(`product_id`) references product(`id`) on delete cascade
+                            UNIQUE KEY `uk_user_id_product_id` (`user_id`, `product_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
