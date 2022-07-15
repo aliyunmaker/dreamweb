@@ -331,15 +331,19 @@ public class TaskController extends BaseController {
             .taskAssignee(username)//指定个人任务查询
             .list().stream()
             .filter(task -> {
-                Integer applicationId = (Integer)taskService.getVariable(task.getId(), "applicationId");
+                Integer applicationId;
+                try {
+                    applicationId = (Integer)taskService.getVariable(task.getId(), "applicationId");
+                } catch (Exception e) {
+                    return false;
+                }
                 Application application = applicationService.getApplicationById(applicationId);
-                logger.info("applicationId: {}, application: {}", applicationId, JsonUtils.toJsonString(application));
                 return application != null;
             })
             .collect(Collectors.toList());
         if (StringUtils.isBlank(count)) {
             flag = "no";
-        } else if(list.size() != Integer.parseInt(count)) {
+        } else if (list.size() != Integer.parseInt(count)) {
             flag = "yes";
         }
         result.setSuccess(true);
