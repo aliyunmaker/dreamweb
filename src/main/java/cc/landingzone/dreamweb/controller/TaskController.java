@@ -2,6 +2,7 @@ package cc.landingzone.dreamweb.controller;
 
 import cc.landingzone.dreamweb.model.*;
 import cc.landingzone.dreamweb.service.*;
+import cc.landingzone.dreamweb.utils.JsonUtils;
 import com.aliyun.servicecatalog20210901.Client;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RuntimeService;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 对工作流任务进行操作
@@ -91,6 +93,9 @@ public class TaskController extends BaseController {
             for (Task task : list) {
                 Integer applicationId = (Integer) taskService.getVariable(task.getId(), "applicationId");
                 Application application = applicationService.getApplicationById(applicationId);
+                if (application == null) {
+                    continue;
+                }
                 String starterName = userService.getUserById(application.getStarterId()).getLoginName();
                 String servicecatalogPlanId = application.getServicecatalogPlanId();
 
@@ -237,10 +242,13 @@ public class TaskController extends BaseController {
         List<Assignment> assignmentList = new ArrayList<>();
 
         // 循环结果集
-        tasks.forEach(task -> {
+        for (Task task : tasks) {
             Assignment assignment = new Assignment();
-            Integer applicationId = (Integer) taskService.getVariable(task.getId(), "applicationId");
+            Integer applicationId = (Integer)taskService.getVariable(task.getId(), "applicationId");
             Application application = applicationService.getApplicationById(applicationId);
+            if (application == null) {
+                continue;
+            }
             String starterName = userService.getUserById(application.getStarterId()).getLoginName();
             String servicecatalogPlanId = application.getServicecatalogPlanId();
 
@@ -257,7 +265,7 @@ public class TaskController extends BaseController {
             assignment.setAssignee(task.getAssignee());
             assignment.setServicecatalogPlanId(servicecatalogPlanId);
             assignmentList.add(assignment);
-        });
+        }
         Collections.sort(assignmentList);
         if(assignmentList.size() > (start + limit)) {
             result.setData(assignmentList.subList(start, start + limit));
@@ -320,9 +328,16 @@ public class TaskController extends BaseController {
         String count = request.getParameter("count");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
-                .taskAssignee(username)//指定个人任务查询
-                .list();
-        if(StringUtils.isBlank(count)) {
+            .taskAssignee(username)//指定个人任务查询
+            .list().stream()
+            .filter(task -> {
+                Integer applicationId = (Integer)taskService.getVariable(task.getId(), "applicationId");
+                Application application = applicationService.getApplicationById(applicationId);
+                logger.info("applicationId: {}, application: {}", applicationId, JsonUtils.toJsonString(application));
+                return application != null;
+            })
+            .collect(Collectors.toList());
+        if (StringUtils.isBlank(count)) {
             flag = "no";
         } else if(list.size() != Integer.parseInt(count)) {
             flag = "yes";
@@ -331,7 +346,5 @@ public class TaskController extends BaseController {
         result.setData(flag);
         outputToJSON(response, result);
     }
-
-
 }
 

@@ -223,9 +223,12 @@ public class ServiceCatalogViewService {
                 "ros:ListChangeSets"};
         String[] Resource2 = {"*"};
         String[] Action3 = {
-                "ram:ListUsers",
-                "ros:ValidateTemplate",
-                "ram:ListRoles"};
+            "ram:ListUsers",
+            "ros:ValidateTemplate",
+            "ram:ListRoles",
+            "ecs:*",
+            "vpc:*"
+        };
         String[] Action4 = {"servicecatalog:GetProvisionedProduct", "servicecatalog:GetTask"};
         JSONObject ser = new JSONObject();
         ser.put("servicecatalog:UserLevel", "self");
@@ -320,6 +323,11 @@ public class ServiceCatalogViewService {
         Map<String, Object> style = new HashMap<>();
         style.put("displayMode", "cmp");
         style.put("planButtonText", planButtonText);
+        //style.put("hideProvisionedProductName", planButtonText);
+        //style.put("hideLaunchOption", planButtonText);
+        //style.put("hideProductVersion", planButtonText);
+        //style.put("hideStackRegion", planButtonText);
+        style.put("hideSpecifiedItem", planButtonText);
 
         Map<String, Object> controlParameters = new HashMap<>();
         controlParameters.put("style", style);
