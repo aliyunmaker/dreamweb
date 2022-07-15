@@ -120,6 +120,7 @@ public class ProcessController extends BaseController {
     public void startPlan(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
+            System.out.println("11111111111");
             String processDefinitionId = request.getParameter("definitionId");
             Integer productId = Integer.valueOf(request.getParameter("productId"));
             String servicecatalogProductId = productService.getProductById(productId).getServicecatalogProductId();
@@ -166,11 +167,16 @@ public class ProcessController extends BaseController {
             application.setProcessDefinitionId(processDefinitionId);
             application.setProvisionedProductName(response1.getBody().getPlanDetail().provisionedProductName);
             applicationService.saveApplication(application);
+            System.out.println("22222222");
 
             result.setData(servicecatalogPlanId);
             outputToJSON(response, result);
         } catch (Exception e) {
             logger.error(e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+            outputToJSON(response, result);
+
         }
     }
 

@@ -88,4 +88,9 @@ public class ProductVersionService {
     public void deleteProductVersion(Integer id) {
         productVersionDao.deleteProductVersion(id);
     }
+
+    @Transactional
+    public void deleteProductVersionByProductId(Integer productId) {
+
+    }
 }

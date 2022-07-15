@@ -342,7 +342,7 @@ public class ServiceCatalogViewService {
         String controlString = JsonUtils.toJsonString(controlParameters);
         String base64EncodedControlString = Base64.getUrlEncoder().encodeToString(controlString.getBytes(StandardCharsets.UTF_8));
 
-        String preUrl = String.format("https://servicecatalog4service.console.aliyun.com/products"
+        String preUrl = String.format("https://pre-servicecatalog4service.console.aliyun.com/products"
                 + "/launch?productId=%s&controlString=%s",
             URLEncoder.encode(servicecatalogProductId, "utf-8"),
             URLEncoder.encode(base64EncodedControlString, "utf-8"));

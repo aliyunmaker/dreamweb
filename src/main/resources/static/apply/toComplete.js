@@ -224,6 +224,7 @@ Ext.onReady(function () {
 
     function update() {
         var count = userStore.totalCount;
+        console.log(count);
         MyExt.util.Ajax('../task/getCount.do', {
             count: count,
         }, function (data) {

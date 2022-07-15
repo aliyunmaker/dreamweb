@@ -8,6 +8,8 @@ import cc.landingzone.dreamweb.model.Product;
 import java.util.List;
 
 
+import cc.landingzone.dreamweb.service.ProductVersionService;
+import cc.landingzone.dreamweb.service.UserProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,12 @@ public class ProductController extends BaseController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductVersionService productVersionService;
+
+    @Autowired
+    private UserProductService userProductService;
 
     /**
          * 获取所有产品列表
@@ -115,6 +123,7 @@ public class ProductController extends BaseController {
         try {
             Integer id = Integer.valueOf(request.getParameter("id"));
             productService.deleteProduct(id);
+//            productVersionService.
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

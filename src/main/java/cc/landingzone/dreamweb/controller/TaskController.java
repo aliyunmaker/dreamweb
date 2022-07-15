@@ -92,6 +92,7 @@ public class TaskController extends BaseController {
         if (list != null && list.size() > 0) {
             for (Task task : list) {
                 Integer applicationId = (Integer) taskService.getVariable(task.getId(), "applicationId");
+                System.out.println(applicationId);
                 Application application = applicationService.getApplicationById(applicationId);
                 if (application == null) {
                     continue;
@@ -122,6 +123,7 @@ public class TaskController extends BaseController {
             result.setData(assignmentList.subList(start, assignmentList.size()));
         }
         result.setTotal(assignmentList.size());
+        System.out.println(assignmentList.size());
         outputToJSON(response, result);
 
     }

@@ -190,11 +190,12 @@ public class ServiceCatalogViewController extends BaseController{
             Assert.hasText(provisionedProductName, "实例名称不能为空！");
 
             String servicecatalogProductVersionId = request.getParameter("servicecatalogProductVersionId");
-            Assert.hasText(servicecatalogProductVersionId, "产品版本ID不能为空！");
+            Assert.hasText(servicecatalogProductVersionId, "请完整选择参数！");
             String servicecatalogPortfolioId = request.getParameter("servicecatalogPortfolioId");
-            Assert.hasText(servicecatalogPortfolioId, "产品组合ID不能为空！");
+            Assert.hasText(servicecatalogPortfolioId, "请完整选择参数！");
             String regionSelect = request.getParameter("region");
-            Assert.hasText(regionSelect, "地域不能为空！");
+            Assert.hasText(regionSelect, "请完整选择参数！");
+            Assert.doesNotContain(regionSelect, "选择地域", "请完整选择参数!");
 
             Integer productId = Integer.valueOf(Id);
             Product product = productService.getProductById(productId);
