@@ -2,7 +2,6 @@ package cc.landingzone.dreamweb.controller;
 
 import cc.landingzone.dreamweb.model.*;
 import cc.landingzone.dreamweb.service.*;
-import cc.landingzone.dreamweb.utils.JsonUtils;
 import com.aliyun.servicecatalog20210901.Client;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RuntimeService;
@@ -21,16 +20,8 @@ import cc.landingzone.dreamweb.utils.DateUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-<<<<<<< HEAD
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-=======
 import java.util.*;
->>>>>>> 397dbda (删除数据库外键)
+import java.util.stream.Collectors;
 
 /**
  * 对工作流任务进行操作
