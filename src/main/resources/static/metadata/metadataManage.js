@@ -538,7 +538,6 @@ Ext.onReady(function () {
            fieldLabel: '用户',
            store: Ext.create('MyExt.Component.SimpleJsonStore', {
              dataUrl: '../user/searchUser.do',
-             pageSize: 10,
              fields: ['id', 'loginName', 'name']
            }),
            displayField: 'loginName',
