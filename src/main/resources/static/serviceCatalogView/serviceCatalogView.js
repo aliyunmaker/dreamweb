@@ -15,10 +15,10 @@ $(document).ready(function(){
                         userRole = result.data;
                         if(userRole == 'ROLE_ADMIN') {
                             alert("您还未选择角色！");
-                            window.location.href = "http://localhost:8080/metadata/metadataManage.html";
+                            window.location.href = "../metadata/metadataManage.html";
                         } else {
                             alert("您还未选择角色！");
-                            window.location.href = "http://localhost:8080/welcome/welcome.html";
+                            window.location.href = "../welcome/welcome.html";
                         }
                     }
                 })
@@ -197,7 +197,7 @@ window.addEventListener("message", function(event) {
                         servicecatalogPlanId
                     },
                     success: function (result) {
-                        window.location.href = "http://localhost:8080/application/myApplication.html";
+                        window.location.href = "../application/myApplication.html";
                     }
                 })
             }
