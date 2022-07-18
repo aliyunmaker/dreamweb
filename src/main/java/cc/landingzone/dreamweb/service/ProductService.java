@@ -1,8 +1,11 @@
 package cc.landingzone.dreamweb.service;
 
 import cc.landingzone.dreamweb.dao.ProductDao;
+import cc.landingzone.dreamweb.dao.ProductVersionDao;
+import cc.landingzone.dreamweb.dao.UserProductAssociateDao;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.Product;
+import cc.landingzone.dreamweb.model.UserProductAssociate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,12 @@ public class ProductService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private ProductVersionDao productVersionDao;
+
+    @Autowired
+    private UserProductAssociateDao userProductAssociateDao;
 
     @Transactional
     public List<Product> listProduct(Page page) {
@@ -78,6 +87,8 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Integer id) {
         productDao.deleteProduct(id);
+        productVersionDao.deleteProductVersionByProductId(id);
+        userProductAssociateDao.deleteUserProductAssociateByProductId(id);
     }
 
 }
