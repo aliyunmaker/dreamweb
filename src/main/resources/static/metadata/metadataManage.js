@@ -536,6 +536,7 @@ Ext.onReady(function () {
            xtype: 'autocombobox',
            emptyText: '登录名（姓名）',
            fieldLabel: '用户',
+           queryParam: 'simpleSearch',
            store: Ext.create('MyExt.Component.SimpleJsonStore', {
              dataUrl: '../user/searchUser.do',
              fields: ['id', 'loginName', 'name']
