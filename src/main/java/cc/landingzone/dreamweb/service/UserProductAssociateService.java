@@ -1,7 +1,7 @@
 package cc.landingzone.dreamweb.service;
 
 import cc.landingzone.dreamweb.dao.ProductDao;
-import cc.landingzone.dreamweb.dao.UserProductDao;
+import cc.landingzone.dreamweb.dao.UserProductAssociateDao;
 import cc.landingzone.dreamweb.model.Page;
 import cc.landingzone.dreamweb.model.Product;
 import cc.landingzone.dreamweb.model.UserProductAssociate;
@@ -20,22 +20,21 @@ import java.util.Map;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Component
-public class UserProductService {
+public class UserProductAssociateService {
 
     @Autowired
-    private UserProductDao userProductDao;
+    private UserProductAssociateDao userProductAssociateDao;
 
     @Autowired
     private ProductDao productDao;
 
     @Transactional
     public List<Product> listProductByUserId(Integer userId) {
-        List<Integer> productIds = userProductDao.listProductIdsByUserId(userId);
+        List<Integer> productIds = userProductAssociateDao.listProductIdsByUserId(userId);
         List<Product> products = new ArrayList<>();
-        for (Integer productId: productIds ) {
+        for (Integer productId : productIds) {
             Product product = productDao.getProductById(productId);
             products.add(product);
         }
@@ -46,10 +45,10 @@ public class UserProductService {
     public List<UserProductAssociate> listUserProductAssociate(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<UserProductAssociate> list = userProductDao.listUserProductAssociate(map);
+        List<UserProductAssociate> list = userProductAssociateDao.listUserProductAssociate(map);
         if (null != page) {
             if (null != page.getStart() && null != page.getLimit()) {
-                Integer total = userProductDao.getUserProductAssociateTotal(map);
+                Integer total = userProductAssociateDao.getUserProductAssociateTotal(map);
                 page.setTotal(total);
             } else {
                 page.setTotal(list.size());
@@ -60,45 +59,47 @@ public class UserProductService {
 
     @Transactional
     public void saveUserProductAssociate(UserProductAssociate userProductAssociate) {
-        UserProductAssociate userProductAssociate1 = getUserProductAssociateByProductIdAndUserId(userProductAssociate.getProductId(), userProductAssociate.getUserId());
+        UserProductAssociate userProductAssociate1 = getUserProductAssociateByProductIdAndUserId(
+            userProductAssociate.getProductId(), userProductAssociate.getUserId());
         if (userProductAssociate1 != null) {
             throw new IllegalArgumentException("此权限已存在！");
         }
-        userProductDao.saveUserProductAssociate(userProductAssociate);
+        userProductAssociateDao.saveUserProductAssociate(userProductAssociate);
     }
 
     @Transactional
     public UserProductAssociate getUserProductAssociateByProductIdAndUserId(Integer productId, Integer userId) {
-        return userProductDao.getUserProductAssociateByProductIdAndUserId(productId, userId);
+        return userProductAssociateDao.getUserProductAssociateByProductIdAndUserId(productId, userId);
     }
 
     @Transactional
     public UserProductAssociate getUserProductAssociateById(Integer id) {
-        return userProductDao.getUserProductAssociateById(id);
+        return userProductAssociateDao.getUserProductAssociateById(id);
     }
 
     @Transactional
     public void updateUserProductAssociate(UserProductAssociate userProductAssociate) {
-        UserProductAssociate userProductAssociate1 = getUserProductAssociateByProductIdAndUserId(userProductAssociate.getProductId(), userProductAssociate.getUserId());
+        UserProductAssociate userProductAssociate1 = getUserProductAssociateByProductIdAndUserId(
+            userProductAssociate.getProductId(), userProductAssociate.getUserId());
         if (userProductAssociate1 != null && userProductAssociate1.getId() != userProductAssociate.getId()) {
             throw new IllegalArgumentException("此权限已存在！");
         }
-        userProductDao.updateUserProductAssociate(userProductAssociate);
+        userProductAssociateDao.updateUserProductAssociate(userProductAssociate);
     }
 
     @Transactional
     public void deleteUserProductAssociate(Integer id) {
-        userProductDao.deleteUserProductAssociate(id);
+        userProductAssociateDao.deleteUserProductAssociate(id);
     }
 
     @Transactional
     public void deleteUserProductAssociateByProductId(Integer productId) {
-        userProductDao.deleteUserProductAssociateByProductId(productId);
+        userProductAssociateDao.deleteUserProductAssociateByProductId(productId);
     }
 
     @Transactional
-    public String getServicecatalogPortfolioId (Integer productId, Integer userId) {
-        return userProductDao.getServicecatalogPortfolioId(productId, userId);
+    public String getServicecatalogPortfolioId(Integer productId, Integer userId) {
+        return userProductAssociateDao.getServicecatalogPortfolioId(productId, userId);
     }
 
 }

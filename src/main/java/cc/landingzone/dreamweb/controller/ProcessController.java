@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -69,8 +69,8 @@ public class ProcessController extends BaseController {
 
         // bpm 文件路径
         String bpmnResourcePath = "processes/example/apply/ServiceCatalog.bpmn";
-//        // png 文件路径
-//        String pngResourcePath = "processes/example/apply/ApplyProcess.png";
+        //        // png 文件路径
+        //        String pngResourcePath = "processes/example/apply/ApplyProcess.png";
         // 流程名
         String processName = "申请流程";
 
@@ -120,7 +120,6 @@ public class ProcessController extends BaseController {
     public void startPlan(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            System.out.println("11111111111");
             String processDefinitionId = request.getParameter("definitionId");
             Integer productId = Integer.valueOf(request.getParameter("productId"));
             String servicecatalogProductId = productService.getProductById(productId).getServicecatalogProductId();
@@ -137,7 +136,7 @@ public class ProcessController extends BaseController {
             GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
             JSONObject parameter = new JSONObject();
             for (GetProvisionedProductPlanResponseBody.GetProvisionedProductPlanResponseBodyPlanDetailParameters para :
-                    response1.getBody().getPlanDetail().parameters) {
+                response1.getBody().getPlanDetail().parameters) {
                 parameter.put(para.getParameterKey(), para.getParameterValue());
             }
 
@@ -145,7 +144,8 @@ public class ProcessController extends BaseController {
             application.setStarterId(user.getId());
             application.setRoleId(roleId);
 
-            ProductVersion productVersion = productVersionService.getProductVersionByServicecatalogProductVersionId(response1.getBody().getPlanDetail().productVersionId);
+            ProductVersion productVersion = productVersionService.getProductVersionByServicecatalogProductVersionId(
+                response1.getBody().getPlanDetail().productVersionId);
             application.setProductVersionId(productVersion.getId());
 
             application.setProductId(productId);
@@ -167,7 +167,6 @@ public class ProcessController extends BaseController {
             application.setProcessDefinitionId(processDefinitionId);
             application.setProvisionedProductName(response1.getBody().getPlanDetail().provisionedProductName);
             applicationService.saveApplication(application);
-            System.out.println("22222222");
 
             result.setData(servicecatalogPlanId);
             outputToJSON(response, result);
@@ -221,7 +220,7 @@ public class ProcessController extends BaseController {
         WebResult result = new WebResult();
         String servicecatalogPlanId = request.getParameter("servicecatalogPlanId");
         Application application = applicationService.getApplicationByServicecatalogPlanId(servicecatalogPlanId);
-        if(!application.getProcessState().equals("预检中")) {
+        if (!application.getProcessState().equals("预检中")) {
             Map<String, String> flag = new HashMap<>();
             flag.put("flag", "yes");
             result.setSuccess(true);

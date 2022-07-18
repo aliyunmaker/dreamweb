@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * 产品版本service层
+ *
  * @author: laodou
  * @createDate: 2022/7/8
  */
@@ -29,12 +30,12 @@ public class ProductVersionService {
     }
 
     @Transactional
-    public List<String> listEnvironments (Integer productId, String app) {
+    public List<String> listEnvironments(Integer productId, String app) {
         return productVersionDao.listEnvironments(productId, app);
     }
 
     @Transactional
-    public String getServicecatalogProductVersionId (Integer productId, String app, String environment) {
+    public String getServicecatalogProductVersionId(Integer productId, String app, String environment) {
         return productVersionDao.getServicecatalogProductVersionId(productId, app, environment);
     }
 
@@ -56,9 +57,10 @@ public class ProductVersionService {
 
     @Transactional
     public void saveProductVersion(ProductVersion productVersion) {
-        ProductVersion productVersion1 = productVersionDao.getProductVersionByServicecatalogProductVersionId(productVersion.getServicecatalogProductVersionId());
+        ProductVersion productVersion1 = productVersionDao.getProductVersionByServicecatalogProductVersionId(
+            productVersion.getServicecatalogProductVersionId());
         if (productVersion1 != null) {
-            throw new IllegalArgumentException("此产品版本(" + productVersion.getServicecatalogProductVersionId()+ ")已存在");
+            throw new IllegalArgumentException("此产品版本(" + productVersion.getServicecatalogProductVersionId() + ")已存在");
         }
         productVersionDao.saveProductVersion(productVersion);
     }
@@ -69,7 +71,7 @@ public class ProductVersionService {
     }
 
     @Transactional
-    public ProductVersion getProductVersionByServicecatalogProductVersionId (String servicecatalogProductVersionId) {
+    public ProductVersion getProductVersionByServicecatalogProductVersionId(String servicecatalogProductVersionId) {
         return productVersionDao.getProductVersionByServicecatalogProductVersionId(servicecatalogProductVersionId);
     }
 
@@ -77,9 +79,10 @@ public class ProductVersionService {
     public void updateProductVersion(ProductVersion productVersion) {
         Assert.notNull(productVersion, "数据不能为空!");
         Assert.notNull(productVersion.getProductId(), "产品不能为空!");
-        ProductVersion productVersion1 = productVersionDao.getProductVersionByServicecatalogProductVersionId(productVersion.getServicecatalogProductVersionId());
-        if (productVersion1 != null && productVersion1.getId()!=productVersion.getId()) {
-            throw new IllegalArgumentException("此产品版本(" + productVersion.getServicecatalogProductVersionId()+ ")已存在");
+        ProductVersion productVersion1 = productVersionDao.getProductVersionByServicecatalogProductVersionId(
+            productVersion.getServicecatalogProductVersionId());
+        if (productVersion1 != null && productVersion1.getId() != productVersion.getId()) {
+            throw new IllegalArgumentException("此产品版本(" + productVersion.getServicecatalogProductVersionId() + ")已存在");
         }
         productVersionDao.updateProductVersion(productVersion);
     }

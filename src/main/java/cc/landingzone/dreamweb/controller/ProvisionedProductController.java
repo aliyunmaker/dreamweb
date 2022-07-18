@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 产品实例相关请求的处理
@@ -55,13 +56,14 @@ public class ProvisionedProductController extends BaseController{
                 provisionedProductVO.setProvisionedProductName(provisionedProduct.getProvisionedProductName());
 
                 Product product = productService.getProductById(provisionedProduct.getProductId());
-                provisionedProductVO.setServicecatalogProductId(product.getServicecatalogProductId());
-                provisionedProductVO.setProductName(product.getProductName());
+                provisionedProductVO.setServicecatalogProductId(Optional.ofNullable(product).map(Product::getServicecatalogProductId).orElse(null));
+                provisionedProductVO.setProductName(Optional.ofNullable(product).map(Product::getProductName).orElse(null));
 
                 provisionedProductVO.setRoleId(provisionedProduct.getRoleId());
 
                 User user = userService.getUserById(provisionedProduct.getStarterId());
-                provisionedProductVO.setStarterName(user.getLoginName());
+                provisionedProductVO.setStarterName(Optional.ofNullable(user).map(User::getLoginName).orElse(null));
+
                 provisionedProductVO.setStatus(provisionedProduct.getStatus());
                 provisionedProductVO.setParameter(provisionedProduct.getParameter());
                 provisionedProductVO.setOutputs(provisionedProduct.getOutputs());

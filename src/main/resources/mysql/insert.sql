@@ -20,12 +20,12 @@ VALUES
 (3,'application2','线上','pv-bp1wendz2e962y',now()),
 (4,'application2','日常','pv-bp1zymve23b54q',now()),
 
-(4,'application3','预发','pv-bp1z87gw25a4zf',now()),
+(4,'application3','预发','pv-bp1xc5md2767vm',now()),
 (3,'application3','线上','pv-bp15e79d2614pw',now()),
 (3,'application3','日常','pv-bp1bjeut29963a',now());
 
 
-INSERT INTO `user_product_associate` (`product_id`, `user_id`, `servicecatalog_portfolio_id`, `gmt_create`)
+insert into `user_product_associate` (`product_id`, `user_id`, `servicecatalog_portfolio_id`, `gmt_create`)
 VALUES
 (3, 1,'port-bp1yt7582gn4p7',now()),
 (1, 1,'port-bp1yt7582gn4p7',now()),

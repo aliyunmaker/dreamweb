@@ -42,17 +42,17 @@ public class ProvisionedProductService {
     private ServiceCatalogViewService serviceCatalogViewService;
 
     @Transactional
-    public ProvisionedProduct getProvisionedProductByProvisionedProductName (String provisionedProductName) {
+    public ProvisionedProduct getProvisionedProductByProvisionedProductName(String provisionedProductName) {
         return provisionedProductDao.getProvisionedProductByProvisionedProductName(provisionedProductName);
     }
 
     @Transactional
-    public void saveProvisionedProduct (ProvisionedProduct provisionedProduct) {
+    public void saveProvisionedProduct(ProvisionedProduct provisionedProduct) {
         provisionedProductDao.saveProvisionedProduct(provisionedProduct);
     }
 
     @Transactional
-    public List<String> listServicecatalogProvisionedProductIdUnderChange () {
+    public List<String> listServicecatalogProvisionedProductIdUnderChange() {
         return provisionedProductDao.listServicecatalogProvisionedProductIdUnderChange();
     }
 
@@ -72,16 +72,13 @@ public class ProvisionedProductService {
         return list;
     }
 
-
-
-
     /**
-         * 新增一条产品实例记录
-         *
-         * @param:
-         * @return
-         * @throws Exception
-         */
+     * 新增一条产品实例记录
+     *
+     * @return
+     * @throws Exception
+     * @param:
+     */
     public void saveProvisionedProduct(Client client, String planId, Map<String, Object> example) throws Exception {
 
         ProvisionedProduct provisionedProduct = new ProvisionedProduct();
@@ -94,7 +91,8 @@ public class ProvisionedProductService {
         GetProvisionedProductPlanResponse response = client.getProvisionedProductPlan(request);
         String provisionedProductId = response.getBody().getPlanDetail().provisionedProductId;
 
-        GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail provisionedProductDetail = getProvisionedProduct(client, provisionedProductId);
+        GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail
+            provisionedProductDetail = getProvisionedProduct(client, provisionedProductId);
         provisionedProductStatus = provisionedProductDetail.getStatus();   //实例状态
         provisionedProduct.setStatus(provisionedProductStatus);
 
@@ -109,12 +107,13 @@ public class ProvisionedProductService {
         lastTaskId = provisionedProductDetail.getLastTaskId();
 
         provisionedProduct.setProvisionedProductName(provisionedProductDetail.getProvisionedProductName());//实例名称
+
         Product product = productService.getProductByServicecatalogProductId(provisionedProductDetail.getProductId());
-        provisionedProduct.setProductId(product.getId());//产品ID
+        provisionedProduct.setProductId(Optional.ofNullable(product).map(Product::getId).orElse(null));//产品ID
         provisionedProduct.setServicecatalogProvisionedProductId(provisionedProductId);//实例ID
-        provisionedProduct.setRoleId((Integer) example.get("角色ID"));//角色ID
-        User user = userService.getUserByLoginName((String) example.get("申请人"));
-        provisionedProduct.setStarterId(user.getId());//申请人ID
+        provisionedProduct.setRoleId((Integer)example.get("角色ID"));//角色ID
+        User user = userService.getUserByLoginName((String)example.get("申请人"));
+        provisionedProduct.setStarterId(Optional.ofNullable(user).map(User::getId).orElse(null));//申请人ID
 
         GetTaskResponseBody.GetTaskResponseBodyTaskDetail taskDetail = getTask(client, lastTaskId);
         provisionedProduct.setParameter(JsonUtils.toJsonString(taskDetail.getParameters()));//申请参数
@@ -128,33 +127,38 @@ public class ProvisionedProductService {
     }
 
     /**
-         * 更新产品实例状态
-         *
-         * @param:
-         * @return
-         * @throws Exception
-         */
+     * 更新产品实例状态
+     *
+     * @return
+     * @throws Exception
+     * @param:
+     */
     public void updateProvisionedProduct(Client client, String provisionedProductId) {
         try {
             String provisionedProductStatus;
             String lastTaskId;
 
-            GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail provisionedProductDetail = getProvisionedProduct(client, provisionedProductId);
+            GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail
+                provisionedProductDetail = getProvisionedProduct(client, provisionedProductId);
             provisionedProductStatus = provisionedProductDetail.getStatus();   //实例状态
 
-            if(!provisionedProductStatus.equals("UnderChange")) {
-                provisionedProductDao.updateStatusByServicecatalogProvisionedProductId(provisionedProductStatus, provisionedProductId);
+            if (!provisionedProductStatus.equals("UnderChange")) {
+                provisionedProductDao.updateStatusByServicecatalogProvisionedProductId(provisionedProductStatus,
+                    provisionedProductId);
                 lastTaskId = provisionedProductDetail.getLastTaskId();
 
                 GetTaskResponseBody.GetTaskResponseBodyTaskDetail taskDetail = getTask(client, lastTaskId);
                 if ("Available".equals(provisionedProductStatus)) {
                     String parameter = JsonUtils.toJsonString(taskDetail.getParameters());
-                    provisionedProductDao.updateParameterByServicecatalogProvisionedProductId(parameter, provisionedProductId);
+                    provisionedProductDao.updateParameterByServicecatalogProvisionedProductId(parameter,
+                        provisionedProductId);
                     String outputs = JsonUtils.toJsonString(taskDetail.getOutputs());
-                    provisionedProductDao.updateOutputsByServicecatalogProvisionedProductId(outputs, provisionedProductId);
+                    provisionedProductDao.updateOutputsByServicecatalogProvisionedProductId(outputs,
+                        provisionedProductId);
                 } else {
                     String error = taskDetail.getStatusMessage();
-                    provisionedProductDao.updateOutputsByServicecatalogProvisionedProductId(error, provisionedProductId);
+                    provisionedProductDao.updateOutputsByServicecatalogProvisionedProductId(error,
+                        provisionedProductId);
                     logger.error(taskDetail.getStatusMessage());
                 }
             }
@@ -164,12 +168,12 @@ public class ProvisionedProductService {
     }
 
     /**
-         * 启动产品计划
-         *
-         * @param:
-         * @return
-         * @throws Exception
-         */
+     * 启动产品计划
+     *
+     * @return
+     * @throws Exception
+     * @param:
+     */
     public void executePlan(com.aliyun.servicecatalog20210901.Client client, String planId) throws Exception {
         ExecuteProvisionedProductPlanRequest request = new ExecuteProvisionedProductPlanRequest();
         request.setPlanId(planId);
@@ -178,30 +182,32 @@ public class ProvisionedProductService {
     }
 
     /**
-         * 获取产品实例详细信息
-         *
-         * @param: 终端、实例ID
-         * @return 产品实例详细信息
-         * @throws Exception
-         */
-    public GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail getProvisionedProduct(com.aliyun.servicecatalog20210901.Client client, String provisionedProductId)
-            throws Exception {
+     * 获取产品实例详细信息
+     *
+     * @return 产品实例详细信息
+     * @throws Exception
+     * @param: 终端、实例ID
+     */
+    public GetProvisionedProductResponseBody.GetProvisionedProductResponseBodyProvisionedProductDetail getProvisionedProduct(
+        com.aliyun.servicecatalog20210901.Client client, String provisionedProductId)
+        throws Exception {
 
         GetProvisionedProductRequest request = new GetProvisionedProductRequest();
         request.setProvisionedProductId(provisionedProductId);
 
         GetProvisionedProductResponse response = client.getProvisionedProduct(request);
-        return  response.getBody().getProvisionedProductDetail();
+        return response.getBody().getProvisionedProductDetail();
     }
 
     /**
-         * 获取任务详细信息以便查询产品实例参数和输出
-         *
-         * @param: 任务ID
-         * @return 任务详细信息
-         * @throws Exception
-         */
-    public GetTaskResponseBody.GetTaskResponseBodyTaskDetail getTask(com.aliyun.servicecatalog20210901.Client client, String taskId) throws Exception {
+     * 获取任务详细信息以便查询产品实例参数和输出
+     *
+     * @return 任务详细信息
+     * @throws Exception
+     * @param: 任务ID
+     */
+    public GetTaskResponseBody.GetTaskResponseBodyTaskDetail getTask(com.aliyun.servicecatalog20210901.Client client,
+                                                                     String taskId) throws Exception {
         GetTaskRequest request = new GetTaskRequest();
         request.setTaskId(taskId);
 
@@ -210,11 +216,10 @@ public class ProvisionedProductService {
     }
 
     /**
-         * 定时任务查询"UnderChange"状态产品实例并更新状态
-         *
-         *
-         * @throws Exception
-         */
+     * 定时任务查询"UnderChange"状态产品实例并更新状态
+     *
+     * @throws Exception
+     */
     @Scheduled(cron = "0/3 * * * * ?")
     public void updateProvisionedProduct() {
         try {
@@ -223,11 +228,12 @@ public class ProvisionedProductService {
                 for (String provisionedProductId : provisionedProductIds) {
                     // 创建终端
                     String region = "cn-hangzhou";
-                    ProvisionedProduct provisionedProduct = provisionedProductDao.getProvisionedProductByServicecatalogProvisionedProductId(provisionedProductId);
+                    ProvisionedProduct provisionedProduct
+                        = provisionedProductDao.getProvisionedProductByServicecatalogProvisionedProductId(
+                        provisionedProductId);
                     User user = userService.getUserById(provisionedProduct.getStarterId());
                     UserRole userRole = userRoleService.getUserRoleById(provisionedProduct.getRoleId());
-                    String servicecatalogProductId = productService.getProductById(provisionedProduct.getProductId()).getServicecatalogProductId();
-                    Client client = serviceCatalogViewService.createClient(region, user, userRole, servicecatalogProductId);
+                    Client client = serviceCatalogViewService.createClient2(region, user, userRole);
                     // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
                     updateProvisionedProduct(client, provisionedProductId);
                 }
@@ -239,8 +245,10 @@ public class ProvisionedProductService {
 
     public String searchStatus(String servicecatalogProvisionedProductId) {
         String flag = "no";
-        ProvisionedProduct provisionedProduct = provisionedProductDao.getProvisionedProductByServicecatalogProvisionedProductId(servicecatalogProvisionedProductId);
-        if(!provisionedProduct.getStatus().equals("UnderChange")) {
+        ProvisionedProduct provisionedProduct
+            = provisionedProductDao.getProvisionedProductByServicecatalogProvisionedProductId(
+            servicecatalogProvisionedProductId);
+        if (!provisionedProduct.getStatus().equals("UnderChange")) {
             flag = "yes";
         }
         return flag;

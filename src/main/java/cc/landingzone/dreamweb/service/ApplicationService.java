@@ -25,7 +25,6 @@ import java.util.Map;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Component
 public class ApplicationService {
@@ -72,7 +71,7 @@ public class ApplicationService {
     }
 
     @Transactional
-    public List<Application> listApplicationPreviewInProgress() {return applicationDao.listApplicationPreviewInProgress(); }
+    public List<Application> listApplicationPreviewInProgress() {return applicationDao.listApplicationPreviewInProgress();}
 
     @Transactional
     public void updateTaskByProcessId(String processId, String task) {
@@ -85,7 +84,8 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application getApplicationByServicecatalogPlanId(String servicecatalogPlanId) { return applicationDao.getApplicationByServicecatalogPlanId(servicecatalogPlanId);}
+    public Application getApplicationByServicecatalogPlanId(
+        String servicecatalogPlanId) {return applicationDao.getApplicationByServicecatalogPlanId(servicecatalogPlanId);}
 
     @Transactional
     public Application getApplicationById(Integer id) {
@@ -103,10 +103,10 @@ public class ApplicationService {
     }
 
     @Transactional
-    public void updateProcessIdById(Integer id, String processId) { applicationDao.updateProcessIdById(id, processId);}
+    public void updateProcessIdById(Integer id, String processId) {applicationDao.updateProcessIdById(id, processId);}
 
     @Transactional
-    public void updateTaskById(Integer id, String task) { applicationDao.updateTaskById(id, task);}
+    public void updateTaskById(Integer id, String task) {applicationDao.updateTaskById(id, task);}
 
     /**
      * 预检通过启动流程实例
@@ -122,8 +122,10 @@ public class ApplicationService {
         identityService.setAuthenticatedUserId(user.getLoginName());
         Map<String, Object> variables = new HashMap<>();
         variables.put("applicationId", application.getId());
-        ProcessInstance processInstance = runtimeService.startProcessInstanceById(application.getProcessDefinitionId(), variables);
-        String task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).singleResult().getName();
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById(application.getProcessDefinitionId(),
+            variables);
+        String task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId())
+            .singleResult().getName();
 
         updateProcessIdById(application.getId(), processInstance.getProcessInstanceId());
         updateTaskById(application.getId(), "等待" + task);
@@ -143,18 +145,20 @@ public class ApplicationService {
                     User user = userService.getUserById(application.getStarterId());
                     UserRole userRole = userRoleService.getUserRoleById(roleId);
                     Product product = productService.getProductById(application.getProductId());
-                    Client client = serviceCatalogViewService.createClient(region, user, userRole, product.getServicecatalogProductId());
+                    Client client = serviceCatalogViewService.createClient(region, user, userRole,
+                        product.getServicecatalogProductId());
                     // 查询并更新数据库，还是调用getProvisionedProduct和getTask接口
                     GetProvisionedProductPlanRequest request1 = new GetProvisionedProductPlanRequest();
                     request1.setPlanId(application.getServicecatalogPlanId());
                     GetProvisionedProductPlanResponse response1 = client.getProvisionedProductPlan(request1);
-                    if(response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
+                    if (response1.getBody().getPlanDetail().status.equals("PreviewSuccess")) {
                         applicationDao.updateStatusById(application.getId(), "审批中");
                         applicationDao.updatePlanResultById(application.getId(), "预检通过");
                         startProcessByDefinitionId(application);
-                    } else if(response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
+                    } else if (response1.getBody().getPlanDetail().status.equals("PreviewFailed")) {
                         applicationDao.updateStatusById(application.getId(), "预检失败");
-                        applicationDao.updatePlanResultById(application.getId(), response1.getBody().getPlanDetail().statusMessage);
+                        applicationDao.updatePlanResultById(application.getId(),
+                            response1.getBody().getPlanDetail().statusMessage);
                     }
                     // 如果状态改变，修改数据库为预检失败 or 修改数据库为预检成功且开启工作流审批
                 }

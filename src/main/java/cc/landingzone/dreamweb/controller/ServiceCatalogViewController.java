@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.*;
 
 /**
- *
  * 对服务目录页面请求进行处理
+ *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Controller
 @RequestMapping("/serviceCatalogView")
-public class ServiceCatalogViewController extends BaseController{
+public class ServiceCatalogViewController extends BaseController {
 
     @Autowired
     private ProductService productService;
@@ -46,15 +46,14 @@ public class ServiceCatalogViewController extends BaseController{
     private ServiceCatalogViewService serviceCatalogViewService;
 
     @Autowired
-    private UserProductService userProductService;
+    private UserProductAssociateService userProductAssociateService;
 
     /**
-         * 获取产品ID对应的使用应用
-         *
-         *
-         * @return 应用列表
-         * @throws Exception
-         */
+     * 获取产品ID对应的使用应用
+     *
+     * @return 应用列表
+     * @throws Exception
+     */
     @GetMapping("/getApps.do")
     public void getApps(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -69,12 +68,11 @@ public class ServiceCatalogViewController extends BaseController{
     }
 
     /**
-         * 用户 + 产品ID 获取产品组合ID
-         *
-         *
-         * @return 
-         * @throws Exception
-         */
+     * 用户 + 产品ID 获取产品组合ID
+     *
+     * @return
+     * @throws Exception
+     */
     @GetMapping("/getServicecatalogPortfolioId.do")
     public void getServicecatalogPortfolioId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -83,18 +81,18 @@ public class ServiceCatalogViewController extends BaseController{
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByLoginName(userName);
 
-        String portfolioId = userProductService.getServicecatalogPortfolioId(productId, user.getId());
+        String portfolioId = userProductAssociateService.getServicecatalogPortfolioId(productId, user.getId());
         result.setData(portfolioId);
         outputToJSON(response, result);
     }
 
     /**
-         * 获取某应用对应的所有使用场景
-         *
-         * @param: 应用名称
-         * @return 场景列表
-         * @throws Exception
-         */
+     * 获取某应用对应的所有使用场景
+     *
+     * @return 场景列表
+     * @throws Exception
+     * @param: 应用名称
+     */
     @GetMapping("/getEnvironment.do")
     public void getEnvironment(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -114,12 +112,12 @@ public class ServiceCatalogViewController extends BaseController{
     }
 
     /**
-         * 根据应用及场景获取指定产品ID
-         *
-         * @param: 应用名称、场景名称
-         * @return 产品ID
-         * @throws Exception
-         */
+     * 根据应用及场景获取指定产品ID
+     *
+     * @return 产品ID
+     * @throws Exception
+     * @param: 应用名称、场景名称
+     */
     @GetMapping("/getServicecatalogProductVersionId.do")
     public void getServicecatalogProductVersionId(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -131,7 +129,8 @@ public class ServiceCatalogViewController extends BaseController{
             String getProductId = request.getParameter("productId");
             Assert.hasText(getProductId, "产品Id不能为空！");
             Integer productId = Integer.valueOf(getProductId);
-            String servicecatalogProductVersionId = productVersionService.getServicecatalogProductVersionId(productId, getApp, getEnvironment);
+            String servicecatalogProductVersionId = productVersionService.getServicecatalogProductVersionId(productId,
+                getApp, getEnvironment);
             Assert.hasText(servicecatalogProductVersionId, "未找到对应servicecatalogProductVersionId！");
             result.setData(servicecatalogProductVersionId);
         } catch (Exception e) {
@@ -144,12 +143,12 @@ public class ServiceCatalogViewController extends BaseController{
     }
 
     /**
-         * 根据产品ID查询产品名称并生成产品实例名称
-         *
-         * @param: 产品ID
-         * @return 实例名称
-         * @throws Exception
-         */
+     * 根据产品ID查询产品名称并生成产品实例名称
+     *
+     * @return 实例名称
+     * @throws Exception
+     * @param: 产品ID
+     */
     @GetMapping("/getExampleName.do")
     public void getExampleName(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -157,26 +156,28 @@ public class ServiceCatalogViewController extends BaseController{
         String Id = request.getParameter("productId");
         Integer productId = Integer.valueOf(Id);
         String productName = productService.getProductById(productId).getProductName();
-        
+
         Integer exampleRandom = r.nextInt(10000000);
         String provisionedProductName = productName + "-" + exampleRandom;
-        ProvisionedProduct provisionedProduct = provisionedProductService.getProvisionedProductByProvisionedProductName(provisionedProductName);
+        ProvisionedProduct provisionedProduct = provisionedProductService.getProvisionedProductByProvisionedProductName(
+            provisionedProductName);
         while (provisionedProduct != null) {
             exampleRandom = r.nextInt(10000000);
             provisionedProductName = productName + "-" + exampleRandom;
-            provisionedProduct = provisionedProductService.getProvisionedProductByProvisionedProductName(provisionedProductName);
+            provisionedProduct = provisionedProductService.getProvisionedProductByProvisionedProductName(
+                provisionedProductName);
         }
         result.setData(provisionedProductName);
         outputToJSON(response, result);
 
     }
 
-/**
+    /**
      * 获取免密登录URL
      *
-     * @param: 产品ID、角色ID、实例名称
      * @return URL
      * @throws Exception
+     * @param: 产品ID、角色ID、实例名称
      */
     @GetMapping("/getNonLoginPreUrl.do")
     public void getNonLoginPreUrl(HttpServletRequest request, HttpServletResponse response) {
@@ -208,7 +209,9 @@ public class ServiceCatalogViewController extends BaseController{
             User user = userService.getUserByLoginName(userName);
             UserRole userRole = userRoleService.getUserRoleById(roleId);
 
-            String nonLoginPreUrl = serviceCatalogViewService.getNonLoginPreUrl(servicecatalogProductId, provisionedProductName, region, user, userRole, servicecatalogProductVersionId, servicecatalogPortfolioId, regionSelect);
+            String nonLoginPreUrl = serviceCatalogViewService.getNonLoginPreUrl(servicecatalogProductId,
+                provisionedProductName, region, user, userRole, servicecatalogProductVersionId,
+                servicecatalogPortfolioId, regionSelect);
             result.setData(nonLoginPreUrl);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

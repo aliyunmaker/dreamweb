@@ -3,7 +3,6 @@ package cc.landingzone.dreamweb.dao;
 import java.util.List;
 import java.util.Map;
 
-import cc.landingzone.dreamweb.model.Product;
 import cc.landingzone.dreamweb.model.UserProductAssociate;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +11,9 @@ import org.springframework.stereotype.Component;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Component
-public interface UserProductDao {
+public interface UserProductAssociateDao {
 
     List<UserProductAssociate> listUserProductAssociate(Map<String, Object> map);
 

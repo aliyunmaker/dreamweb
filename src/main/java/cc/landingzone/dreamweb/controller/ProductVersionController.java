@@ -10,17 +10,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 管理产品版本列表
+ *
  * @author: laodou
  * @createDate: 2022/7/8
  */
 @Controller
 @RequestMapping("/productVersion")
-public class ProductVersionController extends BaseController{
+public class ProductVersionController extends BaseController {
 
     @Autowired
     private ProductVersionService productVersionService;
@@ -28,14 +30,13 @@ public class ProductVersionController extends BaseController{
     @Autowired
     private ProductService productService;
 
-
     /**
-         * 获取所有产品版本列表
-         *
-         * @param:
-         * @return
-         * @throws Exception
-         */
+     * 获取所有产品版本列表
+     *
+     * @return
+     * @throws Exception
+     * @param:
+     */
     @RequestMapping("/searchProductVersion.do")
     public void searchProductVersion(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -45,7 +46,7 @@ public class ProductVersionController extends BaseController{
             Page page = new Page(start, limit);
             List<ProductVersion> list = productVersionService.listProductVersion(page);
             List<ProductVersionVO> list1 = new ArrayList<>();
-            for (ProductVersion productVersion: list) {
+            for (ProductVersion productVersion : list) {
                 ProductVersionVO productVersionVO = new ProductVersionVO();
                 productVersionVO.setId(productVersion.getId());
                 productVersionVO.setServicecatalogProductVersionId(productVersion.getServicecatalogProductVersionId());
@@ -67,12 +68,12 @@ public class ProductVersionController extends BaseController{
     }
 
     /**
-         * 增加产品版本
-         *
-         * @param:
-         * @return
-         * @throws Exception
-         */
+     * 增加产品版本
+     *
+     * @return
+     * @throws Exception
+     * @param:
+     */
     @RequestMapping("/addProductVersion.do")
     public void addProductVersion(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -89,12 +90,12 @@ public class ProductVersionController extends BaseController{
     }
 
     /**
-         *  更新产品版本
-         *
-         * @param:
-         * @return
-         * @throws Exception
-         */
+     * 更新产品版本
+     *
+     * @return
+     * @throws Exception
+     * @param:
+     */
     @RequestMapping("/updateProductVersion.do")
     public void updateProductVersion(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -120,12 +121,12 @@ public class ProductVersionController extends BaseController{
     }
 
     /**
-         * 删除产品版本
-         *
-         * @param:
-         * @return
-         * @throws Exception
-         */
+     * 删除产品版本
+     *
+     * @return
+     * @throws Exception
+     * @param:
+     */
     @RequestMapping("/deleteProductVersion.do")
     public void deleteProductVersion(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();

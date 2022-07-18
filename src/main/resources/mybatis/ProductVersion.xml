@@ -4,67 +4,68 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.landingzone.dreamweb.dao.ProductVersionDao">
 
-        <select id="listApps"
-                resultType="String">
-            select distinct app from product_version where product_id = #{productId}
-        </select>
+    <select id="listApps"
+            resultType="String">
+        select distinct app from product_version where product_id = #{productId}
+    </select>
 
-        <select id="listEnvironments"
-                resultType="String">
-            select distinct environment from product_version where app = #{app} and product_id = #{productId}
-        </select>
+    <select id="listEnvironments"
+            resultType="String">
+        select distinct environment from product_version where app = #{app} and product_id = #{productId}
+    </select>
 
-        <select id="getServicecatalogProductVersionId"
-                resultType="String">
-            select servicecatalog_product_version_id from product_version where app = #{app} and environment = #{environment} and product_id = #{productId};
-        </select>
+    <select id="getServicecatalogProductVersionId"
+            resultType="String">
+        select servicecatalog_product_version_id from product_version where app = #{app} and environment =
+        #{environment} and product_id = #{productId};
+    </select>
 
-        <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.ProductVersion" parameterType="map">
-            select * from product_version order by id
-            <if test="page != null">
-                limit #{page.start},#{page.limit}
-            </if>
-        </select>
+    <select id="listProductVersion" resultType="cc.landingzone.dreamweb.model.ProductVersion" parameterType="map">
+        select * from product_version order by id
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
 
-        <select id="getProductVersionTotal" resultType="int" parameterType="map">
-            select count(*) from product_version
-        </select>
+    <select id="getProductVersionTotal" resultType="int" parameterType="map">
+        select count(*) from product_version
+    </select>
 
-        <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.ProductVersion">
-            select *
-            from product_version
-            where id = #{id}
-        </select>
+    <select id="getProductVersionById" resultType="cc.landingzone.dreamweb.model.ProductVersion">
+        select *
+        from product_version
+        where id = #{id}
+    </select>
 
-        <insert id="saveProductVersion"
-                parameterType="cc.landingzone.dreamweb.model.ProductVersion">
-            insert into product_version
-            (app,
-            environment,
-            product_id,
-            servicecatalog_product_version_id,
-            gmt_create)
-            values (#{app},
-                    #{environment},
-                    #{productId},
-                    #{servicecatalogProductVersionId},
-                    now())
-        </insert>
+    <insert id="saveProductVersion"
+            parameterType="cc.landingzone.dreamweb.model.ProductVersion">
+        insert into product_version
+        (app,
+        environment,
+        product_id,
+        servicecatalog_product_version_id,
+        gmt_create)
+        values (#{app},
+        #{environment},
+        #{productId},
+        #{servicecatalogProductVersionId},
+        now())
+    </insert>
 
-        <update id="updateProductVersion" parameterType="cc.landingzone.dreamweb.model.ProductVersion">
-            update product_version
-            set app                                       = #{app},
-                environment                               = #{environment},
-                product_id                                = #{productId},
-                servicecatalog_product_version_id         = #{servicecatalogProductVersionId}
-            where id = #{id}
-        </update>
+    <update id="updateProductVersion" parameterType="cc.landingzone.dreamweb.model.ProductVersion">
+        update product_version
+        set app = #{app},
+        environment = #{environment},
+        product_id = #{productId},
+        servicecatalog_product_version_id = #{servicecatalogProductVersionId}
+        where id = #{id}
+    </update>
 
-        <delete id="deleteProductVersion" parameterType="int">
-            delete
-            from product_version
-            where id = #{id}
-        </delete>
+    <delete id="deleteProductVersion" parameterType="int">
+        delete
+        from product_version
+        where id = #{id}
+    </delete>
 
     <delete id="deleteProductVersionByProductId" parameterType="int">
         delete
@@ -73,8 +74,9 @@
     </delete>
 
 
-        <select id="getProductVersionByServicecatalogProductVersionId" parameterType="String" resultType="cc.landingzone.dreamweb.model.ProductVersion">
-            select * from product_version where servicecatalog_product_version_id = #{servicecatalogProductVersionId}
-        </select>
+    <select id="getProductVersionByServicecatalogProductVersionId" parameterType="String"
+            resultType="cc.landingzone.dreamweb.model.ProductVersion">
+        select * from product_version where servicecatalog_product_version_id = #{servicecatalogProductVersionId}
+    </select>
 
 </mapper>

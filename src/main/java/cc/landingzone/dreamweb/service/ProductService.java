@@ -17,7 +17,6 @@ import java.util.Map;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Component
 public class ProductService {
@@ -41,12 +40,11 @@ public class ProductService {
         return list;
     }
 
-
     @Transactional
     public void saveProduct(Product product) {
         Product product1 = productDao.getProductByServicecatalogProductId(product.getServicecatalogProductId());
-        if(product1 != null) {
-            throw new IllegalArgumentException("此产品(" + product.getServicecatalogProductId()+ ")已存在");
+        if (product1 != null) {
+            throw new IllegalArgumentException("此产品(" + product.getServicecatalogProductId() + ")已存在");
         }
         productDao.saveProduct(product);
     }
@@ -62,7 +60,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product getProductByServicecatalogProductId (String servicecatalogProductId) {
+    public Product getProductByServicecatalogProductId(String servicecatalogProductId) {
         return productDao.getProductByServicecatalogProductId(servicecatalogProductId);
     }
 
@@ -71,8 +69,8 @@ public class ProductService {
         Assert.notNull(product, "数据不能为空!");
         Assert.hasText(product.getServicecatalogProductId(), "产品ID不能为空!");
         Product product1 = productDao.getProductByServicecatalogProductId(product.getServicecatalogProductId());
-        if(product1 != null && product1.getId() != product.getId()) {
-            throw new IllegalArgumentException("此产品(" + product.getServicecatalogProductId()+ ")已存在");
+        if (product1 != null && product1.getId() != product.getId()) {
+            throw new IllegalArgumentException("此产品(" + product.getServicecatalogProductId() + ")已存在");
         }
         productDao.updateProduct(product);
     }

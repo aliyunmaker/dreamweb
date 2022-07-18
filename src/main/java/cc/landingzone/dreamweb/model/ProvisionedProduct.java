@@ -5,7 +5,6 @@ package cc.landingzone.dreamweb.model;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 public class ProvisionedProduct {
 

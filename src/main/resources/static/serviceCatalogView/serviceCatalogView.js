@@ -154,7 +154,6 @@ $(document).ready(function(){
             success: function (result) {
                 var provisionedProductName = result.data;
                 var region = $("#select_region").val();
-                console.log(region);
                 $.ajax({
                     url: "../../serviceCatalogView/getNonLoginPreUrl.do",
                     data: {
@@ -189,7 +188,6 @@ window.addEventListener("message", function(event) {
                 var definitionId = result.data;
                 var data = JSON.parse(event.data);
                 var servicecatalogPlanId = data['PlanId'];
-                console.log(servicecatalogPlanId);
                 $.ajax({
                     url: "../../application/startPlan.do",
                     data: {

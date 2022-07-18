@@ -1,6 +1,5 @@
 package cc.landingzone.dreamweb.dao;
 
-
 import org.springframework.stereotype.Component;
 
 import cc.landingzone.dreamweb.model.Product;
@@ -13,7 +12,6 @@ import java.util.Map;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Component
 public interface ProductDao {

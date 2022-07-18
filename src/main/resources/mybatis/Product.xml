@@ -47,8 +47,8 @@
 
     <update id="updateProduct" parameterType="cc.landingzone.dreamweb.model.Product">
         update product
-        set servicecatalog_product_id                = #{servicecatalogProductId},
-        product_name                                 = #{productName}
+        set servicecatalog_product_id = #{servicecatalogProductId},
+        product_name = #{productName}
         where id = #{id}
     </update>
 

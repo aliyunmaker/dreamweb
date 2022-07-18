@@ -11,7 +11,6 @@ import java.util.Map;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Component
 public interface ApplicationDao {
@@ -20,7 +19,7 @@ public interface ApplicationDao {
 
     List<Application> listApplicationsByStarterId(Map<String, Object> map);
 
-    Integer searchApplicationsByStarterIdTotal(Map <String, Object> map);
+    Integer searchApplicationsByStarterIdTotal(Map<String, Object> map);
 
     void updateTaskByProcessId(String processId, String task);
 

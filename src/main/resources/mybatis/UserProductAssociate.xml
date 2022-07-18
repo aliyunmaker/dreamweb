@@ -2,9 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cc.landingzone.dreamweb.dao.UserProductDao">
+<mapper namespace="cc.landingzone.dreamweb.dao.UserProductAssociateDao">
 
-    <select id="listUserProductAssociate" resultType="cc.landingzone.dreamweb.model.UserProductAssociate" parameterType="map">
+    <select id="listUserProductAssociate" resultType="cc.landingzone.dreamweb.model.UserProductAssociate"
+            parameterType="map">
         select * from user_product_associate order by id
         <if test="page != null">
             limit #{page.start},#{page.limit}
@@ -30,9 +31,9 @@
 
     <update id="updateUserProductAssociate" parameterType="cc.landingzone.dreamweb.model.UserProductAssociate">
         update user_product_associate
-        set product_id                             = #{productId},
-        user_id                                    = #{userId},
-        servicecatalog_portfolio_id                = #{servicecatalogPortfolioId}
+        set product_id = #{productId},
+        user_id = #{userId},
+        servicecatalog_portfolio_id = #{servicecatalogPortfolioId}
         where id = #{id}
     </update>
 
@@ -48,7 +49,8 @@
         where product_id = #{productId}
     </delete>
 
-    <select id="getUserProductAssociateByProductIdAndUserId" resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
+    <select id="getUserProductAssociateByProductIdAndUserId"
+            resultType="cc.landingzone.dreamweb.model.UserProductAssociate">
         select * from user_product_associate
         where product_id = #{productId} and user_id = #{userId}
     </select>
@@ -61,7 +63,8 @@
 
     <select id="getServicecatalogPortfolioId"
             resultType="String">
-        select servicecatalog_portfolio_id from user_product_associate where product_id = #{productId} and user_id = #{userId}
+        select servicecatalog_portfolio_id from user_product_associate where product_id = #{productId} and user_id =
+        #{userId}
     </select>
 
     <select id="listProductIdsByUserId" resultType="Integer">

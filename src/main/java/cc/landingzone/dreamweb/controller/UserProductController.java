@@ -8,7 +8,6 @@ import cc.landingzone.dreamweb.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.utils.JsonUtils;
@@ -17,15 +16,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import cc.landingzone.dreamweb.service.UserProductService;
-
+import cc.landingzone.dreamweb.service.UserProductAssociateService;
 
 @Controller
 @RequestMapping("/userProduct")
 public class UserProductController extends BaseController {
 
     @Autowired
-    private UserProductService userProductService;
+    private UserProductAssociateService userProductAssociateService;
 
     @Autowired
     private ProductService productService;
@@ -34,12 +32,11 @@ public class UserProductController extends BaseController {
     private UserService userService;
 
     /**
-         * 获取所有权限列表
-         *
-         *
-         * @return 权限列表
-         * @throws Exception
-         */
+     * 获取所有权限列表
+     *
+     * @return 权限列表
+     * @throws Exception
+     */
     @RequestMapping("/searchUserProductAssociate.do")
     public void searchUserProductAssociate(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -47,9 +44,9 @@ public class UserProductController extends BaseController {
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
-            List<UserProductAssociate> list = userProductService.listUserProductAssociate(page);
+            List<UserProductAssociate> list = userProductAssociateService.listUserProductAssociate(page);
             List<UserProductAssociateVO> list1 = new ArrayList<>();
-            for (UserProductAssociate userProductAssociate : list ) {
+            for (UserProductAssociate userProductAssociate : list) {
                 Product product = productService.getProductById(userProductAssociate.getProductId());
                 User user = userService.getUserById(userProductAssociate.getUserId());
                 UserProductAssociateVO userProductAssociateVO = new UserProductAssociateVO();
@@ -57,7 +54,8 @@ public class UserProductController extends BaseController {
                 userProductAssociateVO.setLoginName(user.getLoginName());
                 userProductAssociateVO.setProductName(product.getProductName());
                 userProductAssociateVO.setServicecatalogProductId(product.getServicecatalogProductId());
-                userProductAssociateVO.setServicecatalogPortfolioId(userProductAssociate.getServicecatalogPortfolioId());
+                userProductAssociateVO.setServicecatalogPortfolioId(
+                    userProductAssociate.getServicecatalogPortfolioId());
                 list1.add(userProductAssociateVO);
             }
             result.setTotal(page.getTotal());
@@ -73,9 +71,9 @@ public class UserProductController extends BaseController {
     /**
      * 元资源申请页面按照用户名搜索产品列表
      *
-     * @param:
      * @return
      * @throws Exception
+     * @param:
      */
     @RequestMapping("/searchUserProductByUserName.do")
     public void searchUserProductByUserName(HttpServletRequest request, HttpServletResponse response) {
@@ -83,7 +81,7 @@ public class UserProductController extends BaseController {
         try {
             String userName = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userService.getUserByLoginName(userName);
-            List<Product> list = userProductService.listProductByUserId(user.getId());
+            List<Product> list = userProductAssociateService.listProductByUserId(user.getId());
             result.setData(list);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -94,19 +92,18 @@ public class UserProductController extends BaseController {
     }
 
     /**
-         * 增加权限
-         *
-         * @param:
-         *
-         * @throws Exception
-         */
+     * 增加权限
+     *
+     * @throws Exception
+     * @param:
+     */
     @RequestMapping("/addUserProduct.do")
     public void addUserProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
             String formString = request.getParameter("formString");
             UserProductAssociate userProductAssociate = JsonUtils.parseObject(formString, UserProductAssociate.class);
-            userProductService.saveUserProductAssociate(userProductAssociate);
+            userProductAssociateService.saveUserProductAssociate(userProductAssociate);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -116,12 +113,11 @@ public class UserProductController extends BaseController {
     }
 
     /**
-         * 更新权限
-         *
-         * @param:
-         *
-         * @throws Exception
-         */
+     * 更新权限
+     *
+     * @throws Exception
+     * @param:
+     */
     @RequestMapping("/updateUserProduct.do")
     public void updateUserProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -130,13 +126,14 @@ public class UserProductController extends BaseController {
             String productName = request.getParameter("productName");
             String loginName = request.getParameter("loginName");
             String servicecatalogPortfolioId = request.getParameter("servicecatalogPortfolioId");
-            UserProductAssociate userProductAssociate = userProductService.getUserProductAssociateById(Integer.valueOf(id));
+            UserProductAssociate userProductAssociate = userProductAssociateService.getUserProductAssociateById(
+                Integer.valueOf(id));
             User user = userService.getUserByLoginName(loginName);
             Product product = productService.getProductByProductName(productName);
             userProductAssociate.setProductId(product.getId());
             userProductAssociate.setServicecatalogPortfolioId(servicecatalogPortfolioId);
             userProductAssociate.setUserId(user.getId());
-            userProductService.updateUserProductAssociate(userProductAssociate);
+            userProductAssociateService.updateUserProductAssociate(userProductAssociate);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -146,18 +143,17 @@ public class UserProductController extends BaseController {
     }
 
     /**
-         * 删除权限
-         *
-         * @param:
-         *
-         * @throws Exception
-         */
+     * 删除权限
+     *
+     * @throws Exception
+     * @param:
+     */
     @RequestMapping("/deleteUserProduct.do")
     public void deleteUserProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
             Integer id = Integer.valueOf(request.getParameter("id"));
-            userProductService.deleteUserProductAssociate(id);
+            userProductAssociateService.deleteUserProductAssociate(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

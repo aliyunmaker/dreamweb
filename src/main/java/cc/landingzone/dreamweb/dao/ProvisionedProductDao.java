@@ -11,7 +11,6 @@ import java.util.Map;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
 @Component
 public interface ProvisionedProductDao {
@@ -22,16 +21,17 @@ public interface ProvisionedProductDao {
 
     Integer getProvisionedProductTotal(Map<String, Object> map);
 
-
     void saveProvisionedProduct(ProvisionedProduct provisionedProduct);
 
     List<String> listServicecatalogProvisionedProductIdUnderChange();
 
-    ProvisionedProduct getProvisionedProductByServicecatalogProvisionedProductId(String servicecatalogProvisionedProductId);
+    ProvisionedProduct getProvisionedProductByServicecatalogProvisionedProductId(
+        String servicecatalogProvisionedProductId);
 
     void updateStatusByServicecatalogProvisionedProductId(String status, String servicecatalogProvisionedProductId);
 
-    void updateParameterByServicecatalogProvisionedProductId(String parameter, String servicecatalogProvisionedProductId);
+    void updateParameterByServicecatalogProvisionedProductId(String parameter,
+                                                             String servicecatalogProvisionedProductId);
 
     void updateOutputsByServicecatalogProvisionedProductId(String outputs, String servicecatalogProvisionedProductId);
 

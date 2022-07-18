@@ -49,8 +49,10 @@
         select distinct servicecatalog_provisioned_product_id from provisioned_product where status = 'UnderChange'
     </select>
 
-    <select id="getProvisionedProductByServicecatalogProvisionedProductId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
-        select * from provisioned_product where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
+    <select id="getProvisionedProductByServicecatalogProvisionedProductId"
+            resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product where servicecatalog_provisioned_product_id =
+        #{servicecatalogProvisionedProductId}
     </select>
 
     <update id="updateStatusByServicecatalogProvisionedProductId">

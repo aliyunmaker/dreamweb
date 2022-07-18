@@ -5,9 +5,8 @@ package cc.landingzone.dreamweb.model;
  *
  * @author: laodou
  * @createDate: 2022/6/21
- *
  */
-public class Assignment implements Comparable<Assignment>{
+public class Assignment implements Comparable<Assignment> {
     private String starterName;
 
     private String processTime;
