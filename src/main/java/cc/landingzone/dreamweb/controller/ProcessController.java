@@ -220,7 +220,7 @@ public class ProcessController extends BaseController {
         WebResult result = new WebResult();
         String servicecatalogPlanId = request.getParameter("servicecatalogPlanId");
         Application application = applicationService.getApplicationByServicecatalogPlanId(servicecatalogPlanId);
-        if (!application.getProcessState().equals("预检中")) {
+        if (application == null || !application.getProcessState().equals("预检中")) {
             Map<String, String> flag = new HashMap<>();
             flag.put("flag", "yes");
             result.setSuccess(true);

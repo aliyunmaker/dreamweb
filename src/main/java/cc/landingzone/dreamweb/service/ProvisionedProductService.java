@@ -248,7 +248,7 @@ public class ProvisionedProductService {
         ProvisionedProduct provisionedProduct
             = provisionedProductDao.getProvisionedProductByServicecatalogProvisionedProductId(
             servicecatalogProvisionedProductId);
-        if (!provisionedProduct.getStatus().equals("UnderChange")) {
+        if (provisionedProduct == null || !provisionedProduct.getStatus().equals("UnderChange")) {
             flag = "yes";
         }
         return flag;
