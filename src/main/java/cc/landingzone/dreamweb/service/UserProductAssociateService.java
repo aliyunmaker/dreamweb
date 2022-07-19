@@ -93,11 +93,6 @@ public class UserProductAssociateService {
     }
 
     @Transactional
-    public void deleteUserProductAssociateByProductId(Integer productId) {
-        userProductAssociateDao.deleteUserProductAssociateByProductId(productId);
-    }
-
-    @Transactional
     public String getServicecatalogPortfolioId(Integer productId, Integer userId) {
         return userProductAssociateDao.getServicecatalogPortfolioId(productId, userId);
     }

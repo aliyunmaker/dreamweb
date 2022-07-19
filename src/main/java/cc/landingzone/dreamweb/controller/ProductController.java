@@ -119,8 +119,6 @@ public class ProductController extends BaseController {
         try {
             Integer id = Integer.valueOf(request.getParameter("id"));
             productService.deleteProduct(id);
-            productVersionService.deleteProductVersionByProductId(id);
-            userProductAssociateService.deleteUserProductAssociateByProductId(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
