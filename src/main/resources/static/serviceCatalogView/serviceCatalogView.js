@@ -3,17 +3,17 @@ var servicecatalogPortfolioId;
 var productId;
 var roleId;
 
-$(document).ready(function(){
+$(document).ready(function () {
     $.ajax({
-        url:'../userRole/getRoleId.do',
+        url: '../userRole/getRoleId.do',
         success: function (result) {
             roleId = result.data;
-            if(roleId == null) {
+            if (roleId == null) {
                 $.ajax({
-                    url:'../userRole/getUserRole.do',
-                    success:function (result) {
+                    url: '../userRole/getUserRole.do',
+                    success: function (result) {
                         userRole = result.data;
-                        if(userRole == 'ROLE_ADMIN') {
+                        if (userRole == 'ROLE_ADMIN') {
                             alert("您还未选择角色！");
                             window.location.href = "../metadata/metadataManage.html";
                         } else {
@@ -28,26 +28,26 @@ $(document).ready(function(){
     $.ajax({
         url: "../../userProduct/searchUserProductByUserName.do",
         success: function (result) {
-            if(isTrue(result.success)) {
-                var data= result.data;
+            if (isTrue(result.success)) {
+                var data = result.data;
                 var count = data.length;
-                for(var i = 0; i < count;i++) {
+                for (var i = 0; i < count; i++) {
                     productId = data[i].id;
                     var li;
-                    if(i == 0) {
+                    if (i == 0) {
                         productId = data[i].id;
                         test1(productId);
                         test2(productId);
-                        li = $("<li />", {"class":"active"});
+                        li = $("<li />", { "class": "active" });
                     } else {
                         li = $("<li />", {});
                     }
                     var a = $("<a />", {
                         "href": "#basic",
                         "text": data[i].productName,
-                        "data-toggle":"tab" ,
-                        "style":"font-size: medium;",
-                        "test":productId,
+                        "data-toggle": "tab",
+                        "style": "font-size: medium;",
+                        "test": productId,
                         "click": function (e) {
                             productId = e.target.attributes.test.value;
                             test1(productId);
@@ -56,7 +56,7 @@ $(document).ready(function(){
                     });
                     li.append(a);
                     $('#myTab').append(li);
-                    if (i == count-1) {
+                    if (i == count - 1) {
                         productId = data[0].id;
                     }
                 }
@@ -72,7 +72,7 @@ $(document).ready(function(){
                 productId
             },
             success: function (result) {
-                if(isTrue(result.success)) {
+                if (isTrue(result.success)) {
                     servicecatalogPortfolioId = result.data;
                 } else {
                     alert(result.errorMsg);
@@ -88,12 +88,12 @@ $(document).ready(function(){
                 productId
             },
             success: function (result) {
-                if(isTrue(result.success)) {
+                if (isTrue(result.success)) {
                     var appList = result.data;
                     $("#select_app").empty();
                     var option1 = "<option value='选择应用'>" + "选择应用" + "</option>";
                     $("#select_app").append(option1)
-                    for (var i = 0; i < appList.length; i++){
+                    for (var i = 0; i < appList.length; i++) {
                         var app = appList[i];
                         var option = "<option value='" + app + "'>" + app + "</option>";
                         $("#select_app").append(option);
@@ -111,14 +111,14 @@ $(document).ready(function(){
         $.ajax({
             url: "../../serviceCatalogView/getEnvironment.do",
             data: {
-            select_app,
-            productId
+                select_app,
+                productId
             },
             success: function (result) {
-                if(isTrue(result.success)) {
+                if (isTrue(result.success)) {
                     var environmentList = result.data;
                 }
-                for(var i = 0; i < environmentList.length; i++) {
+                for (var i = 0; i < environmentList.length; i++) {
                     var environment = environmentList[i];
                     var option = "<option value='" + environment + "'>" + environment + "</option>";
                     $('#select_environment').append(option);
@@ -133,14 +133,14 @@ $(document).ready(function(){
         $.ajax({
             url: "../../serviceCatalogView/getServicecatalogProductVersionId.do",
             data: {
-            select_app,
-            select_environment,
-            productId
+                select_app,
+                select_environment,
+                productId
             },
             success: function (result) {
-                if(isTrue(result.success)) {
+                if (isTrue(result.success)) {
                     servicecatalogProductVersionId = result.data;
-               }
+                }
             }
         })
     })
@@ -165,11 +165,11 @@ $(document).ready(function(){
                         region
                     },
                     success: function (result) {
-                        if(isTrue(result.success)) {
+                        if (isTrue(result.success)) {
                             var nonLoginPreUrl = result.data;
                             var iframe = '<iframe class="embed-responsive-item" id="iframe_showPreConsole" src="' + nonLoginPreUrl + '"></iframe>';
                             $("#serviceCatalogViewConsoleDiv").html(iframe);
-                        }else {
+                        } else {
                             alert(result.errorMsg);
                         }
                     }
@@ -180,11 +180,11 @@ $(document).ready(function(){
 
 })
 
-window.addEventListener("message", function(event) {
+window.addEventListener("message", function (event) {
     $.ajax({
         url: "../../application/processDefinitionQueryFinal.do",
         success: function (result) {
-            if(isTrue(result.success)) {
+            if (isTrue(result.success)) {
                 var definitionId = result.data;
                 var data = JSON.parse(event.data);
                 var servicecatalogPlanId = data['PlanId'];

@@ -42,79 +42,79 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    servicecatalogPlanId: servicecatalogPlanId,
-                                }, function (data) {
-                                    var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
-                                    var form = new Ext.form.FormPanel({
-                                        defaultType:'textfield',
-                                        items: [{
-                                            xtype : 'displayfield',
-                                            fieldLabel: '应用',
-                                            name: 'home_score',
-                                            value: data.data['应用']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '环境',
-                                            name: 'home_score',
-                                            value: data.data['环境']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '地域',
-                                            name: 'home_score',
-                                            value: data.data['地域']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品ID',
-                                            name: 'home_score',
-                                            value: data.data['产品ID']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品名称',
-                                            name: 'home_score',
-                                            value: data.data['产品名称']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品版本ID',
-                                            name: 'home_score',
-                                            value: data.data['版本ID']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品组合ID',
-                                            name: 'home_score',
-                                            value: data.data['产品组合ID']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '实例名称',
-                                            name: 'home_score',
-                                            value: data.data['实例名称']
-                                        }, {
-                                            xtype : 'textarea',
-                                            fieldLabel: '参数信息',
-                                            width: 400,
-                                            name: 'home_score',
-                                            value: parameters,
-                                            rows:10,
-                                            readOnly:true
-                                        }]
-                                    });
-                                    win = new Ext.Window({
-                                        title:'详细信息',
-                                        layout:'fit',
-                                        width:500,
-                                        closeAction:'close',
-                                        target : document.getElementById('buttonId'),
-                                        plain: true,
-                                        items: [form],
-                                        buttons: [{
-                                           text: '确认',
-                                           handler: function(){
-                                               win.hide();
-                                            }
-                                        }],
-                                        buttonAlign: 'center',
-                                     });
-                                    win.show();
+                                servicecatalogPlanId: servicecatalogPlanId,
+                            }, function (data) {
+                                var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
+                                var form = new Ext.form.FormPanel({
+                                    defaultType: 'textfield',
+                                    items: [{
+                                        xtype: 'displayfield',
+                                        fieldLabel: '应用',
+                                        name: 'home_score',
+                                        value: data.data['应用']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '环境',
+                                        name: 'home_score',
+                                        value: data.data['环境']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '地域',
+                                        name: 'home_score',
+                                        value: data.data['地域']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品ID',
+                                        name: 'home_score',
+                                        value: data.data['产品ID']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品名称',
+                                        name: 'home_score',
+                                        value: data.data['产品名称']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品版本ID',
+                                        name: 'home_score',
+                                        value: data.data['版本ID']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品组合ID',
+                                        name: 'home_score',
+                                        value: data.data['产品组合ID']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '实例名称',
+                                        name: 'home_score',
+                                        value: data.data['实例名称']
+                                    }, {
+                                        xtype: 'textarea',
+                                        fieldLabel: '参数信息',
+                                        width: 400,
+                                        name: 'home_score',
+                                        value: parameters,
+                                        rows: 10,
+                                        readOnly: true
+                                    }]
                                 });
+                                win = new Ext.Window({
+                                    title: '详细信息',
+                                    layout: 'fit',
+                                    width: 500,
+                                    closeAction: 'close',
+                                    target: document.getElementById('buttonId'),
+                                    plain: true,
+                                    items: [form],
+                                    buttons: [{
+                                        text: '确认',
+                                        handler: function () {
+                                            win.hide();
+                                        }
+                                    }],
+                                    buttonAlign: 'center',
+                                });
+                                win.show();
+                            });
                         }
                     });
                 }, 50);

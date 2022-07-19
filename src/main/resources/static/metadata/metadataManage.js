@@ -41,7 +41,7 @@ Ext.onReady(function () {
         rootFlag: 'data',
         pageSize: 200,
         fields: ['id', 'userGroupId', 'roleType', 'roleName', 'roleValue']
-      });
+    });
 
     var userRoleStore = Ext.create('MyExt.Component.SimpleJsonStore', {
         dataUrl: '../userRole/getRolesByUser.do',
@@ -189,14 +189,14 @@ Ext.onReady(function () {
             header: "服务目录产品ID",
             width: 160
         }, {
-             dataIndex: 'servicecatalogPortfolioId',
-             header: "服务目录产品组合ID",
-             width: 160
-         }, {
-              dataIndex: 'loginName',
-              header: "用户名",
-              width: 70
-          }, {
+            dataIndex: 'servicecatalogPortfolioId',
+            header: "服务目录产品组合ID",
+            width: 160
+        }, {
+            dataIndex: 'loginName',
+            header: "用户名",
+            width: 70
+        }, {
             dataIndex: 'productName',
             header: "产品名称",
             width: 170,
@@ -206,7 +206,7 @@ Ext.onReady(function () {
             text: '增加',
             iconCls: 'MyExt-add',
             handler: function () {
-                  userProductFormWindow.changeFormUrlAndShow('');
+                userProductFormWindow.changeFormUrlAndShow('');
             }
         }, {
             text: '修改',
@@ -317,15 +317,15 @@ Ext.onReady(function () {
                     }]
                 });
                 win = new Ext.Window({
-                    title:'可选角色信息',
-                    layout:'form',
-                    width:900,
-                    closeAction:'close',
+                    title: '可选角色信息',
+                    layout: 'form',
+                    width: 900,
+                    closeAction: 'close',
                     plain: true,
                     items: [userRoleInfo],
                     buttons: [{
                         text: '关闭',
-                        handler: function(){
+                        handler: function () {
                             win.hide();
                         }
                     }],
@@ -357,22 +357,23 @@ Ext.onReady(function () {
             name: 'servicecatalogProductVersionId',
             allowBlank: false
         }, {
-           xtype: 'autocombobox',
-           fieldLabel: '产品',
-           store: Ext.create('MyExt.Component.SimpleJsonStore', {
-             dataUrl: '../product/searchProduct.do',
-             pageSize: 10,
-             fields: ['id', 'productName', 'servicecatalogProductId']
-           }),
-           displayField: 'productName',
-           valueField: 'productName',
-           name: 'productName',
-           listConfig: {
-             getInnerTpl: function () {
-               return '{productName}[{servicecatalogProductId}]';
-             }
-           },
-         }],
+            xtype: 'autocombobox',
+            fieldLabel: '产品',
+            queryParam: 'simpleSearch',
+            store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                dataUrl: '../product/searchProduct.do',
+                pageSize: 10,
+                fields: ['id', 'productName', 'servicecatalogProductId']
+            }),
+            displayField: 'productName',
+            valueField: 'productName',
+            name: 'productName',
+            listConfig: {
+                getInnerTpl: function () {
+                    return '{productName}[{servicecatalogProductId}]';
+                }
+            },
+        }],
         submitBtnFn: function () {
             var form = formWindow.getFormPanel().getForm();
             if (form.isValid()) {
@@ -411,23 +412,24 @@ Ext.onReady(function () {
             name: 'servicecatalogProductVersionId',
             allowBlank: false
         }, {
-           xtype: 'autocombobox',
-           emptyText: '产品名称（产品ID）',
-           fieldLabel: '产品',
-           store: Ext.create('MyExt.Component.SimpleJsonStore', {
-             dataUrl: '../product/searchProduct.do',
-             pageSize: 10,
-             fields: ['id', 'productName', 'servicecatalogProductId']
-           }),
-           displayField: 'productName',
-           valueField: 'id',
-           name: 'productId',
-           listConfig: {
-             getInnerTpl: function () {
-               return '{productName}[{servicecatalogProductId}]';
-             }
-           },
-         }],
+            xtype: 'autocombobox',
+            emptyText: '产品名称（产品ID）',
+            fieldLabel: '产品',
+            queryParam: 'simpleSearch',
+            store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                dataUrl: '../product/searchProduct.do',
+                pageSize: 10,
+                fields: ['id', 'productName', 'servicecatalogProductId']
+            }),
+            displayField: 'productName',
+            valueField: 'id',
+            name: 'productId',
+            listConfig: {
+                getInnerTpl: function () {
+                    return '{productName}[{servicecatalogProductId}]';
+                }
+            },
+        }],
         submitBtnFn: function () {
             var form = formWindow2.getFormPanel().getForm();
             if (form.isValid()) {
@@ -443,135 +445,138 @@ Ext.onReady(function () {
     });
 
     var userProductFormWindow2 = new MyExt.Component.FormWindow({
-            title: '修改权限',
-            width: 500,
-            height: 320,
-            formItems: [{
-              name: 'id',
-              hidden: true
-            }, {
-              xtype: 'autocombobox',
-              fieldLabel: '产品',
-                store: Ext.create('MyExt.Component.SimpleJsonStore', {
+        title: '修改权限',
+        width: 500,
+        height: 320,
+        formItems: [{
+            name: 'id',
+            hidden: true
+        }, {
+            xtype: 'autocombobox',
+            fieldLabel: '产品',
+            queryParam: 'simpleSearch',
+            store: Ext.create('MyExt.Component.SimpleJsonStore', {
                 dataUrl: '../product/searchProduct.do',
                 pageSize: 10,
                 fields: ['id', 'productName', 'servicecatalogProductId']
-              }),
-                displayField: 'productName',
-                valueField: 'productName',
-                name: 'productName',
-             listConfig: {
-               getInnerTpl: function () {
-                 return '{productName}[{servicecatalogProductId}]';
-               }
-             },
-            }, {
-               xtype: 'autocombobox',
-               fieldLabel: '用户',
-                store: Ext.create('MyExt.Component.SimpleJsonStore', {
-                 dataUrl: '../user/searchUser.do',
-                 pageSize: 10,
-                 fields: ['id', 'loginName', 'name']
-               }),
-                displayField: 'loginName',
-                valueField: 'loginName',
-                name: 'loginName',
-               listConfig: {
-                 getInnerTpl: function () {
-                   return '{loginName}[{name}]';
-                 }
-               },
-             }, {
-              fieldLabel: '产品组合ID',
-              name: 'servicecatalogPortfolioId',
-              allowBlank: false
-            }],
-            submitBtnFn: function () {
-                var form = userProductFormWindow2.getFormPanel().getForm();
-              if (form.isValid()) {
+            }),
+            displayField: 'productName',
+            valueField: 'productName',
+            name: 'productName',
+            listConfig: {
+                getInnerTpl: function () {
+                    return '{productName}[{servicecatalogProductId}]';
+                }
+            },
+        }, {
+            xtype: 'autocombobox',
+            fieldLabel: '用户',
+            store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                dataUrl: '../user/searchUser.do',
+                pageSize: 10,
+                fields: ['id', 'loginName', 'name']
+            }),
+            displayField: 'loginName',
+            valueField: 'loginName',
+            name: 'loginName',
+            listConfig: {
+                getInnerTpl: function () {
+                    return '{loginName}[{name}]';
+                }
+            },
+        }, {
+            fieldLabel: '产品组合ID',
+            name: 'servicecatalogPortfolioId',
+            allowBlank: false
+        }],
+        submitBtnFn: function () {
+            var form = userProductFormWindow2.getFormPanel().getForm();
+            if (form.isValid()) {
                 MyExt.util.Ajax('../userProduct/updateUserProduct.do', {
                     id: form.getValues().id,
                     productName: form.getValues().productName,
                     loginName: form.getValues().loginName,
                     servicecatalogPortfolioId: form.getValues().servicecatalogPortfolioId
                 }, function (data) {
-                  userProductFormWindow2.hide();
-                  userProductStore.load();
-                  MyExt.Msg.alert('修改成功!');
+                    userProductFormWindow2.hide();
+                    userProductStore.load();
+                    MyExt.Msg.alert('修改成功!');
                 });
-              }
             }
-          });
+        }
+    });
 
     var userProductFormWindow = new MyExt.Component.FormWindow({
         title: '增加权限',
         width: 500,
         height: 320,
-        formItems: [{
-          name: 'id',
-          hidden: true
-        }, {
-          xtype: 'autocombobox',
-          emptyText: '产品名称（产品ID）',
-          fieldLabel: '产品',
-          store: Ext.create('MyExt.Component.SimpleJsonStore', {
-            dataUrl: '../product/searchProduct.do',
-            pageSize: 10,
-            fields: ['id', 'productName', 'servicecatalogProductId']
-          }),
-          displayField: 'productName',
-          displayTpl: Ext.create('Ext.XTemplate',
-            '<tpl for=".">',
-            '{productName}[{servicecatalogProductId}]',
-            '</tpl>'
-          ),
-          valueField: 'id',
-          name: 'productId',
-          listConfig: {
-            getInnerTpl: function () {
-              return '{productName}[{servicecatalogProductId}]';
-            }
-          },
-        }, {
-           xtype: 'autocombobox',
-           emptyText: '登录名（姓名）',
-           fieldLabel: '用户',
-           queryParam: 'simpleSearch',
-           store: Ext.create('MyExt.Component.SimpleJsonStore', {
-             dataUrl: '../user/searchUser.do',
-             fields: ['id', 'loginName', 'name']
-           }),
-           displayField: 'loginName',
-           displayTpl: Ext.create('Ext.XTemplate',
-             '<tpl for=".">',
-             '{loginName}[{name}]',
-             '</tpl>'
-           ),
-           valueField: 'id',
-           name: 'userId',
-           listConfig: {
-             getInnerTpl: function () {
-               return '{loginName}[{name}]';
-             }
-           },
-         }, {
-          fieldLabel: '产品组合ID',
-          name: 'servicecatalogPortfolioId',
-          allowBlank: false
-        }],
+        formItems: [
+            {
+                name: 'id',
+                hidden: true
+            }, {
+                xtype: 'autocombobox',
+                emptyText: '产品名称（产品ID）',
+                fieldLabel: '产品',
+                queryParam: 'simpleSearch',
+                store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                    dataUrl: '../product/searchProduct.do',
+                    pageSize: 10,
+                    fields: ['id', 'productName', 'servicecatalogProductId']
+                }),
+                displayField: 'productName',
+                displayTpl: Ext.create('Ext.XTemplate',
+                    '<tpl for=".">',
+                    '{productName}[{servicecatalogProductId}]',
+                    '</tpl>'
+                ),
+                valueField: 'id',
+                name: 'productId',
+                listConfig: {
+                    getInnerTpl: function () {
+                        return '{productName}[{servicecatalogProductId}]';
+                    }
+                },
+            }, {
+                xtype: 'autocombobox',
+                emptyText: '登录名（姓名）',
+                fieldLabel: '用户',
+                queryParam: 'simpleSearch',
+                store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                    dataUrl: '../user/searchUser.do',
+                    fields: ['id', 'loginName', 'name']
+                }),
+                displayField: 'loginName',
+                displayTpl: Ext.create('Ext.XTemplate',
+                    '<tpl for=".">',
+                    '{loginName}[{name}]',
+                    '</tpl>'
+                ),
+                valueField: 'id',
+                name: 'userId',
+                listConfig: {
+                    getInnerTpl: function () {
+                        return '{loginName}[{name}]';
+                    }
+                },
+            }, {
+                fieldLabel: '产品组合ID',
+                name: 'servicecatalogPortfolioId',
+                allowBlank: false
+            }],
         submitBtnFn: function () {
             var form = userProductFormWindow.getFormPanel().getForm();
-          if (form.isValid()) {
-            MyExt.util.Ajax('../userProduct/addUserProduct.do', {
-                formString: Ext.JSON.encode(form.getValues())
-            }, function (data) {
-              userProductFormWindow.hide();
-              userProductStore.load();
-              MyExt.Msg.alert('增加成功!');
-            });
-          }
+            if (form.isValid()) {
+                MyExt.util.Ajax('../userProduct/addUserProduct.do', {
+                    formString: Ext.JSON.encode(form.getValues())
+                }, function (data) {
+                    userProductFormWindow.hide();
+                    userProductStore.load();
+                    MyExt.Msg.alert('增加成功!');
+                });
+            }
         }
-      });
+    });
 
 
     var productFormWindow = new MyExt.Component.FormWindow({
@@ -615,17 +620,17 @@ Ext.onReady(function () {
     Ext.create('Ext.container.Viewport', {
         layout: 'border',
         items: [{
-          layout: 'border',
-          border: false,
-          split: true,
-          region: 'west',
-          width: 680,
-          items: [productVersionGrid, productGrid]
+            layout: 'border',
+            border: false,
+            split: true,
+            region: 'west',
+            width: 680,
+            items: [productVersionGrid, productGrid]
         }, {
-          layout: 'border',
-          region: 'center',
-          border: false,
-          items: [userProductGrid, userRoleGrid]
+            layout: 'border',
+            region: 'center',
+            border: false,
+            items: [userProductGrid, userRoleGrid]
         }]
     });
 

@@ -32,7 +32,7 @@ Ext.onReady(function () {
             xtype: 'gridcolumn',
             width: 150,
             align: 'center',
-            renderer: function (value, metaData, record, rowIndex, columnIndex,cellmeta) {
+            renderer: function (value, metaData, record, rowIndex, columnIndex, cellmeta) {
                 var servicecatalogPlanId = record.raw.servicecatalogPlanId;
                 var id = servicecatalogPlanId + "shenqingneirong";
                 Ext.defer(function () {
@@ -43,79 +43,79 @@ Ext.onReady(function () {
                         handler: function () {
                             var select = MyExt.util.SelectGridModel(userGrid, true);
                             MyExt.util.Ajax('../task/getInfo.do', {
-                                    servicecatalogPlanId: servicecatalogPlanId,
-                                }, function (data) {
-                                    var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
-                                    var form = new Ext.form.FormPanel({
-                                        defaultType:'textfield',
-                                        items: [{
-                                            xtype : 'displayfield',
-                                            fieldLabel: '应用',
-                                            name: 'home_score',
-                                            value: data.data['应用']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '环境',
-                                            name: 'home_score',
-                                            value: data.data['环境']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '地域',
-                                            name: 'home_score',
-                                            value: data.data['地域']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品ID',
-                                            name: 'home_score',
-                                            value: data.data['产品ID']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品名称',
-                                            name: 'home_score',
-                                            value: data.data['产品名称']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品版本ID',
-                                            name: 'home_score',
-                                            value: data.data['版本ID']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '产品组合ID',
-                                            name: 'home_score',
-                                            value: data.data['产品组合ID']
-                                        }, {
-                                            xtype : 'displayfield',
-                                            fieldLabel: '实例名称',
-                                            name: 'home_score',
-                                            value: data.data['实例名称']
-                                        }, {
-                                            xtype : 'textarea',
-                                            fieldLabel: '参数信息',
-                                            width: 400,
-                                            name: 'home_score',
-                                            value: parameters,
-                                            rows:10,
-                                            readOnly:true
-                                        }]
-                                    });
-                                    var win = new Ext.Window({
-                                        title:'详细信息',
-                                        layout:'fit',
-                                        width:500,
-                                        closeAction:'close',
-                                        target : document.getElementById('buttonId'),
-                                        plain: true,
-                                        items: [form],
-                                        buttons: [{
-                                           text: '确认',
-                                           handler: function(){
-                                               win.hide();
-                                            }
-                                        }],
-                                        buttonAlign: 'center',
-                                        });
-                                    win.show();
+                                servicecatalogPlanId: servicecatalogPlanId,
+                            }, function (data) {
+                                var parameters = JSON.stringify(JSON.parse(data.data["参数信息"]), null, 4);
+                                var form = new Ext.form.FormPanel({
+                                    defaultType: 'textfield',
+                                    items: [{
+                                        xtype: 'displayfield',
+                                        fieldLabel: '应用',
+                                        name: 'home_score',
+                                        value: data.data['应用']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '环境',
+                                        name: 'home_score',
+                                        value: data.data['环境']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '地域',
+                                        name: 'home_score',
+                                        value: data.data['地域']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品ID',
+                                        name: 'home_score',
+                                        value: data.data['产品ID']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品名称',
+                                        name: 'home_score',
+                                        value: data.data['产品名称']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品版本ID',
+                                        name: 'home_score',
+                                        value: data.data['版本ID']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '产品组合ID',
+                                        name: 'home_score',
+                                        value: data.data['产品组合ID']
+                                    }, {
+                                        xtype: 'displayfield',
+                                        fieldLabel: '实例名称',
+                                        name: 'home_score',
+                                        value: data.data['实例名称']
+                                    }, {
+                                        xtype: 'textarea',
+                                        fieldLabel: '参数信息',
+                                        width: 400,
+                                        name: 'home_score',
+                                        value: parameters,
+                                        rows: 10,
+                                        readOnly: true
+                                    }]
                                 });
+                                var win = new Ext.Window({
+                                    title: '详细信息',
+                                    layout: 'fit',
+                                    width: 500,
+                                    closeAction: 'close',
+                                    target: document.getElementById('buttonId'),
+                                    plain: true,
+                                    items: [form],
+                                    buttons: [{
+                                        text: '确认',
+                                        handler: function () {
+                                            win.hide();
+                                        }
+                                    }],
+                                    buttonAlign: 'center',
+                                });
+                                win.show();
+                            });
                         }
                     });
                 }, 50);
@@ -135,15 +135,15 @@ Ext.onReady(function () {
             text: '通过',
             iconCls: 'MyExt-confirm',
             handler: function (o) {
-                var grid=o.ownerCt.ownerCt;//ownerCt 获取父节点  ，最终获取grid
-	        	var select=grid.getSelectionModel().getSelection(); //获取选中的数组对象
+                var grid = o.ownerCt.ownerCt;//ownerCt 获取父节点  ，最终获取grid
+                var select = grid.getSelectionModel().getSelection(); //获取选中的数组对象
                 if (select.length == 0) {
-                    Ext.Msg.alert('提示','请选择要通过的任务（可多选）');
-                }else{
+                    Ext.Msg.alert('提示', '请选择要通过的任务（可多选）');
+                } else {
                     var taskIds = [];
                     var processIds = [];
                     var planIds = [];
-                    Ext.Array.each(select,function(record){
+                    Ext.Array.each(select, function (record) {
                         taskIds.push(record.raw.taskId);
                         processIds.push(record.raw.processId);
                         planIds.push(record.raw.servicecatalogPlanId);
@@ -163,7 +163,7 @@ Ext.onReady(function () {
                             else {
                                 MyExt.Msg.alert('审批通过，开始创建产品实例!');
                             }
-                         });
+                        });
                     });
                 }
             }
@@ -176,19 +176,19 @@ Ext.onReady(function () {
                     return;
                 }
                 win = new Ext.Window({
-                    title:'处理',
-                    layout:'form',
-                    width:700,
-                    closeAction:'close',
-                    target : document.getElementById('buttonId'),
+                    title: '处理',
+                    layout: 'form',
+                    width: 700,
+                    closeAction: 'close',
+                    target: document.getElementById('buttonId'),
                     plain: true,
                     items: [{
-                       xtype : 'textfield',
-                       fieldLabel: '请给出拒绝意见'
+                        xtype: 'textfield',
+                        fieldLabel: '请给出拒绝意见'
                     }],
                     buttons: [{
-                       text: '确认拒绝',
-                       handler: function(){
+                        text: '确认拒绝',
+                        handler: function () {
                             MyExt.util.MessageConfirm('是否确定拒绝', function () {
                                 MyExt.util.Ajax('../task/reject.do', {
                                     taskId: select[0].raw.taskId,
@@ -201,16 +201,16 @@ Ext.onReady(function () {
                                 });
                             });
                         }
-                    },{
-                       text: '取消',
-                       handler: function(){
-                           win.hide();
+                    }, {
+                        text: '取消',
+                        handler: function () {
+                            win.hide();
                         }
                     }],
                     buttonAlign: 'center',
-                 });
+                });
 
-                 win.show();
+                win.show();
             }
         }],
     });
@@ -228,16 +228,16 @@ Ext.onReady(function () {
             count: count,
         }, function (data) {
             var flag = data.data;
-            if(flag != "no") {
+            if (flag != "no") {
                 reload();
             }
         });
     };
 
     //定时刷新store
-    var task={
-        run:update,
-        interval:2000 //2秒
+    var task = {
+        run: update,
+        interval: 2000 //2秒
     }
     Ext.TaskManager.start(task);
 

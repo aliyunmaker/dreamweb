@@ -47,10 +47,11 @@ public class ProductController extends BaseController {
     public void searchProduct(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
+            String simpleSearch = request.getParameter("simpleSearch");
             Integer start = Integer.valueOf(request.getParameter("start"));
             Integer limit = Integer.valueOf(request.getParameter("limit"));
             Page page = new Page(start, limit);
-            List<Product> list = productService.listProduct(page);
+            List<Product> list = productService.listProduct(simpleSearch, page);
             result.setTotal(page.getTotal());
             result.setData(list);
         } catch (Exception e) {

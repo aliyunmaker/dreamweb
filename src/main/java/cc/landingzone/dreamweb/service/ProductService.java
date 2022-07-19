@@ -25,8 +25,9 @@ public class ProductService {
     private ProductDao productDao;
 
     @Transactional
-    public List<Product> listProduct(Page page) {
+    public List<Product> listProduct(String simpleSearch, Page page) {
         Map<String, Object> map = new HashMap<>();
+        map.put("simpleSearch", simpleSearch);
         map.put("page", page);
         List<Product> list = productDao.listProduct(map);
         if (null != page) {

@@ -5,7 +5,13 @@
 <mapper namespace="cc.landingzone.dreamweb.dao.ProductDao">
 
     <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
-        select * from product order by id
+        select * from product
+        <where>
+            <if test="simpleSearch != null and simpleSearch !=''">
+                and (servicecatalog_product_id like concat('%',#{simpleSearch},'%') or product_name like concat('%',#{simpleSearch},'%'))
+            </if>
+        </where>
+        order by id
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>
@@ -13,6 +19,11 @@
 
     <select id="getProductTotal" resultType="int" parameterType="map">
         select count(*) from product
+        <where>
+            <if test="simpleSearch != null and simpleSearch !=''">
+                and (servicecatalog_product_id like concat('%',#{simpleSearch},'%') or product_name like concat('%',#{simpleSearch},'%'))
+            </if>
+        </where>
     </select>
 
     <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">

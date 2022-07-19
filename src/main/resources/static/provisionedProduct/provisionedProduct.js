@@ -7,7 +7,7 @@ Ext.onReady(function () {
         dataUrl: '../provisionedProduct/searchProvisionedProduct.do',
         rootFlag: 'data',
         pageSize: 200,
-        fields: ['id', 'provisionedProductName', 'servicecatalogProductId', 'servicecatalogProvisionedProductId', 'roleId', 'starterName', 'status', 'parameter', 'outputs', 'productName','createTime']
+        fields: ['id', 'provisionedProductName', 'servicecatalogProductId', 'servicecatalogProvisionedProductId', 'roleId', 'starterName', 'status', 'parameter', 'outputs', 'productName', 'createTime']
     });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
@@ -44,14 +44,14 @@ Ext.onReady(function () {
             header: "实例状态",
             width: 115,
             align: 'center',
-            renderer: function(v) {
-                if(v == 'Error') {
+            renderer: function (v) {
+                if (v == 'Error') {
                     return "<span style='color:red;'>Error</span>";
                 }
-                else if(v == 'Available') {
+                else if (v == 'Available') {
                     return "<span style='color:green;'>Available</span>";
                 }
-                else if(v == 'UnderChange') {
+                else if (v == 'UnderChange') {
                     return "<span style='color:black;'>UnderChange</span>";
                 }
             }
@@ -69,27 +69,27 @@ Ext.onReady(function () {
                         handler: function () {
                             var parameter = JSON.stringify(JSON.parse(record.data.parameter), null, 4);
                             parameterTest = Ext.create('Ext.form.field.TextArea', {
-                                labelAlign:'right',
+                                labelAlign: 'right',
                                 width: "100%",
                                 name: 'parameter',
                                 value: parameter,
                                 allowBlank: false,
-                                rows:20,
+                                rows: 20,
                                 width: '100%',
-                                readOnly:true,
+                                readOnly: true,
                             });
                             win = new Ext.Window({
-                                title:'申请参数详细信息',
-                                layout:'form',
-                                width:400,
-                                closeAction:'close',
-                                target : document.getElementById('buttonId'),
+                                title: '申请参数详细信息',
+                                layout: 'form',
+                                width: 400,
+                                closeAction: 'close',
+                                target: document.getElementById('buttonId'),
                                 plain: true,
                                 items: [parameterTest],
                                 buttons: [{
-                                text: '确认',
-                                handler: function(){
-                                    win.hide();
+                                    text: '确认',
+                                    handler: function () {
+                                        win.hide();
                                     }
                                 }],
                                 buttonAlign: 'center',
@@ -104,60 +104,60 @@ Ext.onReady(function () {
             text: '实例输出',
             width: 130,
             align: 'center',
-            renderer: function (value, metaData, record,rowIndex,store) {
-            var id = record.data.servicecatalogProvisionedProductId + 'shilishuchu';
-            Ext.defer(function () {
-                Ext.widget('button', {
-                    renderTo: id,
-                    width: 110,
-                    text: '实例输出',
-                    handler: function () {
-                        var outputs;
-                        if(record.data.outputs == null) {
-                            outputs = "";
-                        } else if(record.data.status == "Error"){
-                            outputs = record.data.outputs;
-                        } else {
-                            outputs = JSON.stringify(JSON.parse(record.data.outputs), null, 4);
+            renderer: function (value, metaData, record, rowIndex, store) {
+                var id = record.data.servicecatalogProvisionedProductId + 'shilishuchu';
+                Ext.defer(function () {
+                    Ext.widget('button', {
+                        renderTo: id,
+                        width: 110,
+                        text: '实例输出',
+                        handler: function () {
+                            var outputs;
+                            if (record.data.outputs == null) {
+                                outputs = "";
+                            } else if (record.data.status == "Error") {
+                                outputs = record.data.outputs;
+                            } else {
+                                outputs = JSON.stringify(JSON.parse(record.data.outputs), null, 4);
+                            }
+                            outputsTest = Ext.create('Ext.form.field.TextArea', {
+                                labelAlign: 'right',
+                                width: "100%",
+                                name: 'outputs',
+                                value: outputs,
+                                allowBlank: false,
+                                rows: 20,
+                                width: '100%',
+                                readOnly: true,
+                            });
+                            win = new Ext.Window({
+                                title: '实例输出详细信息',
+                                layout: 'form',
+                                width: 500,
+                                closeAction: 'close',
+                                target: document.getElementById('buttonId'),
+                                plain: true,
+                                items: [outputsTest],
+                                buttons: [{
+                                    text: '确认',
+                                    handler: function () {
+                                        win.hide();
+                                    }
+                                }],
+                                buttonAlign: 'center',
+                            });
+                            win.show();
                         }
-                        outputsTest = Ext.create('Ext.form.field.TextArea', {
-                            labelAlign:'right',
-                            width: "100%",
-                            name: 'outputs',
-                            value: outputs,
-                            allowBlank: false,
-                            rows:20,
-                            width: '100%',
-                            readOnly:true,
-                        });
-                        win = new Ext.Window({
-                            title:'实例输出详细信息',
-                            layout:'form',
-                            width:500,
-                            closeAction:'close',
-                            target : document.getElementById('buttonId'),
-                            plain: true,
-                            items: [outputsTest],
-                            buttons: [{
-                            text: '确认',
-                            handler: function(){
-                                win.hide();
-                                }
-                            }],
-                            buttonAlign: 'center',
-                        });
-                        win.show();
-                    }
-                });
-            }, 50);
-            return Ext.String.format('<div id="{0}"></div>', id);
-        }
-    }, {
-                 dataIndex: 'createTime',
-                 header: "创建时间",
-                 width: 150
-             }],
-});
+                    });
+                }, 50);
+                return Ext.String.format('<div id="{0}"></div>', id);
+            }
+        }, {
+            dataIndex: 'createTime',
+            header: "创建时间",
+            width: 150
+        }],
+    });
 
     reload();
     Ext.create('Ext.container.Viewport', {
@@ -167,14 +167,14 @@ Ext.onReady(function () {
 
     function update() {
         for (var i = 0; i < userStore.getCount(); i++) {//store遍历，可能有多条数据
-            var  record = userStore.getAt(i);//获取每一条记录
-            if(record.get('status') == 'UnderChange') {
+            var record = userStore.getAt(i);//获取每一条记录
+            if (record.get('status') == 'UnderChange') {
                 var servicecatalogProvisionedProductId = record.get('servicecatalogProvisionedProductId');
                 MyExt.util.Ajax('../provisionedProduct/updateProvisionedProduct.do', {
                     servicecatalogProvisionedProductId: servicecatalogProvisionedProductId,
                 }, function (data) {
                     var flag = data.data;
-                    if(flag != "no") {
+                    if (flag != "no") {
                         reload();
                     }
                 });
@@ -183,9 +183,9 @@ Ext.onReady(function () {
     };
 
     //定时刷新store
-    var task={
-        run:update,
-        interval:2000 //2秒
+    var task = {
+        run: update,
+        interval: 2000 //2秒
     }
     Ext.TaskManager.start(task);
 
