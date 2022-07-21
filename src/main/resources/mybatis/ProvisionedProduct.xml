@@ -17,6 +17,14 @@
         </if>
     </select>
 
+    <select id="listProvisionedProducts2" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select *from provisioned_product
+        where id = 5
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
     <select id="getProvisionedProductTotal" resultType="int" parameterType="map">
         select count(*) from provisioned_product
     </select>

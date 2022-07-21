@@ -56,6 +56,27 @@ public class ProvisionedProductService {
         return provisionedProductDao.listServicecatalogProvisionedProductIdUnderChange();
     }
 
+//    @Transactional
+//    public List<ProvisionedProduct> listProvisionedProductsByRole(String role) {
+//
+//    }
+
+    @Transactional
+    public List<ProvisionedProduct> listProvisionedProducts2(Page page) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("page", page);
+        List<ProvisionedProduct> list = provisionedProductDao.listProvisionedProducts2(map);
+//        if (null != page) {
+//            if (null != page.getStart() && null != page.getLimit()) {
+//                Integer total = provisionedProductDao.getProvisionedProductTotal(map);
+//                page.setTotal(total);
+//            } else {
+//                page.setTotal(list.size());
+//            }
+//        }
+        return list;
+    }
+
     @Transactional
     public List<ProvisionedProduct> listProvisionedProducts(Page page) {
         Map<String, Object> map = new HashMap<>();
