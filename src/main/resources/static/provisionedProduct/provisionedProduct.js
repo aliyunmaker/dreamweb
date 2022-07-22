@@ -181,7 +181,6 @@ Ext.onReady(function () {
             },
             listeners: {
                 'change': function(o, gid) {
-                    console.log(o.rawValue);
                     if(o.rawValue == "所有") {
                         flag2 = true;
                         reload();
