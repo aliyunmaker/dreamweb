@@ -53,7 +53,7 @@ public class ApplicationService {
     @Autowired
     private ProductService productService;
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceCatalogViewService.class);
+    private static Logger logger = LoggerFactory.getLogger(ApplicationService.class);
 
     @Transactional
     public void saveApplication(Application application) {

@@ -24,7 +24,7 @@ import java.util.*;
 @Service
 public class ProvisionedProductService {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceCatalogViewService.class);
+    private static Logger logger = LoggerFactory.getLogger(ProvisionedProductService.class);
 
     @Autowired
     private ProvisionedProductDao provisionedProductDao;
