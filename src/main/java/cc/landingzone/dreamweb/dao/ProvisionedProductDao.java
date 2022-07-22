@@ -18,9 +18,12 @@ public interface ProvisionedProductDao {
     ProvisionedProduct getProvisionedProductByProvisionedProductName(String provisionedProductName);
 
     List<ProvisionedProduct> listProvisionedProducts(Map<String, Object> map);
-    List<ProvisionedProduct> listProvisionedProducts2(Map<String, Object> map);
+
+    List<ProvisionedProduct> listProvisionedProductsByUserId(Map<String, Object> map);
 
     Integer getProvisionedProductTotal(Map<String, Object> map);
+
+    Integer getProvisionedProductTotalByUserId(Map<String, Object> map);
 
     void saveProvisionedProduct(ProvisionedProduct provisionedProduct);
 

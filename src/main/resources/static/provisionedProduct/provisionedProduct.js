@@ -2,6 +2,7 @@ Ext.onReady(function () {
     var reload = function () {
         userStore.load();
     };
+    var flag2 = false;
 
     var userStore = Ext.create('MyExt.Component.SimpleJsonStore', {
         dataUrl: '../provisionedProduct/searchProvisionedProduct.do',
@@ -9,6 +10,12 @@ Ext.onReady(function () {
         pageSize: 200,
         fields: ['id', 'provisionedProductName', 'servicecatalogProductId', 'servicecatalogProvisionedProductId', 'roleId', 'starterName', 'status', 'parameter', 'outputs', 'productName', 'createTime']
     });
+
+    userStore.on('beforeload', function (store, options) {
+        options.params = Ext.apply(options.params || {}, {
+          flag: flag2
+        });
+      });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'center',
@@ -159,120 +166,32 @@ Ext.onReady(function () {
         }],
         tbar : [new Ext.form.ComboBox({
             fieldLabel: '访问筛选器',
-            // store : ["我的", "所有"],    //給ComboBox添加數據
             store: Ext.create('MyExt.Component.SimpleJsonStore', {
                 dataUrl: '../provisionedProduct/getRole.do',
                 fields: ['id', 'role']
             }),
             displayField: 'role',
-            // valueField: 'role',
             emptyText : '我的',
-            editable : false,   //是否允許輸入
+            editable : false,
             width: 170,
             listConfig: {
                 getInnerTpl: function () {
-                    // console.log("111");
                     return '{role}';
                 }
             },
             listeners: {
                 'change': function(o, gid) {
-                    // console.log("222");
-                    // console.log(o);
-                    // console.log(gid);
                     console.log(o.rawValue);
                     if(o.rawValue == "所有") {
-                        userStore = Ext.create('MyExt.Component.SimpleJsonStore', {
-                            dataUrl: '../provisionedProduct/searchProvisionedProduct.do',
-                            rootFlag: 'data',
-                            pageSize: 200,
-                            fields: ['id', 'provisionedProductName', 'servicecatalogProductId', 'servicecatalogProvisionedProductId', 'roleId', 'starterName', 'status', 'parameter', 'outputs', 'productName', 'createTime']
-                        });
-                        userGrid.getView().refresh();
+                        flag2 = true;
                         reload();
-                        console.log("333");
                     } else {
-                        console.log("222");
-                        var userStore2 = Ext.create('MyExt.Component.SimpleJsonStore', {
-                            dataUrl: '../provisionedProduct/searchProvisionedProduct2.do',
-                            rootFlag: 'data',
-                            pageSize: 200,
-                            fields: ['id', 'provisionedProductName', 'servicecatalogProductId', 'servicecatalogProvisionedProductId', 'roleId', 'starterName', 'status', 'parameter', 'outputs', 'productName', 'createTime']
-                        });
-                        userGrid.getView().refresh();
-                        userGrid.store = userStore2;
-                        userGrid.getView().refresh();
-                        console.log(userStore2);
-                        console.log(userStore);
-                        console.log(userGrid);
+                        flag2 = false;
                         reload();
                     }
-                    // MyExt.util.Ajax('../provisionedProduct/updateUserProduct.do', {
-                    //     role: o.rawValue,
-                    // }, function (data) {
-                    //     userProductFormWindow2.hide();
-                    //     userProductStore.load();
-                    //     MyExt.Msg.alert('修改成功!');
-                    // });
                 }
             }
         })],
-        // tbar: [{
-        //     text: '通过',
-        //     iconCls: 'MyExt-confirm',
-        //     handler: function (o) {
-        //         var grid = o.ownerCt.ownerCt;//ownerCt 获取父节点  ，最终获取grid
-        //         var select = grid.getSelectionModel().getSelection(); //获取选中的数组对象
-        //         if (select.length == 0) {
-        //             Ext.Msg.alert('提示', '请选择要通过的任务（可多选）');
-        //         } else {
-        //             var taskIds = [];
-        //             var processIds = [];
-        //             var planIds = [];
-        //             Ext.Array.each(select, function (record) {
-        //                 taskIds.push(record.raw.taskId);
-        //                 processIds.push(record.raw.processId);
-        //                 planIds.push(record.raw.servicecatalogPlanId);
-        //             });
-        //             var taskId = JSON.stringify(taskIds);
-        //             var processId = JSON.stringify(processIds);
-        //             var planId = JSON.stringify(planIds);
-        //             MyExt.util.MessageConfirm('是否确定通过', function () {
-        //                 MyExt.util.Ajax('../task/complete.do', {
-        //                     taskId: taskId,
-        //                     processId: processId,
-        //                     planId: planId
-        //                 }, function (data) {
-        //                     reload();
-        //                     if (data.data == 1)
-        //                         MyExt.Msg.alert('通过成功!');
-        //                     else {
-        //                         MyExt.Msg.alert('审批通过，开始创建产品实例!');
-        //                     }
-        //                 });
-        //             });
-        //         }
-        //     }
-        // }],
-        // tbar: Ext.create('Ext.Toolbar', {
-        // text: '添加', handler: function () {
-        //
-        //         }
-        // }),
-        // Toolbar([
-        //     { text: '添加', handler: function () {
-        //         }
-        //     }, '-',
-        //     { text: '修改', handler: function () {
-        //         }
-        //     }, '-', //修改操作
-        //     {text: '删除', handler: function () {//删除操作
-        //         }
-        //     }, '-',
-        //     { text: '上移', handler: function () {  } }, '-',
-        //     { text: '下移', handler: function () {  } }
-        // ]),
-        // bbar: new Ext.PagingToolbar({ store: userStore, pageSize: 50, displayInfo: true, displayMsg: '显示{0}-{1}条记录,共{2}条', emptyMsg: '没有记录' })
     });
 
     reload();

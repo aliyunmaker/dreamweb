@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,24 +57,22 @@ public class ProvisionedProductService {
         return provisionedProductDao.listServicecatalogProvisionedProductIdUnderChange();
     }
 
-//    @Transactional
-//    public List<ProvisionedProduct> listProvisionedProductsByRole(String role) {
-//
-//    }
-
     @Transactional
-    public List<ProvisionedProduct> listProvisionedProducts2(Page page) {
+    public List<ProvisionedProduct> listProvisionedProductsByUserId(Page page) {
         Map<String, Object> map = new HashMap<>();
         map.put("page", page);
-        List<ProvisionedProduct> list = provisionedProductDao.listProvisionedProducts2(map);
-//        if (null != page) {
-//            if (null != page.getStart() && null != page.getLimit()) {
-//                Integer total = provisionedProductDao.getProvisionedProductTotal(map);
-//                page.setTotal(total);
-//            } else {
-//                page.setTotal(list.size());
-//            }
-//        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByLoginName(username);
+        map.put("userId", user.getId());
+        List<ProvisionedProduct> list = provisionedProductDao.listProvisionedProductsByUserId(map);
+        if (null != page) {
+            if (null != page.getStart() && null != page.getLimit()) {
+                Integer total = provisionedProductDao.getProvisionedProductTotalByUserId(map);
+                page.setTotal(total);
+            } else {
+                page.setTotal(list.size());
+            }
+        }
         return list;
     }
 

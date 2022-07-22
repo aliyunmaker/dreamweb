@@ -10,16 +10,16 @@
     </select>
 
     <select id="listProvisionedProducts" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
-        select *from provisioned_product
+        select * from provisioned_product
         order by id desc
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>
     </select>
 
-    <select id="listProvisionedProducts2" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
-        select *from provisioned_product
-        where id = 5
+    <select id="listProvisionedProductsByUserId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product
+        where starter_id = #{userId}
         <if test="page != null">
             limit #{page.start},#{page.limit}
         </if>
@@ -27,6 +27,11 @@
 
     <select id="getProvisionedProductTotal" resultType="int" parameterType="map">
         select count(*) from provisioned_product
+    </select>
+
+    <select id="getProvisionedProductTotalByUserId" resultType="int" parameterType="map">
+        select count(*) from provisioned_product
+        where starter_id = #{userId}
     </select>
 
     <insert id="saveProvisionedProduct" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">
