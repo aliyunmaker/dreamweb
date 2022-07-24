@@ -7,6 +7,7 @@ import cc.landingzone.dreamweb.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import cc.landingzone.dreamweb.service.ProductService;
 import cc.landingzone.dreamweb.service.UserService;
@@ -51,9 +52,9 @@ public class UserProductController extends BaseController {
                 User user = userService.getUserById(userProductAssociate.getUserId());
                 UserProductAssociateVO userProductAssociateVO = new UserProductAssociateVO();
                 userProductAssociateVO.setId(userProductAssociate.getId());
-                userProductAssociateVO.setLoginName(user.getLoginName());
-                userProductAssociateVO.setProductName(product.getProductName());
-                userProductAssociateVO.setServicecatalogProductId(product.getServicecatalogProductId());
+                userProductAssociateVO.setLoginName(Optional.ofNullable(user).map(User::getLoginName).orElse(null));
+                userProductAssociateVO.setProductName(Optional.ofNullable(product).map(Product::getProductName).orElse(null));
+                userProductAssociateVO.setServicecatalogProductId(Optional.ofNullable(product).map(Product::getServicecatalogProductId).orElse(null));
                 userProductAssociateVO.setServicecatalogPortfolioId(
                     userProductAssociate.getServicecatalogPortfolioId());
                 list1.add(userProductAssociateVO);
