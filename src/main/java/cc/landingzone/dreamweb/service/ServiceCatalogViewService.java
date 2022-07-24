@@ -134,7 +134,7 @@ public class ServiceCatalogViewService {
     }
 
     /**
-     * 获取产品实例之前创建终端
+     * 查询产品实例状态之前创建终端
      *
      * @return 终端
      * @throws Exception
