@@ -2,6 +2,7 @@ Ext.onReady(function () {
     var reload = function () {
         userStore.load();
     };
+    var flag2 = false;
 
     var userStore = Ext.create('MyExt.Component.SimpleJsonStore', {
         dataUrl: '../provisionedProduct/searchProvisionedProduct.do',
@@ -9,6 +10,12 @@ Ext.onReady(function () {
         pageSize: 200,
         fields: ['id', 'provisionedProductName', 'servicecatalogProductId', 'servicecatalogProvisionedProductId', 'roleId', 'starterName', 'status', 'parameter', 'outputs', 'productName', 'createTime']
     });
+
+    userStore.on('beforeload', function (store, options) {
+        options.params = Ext.apply(options.params || {}, {
+          flag: flag2
+        });
+      });
 
     var userGrid = Ext.create('MyExt.Component.GridPanel', {
         region: 'center',
@@ -157,6 +164,33 @@ Ext.onReady(function () {
             header: "创建时间",
             width: 150
         }],
+        tbar : [new Ext.form.ComboBox({
+            fieldLabel: '访问筛选器',
+            store: Ext.create('MyExt.Component.SimpleJsonStore', {
+                dataUrl: '../provisionedProduct/getRole.do',
+                fields: ['id', 'role']
+            }),
+            displayField: 'role',
+            emptyText : '我的',
+            editable : false,
+            width: 170,
+            listConfig: {
+                getInnerTpl: function () {
+                    return '{role}';
+                }
+            },
+            listeners: {
+                'change': function(o, gid) {
+                    if(o.rawValue == "所有") {
+                        flag2 = true;
+                        reload();
+                    } else {
+                        flag2 = false;
+                        reload();
+                    }
+                }
+            }
+        })],
     });
 
     reload();

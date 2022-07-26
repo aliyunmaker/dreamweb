@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 管理产品版本列表
@@ -53,8 +54,8 @@ public class ProductVersionController extends BaseController {
                 productVersionVO.setApp(productVersion.getApp());
                 productVersionVO.setEnvironment(productVersion.getEnvironment());
                 Product product = productService.getProductById(productVersion.getProductId());
-                productVersionVO.setProductName(product.getProductName());
-                productVersionVO.setServicecatalogProductId(product.getServicecatalogProductId());
+                productVersionVO.setProductName(Optional.ofNullable(product).map(Product::getProductName).orElse(null));
+                productVersionVO.setServicecatalogProductId(Optional.ofNullable(product).map(Product::getServicecatalogProductId).orElse(null));
                 list1.add(productVersionVO);
             }
             result.setTotal(page.getTotal());
