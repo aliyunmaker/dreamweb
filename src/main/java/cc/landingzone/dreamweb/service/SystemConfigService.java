@@ -185,7 +185,7 @@ public class SystemConfigService {
      * @return
      */
     public String getLoginPageTitle() {
-        return getStringValueFromCache("loginPageTitle", "无限梦想");
+        return getStringValueFromCache("loginPageTitle", "个人演示网");
     }
 
     /**

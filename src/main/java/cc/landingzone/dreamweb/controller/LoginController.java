@@ -65,6 +65,7 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/index.html")
     public String hello(Model model) {
+        model.addAttribute("loginPageTitle", systemConfigService.getLoginPageTitle());
         model.addAttribute("isAdmin", AuthorityUtils.authorityListToSet(
             SecurityContextHolder.getContext().getAuthentication().getAuthorities()
             ).contains("ROLE_ADMIN"));
