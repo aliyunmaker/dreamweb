@@ -124,6 +124,7 @@
 
 <body ${onloadSubmit}>
     <form action="${ssoURL}" method="post" ${formVisible}>
+        <div><input name="RelayState" type="hidden" value="https://home.console.aliyun.com" /></div>
         <div><textarea name="SAMLResponse">${samlResponse}</textarea>
         </div>
         <div><input type="submit" value="Continue" /></div>
