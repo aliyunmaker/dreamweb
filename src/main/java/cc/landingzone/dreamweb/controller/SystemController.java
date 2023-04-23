@@ -3,7 +3,6 @@ package cc.landingzone.dreamweb.controller;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -16,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
@@ -35,8 +33,8 @@ public class SystemController extends BaseController implements InitializingBean
     private Logger logger = LoggerFactory.getLogger(SystemController.class);
 
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+//    @Autowired
+//    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private SyncUserFromLDAPTask syncUserFromLDAPTask;
@@ -86,8 +84,8 @@ public class SystemController extends BaseController implements InitializingBean
     public void getStartInfo(HttpServletRequest request, HttpServletResponse response) {
         String result = new String();
         try {
-            result = "hostname: " + InetAddress.getLocalHost().getHostName() + " \n " + new Date() + stringRedisTemplate;
-            stringRedisTemplate.opsForValue().set("dreamwebname", "charlesttest" + new Date(), 60, TimeUnit.SECONDS);
+            result = "hostname: " + InetAddress.getLocalHost().getHostName() + " \n " + new Date() ;
+//            stringRedisTemplate.opsForValue().set("dreamwebname", "charlesttest" + new Date(), 60, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result = e.getMessage();

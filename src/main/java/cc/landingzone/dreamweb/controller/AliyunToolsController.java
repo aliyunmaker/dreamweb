@@ -17,7 +17,6 @@ public class AliyunToolsController extends BaseController {
     @Autowired
     ResourceDirectoryAccountFactory resourceDirectoryAccountFactory;
 
-
     @RequestMapping("/createAccount.do")
     public void createAccount(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
@@ -26,8 +25,9 @@ public class AliyunToolsController extends BaseController {
             final String accessKeySecret = request.getParameter("accessKeySecret");
             final String email = request.getParameter("email");
             final String id = "aliyuntool_new_account_" + UUIDUtils.generateUUID();
-            ResourceDirectoryAccountFactory.putLogToRedis(id, "=================start: " + id + "==================");
-//            ResourceDirectoryAccountFactory.logMap.put(id, new StringBuilder());
+            // ResourceDirectoryAccountFactory.putLogToRedis(id, "=================start: " + id +
+            // "==================");
+            // ResourceDirectoryAccountFactory.logMap.put(id, new StringBuilder());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -52,12 +52,12 @@ public class AliyunToolsController extends BaseController {
         WebResult result = new WebResult();
         try {
             String id = request.getParameter("id");
-            if (null == ResourceDirectoryAccountFactory.getLogFromRedis(id)) {
-                result.setData("can not find log,id:" + id);
-            } else {
-                String log = ResourceDirectoryAccountFactory.getLogFromRedis(id);
-                result.setData(log);
-            }
+            result.setData("can not find log,id:" + id);
+            // if (null == ResourceDirectoryAccountFactory.getLogFromRedis(id)) {
+            // } else {
+            // String log = ResourceDirectoryAccountFactory.getLogFromRedis(id);
+            // result.setData(log);
+            // }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

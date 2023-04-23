@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -18,7 +19,6 @@ import javax.naming.directory.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +34,8 @@ public class SyncUserFromLDAPTask {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private RedisLockRegistry redisLockRegistry;
+//    @Autowired
+//    private RedisLockRegistry redisLockRegistry;
 
     @Autowired
     private SystemConfigService systemConfigService;
@@ -73,7 +73,7 @@ public class SyncUserFromLDAPTask {
         if(!systemConfigService.isAllowLDAP()) {
             return;
         }
-        Lock lock = redisLockRegistry.obtain("mylock");
+        Lock lock = new ReentrantLock();
         boolean success = false;
         try {
             success = lock.tryLock(3, TimeUnit.SECONDS);
