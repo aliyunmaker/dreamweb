@@ -25,9 +25,6 @@ public class AliyunToolsController extends BaseController {
             final String accessKeySecret = request.getParameter("accessKeySecret");
             final String email = request.getParameter("email");
             final String id = "aliyuntool_new_account_" + UUIDUtils.generateUUID();
-            // ResourceDirectoryAccountFactory.putLogToRedis(id, "=================start: " + id +
-            // "==================");
-            // ResourceDirectoryAccountFactory.logMap.put(id, new StringBuilder());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -53,11 +50,6 @@ public class AliyunToolsController extends BaseController {
         try {
             String id = request.getParameter("id");
             result.setData("can not find log,id:" + id);
-            // if (null == ResourceDirectoryAccountFactory.getLogFromRedis(id)) {
-            // } else {
-            // String log = ResourceDirectoryAccountFactory.getLogFromRedis(id);
-            // result.setData(log);
-            // }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
