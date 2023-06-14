@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Generator</title>
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
+    <script type="text/javascript"
+        src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+    <script type="text/javascript">
+        let task;
+        $(document).ready(function () {
+            $("#btn_config").on("click", function () {
+                let accessKeyId = $("input[name='accessKeyId']").val();
+                let accessKeySecret = $("input[name='accessKeySecret']").val();
+                let idpProviderName = $('input[name="idpProviderName"]').val();
+                let roleJson = $('textarea[name="roleJson"]').val();
+
+                $("#msgBox").show();
+                $("#msgBox").delay(1000).hide(500);
+
+                $.ajax({
+                    url: "../../sso/listSubAccount.do",
+                    data: {
+                        accessKeyId: accessKeyId,
+                        accessKeySecret: accessKeySecret
+                    },
+                    success: function (result) {
+                        let accountList = result.data;
+                        let acccountDiv = '<ul class="list-group">';
+                        for (let index = 0; index < accountList.length; index++) {
+                            let account = accountList[index];
+                            acccountDiv += '<li class="list-group-item">' + JSON.stringify(account) + '</li>'
+                            // acccountDiv += '<li class="list-group-item">' + account.DisplayName + '[' + account.AccountId + ']' + '</li>'
+                        }
+                        acccountDiv += '</ul>';
+                        $("#accountListDiv").html(acccountDiv);
+                    }
+                });
+
+
+                $.ajax({
+                    url: "../../sso/ssoConfig.do",
+                    data: {
+                        accessKeyId: accessKeyId,
+                        accessKeySecret: accessKeySecret,
+                        idpProviderName: idpProviderName,
+                        roleJson: roleJson
+                    },
+                    success: function (result) {
+                        $("#consoleDiv").html(result);
+                    }
+                });
+
+            });
+
+            $("#btn_listSubAccount").on("click", function () {
+                let accessKeyId = $("input[name='accessKeyId']").val();
+                let accessKeySecret = $("input[name='accessKeySecret']").val();
+                $.ajax({
+                    url: "../../sso/listSubAccount.do",
+                    data: {
+                        accessKeyId: accessKeyId,
+                        accessKeySecret: accessKeySecret
+                    },
+                    success: function (result) {
+                        let accountList = result.data;
+                        let acccountDiv = '';
+                        for (let index = 0; index < accountList.length; index++) {
+                            let account = accountList[index];
+                            acccountDiv += '<div class="list-group-item"><h4 class="list-group-item-heading">' + account.DisplayName + '  &nbsp;[' + account.AccountId + ']' + '</h4><p class="list-group-item-text">' + JSON.stringify(account) + '</p></div>';
+                            // acccountDiv += '<li class="list-group-item">' + JSON.stringify(account) + '</li>'
+                            // acccountDiv += '<li class="list-group-item">' + account.DisplayName + '[' + account.AccountId + ']' + '</li>'
+                        }
+                        $("#accountListDiv").html(acccountDiv);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <br>
+        <h4>SSO自动化配置</h4>
+        <hr>
+        <div class="form-group">
+            <label>
+                <h6>AccessKeyId</h6>
+            </label>
+            <input class="form-control" name="accessKeyId" placeholder="必填">
+        </div>
+
+        <div class="form-group">
+            <label>
+                <h6>AccessKeySecret</h6>
+            </label>
+            <input class="form-control" name="accessKeySecret" type="password" placeholder="必填">
+        </div>
+
+        <div class="form-group">
+            <label>
+                <h6>IDP名称</h6>
+            </label>
+            <input class="form-control" name="idpProviderName" placeholder="必填">
+        </div>
+
+        <div class="form-group">
+            <label>
+                <h6>角色列表(JSON)</h6>
+            </label>
+            <textarea class="form-control" name="roleJson" placeholder="必填" rows="6"></textarea>
+        </div>
+        <br>
+
+        <button id="btn_config" class="btn btn-success">&nbsp;&nbsp;开始配置&nbsp;&nbsp;</button>
+
+        <button id="btn_listSubAccount" class="btn btn-primary">&nbsp;&nbsp;列出账号&nbsp;&nbsp;</button>
+
+        <br>
+        <div id="msgBox" style="display:none" class="alert alert-success" role="alert">
+            已经提交,请耐心等待!
+        </div>
+        <br>
+
+
+        <h6>子账号列表</h6>
+        <div class="list-group" id="accountListDiv">
+        </div>
+        <br>
+        <hr>
+        <div id="consoleDiv" style="background-color: black;color: #adb5bd;word-break: break-all;padding: 10px;">
+            waiting...
+        </div>
+    </div>
+</body>
+
+</html>

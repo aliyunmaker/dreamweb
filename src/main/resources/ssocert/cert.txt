@@ -1,0 +1,4 @@
+这个位置放证书
+
+openssl pkcs12 -export -in saml.crt -inkey saml.pem -out certificate.pfx
+export password: 654321

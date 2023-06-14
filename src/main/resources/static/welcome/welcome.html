@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>个人演示网</title>
+    <link rel="stylesheet" type="text/css" href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/font-awesome/css/font-awesome.min.css"/>
+    <script type="text/javascript" src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: "../user/getUserInfo.do",
+                data: null,
+                success: function (data) {
+                    if (data.success) {
+                        $("#usernameDiv").html(data.data.userInfo);
+                        $("#userRoleDiv").html(data.data.roleList);
+                    } else {
+                        alert(data.errorMsg);
+                    }
+                }
+            });
+        });
+    </script>
+    <style type="text/css">
+        body {
+            background-color: rgb(223, 233, 246);
+            font-family: verdana, arial, sans-serif;
+        }
+
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            color: dimgrey;
+            text-align: center;
+        }
+
+        .fonticon {
+            font-size: 28px;
+            color: #C8D8EC;
+        }
+
+
+        a:link,
+        a:visited {
+            color: rgb(59, 56, 56);
+            text-decoration: none;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+            color: coral;
+            text-decoration: none;
+        }
+
+        ol#grid {
+            list-style: none;
+            overflow: auto;
+            font-size: 12px;
+            /* padding: 47px 63px 0; */
+        }
+
+        ol#grid li {
+            float: left;
+            position: relative;
+        }
+
+        ol#grid li a {
+            background: transparent;
+            margin: 0 60px 60px 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        ol#grid li a img {
+            border: none;
+            height: 32px;
+        }
+
+
+        table {
+            font-family: verdana, arial, sans-serif;
+            font-size: 12px;
+            border-width: 1px;
+            border-collapse: collapse;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        table th {
+            border-width: 1px;
+            padding: 8px;
+            border-style: dashed;
+            border-color: gray;
+            background-color: #C8D8EC;
+        }
+
+        table td {
+            border-width: 1px;
+            padding: 8px;
+            border-color: gray;
+            border-style: dashed;
+            max-width: 800px;
+            word-break: break-all;
+            white-space: break-spaces;
+        }
+    </style>
+</head>
+
+<body>
+<br>
+<div align="left">
+    <div style="font-weight: bolder;"><i class="fa fa-user-secret" aria-hidden="true"></i> [当前用户]
+        <a href="javascript:void(0)" onClick="(function() {window.top.location.href='../logout'})()">注销</a></div>
+    <br/>
+    <div id="usernameDiv">loading...</div>
+    <br/>
+    <div style="font-weight: bolder;"><i class="fa fa-hand-o-right" aria-hidden="true"></i> [角色列表]</div>
+    <br/>
+    <div id="userRoleDiv" style="font-size: 12px;">loading...</div>
+    <br/>
+    <div style="font-weight: bolder;"><i class="fa fa-rocket" aria-hidden="true"></i> [快捷登录]</div>
+    <br/>
+    <ol id="grid">
+        <li>
+            <a href="../sso/login.do?sp=aliyun" target="_blank">
+                <img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/aliyun_128.png"/> <span>aliyun</span>
+            </a>
+        </li>
+        <li>
+            <a href="../sso/login.do?sp=aws" target="_blank">
+                <img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/aws_128.png"/> <span>aws</span>
+            </a>
+        </li>
+        <li>
+            <a href="../sso/login.do?sp=tencent" target="_blank">
+                <img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/image/tencent_128.png"/> <span>tencent</span>
+            </a>
+        </li>
+    </ol>
+    <div class="footer">
+        <p><i class="fa fa-copyright" aria-hidden="true"></i>&nbsp;landingzone.cc</p>
+    </div>
+</div>
+</body>
+</html>

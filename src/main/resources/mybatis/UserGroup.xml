@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.UserGroupDao">
+
+    <insert id="addUserGroup"
+            parameterType="cc.landingzone.dreamweb.model.UserGroup"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into user_group
+        (name,
+         gmt_create)
+        values (#{name},
+                now())
+    </insert>
+
+
+    <update id="updateUserGroup"
+            parameterType="cc.landingzone.dreamweb.model.UserGroup">
+        update user_group
+        set name = #{name}
+        where id = #{id}
+    </update>
+
+    <select id="getAllUserGroups"
+            resultType="cc.landingzone.dreamweb.model.UserGroup">
+        select *
+        from user_group
+    </select>
+
+    <select id="getUserGroupsByNames"
+            resultType="cc.landingzone.dreamweb.model.UserGroup">
+        select *
+        from user_group
+        where name in (
+            <foreach collection="userGroupNames" item="userGroupName" index="index" separator=",">#{userGroupName}</foreach>
+        )
+    </select>
+
+    <delete id="deleteUserGroup" parameterType="int">
+        delete
+        from user_group
+        where id = #{id}
+    </delete>
+
+
+    <!-- user sql -->
+    <select id="getUsersByUserGroupId"
+            resultType="cc.landingzone.dreamweb.model.User">
+        select u.*
+        from user u 
+                 left join user_group_associate uga on uga.user_id = u.id
+                 left join user_group ug on uga.user_group_id = ug.id
+        where uga.user_group_id = #{userGroupId}
+    </select>
+
+    <select id="getUserGroupsByUserId"
+        resultType="cc.landingzone.dreamweb.model.UserGroup">
+        select ug.*
+        from user_group ug
+            left join user_group_associate uga on uga.user_group_id = ug.id
+            left join user u on uga.user_id = u.id
+        where uga.user_id = #{userId}
+    </select>
+
+    <select id="getUserGroupByName"
+            resultType="cc.landingzone.dreamweb.model.UserGroup">
+        select * from user_group where name = #{name}
+    </select>
+
+</mapper>

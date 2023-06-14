@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.UserDao">
+    <insert id="addUser"
+            parameterType="cc.landingzone.dreamweb.model.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user
+        (login_name,
+         login_method,
+         name,
+         email,
+         comment,
+         role,
+         password,
+         phone,
+         unionid,
+         gmt_create)
+        values (#{loginName},
+                #{loginMethod},
+                #{name},
+                #{email},
+                #{comment},
+                #{role},
+                #{password},
+                #{phone},
+                #{unionid},
+                now())
+    </insert>
+
+    <update id="updateUser" parameterType="cc.landingzone.dreamweb.model.User">
+        update user
+        set login_name              = #{loginName},
+            name                    = #{name},
+            password                = #{password},
+            email                   = #{email},
+            comment                 = #{comment},
+            role                    = #{role},
+            phone                   = #{phone},
+            unionid                 = #{unionid}
+        where id = #{id}
+    </update>
+
+    <select id="getUserByLoginName" resultType="cc.landingzone.dreamweb.model.User">
+        select *
+        from user
+        where login_name = #{loginName}
+    </select>
+
+    <select id="getUserByUnionid" resultType="cc.landingzone.dreamweb.model.User">
+        select *
+        from user
+        where unionid = #{unionid}
+    </select>
+
+    <select id="getUserById" resultType="cc.landingzone.dreamweb.model.User">
+        select *
+        from user
+        where id = #{id}
+    </select>
+
+
+    <delete id="deleteUser" parameterType="int">
+        delete
+        from user
+        where id = #{id}
+    </delete>
+
+
+    <select id="getUsersByLoginMethod" resultType="cc.landingzone.dreamweb.model.User" parameterType="map">
+        select * from user
+        <where>
+            <if test="loginMethod != null and loginMethod !=''">
+                and login_method = #{loginMethod}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUsersByLoginNames" resultType="cc.landingzone.dreamweb.model.User">
+        select *
+        from user
+        where login_name in (
+            <foreach collection="loginNames" item="loginName" index="index" separator=",">#{loginName}</foreach>
+        )
+    </select>
+
+
+    <select id="searchUser" resultType="cc.landingzone.dreamweb.model.User" parameterType="map">
+        select * from user
+        <where>
+            <if test="simpleSearch != null and simpleSearch !=''">
+                and (login_name like concat('%',#{simpleSearch},'%') or name like concat('%',#{simpleSearch},'%') or
+                phone=#{simpleSearch})
+            </if>
+            <if test="userId != null and userId !=''">
+                and id=#{userId}
+            </if>
+            <if test="role != null and role !=''">
+                and role=#{role}
+            </if>
+        </where>
+        order by id desc
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="searchUserTotal" resultType="int" parameterType="map">
+        select count(*) from user
+        <where>
+            <if test="simpleSearch != null and simpleSearch !=''">
+                and (login_name like concat('%',#{simpleSearch},'%') or name like concat('%',#{simpleSearch},'%') or
+                id=#{simpleSearch})
+            </if>
+        </where>
+    </select>
+</mapper>

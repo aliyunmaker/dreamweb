@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ProvisionedProductDao">
+
+    <select id="getProvisionedProductByProvisionedProductName"
+            resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product where provisioned_product_name = #{provisionedProductName};
+    </select>
+
+    <select id="listProvisionedProducts" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product
+        order by id desc
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="listProvisionedProductsByUserId" resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product
+        where starter_id = #{userId}
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="getProvisionedProductTotal" resultType="int" parameterType="map">
+        select count(*) from provisioned_product
+    </select>
+
+    <select id="getProvisionedProductTotalByUserId" resultType="int" parameterType="map">
+        select count(*) from provisioned_product
+        where starter_id = #{userId}
+    </select>
+
+    <insert id="saveProvisionedProduct" parameterType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        insert into provisioned_product
+        (servicecatalog_provisioned_product_id,
+        provisioned_product_name,
+        product_id,
+        role_id,
+        starter_id,
+        status,
+        parameter,
+        outputs,
+        create_time,
+        gmt_create)
+        values (#{servicecatalogProvisionedProductId},
+        #{provisionedProductName},
+        #{productId},
+        #{roleId},
+        #{starterId},
+        #{status},
+        #{parameter},
+        #{outputs},
+        #{createTime},
+        now())
+    </insert>
+
+    <select id="listServicecatalogProvisionedProductIdUnderChange" resultType="String">
+        select distinct servicecatalog_provisioned_product_id from provisioned_product where status = 'UnderChange'
+    </select>
+
+    <select id="getProvisionedProductByServicecatalogProvisionedProductId"
+            resultType="cc.landingzone.dreamweb.model.ProvisionedProduct">
+        select * from provisioned_product where servicecatalog_provisioned_product_id =
+        #{servicecatalogProvisionedProductId}
+    </select>
+
+    <update id="updateStatusByServicecatalogProvisionedProductId">
+        update provisioned_product
+        set status = #{status}
+        where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
+    </update>
+
+    <update id="updateParameterByServicecatalogProvisionedProductId">
+        update provisioned_product
+        set parameter = #{parameter}
+        where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
+    </update>
+
+    <update id="updateOutputsByServicecatalogProvisionedProductId">
+        update provisioned_product
+        set outputs = #{outputs}
+        where servicecatalog_provisioned_product_id = #{servicecatalogProvisionedProductId}
+    </update>
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.landingzone.dreamweb.dao.ProductDao">
+
+    <select id="listProduct" resultType="cc.landingzone.dreamweb.model.Product" parameterType="map">
+        select * from product
+        <where>
+            <if test="simpleSearch != null and simpleSearch !=''">
+                and (servicecatalog_product_id like concat('%',#{simpleSearch},'%') or product_name like concat('%',#{simpleSearch},'%'))
+            </if>
+        </where>
+        order by id
+        <if test="page != null">
+            limit #{page.start},#{page.limit}
+        </if>
+    </select>
+
+    <select id="getProductTotal" resultType="int" parameterType="map">
+        select count(*) from product
+        <where>
+            <if test="simpleSearch != null and simpleSearch !=''">
+                and (servicecatalog_product_id like concat('%',#{simpleSearch},'%') or product_name like concat('%',#{simpleSearch},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="getProductById" resultType="cc.landingzone.dreamweb.model.Product">
+        select *
+        from product
+        where id = #{id}
+    </select>
+
+    <select id="getProductByProductName" resultType="cc.landingzone.dreamweb.model.Product">
+        select *
+        from product
+        where product_name = #{productName}
+    </select>
+
+    <insert id="saveProduct"
+            parameterType="cc.landingzone.dreamweb.model.Product">
+        insert into product
+        (servicecatalog_product_id,
+        product_name,
+        gmt_create)
+        values (
+        #{servicecatalogProductId},
+        #{productName},
+        now())
+    </insert>
+
+    <select id="getProductByServicecatalogProductId" resultType="cc.landingzone.dreamweb.model.Product">
+        select *
+        from product
+        where servicecatalog_product_id = #{servicecatalogProductId}
+    </select>
+
+    <update id="updateProduct" parameterType="cc.landingzone.dreamweb.model.Product">
+        update product
+        set servicecatalog_product_id = #{servicecatalogProductId},
+        product_name = #{productName}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProduct" parameterType="int">
+        delete
+        from product
+        where id = #{id}
+    </delete>
+
+</mapper>
