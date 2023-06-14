@@ -1,15 +1,17 @@
 package cc.landingzone.dreamweb.demo.sso;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import cc.landingzone.dreamweb.common.BaseController;
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
+import cc.landingzone.dreamweb.common.model.WebResult;
+import cc.landingzone.dreamweb.common.model.enums.SSOSpEnum;
+import cc.landingzone.dreamweb.common.utils.FreeMarkerUtils;
+import cc.landingzone.dreamweb.common.utils.JsonUtils;
+import cc.landingzone.dreamweb.demo.sso.sp.RAMSamlHelper;
+import cc.landingzone.dreamweb.demo.sso.sp.SPHelper;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.aliyuncs.profile.DefaultProfile;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.DefaultBootstrap;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,19 +20,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.aliyuncs.profile.DefaultProfile;
-
-import cc.landingzone.dreamweb.common.BaseController;
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.EndpointEnum;
-import cc.landingzone.dreamweb.demo.sso.sp.RAMSamlHelper;
-import cc.landingzone.dreamweb.demo.sso.sp.SPHelper;
-import cc.landingzone.dreamweb.common.model.WebResult;
-import cc.landingzone.dreamweb.common.model.enums.SSOSpEnum;
-import cc.landingzone.dreamweb.common.utils.FreeMarkerUtils;
-import cc.landingzone.dreamweb.common.utils.JsonUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 @Controller
 @RequestMapping("/sso")
@@ -107,6 +99,7 @@ public class SSOController extends BaseController implements InitializingBean {
             String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
+            String userRoleValue = request.getParameter("userRoleId");
             HashMap<String, List<String>> attributes = null;
             // 如果是user sso,需要特殊处理,拆分出uid和nameid,而且不支持多个
             if (SSOSpEnum.aliyun_user.equals(ssoSp) || SSOSpEnum.aws_user.equals(ssoSp)) {
@@ -119,6 +112,7 @@ public class SSOController extends BaseController implements InitializingBean {
                 attributes = new HashMap<String, List<String>>();
                 // 只有role sso 才需要这些参数
                 Set<String> roleSet = new HashSet<String>();
+                roleSet.add(userRoleValue);
                 List<String> roleStringList = new ArrayList<String>(roleSet);
                 attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
                 List<String> sessionNameList = new ArrayList<String>();
@@ -169,12 +163,13 @@ public class SSOController extends BaseController implements InitializingBean {
             String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
+            String userRoleValue = request.getParameter("userRoleId");
 
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
             //TODO
-            roleSet.add("");
+            roleSet.add(userRoleValue);
             List<String> roleStringList = new ArrayList<String>(roleSet);
             attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
             List<String> sessionNameList = new ArrayList<String>();
