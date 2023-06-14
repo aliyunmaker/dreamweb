@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SSO DEMO</title>
+  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4061551_l1p1us58fa.css" />
+  <style>
+    .icon-square {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: .75rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <div class="px-5 py-5" >
+      <h2 class="pb-2 border-bottom fs-1"><i class="iconfont icon-aliyun"
+          style="font-size: 2.6rem;"></i>&nbsp;&nbsp;aliyun
+      </h2>
+      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+          <div
+            class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
+            <i class="iconfont icon-clothes" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h3 class="fs-5">管理员</h3>
+            <p>account: kidccc@gmail.com<br /> role: superadmin</p>
+            <a target="_blank" href="../sso/login.htm?sp=aliyun_role&userRoleId=32" class="btn btn-primary">
+              <i class="iconfont icon-login" ></i> Console
+            </a>
+            <a target="_blank" href="../sso/downloadToken.htm?sp=aliyun_role&userRoleId=32" class="btn btn-success">
+              <i class="iconfont icon-download" ></i> STS Token
+            </a>
+          </div>
+        </div>
+        <div class="col d-flex align-items-start">
+          <div
+            class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
+            <i class="iconfont icon-user-blank" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h3 class="fs-5">云效账号</h3>
+            <p>account: kidccc@gmail.com<br /> user: chengchao</p>
+            <a target="_blank" href="../sso/login.htm?sp=aliyun_user&userRoleId=33" class="btn btn-primary">
+              <i class="iconfont icon-login" ></i> Console
+            </a>
+          </div>
+        </div>
+        <div class="col d-flex align-items-start">
+          <div
+            class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
+            <i class="iconfont icon-user-blank" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h3 class="fs-5">CloudSSO-管理员</h3>
+            <p>account: 20210603demo1<br /> cloud sso user: admin</p>
+            <a target="_blank" href="../sso/login.htm?sp=aliyun_user&userRoleId=26" class="btn btn-primary">
+              <i class="iconfont icon-login" ></i> Console
+            </a>
+          </div>
+        </div>
+      </div>
+      <h2 class="pb-2 border-bottom fs-1"><i class="iconfont icon-aws" style="font-size: 2.6rem;"></i>&nbsp;&nbsp;aws
+      </h2>
+      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+          <div
+            class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
+            <i class="iconfont icon-clothes" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h3 class="fs-5">管理员</h3>
+            <p>account: me@chengchao.name<br /> role: mysuperadmin</p>
+            <a target="_blank" href="../sso/login.htm?sp=aws_role&userRoleId=42" class="btn btn-primary">
+              <i class="iconfont icon-login" ></i> Console
+            </a>
+          </div>
+        </div>
+        <div class="col d-flex align-items-start">
+          <div
+            class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
+            <i class="iconfont icon-user-blank" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h3 class="fs-5">Identity Center-个人账号</h3>
+            <p>account: me@chengchao.name<br /> user: me@chengchao.name</p>
+            <a target="_blank" href="../sso/login.htm?sp=aws_user&userRoleId=38" class="btn btn-primary">
+              <i class="iconfont icon-login" ></i> Console
+            </a>
+          </div>
+        </div>
+      </div>
+      <h2 class="pb-2 border-bottom fs-1"><i class="iconfont icon-tencent" style="font-size: 2.6rem;"></i>&nbsp;&nbsp;tencent
+      </h2>
+      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+          <div
+            class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
+            <i class="iconfont icon-clothes" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h3 class="fs-5">管理员</h3>
+            <p>account: 100000543428<br /> role: superadmin</p>
+            <a target="_blank" href="../sso/login.htm?sp=tencent_role&userRoleId=37" class="btn btn-primary">
+              <i class="iconfont icon-login" ></i> Console
+            </a>
+          </div>
+        </div>
+        <div class="col d-flex align-items-start">
+          <div
+            class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
+            <i class="iconfont icon-user-blank" style="font-size: 1.8rem;"></i>
+          </div>
+          <div>
+            <h3 class="fs-5">个人账号</h3>
+            <p>account: 100000543428<br /> user: chengchao</p>
+            <a target="_blank" href="../sso/login.htm?sp=tencent_user&userRoleId=36" class="btn btn-primary">
+              <i class="iconfont icon-login" ></i> Console
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>

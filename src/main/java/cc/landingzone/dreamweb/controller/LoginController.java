@@ -18,10 +18,4 @@ public class LoginController extends BaseController {
 
     }
 
-//    @RequestMapping("/login")
-//    public String login(Model model) {
-//        model.addAttribute("loginPageTitle", "DreamCMP");
-//        return "login";
-//    }
-
 }

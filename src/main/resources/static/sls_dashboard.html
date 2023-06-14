@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+  <style>
+    .iframe-container {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .nav-link:hover {
+      background-color: #a5b6c6;
+    }
+
+    .active {
+      background-color: #8899f0;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <nav class="navbar navbar-expand bg-body-secondary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Monitor Center</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link disabled">Project: [springrun]</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"
+                data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"
+                data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="iframe-container">
+      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>
+    </div>
+  </main>
+  <script>
+    var links = document.querySelectorAll(".navbar-nav a");
+    var iframe = document.getElementById("iframe");
+
+    links.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        var page = e.target.getAttribute("data-link");
+        iframe.setAttribute("src", page);
+
+        // Remove active class from all links
+        links.forEach(function (link) {
+          link.classList.remove("active");
+        });
+
+        // Add active class to the clicked link
+        e.target.classList.add("active");
+      });
+    });
+  </script>
+</body>
+
+</html>

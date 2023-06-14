@@ -1,98 +1,103 @@
-<html>
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
 <head>
-    <title>DreamCMP</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <!--
-    <meta http-equiv="pragma" content="no-cache" />
-    -->
-    <link rel="stylesheet" type="text/css"	href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/extjs/4.1/resources/css/ext-all.css" />
-    <link rel="stylesheet" type="text/css"	href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/common.css" />
-    <link rel="stylesheet" type="text/css"  href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/font-awesome/css/font-awesome.min.css" />
-    <script type="text/javascript" src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/extjs/4.1/ext-all.js"></script>
-    <script type="text/javascript" src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/utilsv4.js"></script>
-    <script type="text/javascript" src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/myComponent.js"></script>
-    <script lang="javascript">
-        Ext
-            .onReady(function () {
-                Ext.tip.QuickTipManager.init();
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+  <style>
+    .b-example-vr {
+      flex-shrink: 0;
+      width: 0;
+      height: 100vh;
+    }
 
-                var store = Ext.create('Ext.data.TreeStore', {
-                    root: {
-                        expanded: true,
-                        children: [
-                            {
-                                text: "<font style='font-weight: bold;'>功能列表</font>",
-                                iconCls: 'MyExt-menu-sub',
-                                expanded: true,
-                                children: [
-                                    {
-                                        text: "个人中心",
-                                        leaf: true,
-                                        href: 'welcome/welcome.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    {
-                                        text: "注销",
-                                        leaf: true,
-                                        iconCls: 'MyExt-logout',
-                                        href: 'logout'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                });
+    .iframe-container {
+      width: 100%;
+      height: 100vh;
+    }
 
-                var tree_panel = Ext.create('Ext.tree.Panel', {
-                    frame: false,
-                    border: false,
-                    region: "center",
-                    store: store,
-                    rootVisible: false
-                });
-
-                var header_panel = Ext
-                    .create(
-                        'Ext.panel.Panel',
-                        {
-                            region: "north",
-                            height: 68,
-                            frame: false,
-                            border: false,
-                            bodyStyle: 'background:rgb(223,233,246)',
-                            html: 'loading...'
-                        });
-
-                var main_panel = Ext.create('Ext.panel.Panel', {
-                    // title : 'Hello',
-                    frame: false,
-                    border: false,
-                    region: "center",
-                    html: '<iframe name="mainFrame" frameborder="0" width="100%" height="100%" src="welcome/welcome.html"/>'
-                });
-
-                Ext.create('Ext.container.Viewport', {
-                    layout: 'border',
-                    items: [{
-                        layout: 'border',
-                        region: 'west',
-                        // frame : false,
-                        // border : false,
-                        split: true,
-                        width: 160,
-                        margins: '0 0 0 0',
-                        items: [header_panel, tree_panel]
-                    }, main_panel]
-                });
-
-                MyExt.util.Ajax("system/getIndexLogoPage.do", null, function (data) {
-                    header_panel.body.update(data.data);
-                });
-
-            });
-    </script>
+    .nav-link:hover {
+      background-color: #353A3F;
+    }
+  </style>
+  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
 </head>
+
 <body>
-<div align="left"></div>
+  <main class="d-flex flex-nowrap">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 240px;">
+      <span class="fs-4"><i class="iconfont icon-rocket-vertical" style="font-size: 2rem;"></i>&nbsp;&nbsp;Dream
+        One</span>
+      <!-- <span style="font-size: 12px; text-align: center;">cloud management platform</span> -->
+      <hr>
+      <ul class="nav nav-pills flex-column mb-auto chengchaobar">
+        <li class="nav-item">
+          <a href="#" class="nav-link text-white active" aria-current="page" data-link="sso_login_demo.html">
+            <i class="iconfont icon-home"></i>&nbsp;&nbsp;Home
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link text-white" data-link="sls_dashboard.html">
+            <i class="iconfont icon-dashboard"></i>&nbsp;&nbsp;Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link text-white" data-link="../dreamcmp/listEcsPage.htm">
+            <i class="iconfont icon-ecs"></i>&nbsp;&nbsp;Application
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link text-white" data-link="log_center.html">
+            <i class="iconfont icon-sls"></i>&nbsp;&nbsp;Log Center
+          </a>
+        </li>
+      </ul>
+      <hr>
+      <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/login_logo.png" alt="" width="32"
+            height="32" class="rounded-circle me-2">
+          <strong>charles</strong>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+          <li><a class="dropdown-item" href="#" onclick="alert('TODO')">Profile</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item" href="../logout">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="b-example-divider b-example-vr"></div>
+    <div class="iframe-container">
+      <iframe id="iframe" src="sso_login_demo.html" width="100%" height="100%"></iframe>
+    </div>
+
+  </main>
+  <script>
+    var links = document.querySelectorAll(".chengchaobar a");
+    var iframe = document.getElementById("iframe");
+
+    links.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        var page = e.target.getAttribute("data-link");
+        iframe.setAttribute("src", page);
+
+        // Remove active class from all links
+        links.forEach(function (link) {
+          link.classList.remove("active");
+        });
+
+        // Add active class to the clicked link
+        e.target.classList.add("active");
+      });
+    });
+  </script>
 </body>
+
 </html>
