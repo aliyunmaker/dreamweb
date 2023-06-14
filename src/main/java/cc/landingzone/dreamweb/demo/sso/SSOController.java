@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.controller;
+package cc.landingzone.dreamweb.demo.sso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,15 +22,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.aliyuncs.profile.DefaultProfile;
 
+import cc.landingzone.dreamweb.common.BaseController;
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.EndpointEnum;
+import cc.landingzone.dreamweb.demo.sso.sp.RAMSamlHelper;
+import cc.landingzone.dreamweb.demo.sso.sp.SPHelper;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
-import cc.landingzone.dreamweb.sso.CertManager;
-import cc.landingzone.dreamweb.sso.SSOConstants;
-import cc.landingzone.dreamweb.sso.SamlGenerator;
-import cc.landingzone.dreamweb.sso.sp.RAMSamlHelper;
-import cc.landingzone.dreamweb.sso.sp.SPHelper;
 import cc.landingzone.dreamweb.utils.FreeMarkerUtils;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 

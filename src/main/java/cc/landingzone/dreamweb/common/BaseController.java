@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.controller;
+package cc.landingzone.dreamweb.common;
 
 import cc.landingzone.dreamweb.utils.JsonUtils;
 import org.slf4j.Logger;

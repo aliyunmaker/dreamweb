@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.sso.sp;
+package cc.landingzone.dreamweb.demo.sso.sp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,8 @@ import com.alibaba.fastjson.TypeReference;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.EndpointEnum;
+import cc.landingzone.dreamweb.demo.sso.SamlGenerator;
+
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -24,7 +26,6 @@ import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleResponse;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityRequest;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
 
-import cc.landingzone.dreamweb.sso.SamlGenerator;
 import cc.landingzone.dreamweb.utils.JsonUtils;
 
 public class SPHelper {

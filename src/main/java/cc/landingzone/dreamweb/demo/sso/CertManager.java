@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.sso;
+package cc.landingzone.dreamweb.demo.sso;
 
 import java.io.FileInputStream;
 import java.io.InputStream;

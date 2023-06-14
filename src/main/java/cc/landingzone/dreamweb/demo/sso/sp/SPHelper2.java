@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.sso.sp;
+package cc.landingzone.dreamweb.demo.sso.sp;
 
 import cc.landingzone.dreamweb.common.EndpointEnum;
 import com.aliyuncs.CommonRequest;

@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.controller;
+package cc.landingzone.dreamweb.common;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.WebResult;
 
 @Controller
