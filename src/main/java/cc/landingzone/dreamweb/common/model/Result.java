@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.model;
+package cc.landingzone.dreamweb.common.model;
 
 public class Result {
 

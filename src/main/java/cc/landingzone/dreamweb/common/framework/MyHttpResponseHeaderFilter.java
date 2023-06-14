@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.framework;
+package cc.landingzone.dreamweb.common.framework;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

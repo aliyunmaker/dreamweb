@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.framework;
+package cc.landingzone.dreamweb.common.framework;
 
 import java.util.ArrayList;
 import java.util.List;

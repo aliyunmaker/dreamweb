@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.utils;
+package cc.landingzone.dreamweb.common.utils;
 
 import java.io.StringWriter;
 import java.io.Writer;

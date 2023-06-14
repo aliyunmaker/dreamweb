@@ -11,7 +11,7 @@ import com.aliyuncs.profile.DefaultProfile;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.EndpointEnum;
-import cc.landingzone.dreamweb.utils.UUIDUtils;
+import cc.landingzone.dreamweb.common.utils.UUIDUtils;
 
 public class RAMSamlHelper {
 

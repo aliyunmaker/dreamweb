@@ -27,10 +27,10 @@ import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.demo.sso.sp.RAMSamlHelper;
 import cc.landingzone.dreamweb.demo.sso.sp.SPHelper;
-import cc.landingzone.dreamweb.model.WebResult;
-import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
-import cc.landingzone.dreamweb.utils.FreeMarkerUtils;
-import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.common.model.WebResult;
+import cc.landingzone.dreamweb.common.model.enums.SSOSpEnum;
+import cc.landingzone.dreamweb.common.utils.FreeMarkerUtils;
+import cc.landingzone.dreamweb.common.utils.JsonUtils;
 
 @Controller
 @RequestMapping("/sso")

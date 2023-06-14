@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import cc.landingzone.dreamweb.model.WebResult;
+import cc.landingzone.dreamweb.common.model.WebResult;
 
 @Controller
 @RequestMapping("/system")

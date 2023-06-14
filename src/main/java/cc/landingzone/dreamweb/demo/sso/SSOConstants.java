@@ -2,7 +2,7 @@ package cc.landingzone.dreamweb.demo.sso;
 
 
 import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
+import cc.landingzone.dreamweb.common.model.enums.SSOSpEnum;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Properties;

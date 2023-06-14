@@ -1,6 +1,6 @@
 package cc.landingzone.dreamweb.common;
 
-import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

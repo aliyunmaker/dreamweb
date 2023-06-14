@@ -26,7 +26,7 @@ import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleResponse;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityRequest;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
 
-import cc.landingzone.dreamweb.utils.JsonUtils;
+import cc.landingzone.dreamweb.common.utils.JsonUtils;
 
 public class SPHelper {
 
