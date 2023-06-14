@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title th:text="${loginPageTitle}"></title>
+    <title>DreamCMP</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <!--
     <meta http-equiv="pragma" content="no-cache" />
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/extjs/4.1/ext-all.js"></script>
     <script type="text/javascript" src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/utilsv4.js"></script>
     <script type="text/javascript" src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/myComponent.js"></script>
-    <script th:inline="javascript">
+    <script lang="javascript">
         Ext
             .onReady(function () {
                 Ext.tip.QuickTipManager.init();
@@ -38,42 +38,11 @@
                                         hrefTarget: 'mainFrame'
                                     },
                                     {
-                                        text: "用户组管理",
-                                        leaf: true,
-                                        href: 'userGroup/userGroupManage.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    {
                                         text: "注销",
                                         leaf: true,
                                         iconCls: 'MyExt-logout',
                                         href: 'logout'
                                     }
-                                ]
-                            },
-                            {
-                                text: "<font style='font-weight: bold;'>系统工具</font>",
-                                iconCls: 'MyExt-menu-sub',
-                                expanded: true,
-                                children: [
-                                    {
-                                        text: "API密钥管理",
-                                        leaf: true,
-                                        href: 'apiUser/apiUser.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    {
-                                        text: "登录记录",
-                                        leaf: true,
-                                        href: 'loginRecord/loginRecord.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
-                                    {
-                                        text: "配置管理",
-                                        leaf: true,
-                                        href: 'systemConfig/systemConfig.html',
-                                        hrefTarget: 'mainFrame'
-                                    },
                                 ]
                             }
                         ]

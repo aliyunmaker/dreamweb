@@ -10,32 +10,22 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.EndpointEnum;
-import cc.landingzone.dreamweb.service.SystemConfigService;
-import com.aliyuncs.profile.DefaultProfile;
-
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.DefaultBootstrap;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import cc.landingzone.dreamweb.framework.MyAuthenticationProvider;
-import cc.landingzone.dreamweb.model.User;
-import cc.landingzone.dreamweb.model.UserRole;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.aliyuncs.profile.DefaultProfile;
+
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
 import cc.landingzone.dreamweb.model.WebResult;
 import cc.landingzone.dreamweb.model.enums.SSOSpEnum;
-import cc.landingzone.dreamweb.service.UserRoleService;
-import cc.landingzone.dreamweb.service.UserService;
 import cc.landingzone.dreamweb.sso.CertManager;
 import cc.landingzone.dreamweb.sso.SSOConstants;
 import cc.landingzone.dreamweb.sso.SamlGenerator;
@@ -47,15 +37,6 @@ import cc.landingzone.dreamweb.utils.JsonUtils;
 @Controller
 @RequestMapping("/sso")
 public class SSOController extends BaseController implements InitializingBean {
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRoleService userRoleService;
-
-    @Autowired
-    private SystemConfigService systemConfigService;
 
     /**
      * 初始化
@@ -70,35 +51,15 @@ public class SSOController extends BaseController implements InitializingBean {
     public void getSamlResponse(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String username = request.getParameter("username");
-            String password = request.getParameter("username");
-
-            User user = userService.getUserByLoginName(username);
-            if (null == user) {
-                throw new UsernameNotFoundException(username);
-            }
-
-            // 密码策略: md5(salt+password) equals user.getAuthkey()
-            if (!MyAuthenticationProvider.buildMd5Password(password).equals(user.getPassword())) {
-                throw new BadCredentialsException("password error!");
-            }
-
-            // 根据SSOSp过滤role
-            List<UserRole> roleList = userRoleService.getRoleListByUserId(user.getId(), SSOSpEnum.aliyun);
-            Assert.notEmpty(roleList, "roleList can not be empty!");
-
             SSOSpEnum ssoSp = SSOSpEnum.aliyun;
 
-            String nameID = user.getLoginName();
+            String nameID = "test";
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
 
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
-            for (UserRole userRole : roleList) {
-                roleSet.add(userRole.getRoleValue());
-            }
             List<String> roleStringList = new ArrayList<String>(roleSet);
             attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
             List<String> sessionNameList = new ArrayList<String>();
@@ -126,7 +87,6 @@ public class SSOController extends BaseController implements InitializingBean {
     public void login(HttpServletRequest request, HttpServletResponse response) {
         try {
             String sp = request.getParameter("sp");
-            String userRoleId = request.getParameter("userRoleId");
             // 默认是aliyun的role sso
             if (StringUtils.isBlank(sp)) {
                 sp = SSOSpEnum.aliyun.toString();
@@ -135,12 +95,6 @@ public class SSOController extends BaseController implements InitializingBean {
 
             // 获取已经登录用户的信息
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = userService.getUserByLoginName(username);
-            // 根据SSOSp过滤role
-            List<UserRole> roleList = userRoleService.getRoleListByUserId(user.getId(), ssoSp);
-
-            logger.info("===============roleList=================");
-            logger.info(JsonUtils.toJsonString(roleList));
 
             // 参考 templates/saml2-post-binding.vm
             String onloadSubmit = "";
@@ -152,35 +106,21 @@ public class SSOController extends BaseController implements InitializingBean {
             }
 
             // *************************************根据 ssoSP的类型解析roleList************
-            String nameID = user.getLoginName();
+            String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
             HashMap<String, List<String>> attributes = null;
-            Assert.notEmpty(roleList, "roleList can not be empty!");
             // 如果是user sso,需要特殊处理,拆分出uid和nameid,而且不支持多个
             if (SSOSpEnum.aliyun_user.equals(ssoSp) || SSOSpEnum.aws_user.equals(ssoSp)) {
-                UserRole choosedRole = roleList.get(0);
-                for (UserRole userRole : roleList) {
-                    if (StringUtils.isNotBlank(userRoleId) && userRoleId.equals(userRole.getId().toString())) {
-                        choosedRole = userRole;
-                        break;
-                    }
-                }
+                String choosedRole = "";
                 logger.info("user sso choosed:" + choosedRole);
-                replyUrl = choosedRole.getRoleValue().split(",")[0];
-                identifier = choosedRole.getRoleValue().split(",")[1];
-                nameID = choosedRole.getRoleValue().split(",")[2];
+                replyUrl = choosedRole.split(",")[0];
+                identifier = choosedRole.split(",")[1];
+                nameID = choosedRole.split(",")[2];
             } else {
                 attributes = new HashMap<String, List<String>>();
                 // 只有role sso 才需要这些参数
                 Set<String> roleSet = new HashSet<String>();
-                for (UserRole userRole : roleList) {
-                    // 如果指定roleId,则只添加该role
-                    if (StringUtils.isNotBlank(userRoleId) && !userRoleId.equals(userRole.getId().toString())) {
-                        continue;
-                    }
-                    roleSet.add(userRole.getRoleValue());
-                }
                 List<String> roleStringList = new ArrayList<String>(roleSet);
                 attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
                 List<String> sessionNameList = new ArrayList<String>();
@@ -208,7 +148,6 @@ public class SSOController extends BaseController implements InitializingBean {
         try {
 
             String sp = request.getParameter("sp");
-            String userRoleId = request.getParameter("userRoleId");
             // 默认是aliyun的role sso
             if (StringUtils.isBlank(sp)) {
                 sp = SSOSpEnum.aliyun.toString();
@@ -228,26 +167,16 @@ public class SSOController extends BaseController implements InitializingBean {
                 cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
             // 获取已经登录用户的信息
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = userService.getUserByLoginName(username);
-            // 根据SSOSp过滤role
-            List<UserRole> roleList = userRoleService.getRoleListByUserId(user.getId(), SSOSpEnum.aliyun);
 
-            Assert.notEmpty(roleList, "roleList can not be empty!");
-
-            String nameID = user.getLoginName();
+            String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
 
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
-            for (UserRole userRole : roleList) {
-                // 如果指定roleId,则只添加该role
-                if (StringUtils.isNotBlank(userRoleId) && !userRoleId.equals(userRole.getId().toString())) {
-                    continue;
-                }
-                roleSet.add(userRole.getRoleValue());
-            }
+            //TODO
+            roleSet.add("");
             List<String> roleStringList = new ArrayList<String>(roleSet);
             attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
             List<String> sessionNameList = new ArrayList<String>();
@@ -307,8 +236,7 @@ public class SSOController extends BaseController implements InitializingBean {
             Assert.hasText(idpProviderName, "idpProviderName can not be blank!");
 
             Map<String, List<String>> roleMap = JSON.parseObject(roleJson,
-                new TypeReference<Map<String, List<String>>>() {
-                });
+                new TypeReference<Map<String, List<String>>>() {});
             // DefaultProfile profile = DefaultProfile.getProfile(
             // cc.landingzone.dreamweb.common.CommonConstants.Aliyun_REGION_HANGZHOU,
             // accessKeyId,
@@ -324,8 +252,7 @@ public class SSOController extends BaseController implements InitializingBean {
 
     public static void main(String[] args) {
         String json = "{\"admin\":[\"role1\",\"role2\"]}";
-        Map<String, List<String>> list2 = JSON.parseObject(json, new TypeReference<Map<String, List<String>>>() {
-        });
+        Map<String, List<String>> list2 = JSON.parseObject(json, new TypeReference<Map<String, List<String>>>() {});
         System.out.println(JsonUtils.toJsonString(list2));
     }
 
@@ -341,24 +268,18 @@ public class SSOController extends BaseController implements InitializingBean {
                 cc.landingzone.dreamweb.common.CommonConstants.Aliyun_AccessKeySecret);
             // 获取已经登录用户的信息
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = userService.getUserByLoginName(username);
-            // 根据SSOSp过滤role
-            List<UserRole> roleList = userRoleService.getRoleListByUserId(user.getId(), SSOSpEnum.aliyun);
-
-            Assert.notEmpty(roleList, "roleList can not be empty!");
 
             SSOSpEnum ssoSp = SSOSpEnum.aliyun;
 
-            String nameID = user.getLoginName();
+            String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
 
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
-            for (UserRole userRole : roleList) {
-                roleSet.add(userRole.getRoleValue());
-            }
+            //TODO
+            roleSet.add("");
             List<String> roleStringList = new ArrayList<String>(roleSet);
             attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
             List<String> sessionNameList = new ArrayList<String>();
@@ -378,31 +299,6 @@ public class SSOController extends BaseController implements InitializingBean {
             result = e.getMessage();
         }
         outputToString(response, result);
-
-    }
-
-    @RequestMapping("/listSubAccount.do")
-    public void listSubAccount(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            String accessKeyId = request.getParameter("accessKeyId");
-            String accessKeySecret = request.getParameter("accessKeySecret");
-            Assert.hasText(accessKeyId, "accessKeyId can not be blank!");
-            Assert.hasText(accessKeySecret, "accessKeySecret can not be blank!");
-            String region = systemConfigService.getStringValueFromCache("region");
-            String endpoint = EndpointEnum.RESOURCE_MANAGER.getEndpoint();
-
-            DefaultProfile profile = DefaultProfile.getProfile(
-                region, accessKeyId,
-                accessKeySecret);
-            List<Map<String, String>> list = SPHelper.listAccounts(profile, endpoint);
-            result.setData(list);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        outputToJSON(response, result);
 
     }
 

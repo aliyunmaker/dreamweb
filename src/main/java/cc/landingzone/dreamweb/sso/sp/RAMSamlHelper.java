@@ -1,15 +1,17 @@
 package cc.landingzone.dreamweb.sso.sp;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.EndpointEnum;
-import cc.landingzone.dreamweb.utils.UUIDUtils;
+import org.springframework.util.Assert;
+
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
-import io.jsonwebtoken.lang.Assert;
+
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
+import cc.landingzone.dreamweb.utils.UUIDUtils;
 
 public class RAMSamlHelper {
 

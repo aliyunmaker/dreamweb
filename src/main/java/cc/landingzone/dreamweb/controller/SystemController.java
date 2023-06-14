@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
@@ -24,7 +23,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.model.WebResult;
-import cc.landingzone.dreamweb.task.SyncUserFromLDAPTask;
 
 @Controller
 @RequestMapping("/system")
@@ -32,12 +30,6 @@ public class SystemController extends BaseController implements InitializingBean
 
     private Logger logger = LoggerFactory.getLogger(SystemController.class);
 
-
-//    @Autowired
-//    private StringRedisTemplate stringRedisTemplate;
-
-    @Autowired
-    private SyncUserFromLDAPTask syncUserFromLDAPTask;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -47,17 +39,6 @@ public class SystemController extends BaseController implements InitializingBean
     public static HttpSession getSession() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getRequest().getSession(true); // true == allow create
-    }
-
-    @RequestMapping("/syncUserFormLDAP.do")
-    public void syncUserFormLDAP(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        try {
-            syncUserFromLDAPTask.doTask();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        outputToJSON(response, result);
     }
 
 

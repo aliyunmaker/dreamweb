@@ -4,7 +4,7 @@
 <head>
     <title th:text="${loginPageTitle}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="pragma" content="no-cache" />
 
     <link rel="stylesheet" href="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css">
     <style type="text/css">
@@ -13,73 +13,18 @@
             padding-bottom: 40px;
             background-color: #eee;
         }
-
         .form-signin {
             max-width: 300px;
             padding: 15px;
             margin: 0 auto;
         }
-
-        .login-btn-no-wechat {
+        .login-btn {
+            width: 270px;
             display: block;
             margin: 0 auto;
-            width: 140px;
-        }
-
-        .login-btn {
-            margin-right: 25px;
-            width: 80px;
-        }
-
-        .weixin-login-btn {
-            width: 160px;
         }
     </style>
     <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
-    <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jsencrypt.js"></script>
-    <script type="text/javascript" src="//res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        var initWeixinLogin = false;
-        var changeLoginStyle = function () {
-            let loginForm = document.getElementById("loginForm");
-            let weixinLogin = document.getElementById("weixin-login-div");
-            loginForm.style.display = "none";
-            weixinLogin.style.display = "block";
-            if (!initWeixinLogin) {
-                initWeixinLogin = true;
-                var obj = new WxLogin({
-                    self_redirect: false,
-                    id: "login_container",
-                    appid: "wxc80b8fd29436f6f5",
-                    scope: "snsapi_login",
-                    redirect_uri: "https%3a%2f%2flandingzone.cc%2fweixin%2fweb_login_callback.do",
-                    style: "black"
-                });
-            }
-        }
-        // let allowWechatLogin = 'error';
-        let doLogin = function () {
-            $.ajax({
-                url: "../rsakey/getPublicKey.do",
-                success: function (result) {
-                    if (result.success) {
-                        let publicKey = result.data.publicKey;
-                        let encrypt = new JSEncrypt();
-                        encrypt.setPublicKey(publicKey);
-                        let encrypted = encrypt.encrypt($('#passwordInput').val());
-                        $('#passwordInput').val(encrypted);
-<!--                        console.log(encrypted);-->
-                        document.getElementById('loginForm').submit();
-                    } else {
-                        alert("获取公钥失败");
-                    }
-                }
-            })
-
-        }
-        /*]]>*/
-    </script>
 </head>
 
 <body>
@@ -95,22 +40,15 @@
             </div>
         </div>
 
-        <form class="form-signin" id="loginForm" onsubmit="return false" th:action="@{/login}" method='POST'>
-            <input type="text" name="username" id="usernameInput" class="form-control" placeholder="用户名" required
-                autofocus><br />
-            <input type="password" name="password" id="passwordInput" class="form-control" placeholder="密码"
-                required><br />
+        <form class="form-signin" id="loginForm" action="/login" method='POST'>
+            <input type="text" name="username" id="usernameInput" class="form-control" placeholder="用户名" required autofocus><br />
+            <input type="password" name="password" id="passwordInput" class="form-control" placeholder="密码" required><br />
             <input type="checkbox" name="remember-me" checked="true" /><span>&nbsp;&nbsp;remember me</span><br /><br />
-            <button th:if="${!allowWechatLogin}" class="btn btn-primary login-btn-no-wechat" onclick="doLogin();" type="submit">登录</button>
-            <button th:if="${allowWechatLogin}" class="btn btn-primary login-btn" onclick="doLogin();" type="submit">登录</button>
-            <button th:if="${allowWechatLogin}" class="btn btn-success weixin-login-btn" onclick="changeLoginStyle();" type="button">微信登录</button>
+            <input type="submit" class="btn btn-primary login-btn" value="Sign in" />
             <br /><br />
         </form>
-        <div align="center" id="weixin-login-div" style="display: none">
-            <div id="login_container"></div>
-        </div>
         <div align="center" style="color: dimgrey">
-            <p>© landingzone.cc</p>
+            <p>© dream cmp</p>
         </div>
     </div>
     <div style="position: fixed;bottom: 0;width: 100%;text-align: center;">

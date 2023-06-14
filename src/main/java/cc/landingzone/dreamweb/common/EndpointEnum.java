@@ -1,12 +1,6 @@
 package cc.landingzone.dreamweb.common;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import cc.landingzone.dreamweb.service.SystemConfigService;
 
 public enum EndpointEnum {
 
@@ -58,19 +52,15 @@ public enum EndpointEnum {
      */
     RAM("ram.aliyuncs.com");
 
-    private static final String REGION = "region";
-    private static final String USE_VPC = "useVpc";
-
     private String endpointPattern;
-    private SystemConfigService systemConfigService;
 
     EndpointEnum(String endpointPattern) {
         this.endpointPattern = endpointPattern;
     }
 
     public String getEndpoint() {
-        String region = systemConfigService.getStringValueFromCache(REGION);
-        boolean useVpc = systemConfigService.getBooleanValueFromCache(USE_VPC);
+        String region = "";
+        boolean useVpc = false;
 
         if (StringUtils.isBlank(region)) {
             region = CommonConstants.Aliyun_REGION_HANGZHOU;
@@ -92,21 +82,4 @@ public enum EndpointEnum {
         }
     }
 
-    @Component
-    public static class EndpointServiceInjector {
-
-        @Autowired
-        private SystemConfigService systemConfigService;
-
-        @PostConstruct
-        public void postConstruct() {
-            for (EndpointEnum endpoint : EndpointEnum.values()) {
-                endpoint.setSystemConfigService(systemConfigService);
-            }
-        }
-    }
-
-    private void setSystemConfigService(SystemConfigService systemConfigService) {
-        this.systemConfigService = systemConfigService;
-    }
 }

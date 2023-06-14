@@ -18,9 +18,6 @@ public class CommonConstants {
 
     public static final String Aliyun_REGION_HANGZHOU = "cn-hangzhou";
 
-    public static final String WEB_LANDINGZONE_ID;
-    public static final String WEB_LANDINGZONE_SECRET;
-
     public static final String LOGOUT_SUCCESS_URL;
 
     // 是否线上环境
@@ -33,8 +30,6 @@ public class CommonConstants {
         ENV_ONLINE = Boolean.parseBoolean(properties.getProperty("dreamweb.env_online"));
         Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
-        WEB_LANDINGZONE_ID = properties.getProperty("dreamweb.weixin.landingzone.id");
-        WEB_LANDINGZONE_SECRET = properties.getProperty("dreamweb.weixin.landingzone.secret");
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";
