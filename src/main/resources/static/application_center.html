@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
   <style>
     .iframe-container {
       width: 100%;
@@ -44,8 +47,104 @@
       </div>
     </div>
   </nav>
-  <div class="iframe-container">
-    <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>
+<!--  <div class="iframe-container">-->
+<!--    <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
+<!--  </div>-->
+  <div class="px-5 py-3" >
+    <div class="row d-flex">
+      <div class="col input-group">
+        <input name="AppName" class="form-control" type="text" placeholder="Please enter the application name">
+        <button class="btn btn-outline-secondary" type="button" id="button-search-app"><i class="bi bi-search"></i></button>
+      </div>
+      <div class="col">
+        <button class="btn btn-outline-secondary" type="button" id="button-reset-search-app"><i class="bi bi-arrow-clockwise"></i></button>
+      </div>
+    </div>
+
+    <div class="row g-4 py-3 row-cols-1 row-cols-lg-3">
+      <div class="col d-flex align-items-start">
+        <div class="card">
+          <div class="card-body">
+            <div class="dropdown-left float-end">
+              <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
+                 data-bs-toggle="dropdown" aria-expanded="false"></a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                <li><a class="dropdown-item" href="#">Log Center</a></li>
+              </ul>
+            </div>
+            <h4 class="card-title">dream-app</h4>
+            <p class="card-text">dream-app dream-app dream-app dream-app dream-app</p>
+            <div class="row row-cols-1 row-cols-lg-5">
+              <div class="col align-items-start">
+                <h5>10</h5>
+                <p>ECS</p>
+              </div>
+              <div class="col align-items-start">
+                <h5>1</h5>
+                <p>OSS</p>
+              </div>
+              <div class="col align-items-start">
+                <h5>1</h5>
+                <p>SLB</p>
+              </div>
+              <div class="col align-items-start">
+                <h5>1</h5>
+                <p>RDS</p>
+              </div>
+              <div class="col align-items-start">
+                <h5>2</h5>
+                <p>SLS</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+          </div>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+          </div>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+          </div>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 <script>

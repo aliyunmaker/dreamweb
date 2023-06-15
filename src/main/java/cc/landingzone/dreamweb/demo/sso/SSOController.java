@@ -110,7 +110,7 @@ public class SSOController extends BaseController implements InitializingBean {
 //                replyUrl = choosedRole.split(",")[0];
 //                identifier = choosedRole.split(",")[1];
 //                nameID = choosedRole.split(",")[2];
-                identifier = SSOConstants.getSSOSpIdentifier(ssoSp).replace("{uid}", CommonConstants.Aliyun_UserId);
+                identifier = identifier.replace("{uid}", CommonConstants.Aliyun_UserId);
                 nameID = userRoleId + "@" + uid + ".onaliyun.com";
             } else if (SSOSpEnum.aliyun_user_cloudsso.equals(ssoSp)) {
                 nameID = userRoleId;
