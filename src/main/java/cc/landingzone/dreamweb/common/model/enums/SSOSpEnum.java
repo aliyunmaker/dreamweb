@@ -7,5 +7,5 @@ package cc.landingzone.dreamweb.common.model.enums;
  * @date 2020-10-15
  */
 public enum SSOSpEnum {
-    aliyun, aliyun_user, aws, aws_user
+    aliyun, aliyun_user, aliyun_user_cloudsso, aws, aws_user
 }
