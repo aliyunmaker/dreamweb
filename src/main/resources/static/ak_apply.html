@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+  <style>
+        .iframe-container {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .nav-link:hover {
+            background-color: #a5b6c6;
+        }
+
+        .active {
+            background-color: #8899f0;
+        }
+    </style>
+</head>
+
+<body>
+<main>
+  <nav class="navbar navbar-expand bg-body-secondary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i>
+        Monitor Center</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link disabled">Project: [springrun]</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!--    <div class="iframe-container">-->
+  <!--      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
+  <!--    </div>-->
+</main>
+<script>
+        var links = document.querySelectorAll(".navbar-nav a");
+        var iframe = document.getElementById("iframe");
+
+        links.forEach(function (link) {
+            link.addEventListener("click", function (e) {
+                e.preventDefault();
+                var page = e.target.getAttribute("data-link");
+                iframe.setAttribute("src", page);
+
+                // Remove active class from all links
+                links.forEach(function (link) {
+                    link.classList.remove("active");
+                });
+
+                // Add active class to the clicked link
+                e.target.classList.add("active");
+            });
+        });
+    </script>
+
+<h1>AK申请</h1>
+<br>
+<form>
+  <div class="form-group">
+    <label for="application">所属应用：</label>
+    <select class="form-select" aria-label="Default select example" id="application">
+      <option selected disabled value="">请选择应用</option>
+      <option value="1">应用1</option>
+      <option value="2">应用2</option>
+      <option value="3">应用3</option>
+    </select>
+  </div>
+  <br>
+  <div class="form-group">
+    <label for="environmentType">环境类型：</label>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>生产
+      <label class="form-check-label" for="radio1"></label>
+    </div>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">测试
+      <label class="form-check-label" for="radio2"></label>
+    </div>
+  </div>
+  <br>
+  <div class="form-group">
+    <label for="application">申请资源：</label>
+    <select class="form-select" aria-label="Default select example" id="application">
+      <option selected="">OSS Bucket</option>
+      <option value="1">sls project</option>
+    </select>
+    <select class="form-select" aria-label="Default select example" id="application">
+      <option selected disabled value="">请选择资源</option>
+      <option value="1">资源1</option>
+      <option value="2">资源2</option>
+      <option value="3">资源3</option>
+    </select>
+  </div>
+  <br>
+  <div class="form-group">
+    <label for="application">权限模版：</label>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>
+      <label class="form-check-label" for="radio1">ReadOnly Access</label>
+      <small id="emailHelp" class="form-text text-muted">具有对指定资源的只读权限</small>
+    </div>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">
+      <label class="form-check-label" for="radio2">Full Access</label>
+      <small id="emailHelp" class="form-text text-muted">具有对指定资源的读写权限</small>
+    </div>
+    <label for="exampleFormControlTextarea1"></label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+  </div>
+  <br>
+  <button type="submit" class="btn btn-primary">申请</button>
+</form>
+
+</body>
+
+</html>
