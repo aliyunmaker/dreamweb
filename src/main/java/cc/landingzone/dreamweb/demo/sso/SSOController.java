@@ -99,19 +99,24 @@ public class SSOController extends BaseController implements InitializingBean {
             String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
-            String userRoleValue = request.getParameter("userRoleId");
+            String uid = CommonConstants.Aliyun_UserId;
+            String userRoleId = request.getParameter("userRoleId");
+            String idpEntityId = SSOConstants.IDP_ENTITY_ID;
             HashMap<String, List<String>> attributes = null;
             // 如果是user sso,需要特殊处理,拆分出uid和nameid,而且不支持多个
             if (SSOSpEnum.aliyun_user.equals(ssoSp) || SSOSpEnum.aws_user.equals(ssoSp)) {
-                String choosedRole = "";
-                logger.info("user sso choosed:" + choosedRole);
-                replyUrl = choosedRole.split(",")[0];
-                identifier = choosedRole.split(",")[1];
-                nameID = choosedRole.split(",")[2];
+//                String choosedRole = "";
+//                logger.info("user sso choosed:" + choosedRole);
+//                replyUrl = choosedRole.split(",")[0];
+//                identifier = choosedRole.split(",")[1];
+//                nameID = choosedRole.split(",")[2];
+                identifier = SSOConstants.getSSOSpIdentifier(ssoSp).replace("{uid}", CommonConstants.Aliyun_UserId);
+                nameID = userRoleId + "@" + uid + ".onaliyun.com";
             } else {
                 attributes = new HashMap<String, List<String>>();
                 // 只有role sso 才需要这些参数
                 Set<String> roleSet = new HashSet<String>();
+                String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
                 roleSet.add(userRoleValue);
                 List<String> roleStringList = new ArrayList<String>(roleSet);
                 attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
@@ -163,12 +168,14 @@ public class SSOController extends BaseController implements InitializingBean {
             String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
-            String userRoleValue = request.getParameter("userRoleId");
+            String uid = CommonConstants.Aliyun_UserId;
+            String userRoleId = request.getParameter("userRoleId");
+            String idpEntityId = SSOConstants.IDP_ENTITY_ID;
 
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
-            //TODO
+            String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
             roleSet.add(userRoleValue);
             List<String> roleStringList = new ArrayList<String>(roleSet);
             attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);

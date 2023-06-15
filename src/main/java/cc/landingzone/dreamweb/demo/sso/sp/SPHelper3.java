@@ -1,17 +1,13 @@
 package cc.landingzone.dreamweb.demo.sso.sp;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.EndpointEnum;
+import cc.landingzone.dreamweb.common.utils.JsonUtils;
+import cc.landingzone.dreamweb.demo.sso.SamlGenerator;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-
-import cc.landingzone.dreamweb.common.EndpointEnum;
-import cc.landingzone.dreamweb.demo.sso.SamlGenerator;
-
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -25,8 +21,9 @@ import com.aliyuncs.ram.model.v20150501.AttachPolicyToRoleResponse;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityRequest;
 import com.aliyuncs.sts.model.v20150401.GetCallerIdentityResponse;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.utils.JsonUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class SPHelper3 {
 
@@ -46,7 +43,7 @@ public class SPHelper3 {
 
         String endpoint = EndpointEnum.RESOURCE_MANAGER.getEndpoint();
         DefaultProfile profile = DefaultProfile.getProfile(CommonConstants.Aliyun_REGION_HANGZHOU,
-                "LTAI4GJUpyaevoyoXyr6hn47", "4SMabTxnMbo3WYCCYrU95T7XJK5uXs");
+                CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         List<Map<String, String>> list = listAccounts(profile, endpoint);
         System.out.println(JsonUtils.toJsonString(list));
     }

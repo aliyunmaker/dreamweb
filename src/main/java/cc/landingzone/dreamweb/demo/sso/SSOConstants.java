@@ -117,8 +117,8 @@ public class SSOConstants {
     private static final String ALIYUN_ATTRIBUTE_KEY_ROLE = "https://www.aliyun.com/SAML-Role/Attributes/Role";
 
     // aliyun user sso
-    private static final String ALIYUN_USER_IDENTIFIER = "[aliyun user sso] must be replaced identifier";// "https://signin.aliyun.com/{uid}/saml/SSO";
-    private static final String ALIYUN_USER_REPLY_URL = "[aliyun user sso] must be replaced replyUrl";// "https://signin.aliyun.com/saml/SSO";
+    private static final String ALIYUN_USER_IDENTIFIER = "https://signin.aliyun.com/{uid}/saml/SSO";
+    private static final String ALIYUN_USER_REPLY_URL = "https://signin.aliyun.com/saml/SSO";
 
     // aws role sso
     private static final String AWS_IDENTIFIER = "urn:amazon:webservices";
