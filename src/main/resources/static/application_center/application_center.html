@@ -68,57 +68,14 @@
         $.ajax({
           url: "../apps/listApps.do",
           success: function(result){
-            appsInfo = result.data;
-            console.log(appsInfo);
-            var cardContainer = document.getElementById("cardContainer");
-            appsInfo.forEach(function(app) {
-              var col = document.createElement("div");
-              col.className = "col align-items-start";
-
-              var cardDiv = document.createElement("div");
-              cardDiv.className = "card";
-
-              var cardBodyDiv = document.createElement("div");
-              cardBodyDiv.className = "card-body";
-
-              var cardTitle = document.createElement("h4");
-              cardTitle.className = "card-title";
-              cardTitle.innerText = app.appName;
-
-              var cardDescription = document.createElement("p");
-              cardDescription.className = "card-text";
-              cardDescription.innerText = app.description;
-
-              var servicesInfo = document.createElement("div");
-              servicesInfo.className = "row row-cols-1 row-cols-lg-5";
-
-              app.services.forEach(function(service) {
-                var serviceInfo = document.createElement("div");
-                serviceInfo.className = "col align-items-start";
-
-                var resourceCount = document.createElement("h5");
-                resourceCount.innerText = service.resourceCount;
-
-                var serviceName = document.createElement("p");
-                serviceName.innerText = service.serviceName;
-
-                serviceInfo.appendChild(resourceCount);
-                serviceInfo.appendChild(serviceName);
-                servicesInfo.appendChild(serviceInfo);
-              });
-
-              cardBodyDiv.appendChild(cardTitle);
-              cardBodyDiv.appendChild(cardDescription);
-              cardBodyDiv.appendChild(servicesInfo);
-              cardDiv.appendChild(cardBodyDiv);
-              col.appendChild(cardDiv);
-              cardContainer.appendChild(col);
-
-    <!--          var cardTitleText = document.createElement("a");-->
-          });
+            if (result.success) {
+              appsInfo = result.data;
+              console.log(appsInfo);
+              createCards(appsInfo);
+            } else {
+              alert(result.errorMsg);
+            }
         }});
-
-
       });
       </script>
       <div class="col d-flex align-items-start">
@@ -193,6 +150,55 @@
         e.target.classList.add("active");
       });
     });
+
+    function createCards(appsInfo) {
+      var cardContainer = document.getElementById("cardContainer");
+      appsInfo.forEach(function(app) {
+        var col = document.createElement("div");
+        col.className = "col align-items-start";
+
+        var cardDiv = document.createElement("div");
+        cardDiv.className = "card";
+
+        var cardBodyDiv = document.createElement("div");
+        cardBodyDiv.className = "card-body";
+
+        var cardTitle = document.createElement("h4");
+        cardTitle.className = "card-title";
+        cardTitle.innerText = app.appName;
+
+        var cardDescription = document.createElement("p");
+        cardDescription.className = "card-text";
+        cardDescription.innerText = app.description;
+
+        var servicesInfo = document.createElement("div");
+        servicesInfo.className = "row row-cols-1 row-cols-lg-5";
+
+        app.services.forEach(function(service) {
+          var serviceInfo = document.createElement("div");
+          serviceInfo.className = "col align-items-start";
+
+          var resourceCount = document.createElement("h5");
+          resourceCount.innerText = service.resourceCount;
+
+          var serviceName = document.createElement("p");
+          serviceName.innerText = service.serviceName;
+
+          serviceInfo.appendChild(resourceCount);
+          serviceInfo.appendChild(serviceName);
+          servicesInfo.appendChild(serviceInfo);
+        });
+
+        cardBodyDiv.appendChild(cardTitle);
+        cardBodyDiv.appendChild(cardDescription);
+        cardBodyDiv.appendChild(servicesInfo);
+        cardDiv.appendChild(cardBodyDiv);
+        col.appendChild(cardDiv);
+        cardContainer.appendChild(col);
+
+        // var cardTitleText = document.createElement("a");
+       });
+    };
 
     var appNames = document.querySelectorAll(".card-body a");
 <!--    var appsInfo;-->

@@ -7,6 +7,6 @@ import java.util.List;
 @Data
 public class Service {
     private String serviceName;
-    private Integer resourceSize;
-    private List<Resource> resources;
+    private Integer resourceCount;
+    private List<String> resourceIds;
 }

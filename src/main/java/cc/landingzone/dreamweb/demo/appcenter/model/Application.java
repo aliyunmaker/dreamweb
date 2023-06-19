@@ -7,5 +7,6 @@ import java.util.List;
 @Data
 public class Application {
     private String appName;
+    private String description;
     private List<Service> services;
 }
