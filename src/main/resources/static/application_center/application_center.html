@@ -61,7 +61,66 @@
       </div>
     </div>
 
-    <div class="row g-4 py-3 row-cols-1 row-cols-lg-3">
+    <div class="row g-4 py-3 row-cols-1 row-cols-lg-3" id="cardContainer">
+      <script>
+       $( document ).ready(function() {
+        var appsInfo;
+        $.ajax({
+          url: "../apps/listApps.do",
+          success: function(result){
+            appsInfo = result.data;
+            console.log(appsInfo);
+            var cardContainer = document.getElementById("cardContainer");
+            appsInfo.forEach(function(app) {
+              var col = document.createElement("div");
+              col.className = "col align-items-start";
+
+              var cardDiv = document.createElement("div");
+              cardDiv.className = "card";
+
+              var cardBodyDiv = document.createElement("div");
+              cardBodyDiv.className = "card-body";
+
+              var cardTitle = document.createElement("h4");
+              cardTitle.className = "card-title";
+              cardTitle.innerText = app.appName;
+
+              var cardDescription = document.createElement("p");
+              cardDescription.className = "card-text";
+              cardDescription.innerText = app.description;
+
+              var servicesInfo = document.createElement("div");
+              servicesInfo.className = "row row-cols-1 row-cols-lg-5";
+
+              app.services.forEach(function(service) {
+                var serviceInfo = document.createElement("div");
+                serviceInfo.className = "col align-items-start";
+
+                var resourceCount = document.createElement("h5");
+                resourceCount.innerText = service.resourceCount;
+
+                var serviceName = document.createElement("p");
+                serviceName.innerText = service.serviceName;
+
+                serviceInfo.appendChild(resourceCount);
+                serviceInfo.appendChild(serviceName);
+                servicesInfo.appendChild(serviceInfo);
+              });
+
+              cardBodyDiv.appendChild(cardTitle);
+              cardBodyDiv.appendChild(cardDescription);
+              cardBodyDiv.appendChild(servicesInfo);
+              cardDiv.appendChild(cardBodyDiv);
+              col.appendChild(cardDiv);
+              cardContainer.appendChild(col);
+
+    <!--          var cardTitleText = document.createElement("a");-->
+          });
+        }});
+
+
+      });
+      </script>
       <div class="col d-flex align-items-start">
         <div class="card">
           <div class="card-body">
@@ -73,7 +132,9 @@
                 <li><a class="dropdown-item" href="#">Log Center</a></li>
               </ul>
             </div>
-            <h4 class="card-title"><a href="#" data-link="application.html" class="text-black text-decoration-none">dream-app</a></h4>
+            <h4 class="card-title">
+              <a class="text-black text-decoration-none" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">dream-app</a>
+            </h4>
             <p class="card-text">dream-app dream-app dream-app dream-app dream-app</p>
             <div class="row row-cols-1 row-cols-lg-5">
               <div class="col align-items-start">
@@ -99,52 +160,18 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col d-flex align-items-start">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title"><a href="../apps/listApps.do" class="text-black text-decoration-none">dream-app</a></h4>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="--bs-offcanvas-width: 80%;">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <div>
+              Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+            </div>
           </div>
         </div>
       </div>
-      <div class="col d-flex align-items-start">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
-          </div>
-        </div>
-      </div>
-      <div class="col d-flex align-items-start">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
-          </div>
-        </div>
-      </div>
-      <div class="col d-flex align-items-start">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </main>
 <script>
@@ -168,14 +195,13 @@
     });
 
     var appNames = document.querySelectorAll(".card-body a");
-
-    var appsInfo;
-    $( document ).ready(function() {
-      $.ajax({url: "../apps/listApps.do", success: function(result){
-        appsInfo = result.data;
-        console.log(appsInfo);
-      }});
-    });
+<!--    var appsInfo;-->
+<!--    $( document ).ready(function() {-->
+<!--      $.ajax({url: "../apps/listApps.do", success: function(result){-->
+<!--        appsInfo = result.data;-->
+<!--        console.log(appsInfo);-->
+<!--      }});-->
+<!--     });-->
   </script>
 </body>
 
