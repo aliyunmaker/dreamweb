@@ -2,11 +2,11 @@ package cc.landingzone.dreamweb.demo.appcenter.model;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 public class Application {
     private String appName;
     private String description;
-    private List<Service> services;
+    private Map<String, Integer> servicesCount;
 }
