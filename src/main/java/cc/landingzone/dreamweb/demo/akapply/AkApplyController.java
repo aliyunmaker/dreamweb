@@ -84,7 +84,12 @@ public class AkApplyController extends BaseController {
         Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
         Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
         Assert.isTrue(StringUtils.isNotEmpty(resourceType), "resourceType can not be empty");
+        logger.info("applicationName: " + applicationName);
+        logger.info("environment: " + environment);
+        logger.info("resourceType: " + resourceType);
+        long startTime = System.currentTimeMillis();
         List<String> resourceNames = AkApplyUtil.listResourcesByTag(applicationName, environment,resourceType);
+        logger.info("listResourcesByTagTime: " + (System.currentTimeMillis() - startTime) + "ms");
         outputToJSON(response, resourceNames);
     }
 }

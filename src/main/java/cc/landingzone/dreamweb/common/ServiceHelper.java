@@ -57,4 +57,20 @@ public class ServiceHelper {
                 .setEndpoint("cn-hangzhou.log.aliyuncs.com");
         return new com.aliyun.sls20201230.Client(config);
     }
+
+    public static com.aliyun.ram20150501.Client createRamClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                  .setAccessKeyId(accessKeyId)
+                  .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "ram.aliyuncs.com";
+        return new com.aliyun.ram20150501.Client(config);
+    }
+
+    public static com.aliyun.tag20180828.Client createTagClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "tag.aliyuncs.com";
+        return new com.aliyun.tag20180828.Client(config);
+    }
 }

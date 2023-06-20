@@ -2,6 +2,7 @@ package cc.landingzone.dreamweb.demo.akapply;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceEnum;
+import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.demo.akapply.model.Condition;
 import cc.landingzone.dreamweb.demo.akapply.model.PolicyDocument;
 import cc.landingzone.dreamweb.demo.akapply.model.Statement;
@@ -12,7 +13,6 @@ import com.aliyun.ram20150501.Client;
 import com.aliyun.ram20150501.models.*;
 import com.aliyun.tag20180828.models.ListResourcesByTagRequest;
 import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
-import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +28,6 @@ public class AkApplyUtil {
     public static Logger logger = LoggerFactory.getLogger(AkApplyUtil.class);
 
     public static void main(String[] args) {
-        System.out.println(ServiceEnum.valueOf("log").getResourceType());
-
 
 //        String ramArn = getRamArn("dreamweb",CommonConstants.Aliyun_UserId);
 //        String resourceType = "oss";
@@ -159,11 +157,10 @@ public class AkApplyUtil {
      * @param userName
      */
     public static void createRamUser(String userName){
-        Client client = AkApplyUtil.createClientRam(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-        RuntimeOptions runtime = new RuntimeOptions();
-        try {
-            assert client != null;
-            // 查询所有RAM用户
+         try {
+             Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
+             RuntimeOptions runtime = new RuntimeOptions();
+             // 查询所有RAM用户
             ListUsersRequest listUsersRequest = new ListUsersRequest();
             ListUsersResponseBody.ListUsersResponseBodyUsers users = client.listUsersWithOptions(listUsersRequest,
                     runtime).getBody().getUsers();
@@ -227,14 +224,13 @@ public class AkApplyUtil {
      * @param policyDocument：权限策略内容
      */
     public static void createPolicy(String policyName,String policyDocument)  {
-        Client client = AkApplyUtil.createClientRam(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-        CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest()
-                .setPolicyName(policyName)
-                .setPolicyDocument(policyDocument);
-        RuntimeOptions runtime = new RuntimeOptions();
-        try {
-            assert client != null;
-            client.createPolicyWithOptions(createPolicyRequest, runtime);
+         try {
+             Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
+             CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest()
+                     .setPolicyName(policyName)
+                     .setPolicyDocument(policyDocument);
+             RuntimeOptions runtime = new RuntimeOptions();
+             client.createPolicyWithOptions(createPolicyRequest, runtime);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -249,15 +245,14 @@ public class AkApplyUtil {
      * @param policyType：System为系统策略，Custom为自定义策略
      */
     public static void attachPolicyToUser(String userName,String policyName,String policyType) {
-        Client client = AkApplyUtil.createClientRam(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-        AttachPolicyToUserRequest attachPolicyToUserRequest = new AttachPolicyToUserRequest()
-                .setUserName(userName)
-                .setPolicyName(policyName)
-                .setPolicyType(policyType);
-        RuntimeOptions runtime = new RuntimeOptions();
-        try {
-            assert client != null;
-            client.attachPolicyToUserWithOptions(attachPolicyToUserRequest, runtime);
+         try {
+             Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
+             AttachPolicyToUserRequest attachPolicyToUserRequest = new AttachPolicyToUserRequest()
+                     .setUserName(userName)
+                     .setPolicyName(policyName)
+                     .setPolicyType(policyType);
+             RuntimeOptions runtime = new RuntimeOptions();
+             client.attachPolicyToUserWithOptions(attachPolicyToUserRequest, runtime);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -269,79 +264,36 @@ public class AkApplyUtil {
      * @return
      */
     public static CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey createAccessKey(String userName){
-        Client client = AkApplyUtil.createClientRam(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-        CreateAccessKeyRequest createAccessKeyRequest = new CreateAccessKeyRequest().setUserName(userName);
-        RuntimeOptions runtime = new RuntimeOptions();
         try {
-            assert client != null;
-            CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey accessKey =
-                    client.createAccessKeyWithOptions(createAccessKeyRequest, runtime).getBody().getAccessKey();
-            return accessKey;
+            Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
+            CreateAccessKeyRequest createAccessKeyRequest = new CreateAccessKeyRequest().setUserName(userName);
+            RuntimeOptions runtime = new RuntimeOptions();
+            return client.createAccessKeyWithOptions(createAccessKeyRequest, runtime)
+                    .getBody().getAccessKey();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
         }
-    }
-
-
-    /**
-     * 使用AK&SK初始化账号Client,访问RAM
-     * @param accessKeyId
-     * @param accessKeySecret
-     * @return Client
-     */
-    public static Client createClientRam(String accessKeyId, String accessKeySecret) {
-        Config config = new Config()
-                .setAccessKeyId(accessKeyId)
-                .setAccessKeySecret(accessKeySecret);
-        // 访问的域名
-        config.endpoint = "ram.aliyuncs.com";
-        try {
-            return new Client(config);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-    }
-
-    /**
-     * 使用AK&SK初始化账号Client,访问Tag
-     * @param accessKeyId
-     * @param accessKeySecret
-     * @return Client
-     */
-    public static com.aliyun.tag20180828.Client createClientTag(String accessKeyId, String accessKeySecret){
-        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                .setAccessKeyId(accessKeyId)
-                .setAccessKeySecret(accessKeySecret);
-        // 访问的域名
-        config.endpoint = "tag.aliyuncs.com";
-        try {
-            return new com.aliyun.tag20180828.Client(config);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-
     }
 
     public static List<String> listResourcesByTag(String applicationName, String environment, String resourceType) {
-        com.aliyun.tag20180828.Client client = AkApplyUtil.createClientTag
-                (CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-
-        ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
-                .setValue(applicationName)
-                .setKey(CommonConstants.APPLICATION_TAG_KEY);
-        ListResourcesByTagRequest listResourcesByTagRequest = new ListResourcesByTagRequest()
-                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
-                .setMaxResult(1000)
-                .setResourceType(ServiceEnum.valueOf(resourceType.toUpperCase()).getResourceType())
-                .setIncludeAllTags(true)
-                .setTagFilter(tagFilter);
-        RuntimeOptions runtime = new RuntimeOptions();
-        List<String> resourceName = new ArrayList<>();
         try {
-            assert client != null;
+            com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient
+                    (CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
+            if ("log".equals(resourceType)){
+                resourceType = "sls";
+            }
+            ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
+                    .setValue(applicationName)
+                    .setKey(CommonConstants.APPLICATION_TAG_KEY);
+            ListResourcesByTagRequest listResourcesByTagRequest = new ListResourcesByTagRequest()
+                    .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                    .setMaxResult(1000)
+                    .setResourceType(ServiceEnum.valueOf(resourceType.toUpperCase()).getResourceType())
+                    .setIncludeAllTags(true)
+                    .setTagFilter(tagFilter);
+            RuntimeOptions runtime = new RuntimeOptions();
+            List<String> resourceName = new ArrayList<>();
             List<ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources> resources = client.
                     listResourcesByTagWithOptions(listResourcesByTagRequest, runtime).getBody().getResources();
             for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources resource : resources) {
@@ -354,7 +306,7 @@ public class AkApplyUtil {
             return resourceName;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return resourceName;
+            return new ArrayList<>();
         }
     }
 

@@ -89,7 +89,7 @@
 <form id = "ak-apply" onsubmit="return akApplySubmit()">
   <div class="form-group">
     <label for="application">所属应用：</label>
-    <select class="form-select" id="application" required>
+    <select class="form-select" id="application" onchange="listResourcesByAppEnvAndResType()" required>
       <option selected disabled value="">请选择应用</option>
       <option value="application1">应用1</option>
       <option value="application2">应用2</option>
@@ -100,7 +100,7 @@
   <div class="form-group">
     <label for="environmentType1">环境类型：</label>
     <div class="form-check">
-      <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product" checked>
+      <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product">
       <label class="form-check-label" for="environmentType1">生产</label>
     </div>
     <div class="form-check">
@@ -112,16 +112,16 @@
   <div class="form-group">
     <label for="applyResourceType">申请资源：</label>
     <!--    <div id ="applyResource">-->
-    <select class="form-select" id="applyResourceType" required>
+    <select class="form-select" id="applyResourceType" onchange="listResourcesByAppEnvAndResType()" required>
       <option selected disabled value="">请选择资源类型</option>
       <option value="oss">OSS Bucket</option>
       <option value="log">sls project</option>
     </select>
-    <select class="form-select" id="concreteResource" required>
+    <select class="form-select" id="concreteResource" onchange="generatePolicyDocument()" required>
       <option selected disabled value="">请选择具体资源</option>
-      <option value="resource1">资源1</option>
+      <!-- <option value="resource1">资源1</option>
       <option value="resource2">资源2</option>
-      <option value="resource3">资源3</option>
+      <option value="resource3">资源3</option> -->
     </select>
     <!--    </div>-->
 
@@ -130,12 +130,12 @@
   <div class="form-group">
     <label for="permissionTemplate1">权限模版：</label>
     <div class="form-check">
-      <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1" checked onclick="generatePolicyDocument()">
+      <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
       <label class="form-check-label" for="permissionTemplate1">ReadOnly Access</label>
       <small id="permissionTemplate1Description" class="form-text text-muted">具有对指定资源的只读权限</small>
     </div>
     <div class="form-check">
-      <input type="radio" class="form-check-input" id="permissionTemplate2" name="permissionTemplate" value="2" onclick="generatePolicyDocument()">
+      <input type="radio" class="form-check-input" id="permissionTemplate2" name="permissionTemplate" value="2">
       <label class="form-check-label" for="permissionTemplate2">Full Access</label>
       <small id="permissionTemplate2Description" class="form-text text-muted">具有对指定资源的读写权限</small>
     </div>
@@ -165,7 +165,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
     </div>
   </div>
@@ -179,15 +179,31 @@
         var permissionTemplate = $("input[name='permissionTemplate']:checked").val();
         var policyDocument = document.getElementById("policyDocument").value;
 
+        // $(window).on('load', function() {
+        //   console.log("window load");
+        //   listResourcesByAppEnvAndResType();
+        //   generatePolicyDocument();
+        // });
+
+        // 单选按钮点击事件
+        $('input[type=radio][name=environmentType]').change(function() {
+          // console.log(this.value);
+          listResourcesByAppEnvAndResType();
+			  });
+
+        $('input[type=radio][name=permissionTemplate]').change(function() {
+          // console.log(this.value);
+          generatePolicyDocument();
+			  });
 
         function akApplySubmit(){
           application = document.getElementById("application").value;
           environmentType = $("input[name='environmentType']:checked").val();
           policyDocument = document.getElementById("policyDocument").value;
 
-          console.log("application: " + application);
-          console.log("environmentType: " + environmentType);
-          console.log("policyDocument: " + policyDocument);
+          // console.log("application: " + application);
+          // console.log("environmentType: " + environmentType);
+          // console.log("policyDocument: " + policyDocument);
 
           var params = {
             applicationName: application,
@@ -196,15 +212,15 @@
           };
 
           $.ajax({
-            url: "http://localhost:8080/" + "akApply/akApplySubmit",
+            url: "../" + "akApply/akApplySubmit.do",
             type: "POST",
             data: params,
             async: false,
             // dataType: "json",
             success: function(data){
-              console.log("data: ");
-              console.log(data.accessKeyId);
-              console.log(data.accessKeySecret);
+              // console.log("data: ");
+              // console.log(data.accessKeyId);
+              // console.log(data.accessKeySecret);
               document.getElementById("accessKeyIdShow").innerText = data.accessKeyId;
               document.getElementById("accessKeySecretShow").innerText = data.accessKeySecret;
             },
@@ -219,13 +235,15 @@
           applyResourceType = document.getElementById("applyResourceType").value;
           concreteResource = document.getElementById("concreteResource").value;
           permissionTemplate = $("input[name='permissionTemplate']:checked").val();
+          // console.log("applyResourceType: " + applyResourceType);
+          // console.log("concreteResource: " + concreteResource);
+          // console.log("permissionTemplate: " + permissionTemplate);
+          if (applyResourceType == "" || concreteResource == "" || permissionTemplate == undefined){
+            return;
+          }
 
-          console.log("applyResourceType: " + applyResourceType);
-          console.log("concreteResource: " + concreteResource);
-          console.log("permissionTemplate: " + permissionTemplate);
-
-          // 测试
-          concreteResource = "buckettestjia";
+          // // 测试
+          // concreteResource = "buckettestjia";
 
           var params = {
             resourceType: applyResourceType,
@@ -234,13 +252,57 @@
           };
 
           $.ajax({
-            url: "http://localhost:8080/" + "akApply/generatePolicyDocument",
+            url: "../" + "akApply/generatePolicyDocument.do",
             type: "POST",
             data: params,
             // dataType: "json",
             success: function(data){
-              console.log("data: " + data);
+              // console.log("data: " + data);
               document.getElementById("policyDocument").value = data;
+            },
+          })
+        }
+
+        function listResourcesByAppEnvAndResType(){
+          application = document.getElementById("application").value;
+          environmentType = $("input[name='environmentType']:checked").val();
+          applyResourceType = document.getElementById("applyResourceType").value;
+          // console.log("application: " + application);
+          // console.log("environmentType: " + environmentType);
+          // console.log("applyResourceType: " + applyResourceType);
+          if(application == "" || environmentType == undefined || applyResourceType == ""){
+            return;
+          }
+          var params = {
+            applicationName: application,
+            environment: environmentType,
+            resourceType: applyResourceType
+          };
+
+          var concreteResource = document.getElementById("concreteResource");
+          // console.log(concreteResource.length);
+          // console.log(concreteResource.value);
+          for (var i = concreteResource.length - 1; i >= 1; i--) {
+            concreteResource.remove(i);
+          }
+
+
+          $.ajax({
+            url: "../" + "akApply/listResourcesByAppEnvAndResType.do",
+            type: "POST",
+            data: params,
+            // dataType: "json",
+            success: function(data){
+              var concreteResource = document.getElementById("concreteResource");
+              // console.log(concreteResource.length);
+              // console.log(concreteResource.value);
+              for (var i = concreteResource.length - 1; i >= 1; i--) {
+                concreteResource.remove(i);
+              }
+              for (var i = 0; i < data.length; i++) {
+                concreteResource.options.add(new Option(data[i], data[i]));
+              }
+              concreteResource.value = "";
             },
           })
         }
