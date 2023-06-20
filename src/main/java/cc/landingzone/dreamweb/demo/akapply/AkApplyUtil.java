@@ -27,11 +27,11 @@ public class AkApplyUtil {
 
     public static void main(String[] args) {
         String ramArn = getRamArn("dreamweb",CommonConstants.Aliyun_UserId);
-//        String resourceType = "oss";
-        String resourceType = "log";
+        String resourceType = "oss";
+//        String resourceType = "log";
         List<String> resourceNameList = new ArrayList<>();
-//        resourceNameList.add("buckttest11");
-        resourceNameList.add("slstestjia1");
+        resourceNameList.add("buckttestjia");
+//        resourceNameList.add("slstestjia1");
         String policyDocument = generatePolicyDocument(resourceType,resourceNameList,
                 2,CommonConstants.Aliyun_UserId);
 
@@ -121,7 +121,7 @@ public class AkApplyUtil {
         List<Statement> statementList = new ArrayList<>();
 
         Statement statement1 = new Statement();
-        List<String> resourceArn = getResourceArn(resourceType, resourceNameList,accountId);
+        List<String> resourceArn = getResourceArn(resourceType, resourceNameList, accountId);
         List<String> action = getAction(resourceType, actionCode);
         statement1.setAction(action);
         statement1.setResource(resourceArn);
@@ -191,6 +191,17 @@ public class AkApplyUtil {
                                     .setPolicyName(policy.getPolicyName());
                             client.deletePolicyWithOptions(deletePolicyRequest, runtime);
                         }
+                    }
+                    // 删除RAM用户的访问密钥
+                    ListAccessKeysRequest listAccessKeysRequest = new ListAccessKeysRequest()
+                            .setUserName(userName);
+                    ListAccessKeysResponseBody.ListAccessKeysResponseBodyAccessKeys accessKeys =
+                            client.listAccessKeysWithOptions(listAccessKeysRequest, runtime).getBody().getAccessKeys();
+                    for (ListAccessKeysResponseBody.ListAccessKeysResponseBodyAccessKeysAccessKey accessKey : accessKeys.accessKey) {
+                         DeleteAccessKeyRequest deleteAccessKeyRequest = new DeleteAccessKeyRequest()
+                                .setUserName(userName)
+                                .setUserAccessKeyId(accessKey.accessKeyId);
+                         client.deleteAccessKeyWithOptions(deleteAccessKeyRequest, runtime);
                     }
                     // 删除RAM用户
                     DeleteUserRequest deleteUserRequest = new DeleteUserRequest().setUserName(userName);

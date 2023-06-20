@@ -6,6 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+  <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+
+  <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+  <!-- 加上这个文件，就可以运行了 -->
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
   <style>
         .iframe-container {
             width: 100%;
@@ -47,9 +58,11 @@
   <!--      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
   <!--    </div>-->
 </main>
+
 <script>
         var links = document.querySelectorAll(".navbar-nav a");
         var iframe = document.getElementById("iframe");
+
 
         links.forEach(function (link) {
             link.addEventListener("click", function (e) {
@@ -58,7 +71,9 @@
                 iframe.setAttribute("src", page);
 
                 // Remove active class from all links
-                links.forEach(function (link) {
+                deleteAccessKeyRequest = new com.aliyun.ram20150501.models.DeleteAccessKeyRequest()
+                .setUserName("aaa")
+                .setUserAccessKeyId("111");links.forEach(function (link) {
                     link.classList.remove("active");
                 });
 
@@ -66,65 +81,173 @@
                 e.target.classList.add("active");
             });
         });
-    </script>
+
+</script>
 
 <h1>AK申请</h1>
 <br>
-<form>
+<form id = "ak-apply" onsubmit="return akApplySubmit()">
   <div class="form-group">
     <label for="application">所属应用：</label>
-    <select class="form-select" aria-label="Default select example" id="application">
+    <select class="form-select" id="application" required>
       <option selected disabled value="">请选择应用</option>
-      <option value="1">应用1</option>
-      <option value="2">应用2</option>
-      <option value="3">应用3</option>
+      <option value="application1">应用1</option>
+      <option value="application2">应用2</option>
+      <option value="application3">应用3</option>
     </select>
   </div>
   <br>
   <div class="form-group">
-    <label for="environmentType">环境类型：</label>
+    <label for="environmentType1">环境类型：</label>
     <div class="form-check">
-      <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>生产
-      <label class="form-check-label" for="radio1"></label>
+      <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product" checked>
+      <label class="form-check-label" for="environmentType1">生产</label>
     </div>
     <div class="form-check">
-      <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">测试
-      <label class="form-check-label" for="radio2"></label>
+      <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
+      <label class="form-check-label" for="environmentType2">测试</label>
     </div>
   </div>
   <br>
   <div class="form-group">
-    <label for="application">申请资源：</label>
-    <select class="form-select" aria-label="Default select example" id="application">
-      <option selected="">OSS Bucket</option>
-      <option value="1">sls project</option>
+    <label for="applyResourceType">申请资源：</label>
+    <!--    <div id ="applyResource">-->
+    <select class="form-select" id="applyResourceType" required>
+      <option selected disabled value="">请选择资源类型</option>
+      <option value="oss">OSS Bucket</option>
+      <option value="log">sls project</option>
     </select>
-    <select class="form-select" aria-label="Default select example" id="application">
-      <option selected disabled value="">请选择资源</option>
-      <option value="1">资源1</option>
-      <option value="2">资源2</option>
-      <option value="3">资源3</option>
+    <select class="form-select" id="concreteResource" required>
+      <option selected disabled value="">请选择具体资源</option>
+      <option value="resource1">资源1</option>
+      <option value="resource2">资源2</option>
+      <option value="resource3">资源3</option>
     </select>
+    <!--    </div>-->
+
   </div>
   <br>
   <div class="form-group">
-    <label for="application">权限模版：</label>
+    <label for="permissionTemplate1">权限模版：</label>
     <div class="form-check">
-      <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>
-      <label class="form-check-label" for="radio1">ReadOnly Access</label>
-      <small id="emailHelp" class="form-text text-muted">具有对指定资源的只读权限</small>
+      <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1" checked onclick="generatePolicyDocument()">
+      <label class="form-check-label" for="permissionTemplate1">ReadOnly Access</label>
+      <small id="permissionTemplate1Description" class="form-text text-muted">具有对指定资源的只读权限</small>
     </div>
     <div class="form-check">
-      <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">
-      <label class="form-check-label" for="radio2">Full Access</label>
-      <small id="emailHelp" class="form-text text-muted">具有对指定资源的读写权限</small>
+      <input type="radio" class="form-check-input" id="permissionTemplate2" name="permissionTemplate" value="2" onclick="generatePolicyDocument()">
+      <label class="form-check-label" for="permissionTemplate2">Full Access</label>
+      <small id="permissionTemplate2Description" class="form-text text-muted">具有对指定资源的读写权限</small>
     </div>
-    <label for="exampleFormControlTextarea1"></label>
-    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+
+    <label for="policyDocument"></label>
+    <textarea class="form-control" id="policyDocument" rows="10" required></textarea>
   </div>
   <br>
   <button type="submit" class="btn btn-primary">申请</button>
 </form>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">查看 Secret</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>请保存或发送 AccessKey 至对应用户。当前窗口关闭后，无法再次查询 Secret。如果您遗失这个 AccessKey, 可以创建新的来替代。</p>
+        <p>AccessKey ID: <span id="accessKeyIdShow">init</span> </p>
+        <p>AccessKey Secret: <span id="accessKeySecretShow">init</span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+        var application = document.getElementById("application").value;
+        var environmentType = $("input[name='environmentType']:checked").val();
+        var applyResourceType = document.getElementById("applyResourceType").value;
+        var concreteResource = document.getElementById("concreteResource").value;
+        var permissionTemplate = $("input[name='permissionTemplate']:checked").val();
+        var policyDocument = document.getElementById("policyDocument").value;
+
+
+        function akApplySubmit(){
+          application = document.getElementById("application").value;
+          environmentType = $("input[name='environmentType']:checked").val();
+          policyDocument = document.getElementById("policyDocument").value;
+
+          console.log("application: " + application);
+          console.log("environmentType: " + environmentType);
+          console.log("policyDocument: " + policyDocument);
+
+          var params = {
+            applicationName: application,
+            environment: environmentType,
+            policyDocument: policyDocument
+          };
+
+          $.ajax({
+            url: "http://localhost:8080/" + "akApply/akApplySubmit",
+            type: "POST",
+            data: params,
+            async: false,
+            // dataType: "json",
+            success: function(data){
+              console.log("data: ");
+              console.log(data.accessKeyId);
+              console.log(data.accessKeySecret);
+              document.getElementById("accessKeyIdShow").innerText = data.accessKeyId;
+              document.getElementById("accessKeySecretShow").innerText = data.accessKeySecret;
+            },
+          });
+
+          $('#myModal').modal('show');
+
+          return false;
+        }
+
+        function generatePolicyDocument(){
+          applyResourceType = document.getElementById("applyResourceType").value;
+          concreteResource = document.getElementById("concreteResource").value;
+          permissionTemplate = $("input[name='permissionTemplate']:checked").val();
+
+          console.log("applyResourceType: " + applyResourceType);
+          console.log("concreteResource: " + concreteResource);
+          console.log("permissionTemplate: " + permissionTemplate);
+
+          // 测试
+          concreteResource = "buckettestjia";
+
+          var params = {
+            resourceType: applyResourceType,
+            resourceName: concreteResource,
+            actionCode: permissionTemplate
+          };
+
+          $.ajax({
+            url: "http://localhost:8080/" + "akApply/generatePolicyDocument",
+            type: "POST",
+            data: params,
+            // dataType: "json",
+            success: function(data){
+              console.log("data: " + data);
+              document.getElementById("policyDocument").value = data;
+            },
+          })
+        }
+
+
+
+</script>
 
 </body>
 
