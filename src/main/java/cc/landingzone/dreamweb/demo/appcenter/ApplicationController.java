@@ -1,9 +1,6 @@
 package cc.landingzone.dreamweb.demo.appcenter;
 
-import cc.landingzone.dreamweb.common.ApplicationEnum;
-import cc.landingzone.dreamweb.common.BaseController;
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.ServiceEnum;
+import cc.landingzone.dreamweb.common.*;
 import cc.landingzone.dreamweb.common.model.WebResult;
 import cc.landingzone.dreamweb.demo.appcenter.model.Application;
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
@@ -30,7 +27,7 @@ public class ApplicationController extends BaseController {
         try {
             List<Application> applications = new ArrayList<>();
             for (ApplicationEnum applicationEnum: ApplicationEnum.values()) {
-                Application application = getApplicationsInfo(applicationEnum);
+                Application application = getApplicationInfo(applicationEnum);
                 assert application != null;
                 applications.add(application);
             }
@@ -67,7 +64,7 @@ public class ApplicationController extends BaseController {
         outputToJSON(response, result);
     }
 
-    public Application getApplicationsInfo(ApplicationEnum applicationEnum) {
+    public Application getApplicationInfo(ApplicationEnum applicationEnum) {
         Application application = new Application();
         application.setAppName(applicationEnum.name());
         application.setDescription(applicationEnum.getDescription());
@@ -88,7 +85,7 @@ public class ApplicationController extends BaseController {
 
             com.aliyun.tag20180828.models.ListTagResourcesRequest listTagResourcesRequest = new com.aliyun.tag20180828.models.ListTagResourcesRequest()
                     .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
-                    .setTags("{\"Application\":\""+ appName + "\"}")
+                    .setTags("{\""+ CommonConstants.APPLICATION_TAG_KEY + "\":\""+ appName + "\"}")
                     .setPageSize(1000);
             com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
             com.aliyun.tag20180828.models.ListTagResourcesResponse response = client.listTagResourcesWithOptions(listTagResourcesRequest, runtime);
@@ -143,7 +140,7 @@ public class ApplicationController extends BaseController {
 
     public List<Resource> getResourcesByService(Service service, String appName) throws Exception {
         ServiceEnum serviceEnum = ServiceEnum.valueOf(service.getServiceName());
-        return serviceEnum.getResources(service.getResourceIds());
+        return GetResourceHelper.getResources(service.getResourceIds(), serviceEnum);
     }
 
     public com.aliyun.tag20180828.Client createTagClient(String accessKeyId, String accessKeySecret) {
