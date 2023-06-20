@@ -1,8 +1,6 @@
 package cc.landingzone.dreamweb.common;
 
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
-import com.aliyun.auth.credentials.Credential;
-import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.ecs20140526.models.DescribeInstancesResponseBody;
 import com.aliyun.rds20140815.models.DescribeDBInstanceAttributeResponseBody;
 import com.aliyun.sdk.service.oss20190517.AsyncClient;
@@ -10,7 +8,6 @@ import com.aliyun.sdk.service.oss20190517.models.GetBucketInfoRequest;
 import com.aliyun.sdk.service.oss20190517.models.GetBucketInfoResponse;
 import com.aliyun.slb20140515.models.DescribeLoadBalancersResponseBody;
 import com.aliyun.sls20201230.models.Project;
-import darabonba.core.client.ClientOverrideConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +34,8 @@ public enum ServiceEnum {
      * SLS
      */
     SLS("ALIYUN::LOG::PROJECT");
+
+
 
     private String resourceType;
 
@@ -66,57 +65,9 @@ public enum ServiceEnum {
         return resources;
     }
 
-    private com.aliyun.ecs20140526.Client createEcsClient(String accessKeyId, String accessKeySecret) throws Exception {
-        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                .setAccessKeyId(accessKeyId)
-                .setAccessKeySecret(accessKeySecret)
-                .setEndpoint("ecs.aliyuncs.com");
-        return new com.aliyun.ecs20140526.Client(config);
-    }
-
-    private com.aliyun.sdk.service.oss20190517.AsyncClient createOssClient(String accessKeyId, String accessKeySecret) throws Exception {
-        StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
-                .accessKeyId(accessKeyId)
-                .accessKeySecret(accessKeySecret)
-                .build());
-
-        return AsyncClient.builder()
-                .region(CommonConstants.Aliyun_REGION_HANGZHOU)
-                .credentialsProvider(provider)
-                .overrideConfiguration(
-                        ClientOverrideConfiguration.create()
-                                .setEndpointOverride("oss-cn-hangzhou.aliyuncs.com")
-                )
-                .build();
-    }
-
-    private com.aliyun.slb20140515.Client createSlbClient(String accessKeyId, String accessKeySecret) throws Exception {
-        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                .setAccessKeyId(accessKeyId)
-                .setAccessKeySecret(accessKeySecret)
-                .setEndpoint("slb.aliyuncs.com");
-        return new com.aliyun.slb20140515.Client(config);
-    }
-
-    private com.aliyun.rds20140815.Client createRdsClient(String accessKeyId, String accessKeySecret) throws Exception {
-        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                .setAccessKeyId(accessKeyId)
-                .setAccessKeySecret(accessKeySecret)
-                .setEndpoint("rds.aliyuncs.com");
-        return new com.aliyun.rds20140815.Client(config);
-    }
-
-    private com.aliyun.sls20201230.Client createSlsClient(String accessKeyId, String accessKeySecret) throws Exception {
-        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                .setAccessKeyId(accessKeyId)
-                .setAccessKeySecret(accessKeySecret)
-                .setEndpoint("cn-hangzhou.log.aliyuncs.com");
-        return new com.aliyun.sls20201230.Client(config);
-    }
-
     private Resource getEcsResource(String resourceId) throws Exception {
         Resource resource = new Resource();
-        com.aliyun.ecs20140526.Client client = createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.ecs20140526.models.DescribeInstancesRequest describeInstancesRequest = new com.aliyun.ecs20140526.models.DescribeInstancesRequest()
                 .setInstanceIds(resourceId);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
@@ -139,7 +90,7 @@ public enum ServiceEnum {
 
     private Resource getOssResource(String resourceId) throws Exception {
         Resource resource = new Resource();
-        AsyncClient client = createOssClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        AsyncClient client = ServiceHelper.createOssClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         GetBucketInfoRequest getBucketInfoRequest = GetBucketInfoRequest.builder()
                 .bucket(resourceId)
                 .build();
@@ -158,7 +109,7 @@ public enum ServiceEnum {
 
     private Resource getSlbResource(String resourceId) throws Exception {
         Resource resource = new Resource();
-        com.aliyun.slb20140515.Client client = createSlbClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.slb20140515.Client client = ServiceHelper.createSlbClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.slb20140515.models.DescribeLoadBalancersRequest describeLoadBalancersRequest = new com.aliyun.slb20140515.models.DescribeLoadBalancersRequest()
                 .setLoadBalancerId(resourceId);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
@@ -183,7 +134,7 @@ public enum ServiceEnum {
 
     private Resource getRdsResource(String resourceId) throws Exception {
         Resource resource = new Resource();
-        com.aliyun.rds20140815.Client client = createRdsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.rds20140815.Client client = ServiceHelper.createRdsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.rds20140815.models.DescribeDBInstanceAttributeRequest describeDBInstanceAttributeRequest = new com.aliyun.rds20140815.models.DescribeDBInstanceAttributeRequest()
                 .setDBInstanceId(resourceId);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
@@ -204,7 +155,7 @@ public enum ServiceEnum {
 
     private Resource getSlsResource(String resourceId) throws Exception {
         Resource resource = new Resource();
-        com.aliyun.sls20201230.Client client = createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.sls20201230.Client client = ServiceHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
         java.util.Map<String, String> headers = new java.util.HashMap<>();

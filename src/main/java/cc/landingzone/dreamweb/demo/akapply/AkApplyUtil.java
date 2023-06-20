@@ -1,6 +1,7 @@
 package cc.landingzone.dreamweb.demo.akapply;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.demo.akapply.model.Condition;
 import cc.landingzone.dreamweb.demo.akapply.model.PolicyDocument;
 import cc.landingzone.dreamweb.demo.akapply.model.Statement;
@@ -9,6 +10,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyun.ram20150501.Client;
 import com.aliyun.ram20150501.models.*;
+import com.aliyun.tag20180828.models.ListResourcesByTagRequest;
+import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.slf4j.Logger;
@@ -18,7 +21,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class AkApplyUtil {
@@ -26,27 +28,30 @@ public class AkApplyUtil {
     public static Logger logger = LoggerFactory.getLogger(AkApplyUtil.class);
 
     public static void main(String[] args) {
-        String ramArn = getRamArn("dreamweb",CommonConstants.Aliyun_UserId);
-        String resourceType = "oss";
-//        String resourceType = "log";
-        List<String> resourceNameList = new ArrayList<>();
-        resourceNameList.add("buckttestjia");
-//        resourceNameList.add("slstestjia1");
-        String policyDocument = generatePolicyDocument(resourceType,resourceNameList,
-                2,CommonConstants.Aliyun_UserId);
+        System.out.println(ServiceEnum.valueOf("log").getResourceType());
 
-        String applicationName = "application";
-        String environment = "test";
-        String policyName = applicationName + "-" + environment + "-" + UUID.randomUUID();
-        String username = applicationName + "-" + environment;
-        createPolicy(policyName,policyDocument);
-        createRamUser(username);
-        attachPolicyToUser(username,policyName,"Custom");
 
-        CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey accessKey = createAccessKey(username);
-        assert accessKey != null;
-        System.out.println(accessKey.accessKeyId);
-        System.out.println(accessKey.accessKeySecret);
+//        String ramArn = getRamArn("dreamweb",CommonConstants.Aliyun_UserId);
+//        String resourceType = "oss";
+////        String resourceType = "log";
+//        List<String> resourceNameList = new ArrayList<>();
+//        resourceNameList.add("buckttestjia");
+////        resourceNameList.add("slstestjia1");
+//        String policyDocument = generatePolicyDocument(resourceType,resourceNameList,
+//                2,CommonConstants.Aliyun_UserId);
+//
+//        String applicationName = "application";
+//        String environment = "test";
+//        String policyName = applicationName + "-" + environment + "-" + UUID.randomUUID();
+//        String username = applicationName + "-" + environment;
+//        createPolicy(policyName,policyDocument);
+//        createRamUser(username);
+//        attachPolicyToUser(username,policyName,"Custom");
+//
+//        CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey accessKey = createAccessKey(username);
+//        assert accessKey != null;
+//        System.out.println(accessKey.accessKeyId);
+//        System.out.println(accessKey.accessKeySecret);
     }
 
     /**
@@ -280,7 +285,7 @@ public class AkApplyUtil {
 
 
     /**
-     * 使用AK&SK初始化账号Client
+     * 使用AK&SK初始化账号Client,访问RAM
      * @param accessKeyId
      * @param accessKeySecret
      * @return Client
@@ -296,6 +301,60 @@ public class AkApplyUtil {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
+        }
+    }
+
+    /**
+     * 使用AK&SK初始化账号Client,访问Tag
+     * @param accessKeyId
+     * @param accessKeySecret
+     * @return Client
+     */
+    public static com.aliyun.tag20180828.Client createClientTag(String accessKeyId, String accessKeySecret){
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        // 访问的域名
+        config.endpoint = "tag.aliyuncs.com";
+        try {
+            return new com.aliyun.tag20180828.Client(config);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+
+    }
+
+    public static List<String> listResourcesByTag(String applicationName, String environment, String resourceType) {
+        com.aliyun.tag20180828.Client client = AkApplyUtil.createClientTag
+                (CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
+
+        ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
+                .setValue(applicationName)
+                .setKey(CommonConstants.APPLICATION_TAG_KEY);
+        ListResourcesByTagRequest listResourcesByTagRequest = new ListResourcesByTagRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setMaxResult(1000)
+                .setResourceType(ServiceEnum.valueOf(resourceType.toUpperCase()).getResourceType())
+                .setIncludeAllTags(true)
+                .setTagFilter(tagFilter);
+        RuntimeOptions runtime = new RuntimeOptions();
+        List<String> resourceName = new ArrayList<>();
+        try {
+            assert client != null;
+            List<ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources> resources = client.
+                    listResourcesByTagWithOptions(listResourcesByTagRequest, runtime).getBody().getResources();
+            for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources resource : resources) {
+                for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResourcesTags tag : resource.tags) {
+                    if(tag.key.equals(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY) && tag.value.equals(environment)){
+                        resourceName.add(resource.resourceId);
+                    }
+                }
+            }
+            return resourceName;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return resourceName;
         }
     }
 
