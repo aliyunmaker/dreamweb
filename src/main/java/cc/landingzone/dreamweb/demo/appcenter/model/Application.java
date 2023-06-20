@@ -8,5 +8,5 @@ import java.util.Map;
 public class Application {
     private String appName;
     private String description;
-    private Map<String, Integer> servicesCount;
+    private Map<String, Integer> servicesCounts;
 }

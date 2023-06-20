@@ -71,7 +71,7 @@ public class ApplicationController extends BaseController {
         Application application = new Application();
         application.setAppName(applicationEnum.name());
         application.setDescription(applicationEnum.getDescription());
-        application.setServicesCount(listServicesByApplication(applicationEnum.name()));
+        application.setServicesCounts(listServicesByApplication(applicationEnum.name()));
         return application;
     }
 
