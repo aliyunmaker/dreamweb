@@ -20,6 +20,10 @@ public class CommonConstants {
 
     public static final String Aliyun_REGION_HANGZHOU = "cn-hangzhou";
 
+    public static final String APPLICATION_TAG_KEY = "application";
+
+    public static final String ENVIRONMENT_TYPE_TAG_KEY = "environmentType";
+
     public static final String LOGOUT_SUCCESS_URL;
 
     // 是否线上环境
