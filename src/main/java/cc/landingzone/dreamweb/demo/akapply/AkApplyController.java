@@ -21,7 +21,7 @@ import java.util.UUID;
 public class AkApplyController extends BaseController {
 
     @PostMapping(
-            path = "/generatePolicyDocument",
+            path = "/generatePolicyDocument.do",
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
     )
     public void generatePolicyDocument(HttpServletRequest request, HttpServletResponse response) {
@@ -44,7 +44,7 @@ public class AkApplyController extends BaseController {
     }
 
     @PostMapping(
-            path = "/akApplySubmit",
+            path = "/akApplySubmit.do",
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
     )
     public void akApplySubmit(HttpServletRequest request, HttpServletResponse response) {
@@ -71,5 +71,20 @@ public class AkApplyController extends BaseController {
         logger.info("accessKeySecret: " + accessKey.accessKeySecret);
         logger.info("createAccessKeyTime: " + (System.currentTimeMillis() - attachPolicyToUserTime) + "ms");
         outputToJSON(response, accessKey);
+    }
+
+    @PostMapping(
+            path = "/listResourcesByAppEnvAndResType.do",
+            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+    )
+    public void listResourcesByAppEnvAndResType(HttpServletRequest request, HttpServletResponse response) {
+        String applicationName = request.getParameter("applicationName");
+        String environment = request.getParameter("environment");
+        String resourceType = request.getParameter("resourceType");
+        Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
+        Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
+        Assert.isTrue(StringUtils.isNotEmpty(resourceType), "resourceType can not be empty");
+        List<String> resourceNames = AkApplyUtil.listResourcesByTag(applicationName, environment,resourceType);
+        outputToJSON(response, resourceNames);
     }
 }
