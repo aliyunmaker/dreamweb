@@ -127,7 +127,7 @@ public enum ServiceEnum {
             resource.setResourceId(resourceId);
             resource.setResourceName(instance.getInstanceName());
             for (DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstanceTagsTag tag: instance.getTags().getTag()) {
-                if ("EnvType".equals(tag.getTagKey())) {
+                if (CommonConstants.ENVIRONMENT_TYPE_TAG_KEY.equals(tag.getTagKey())) {
                     resource.setEnvironmentType(tag.getTagValue());
                 }
             }
@@ -171,7 +171,7 @@ public enum ServiceEnum {
             resource.setResourceId(resourceId);
             resource.setResourceName(loadBalancer.getLoadBalancerName());
             for (DescribeLoadBalancersResponseBody.DescribeLoadBalancersResponseBodyLoadBalancersLoadBalancerTagsTag tag: loadBalancer.getTags().getTag()) {
-                if ("EnvType".equals(tag.getTagKey())) {
+                if (CommonConstants.ENVIRONMENT_TYPE_TAG_KEY.equals(tag.getTagKey())) {
                     resource.setEnvironmentType(tag.getTagValue());
                 }
             }
