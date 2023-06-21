@@ -12,25 +12,24 @@
   <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
   <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
 
-  <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
-  <!-- 加上这个文件，就可以运行了 -->
+  <!-- Bootstrap4 核心 JavaScript 文件 -->
   <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 
   <style>
-        .iframe-container {
-            width: 100%;
-            height: 100vh;
-        }
+    .iframe-container {
+      width: 100%;
+      height: 100vh;
+    }
 
-        .nav-link:hover {
-            background-color: #a5b6c6;
-        }
+    .nav-link:hover {
+      background-color: #a5b6c6;
+    }
 
-        .active {
-            background-color: #8899f0;
-        }
-    </style>
+    .active {
+      background-color: #8899f0;
+    }
+  </style>
 </head>
 
 <body>
@@ -60,256 +59,277 @@
 </main>
 
 <script>
-        var links = document.querySelectorAll(".navbar-nav a");
-        var iframe = document.getElementById("iframe");
+    var links = document.querySelectorAll(".navbar-nav a");
+    var iframe = document.getElementById("iframe");
 
 
-        links.forEach(function (link) {
-            link.addEventListener("click", function (e) {
-                e.preventDefault();
-                var page = e.target.getAttribute("data-link");
-                iframe.setAttribute("src", page);
+    links.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        var page = e.target.getAttribute("data-link");
+        iframe.setAttribute("src", page);
 
-                // Remove active class from all links
-                deleteAccessKeyRequest = new com.aliyun.ram20150501.models.DeleteAccessKeyRequest()
-                .setUserName("aaa")
-                .setUserAccessKeyId("111");links.forEach(function (link) {
-                    link.classList.remove("active");
-                });
+        // Remove active class from all links
+        deleteAccessKeyRequest = new com.aliyun.ram20150501.models.DeleteAccessKeyRequest()
+          .setUserName("aaa")
+          .setUserAccessKeyId("111"); links.forEach(function (link) {
+            link.classList.remove("active");
+          });
 
-                // Add active class to the clicked link
-                e.target.classList.add("active");
-            });
-        });
+        // Add active class to the clicked link
+        e.target.classList.add("active");
+      });
+    });
 
-</script>
+  </script>
 
-<h1>AK申请</h1>
-<br>
-<form id = "ak-apply" onsubmit="return akApplySubmit()">
-  <div class="form-group">
-    <label for="application">所属应用：</label>
-    <select class="form-select" id="application" onchange="listResourcesByAppEnvAndResType()" required>
-      <option selected disabled value="">请选择应用</option>
-      <option value="application1">应用1</option>
-      <option value="application2">应用2</option>
-      <option value="application3">应用3</option>
-    </select>
-  </div>
+<div class="container">
+
+  <h1>AK申请</h1>
   <br>
-  <div class="form-group">
-    <label for="environmentType1">环境类型：</label>
-    <div class="form-check">
-      <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product">
-      <label class="form-check-label" for="environmentType1">生产</label>
-    </div>
-    <div class="form-check">
-      <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
-      <label class="form-check-label" for="environmentType2">测试</label>
-    </div>
-  </div>
-  <br>
-  <div class="form-group">
-    <label for="applyResourceType">申请资源：</label>
-    <!--    <div id ="applyResource">-->
-    <select class="form-select" id="applyResourceType" onchange="listResourcesByAppEnvAndResType()" required>
-      <option selected disabled value="">请选择资源类型</option>
-      <option value="oss">OSS Bucket</option>
-      <option value="log">sls project</option>
-    </select>
-    <select class="form-select" id="concreteResource" onchange="generatePolicyDocument()" required>
-      <option selected disabled value="">请选择具体资源</option>
-      <!-- <option value="resource1">资源1</option>
-      <option value="resource2">资源2</option>
-      <option value="resource3">资源3</option> -->
-    </select>
-    <!--    </div>-->
-
-  </div>
-  <br>
-  <div class="form-group">
-    <label for="permissionTemplate1">权限模版：</label>
-    <div class="form-check">
-      <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
-      <label class="form-check-label" for="permissionTemplate1">ReadOnly Access</label>
-      <small id="permissionTemplate1Description" class="form-text text-muted">具有对指定资源的只读权限</small>
-    </div>
-    <div class="form-check">
-      <input type="radio" class="form-check-input" id="permissionTemplate2" name="permissionTemplate" value="2">
-      <label class="form-check-label" for="permissionTemplate2">Full Access</label>
-      <small id="permissionTemplate2Description" class="form-text text-muted">具有对指定资源的读写权限</small>
-    </div>
-
-    <label for="policyDocument"></label>
-    <textarea class="form-control" id="policyDocument" rows="10" required></textarea>
-  </div>
-  <br>
-  <button type="submit" class="btn btn-primary">申请</button>
-</form>
-
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">查看 Secret</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+  <form id="ak-apply" onsubmit="return akApplySubmit()" role="form">
+    <div class="form-group row">
+      <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
+      <div class="col-sm-10">
+        <select class="form-select" id="application" onchange="listResourcesByAppEnvAndResType()" required>
+          <option selected disabled value="">请选择应用</option>
+          <option value="application1">应用1</option>
+          <option value="application2">应用2</option>
+          <option value="application3">应用3</option>
+        </select>
       </div>
-      <div class="modal-body">
-        <p>请保存或发送 AccessKey 至对应用户。当前窗口关闭后，无法再次查询 Secret。如果您遗失这个 AccessKey, 可以创建新的来替代。</p>
-        <p>AccessKey ID: <span id="accessKeyIdShow">init</span> </p>
-        <p>AccessKey Secret: <span id="accessKeySecretShow">init</span></p>
+    </div>
+    <br>
+    <div class="form-group row">
+      <label for="environmentType1" class="col-sm-2 col-form-label">环境类型：</label>
+      <div class="col-sm-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product"
+                 checked>
+          <label class="form-check-label" for="environmentType1">生产</label>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      <div class="col-sm-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
+          <label class="form-check-label" for="environmentType2">测试</label>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <div class="form-group row">
+      <label for="applyResourceType" class="col-sm-2 col-form-label">申请资源：</label>
+      <div class="col-sm-5">
+        <select class="form-select" id="applyResourceType" onchange="listResourcesByAppEnvAndResType()" required>
+          <!-- <option selected disabled value="">请选择资源类型</option> -->
+          <option value="oss">OSS Bucket</option>
+          <option value="log">sls project</option>
+        </select>
+
+      </div>
+      <div class="col-sm-5">
+        <select class="form-select" id="concreteResource" onchange="generatePolicyDocument()" required>
+          <option selected disabled value="">请选择具体资源</option>
+          <!-- <option value="resource1">资源1</option>
+          <option value="resource2">资源2</option>
+          <option value="resource3">资源3</option> -->
+        </select>
+      </div>
+
+    </div>
+    <br>
+    <div class="form-group row">
+      <label for="permissionTemplate1" class="col-sm-2 col-form-label">权限模版：</label>
+      <div class="col-sm-5">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1"
+                 checked>
+          <label class="form-check-label" for="permissionTemplate1">ReadOnly Access</label>
+          <small id="permissionTemplate1Description" class="form-text text-muted">具有对指定资源的只读权限</small>
+        </div>
+      </div>
+
+      <div class="col-sm-5">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="permissionTemplate2" name="permissionTemplate" value="2">
+          <label class="form-check-label" for="permissionTemplate2">Full Access</label>
+          <small id="permissionTemplate2Description" class="form-text text-muted">具有对指定资源的读写权限</small>
+        </div>
+      </div>
+
+      <label for="policyDocument"></label>
+      <textarea class="form-control" id="policyDocument" rows="10" required></textarea>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">申请</button>
+  </form>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">查看 Secret</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>请保存或发送 AccessKey 至对应用户。当前窗口关闭后，无法再次查询 Secret。如果您遗失这个 AccessKey, 可以创建新的来替代。</p>
+          <p>AccessKey ID: <span id="accessKeyIdShow">init</span> </p>
+          <p>AccessKey Secret: <span id="accessKeySecretShow">init</span></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+
 <script>
-        var application = document.getElementById("application").value;
-        var environmentType = $("input[name='environmentType']:checked").val();
-        var applyResourceType = document.getElementById("applyResourceType").value;
-        var concreteResource = document.getElementById("concreteResource").value;
-        var permissionTemplate = $("input[name='permissionTemplate']:checked").val();
-        var policyDocument = document.getElementById("policyDocument").value;
+    var application = document.getElementById("application").value;
+    var environmentType = $("input[name='environmentType']:checked").val();
+    var applyResourceType = document.getElementById("applyResourceType").value;
+    var concreteResource = document.getElementById("concreteResource").value;
+    var permissionTemplate = $("input[name='permissionTemplate']:checked").val();
+    var policyDocument = document.getElementById("policyDocument").value;
 
-        // $(window).on('load', function() {
-        //   console.log("window load");
-        //   listResourcesByAppEnvAndResType();
-        //   generatePolicyDocument();
-        // });
+    // $(window).on('load', function() {
+    //   console.log("window load");
+    //   listResourcesByAppEnvAndResType();
+    //   generatePolicyDocument();
+    // });
 
-        // 单选按钮点击事件
-        $('input[type=radio][name=environmentType]').change(function() {
-          // console.log(this.value);
-          listResourcesByAppEnvAndResType();
-			  });
+    // 单选按钮点击事件
+    $('input[type=radio][name=environmentType]').change(function () {
+      // console.log(this.value);
+      listResourcesByAppEnvAndResType();
+    });
 
-        $('input[type=radio][name=permissionTemplate]').change(function() {
-          // console.log(this.value);
-          generatePolicyDocument();
-			  });
+    $('input[type=radio][name=permissionTemplate]').change(function () {
+      // console.log(this.value);
+      generatePolicyDocument();
+    });
 
-        function akApplySubmit(){
-          application = document.getElementById("application").value;
-          environmentType = $("input[name='environmentType']:checked").val();
-          policyDocument = document.getElementById("policyDocument").value;
+    function akApplySubmit() {
+      application = document.getElementById("application").value;
+      environmentType = $("input[name='environmentType']:checked").val();
+      policyDocument = document.getElementById("policyDocument").value;
 
-          // console.log("application: " + application);
-          // console.log("environmentType: " + environmentType);
-          // console.log("policyDocument: " + policyDocument);
+      // console.log("application: " + application);
+      // console.log("environmentType: " + environmentType);
+      // console.log("policyDocument: " + policyDocument);
 
-          var params = {
-            applicationName: application,
-            environment: environmentType,
-            policyDocument: policyDocument
-          };
+      var params = {
+        applicationName: application,
+        environment: environmentType,
+        policyDocument: policyDocument
+      };
 
-          $.ajax({
-            url: "../" + "akApply/akApplySubmit.do",
-            type: "POST",
-            data: params,
-            async: false,
-            // dataType: "json",
-            success: function(data){
-              // console.log("data: ");
-              // console.log(data.accessKeyId);
-              // console.log(data.accessKeySecret);
-              document.getElementById("accessKeyIdShow").innerText = data.accessKeyId;
-              document.getElementById("accessKeySecretShow").innerText = data.accessKeySecret;
-            },
-          });
+      $.ajax({
+        url: "../" + "akApply/akApplySubmit.do",
+        type: "POST",
+        data: params,
+        async: false,
+        // dataType: "json",
+        success: function (data) {
+          // console.log("data: ");
+          // console.log(data.accessKeyId);
+          // console.log(data.accessKeySecret);
+          document.getElementById("accessKeyIdShow").innerText = data.accessKeyId;
+          document.getElementById("accessKeySecretShow").innerText = data.accessKeySecret;
+        },
+      });
 
-          $('#myModal').modal('show');
+      $('#myModal').modal('show');
 
-          return false;
-        }
+      return false;
+    }
 
-        function generatePolicyDocument(){
-          applyResourceType = document.getElementById("applyResourceType").value;
-          concreteResource = document.getElementById("concreteResource").value;
-          permissionTemplate = $("input[name='permissionTemplate']:checked").val();
-          // console.log("applyResourceType: " + applyResourceType);
-          // console.log("concreteResource: " + concreteResource);
-          // console.log("permissionTemplate: " + permissionTemplate);
-          if (applyResourceType == "" || concreteResource == "" || permissionTemplate == undefined){
-            return;
-          }
+    function generatePolicyDocument() {
+      applyResourceType = document.getElementById("applyResourceType").value;
+      concreteResource = document.getElementById("concreteResource").value;
+      permissionTemplate = $("input[name='permissionTemplate']:checked").val();
+      // console.log("applyResourceType: " + applyResourceType);
+      // console.log("concreteResource: " + concreteResource);
+      // console.log("permissionTemplate: " + permissionTemplate);
+      if (applyResourceType == "" || concreteResource == "" || permissionTemplate == undefined) {
+        return;
+      }
 
-          // // 测试
-          // concreteResource = "buckettestjia";
+      // // 测试
+      // concreteResource = "buckettestjia";
 
-          var params = {
-            resourceType: applyResourceType,
-            resourceName: concreteResource,
-            actionCode: permissionTemplate
-          };
+      var params = {
+        resourceType: applyResourceType,
+        resourceName: concreteResource,
+        actionCode: permissionTemplate
+      };
 
-          $.ajax({
-            url: "../" + "akApply/generatePolicyDocument.do",
-            type: "POST",
-            data: params,
-            // dataType: "json",
-            success: function(data){
-              // console.log("data: " + data);
-              document.getElementById("policyDocument").value = data;
-            },
-          })
-        }
+      $.ajax({
+        url: "../" + "akApply/generatePolicyDocument.do",
+        type: "POST",
+        data: params,
+        // dataType: "json",
+        success: function (data) {
+          // console.log("data: " + data);
+          document.getElementById("policyDocument").value = data;
+        },
+      })
+    }
 
-        function listResourcesByAppEnvAndResType(){
-          application = document.getElementById("application").value;
-          environmentType = $("input[name='environmentType']:checked").val();
-          applyResourceType = document.getElementById("applyResourceType").value;
-          // console.log("application: " + application);
-          // console.log("environmentType: " + environmentType);
-          // console.log("applyResourceType: " + applyResourceType);
-          if(application == "" || environmentType == undefined || applyResourceType == ""){
-            return;
-          }
-          var params = {
-            applicationName: application,
-            environment: environmentType,
-            resourceType: applyResourceType
-          };
+    function listResourcesByAppEnvAndResType() {
+      application = document.getElementById("application").value;
+      environmentType = $("input[name='environmentType']:checked").val();
+      applyResourceType = document.getElementById("applyResourceType").value;
+      // console.log("application: " + application);
+      // console.log("environmentType: " + environmentType);
+      // console.log("applyResourceType: " + applyResourceType);
+      if (application == "" || environmentType == undefined || applyResourceType == "") {
+        return;
+      }
+      var params = {
+        applicationName: application,
+        environment: environmentType,
+        resourceType: applyResourceType
+      };
 
+      var concreteResource = document.getElementById("concreteResource");
+      // console.log(concreteResource.length);
+      // console.log(concreteResource.value);
+      for (var i = concreteResource.length - 1; i >= 1; i--) {
+        concreteResource.remove(i);
+      }
+
+
+      $.ajax({
+        url: "../" + "akApply/listResourcesByAppEnvAndResType.do",
+        type: "POST",
+        data: params,
+        // dataType: "json",
+        success: function (data) {
           var concreteResource = document.getElementById("concreteResource");
           // console.log(concreteResource.length);
           // console.log(concreteResource.value);
           for (var i = concreteResource.length - 1; i >= 1; i--) {
             concreteResource.remove(i);
           }
-
-
-          $.ajax({
-            url: "../" + "akApply/listResourcesByAppEnvAndResType.do",
-            type: "POST",
-            data: params,
-            // dataType: "json",
-            success: function(data){
-              var concreteResource = document.getElementById("concreteResource");
-              // console.log(concreteResource.length);
-              // console.log(concreteResource.value);
-              for (var i = concreteResource.length - 1; i >= 1; i--) {
-                concreteResource.remove(i);
-              }
-              for (var i = 0; i < data.length; i++) {
-                concreteResource.options.add(new Option(data[i], data[i]));
-              }
-              concreteResource.value = "";
-            },
-          })
-        }
+          for (var i = 0; i < data.length; i++) {
+            concreteResource.options.add(new Option(data[i], data[i]));
+          }
+          concreteResource.value = "";
+        },
+      })
+    }
 
 
 
-</script>
+  </script>
 
 </body>
 
