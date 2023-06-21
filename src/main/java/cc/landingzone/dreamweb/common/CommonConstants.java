@@ -26,6 +26,20 @@ public class CommonConstants {
 
     public static final String[] ENVIRONMENT_TYPE_TAG_VALUES = {"product", "test"};
 
+    public static final String DEFAULT_IMAGE_ID = "aliyun_3_x64_20G_alibase_20221102.vhd";
+    public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp1j3v9i048rpldp8g20";
+    public static final String DEFAULT_ECS_HOSTNAME = "ECS-test";
+    public static final String DEFAULT_ECS_PASSWORD = "ECS@test1234";
+    public static final String ECS_CHARGETYPE_POSTPAID = "PostPaid";
+    public static final String ECS_CHARGETYPE_PREPAID = "PrePaid";
+    public static final String DEFAULT_ECS_MAX_BANDWIDTH_OUT = "10";
+    public static final String DEFAULT_ECS_SYSTEM_DISK_SIZE = "40";
+    public static final String DEFAULT_ECS_SYSTEM_DISK_CATEGORY = "cloud_ssd";
+    public static final String DEFAULT_ECS_DATA_DISK_SIZE = "100";
+    public static final String DEFAULT_ECS_DATA_DISK_CATEGORY = "cloud_ssd";
+
+
+
     public static final String LOGOUT_SUCCESS_URL;
 
     // 是否线上环境
