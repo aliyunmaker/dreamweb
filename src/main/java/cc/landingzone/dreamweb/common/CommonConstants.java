@@ -24,6 +24,8 @@ public class CommonConstants {
 
     public static final String ENVIRONMENT_TYPE_TAG_KEY = "environmentType";
 
+    public static final String[] ENVIRONMENT_TYPE_TAG_VALUES = {"product", "test"};
+
     public static final String LOGOUT_SUCCESS_URL;
 
     // 是否线上环境
