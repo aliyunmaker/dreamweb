@@ -16,13 +16,11 @@ import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
 public class AkApplyUtil {
 
     public static Logger logger = LoggerFactory.getLogger(AkApplyUtil.class);
@@ -52,30 +50,7 @@ public class AkApplyUtil {
 //        System.out.println(accessKey.accessKeySecret);
     }
 
-    /**
-     * 拼接资源ARN
-     * @param resourceType:oss、log
-     * @param resourceNameList
-     * @return
-     */
-    public static List<String> getResourceArn(String resourceType, List<String> resourceNameList,String accountId){
-        List<String> resourceArn = new ArrayList<>();
-        switch (resourceType){
-            case "oss":
-                for (String resourceName : resourceNameList) {
-                    resourceArn.add("acs:oss:*:" + accountId + ":" + resourceName);
-                }
-                break;
-            case "log":
-                for (String resourceName : resourceNameList) {
-                    resourceArn.add("acs:log:*:" + accountId + ":project/" + resourceName);
-                }
-                break;
-            default:
-                break;
-        }
-        return resourceArn;
-    }
+
 
 
     /**
@@ -100,15 +75,6 @@ public class AkApplyUtil {
         return action;
     }
 
-    /**
-     * 拼接RAM用户的ARN：acs:ram::<account-id>:user/<user-name>
-     * @param userName
-     * @param accountId
-     * @return
-     */
-    public static String getRamArn(String userName,String accountId){
-        return "acs:ram::" + accountId + ":user/" + userName;
-    }
 
     /**
      * 生成权限策略内容
@@ -124,7 +90,7 @@ public class AkApplyUtil {
         List<Statement> statementList = new ArrayList<>();
 
         Statement statement1 = new Statement();
-        List<String> resourceArn = getResourceArn(resourceType, resourceNameList, accountId);
+        List<String> resourceArn = ServiceHelper.getResourceArn(resourceType, resourceNameList, accountId);
         List<String> action = getAction(resourceType, actionCode);
         statement1.setAction(action);
         statement1.setResource(resourceArn);
