@@ -23,6 +23,7 @@
   </style>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
   <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+  <script type="text/javascript" src="application_center.js"></script>
 </head>
 
 <body>
@@ -53,30 +54,17 @@
   <div class="px-5 py-3" id="app-center">
     <div class="row d-flex">
       <div class="col input-group">
-        <input name="AppName" class="form-control" type="text" placeholder="Please enter the application name">
-        <button class="btn btn-outline-secondary" type="button" id="button-search-app"><i class="bi bi-search"></i></button>
+        <input id="searchApp" class="form-control" type="text" placeholder="Please enter the application name">
+        <button class="btn btn-outline-secondary" type="button" id="button-search-app" onclick=createFilteredCards()><i class="bi bi-search"></i></button>
       </div>
       <div class="col">
-        <button class="btn btn-outline-secondary" type="button" id="button-reset-search-app"><i class="bi bi-arrow-clockwise"></i></button>
+        <button class="btn btn-outline-secondary" type="button" id="button-reset-search-app" onclick=createCards()><i class="bi bi-arrow-clockwise"></i></button>
       </div>
     </div>
 
     <div class="row g-4 py-3 row-cols-1 row-cols-lg-3" id="cardContainer">
-      <script>
-       $( document ).ready(function() {
-        var appsInfo;
-        $.ajax({
-          url: "../apps/listApps.do",
-          success: function(result){
-            if (result.success) {
-              appsInfo = result.data;
-              console.log(appsInfo);
-              createCards(appsInfo);
-            } else {
-              alert(result.errorMsg);
-            }
-        }});
-      });
+      <script type="text/javascript">
+        
       </script>
       <div class="col d-flex align-items-start">
         <div class="card">
@@ -119,96 +107,76 @@
         </div>
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="--bs-offcanvas-width: 80%;">
           <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">dream-app</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
           </div>
           <div class="offcanvas-body">
-            <div>
-              Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-            </div>
+              <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Active</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link disabled">Disabled</a>
+                </li>
+              </ul>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th scope="col">Resource ID/name</th>
+                  <th scope="col">Resource Type</th>
+                  <th scope="col">Environment Type</th>
+                  <th scope="col">Region</th>
+                  <th scope="col">Create Time</th>
+                  <th scope="col">Operations</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>
+                    <p>123456</p>
+                    <p>name</p>
+                  </td>
+                  <td>ECS</td>
+                  <td>dev</td>
+                  <td>cn-hangzhou</td>
+                  <td>2023-6-19 17:20:00</td>
+                  <td>xxx</td>
+                </tr>
+                <tr>
+                  <td>
+                    <p>123456</p>
+                    <p>name</p>
+                  </td>
+                  <td>ECS</td>
+                  <td>dev</td>
+                  <td>cn-hangzhou</td>
+                  <td>2023-6-19 17:20:00</td>
+                  <td>xxx</td>
+                </tr>
+                <tr>
+                  <td>
+                    <p>123456</p>
+                    <p>name</p>
+                  </td>
+                  <td>ECS</td>
+                  <td>dev</td>
+                  <td>cn-hangzhou</td>
+                  <td>2023-6-19 17:20:00</td>
+                  <td>xxx</td>
+                </tr>
+                </tbody>
+              </table>
           </div>
         </div>
       </div>
   </div>
 </main>
-<script>
-    var links = document.querySelectorAll(".navbar-nav a");
-    var iframe = document.getElementById("iframe");
-
-    links.forEach(function (link) {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        var page = e.target.getAttribute("data-link");
-        iframe.setAttribute("src", page);
-
-        // Remove active class from all links
-        links.forEach(function (link) {
-          link.classList.remove("active");
-        });
-
-        // Add active class to the clicked link
-        e.target.classList.add("active");
-      });
-    });
-
-    function createCards(appsInfo) {
-      var cardContainer = document.getElementById("cardContainer");
-      appsInfo.forEach(function(app) {
-        var col = document.createElement("div");
-        col.className = "col align-items-start";
-
-        var cardDiv = document.createElement("div");
-        cardDiv.className = "card";
-
-        var cardBodyDiv = document.createElement("div");
-        cardBodyDiv.className = "card-body";
-
-        var cardTitle = document.createElement("h4");
-        cardTitle.className = "card-title";
-        cardTitle.innerText = app.appName;
-
-        var cardDescription = document.createElement("p");
-        cardDescription.className = "card-text";
-        cardDescription.innerText = app.description;
-
-        var servicesInfo = document.createElement("div");
-        servicesInfo.className = "row row-cols-1 row-cols-lg-5";
-
-        app.services.forEach(function(service) {
-          var serviceInfo = document.createElement("div");
-          serviceInfo.className = "col align-items-start";
-
-          var resourceCount = document.createElement("h5");
-          resourceCount.innerText = service.resourceCount;
-
-          var serviceName = document.createElement("p");
-          serviceName.innerText = service.serviceName;
-
-          serviceInfo.appendChild(resourceCount);
-          serviceInfo.appendChild(serviceName);
-          servicesInfo.appendChild(serviceInfo);
-        });
-
-        cardBodyDiv.appendChild(cardTitle);
-        cardBodyDiv.appendChild(cardDescription);
-        cardBodyDiv.appendChild(servicesInfo);
-        cardDiv.appendChild(cardBodyDiv);
-        col.appendChild(cardDiv);
-        cardContainer.appendChild(col);
-
-        // var cardTitleText = document.createElement("a");
-       });
-    };
-
-    var appNames = document.querySelectorAll(".card-body a");
-<!--    var appsInfo;-->
-<!--    $( document ).ready(function() {-->
-<!--      $.ajax({url: "../apps/listApps.do", success: function(result){-->
-<!--        appsInfo = result.data;-->
-<!--        console.log(appsInfo);-->
-<!--      }});-->
-<!--     });-->
-  </script>
 </body>
 
 </html>
