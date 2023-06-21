@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+  <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+
+  <!-- Bootstrap4 核心 JavaScript 文件 -->
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+  <style>
+    .iframe-container {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .nav-link:hover {
+      background-color: #a5b6c6;
+    }
+
+    .active {
+      background-color: #8899f0;
+    }
+  </style>
+</head>
+
+<body>
+<main>
+  <nav class="navbar navbar-expand bg-body-secondary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i>
+        Monitor Center</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link disabled">Project: [springrun]</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!--    <div class="iframe-container">-->
+  <!--      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
+  <!--    </div>-->
+</main>
+
+<script>
+    var links = document.querySelectorAll(".navbar-nav a");
+    var iframe = document.getElementById("iframe");
+
+
+    links.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        var page = e.target.getAttribute("data-link");
+        iframe.setAttribute("src", page);
+
+        // Remove active class from all links
+        deleteAccessKeyRequest = new com.aliyun.ram20150501.models.DeleteAccessKeyRequest()
+          .setUserName("aaa")
+          .setUserAccessKeyId("111"); links.forEach(function (link) {
+            link.classList.remove("active");
+          });
+
+        // Add active class to the clicked link
+        e.target.classList.add("active");
+      });
+    });
+
+  </script>
+
+
+<div class="container">
+
+  <h1>资源供给</h1>
+  <br>
+  <form id="resource_supply" onsubmit="return akApplySubmit()" role="form">
+    <h5>基础信息</h5>
+
+    <div class="form-group row">
+      <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
+      <div class="col-sm-10">
+        <select class="form-select" id="application" required>
+          <option selected disabled value="">请选择应用</option>
+          <option value="application1">应用1</option>
+          <option value="application2">应用2</option>
+          <option value="application3">应用3</option>
+        </select>
+      </div>
+    </div>
+    <br>
+
+    <div class="form-group row">
+      <label for="environmentType1"  class="col-sm-2 col-form-label">环境类型：</label>
+      <div class="col-sm-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product"
+                 checked>
+          <label class="form-check-label" for="environmentType1">生产</label>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
+          <label class="form-check-label" for="environmentType2">测试</label>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <div class="form-group row">
+      <label for="resourceType1" class="col-sm-2 col-form-label">资源类型：</label>
+      <div class="col-sm-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="resourceType1" name="resourceType" value="ecs" checked>
+          <label class="form-check-label" for="resourceType1">云服务器ECS</label>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="resourceType2" name="resourceType" value="oss">
+          <label class="form-check-label" for="resourceType1">对象存储服务OSS</label>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="resourceType3" name="resourceType" value="log">
+          <label class="form-check-label" for="resourceType1">日志服务SLS</label>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <div class="form-group row">
+      <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
+      <div class="col-sm-10">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
+          <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">ECS通用模版</label>
+          <br>
+          <small id="resourceTemplateDescription" class="form-text text-muted">ECS通用模版, 可用于申请生产环境下的云服务器ECS资源。</small>
+          <a href="https://www.runoob.com/">查看模板</a>
+        </div>
+
+      </div>
+    </div>
+    <br>
+
+
+    <h5>资源属性</h5>
+    <div class="form-group row">
+      <label for="regionId" class="col-sm-2 control-label">地域：</label>
+      <div class="col-sm-10">
+        <select class="form-select" id="regionId" required>
+          <option selected disabled value="">请选择地域</option>
+          <option value="cn-hangzhou">华东1(杭州)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="zoneId" class="col-sm-2 control-label">可用区：</label>
+      <div class="col-sm-10">
+        <select class="form-select" id="zoneId" required>
+          <option selected disabled value="">请选择可用区</option>
+          <option value="cn-hangzhou">华东1(杭州)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
+      <div class="col-sm-10">
+        <select class="form-select" id="instanceType" required>
+          <option selected disabled value="">请选择实例规格</option>
+          <option value="cn-hangzhou">华东1(杭州)</option>
+        </select>
+      </div>
+
+    </div>
+    <div class="form-group row">
+      <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
+      <div class="col-sm-5">
+        <input class="form-control" type="number" id="instanceNum" min="1" max="100">
+      </div>
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-primary">申请</button>
+
+  </form>
+</div>
+
+
+<script>
+
+
+
+
+    var application = document.getElementById("application").value;
+    var environmentType = $("input[name='environmentType']:checked").val();
+    var applyResourceType = document.getElementById("applyResourceType").value;
+    var concreteResource = document.getElementById("concreteResource").value;
+    var permissionTemplate = $("input[name='permissionTemplate']:checked").val();
+    var policyDocument = document.getElementById("policyDocument").value;
+
+    // $(window).on('load', function() {
+    //   console.log("window load");
+    //   listResourcesByAppEnvAndResType();
+    //   generatePolicyDocument();
+    // });
+
+    // 单选按钮点击事件
+    $('input[type=radio][name=environmentType]').change(function () {
+      // console.log(this.value);
+      listResourcesByAppEnvAndResType();
+    });
+
+    $('input[type=radio][name=permissionTemplate]').change(function () {
+      // console.log(this.value);
+      generatePolicyDocument();
+    });
+
+    function akApplySubmit() {
+      application = document.getElementById("application").value;
+      environmentType = $("input[name='environmentType']:checked").val();
+      policyDocument = document.getElementById("policyDocument").value;
+
+      // console.log("application: " + application);
+      // console.log("environmentType: " + environmentType);
+      // console.log("policyDocument: " + policyDocument);
+
+      var params = {
+        applicationName: application,
+        environment: environmentType,
+        policyDocument: policyDocument
+      };
+
+      $.ajax({
+        url: "../" + "akApply/akApplySubmit.do",
+        type: "POST",
+        data: params,
+        async: false,
+        // dataType: "json",
+        success: function (data) {
+          // console.log("data: ");
+          // console.log(data.accessKeyId);
+          // console.log(data.accessKeySecret);
+          document.getElementById("accessKeyIdShow").innerText = data.accessKeyId;
+          document.getElementById("accessKeySecretShow").innerText = data.accessKeySecret;
+        },
+      });
+
+      $('#myModal').modal('show');
+
+      return false;
+    }
+
+    function generatePolicyDocument() {
+      applyResourceType = document.getElementById("applyResourceType").value;
+      concreteResource = document.getElementById("concreteResource").value;
+      permissionTemplate = $("input[name='permissionTemplate']:checked").val();
+      // console.log("applyResourceType: " + applyResourceType);
+      // console.log("concreteResource: " + concreteResource);
+      // console.log("permissionTemplate: " + permissionTemplate);
+      if (applyResourceType == "" || concreteResource == "" || permissionTemplate == undefined) {
+        return;
+      }
+
+      // // 测试
+      // concreteResource = "buckettestjia";
+
+      var params = {
+        resourceType: applyResourceType,
+        resourceName: concreteResource,
+        actionCode: permissionTemplate
+      };
+
+      $.ajax({
+        url: "../" + "akApply/generatePolicyDocument.do",
+        type: "POST",
+        data: params,
+        // dataType: "json",
+        success: function (data) {
+          // console.log("data: " + data);
+          document.getElementById("policyDocument").value = data;
+        },
+      })
+    }
+
+    function listResourcesByAppEnvAndResType() {
+      application = document.getElementById("application").value;
+      environmentType = $("input[name='environmentType']:checked").val();
+      applyResourceType = document.getElementById("applyResourceType").value;
+      // console.log("application: " + application);
+      // console.log("environmentType: " + environmentType);
+      // console.log("applyResourceType: " + applyResourceType);
+      if (application == "" || environmentType == undefined || applyResourceType == "") {
+        return;
+      }
+      var params = {
+        applicationName: application,
+        environment: environmentType,
+        resourceType: applyResourceType
+      };
+
+      var concreteResource = document.getElementById("concreteResource");
+      // console.log(concreteResource.length);
+      // console.log(concreteResource.value);
+      for (var i = concreteResource.length - 1; i >= 1; i--) {
+        concreteResource.remove(i);
+      }
+
+
+      $.ajax({
+        url: "../" + "akApply/listResourcesByAppEnvAndResType.do",
+        type: "POST",
+        data: params,
+        // dataType: "json",
+        success: function (data) {
+          var concreteResource = document.getElementById("concreteResource");
+          // console.log(concreteResource.length);
+          // console.log(concreteResource.value);
+          for (var i = concreteResource.length - 1; i >= 1; i--) {
+            concreteResource.remove(i);
+          }
+          for (var i = 0; i < data.length; i++) {
+            concreteResource.options.add(new Option(data[i], data[i]));
+          }
+          concreteResource.value = "";
+        },
+      })
+    }
+
+
+
+  </script>
+
+</body>
+
+</html>
