@@ -4,6 +4,7 @@ public enum ApplicationEnum {
     /**
      * Application 1
      */
+    application1("Description of app1"),
     APP1("Description of app1"),
     APP2("Description of app2"),
     APP3("Description of app3"),

@@ -26,6 +26,10 @@ public class CommonConstants {
 
     public static final String[] ENVIRONMENT_TYPE_TAG_VALUES = {"product", "test"};
 
+    public static final String[] SSO_LOGIN_USER_IDS = {"test-user"};
+    public static final String[] SSO_LOGIN_ROLE_IDS = {"dreamweb-test-role"};
+    public static final String[] SSO_LOGIN_CLOUD_USER_IDS = {"tianyu"};
+
     public static final String DEFAULT_IMAGE_ID = "aliyun_3_x64_20G_alibase_20221102.vhd";
     public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp1j3v9i048rpldp8g20";
     public static final String DEFAULT_ECS_HOSTNAME = "ECS-test";

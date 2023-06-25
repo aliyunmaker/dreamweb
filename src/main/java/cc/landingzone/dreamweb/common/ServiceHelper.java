@@ -72,6 +72,14 @@ public class ServiceHelper {
         return new com.aliyun.tag20180828.Client(config);
     }
 
+    public static com.aliyun.actiontrail20200706.Client createTrailClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "actiontrail.cn-hangzhou.aliyuncs.com";
+        return new com.aliyun.actiontrail20200706.Client(config);
+    }
+
     /**
      * 拼接资源ARN
      * @param resourceType:oss、log

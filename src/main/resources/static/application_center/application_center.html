@@ -20,6 +20,10 @@
     .active {
       background-color: #8899f0;
     }
+
+    .table tbody tr td{
+      vertical-align: middle;
+    }
   </style>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
   <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
@@ -30,11 +34,11 @@
 <main>
   <nav class="navbar navbar-expand bg-body-secondary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="iconfont icon-ecs" style="font-size: 1.3rem;"></i> Application Center</a>
+      <a class="navbar-brand" onclick=showAppCenterPage()><i class="iconfont icon-ecs" style="font-size: 1.3rem;"></i> Application Center</a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link disabled">Project: [springrun]</a>
+            <a class="nav-link disabled" id="navbarResourceId"></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#"
@@ -51,8 +55,8 @@
 <!--  <div class="iframe-container">-->
 <!--    <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
 <!--  </div>-->
-  <div class="px-5 py-3" id="app-center">
-    <div class="row d-flex">
+  <div class="px-5 py-3" id="appCenterPage">
+    <!-- <div class="row d-flex">
       <div class="col input-group">
         <input id="searchApp" class="form-control" type="text" placeholder="Please enter the application name">
         <button class="btn btn-outline-secondary" type="button" id="button-search-app" onclick=createFilteredCards()><i class="bi bi-search"></i></button>
@@ -60,12 +64,9 @@
       <div class="col">
         <button class="btn btn-outline-secondary" type="button" id="button-reset-search-app" onclick=createCards()><i class="bi bi-arrow-clockwise"></i></button>
       </div>
-    </div>
+    </div> -->
 
-    <div class="row g-4 py-3 row-cols-1 row-cols-lg-3" id="cardContainer">
-      <script type="text/javascript">
-        
-      </script>
+    <!-- <div class="row g-4 py-3 row-cols-1 row-cols-lg-3" id="cardContainer">
       <div class="col d-flex align-items-start">
         <div class="card">
           <div class="card-body">
@@ -174,7 +175,7 @@
               </table>
           </div>
         </div>
-      </div>
+      </div> -->
   </div>
 </main>
 </body>
