@@ -146,55 +146,115 @@
     </div>
     <br>
 
-    <div class="form-group row">
-      <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
-      <div class="col-sm-10">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
-          <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">ECS通用模版</label>
-          <br>
-          <small id="resourceTemplateDescription" class="form-text text-muted">ECS通用模版, 可用于申请生产环境下的云服务器ECS资源。</small>
-          <a href="https://www.runoob.com/">查看模板</a>
+    <div id = "ecsTemplate">
+      <div class="form-group row">
+        <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
+            <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">ECS通用模版</label>
+            <br>
+            <small id="resourceTemplateDescription" class="form-text text-muted">ECS通用模版, 可用于申请云服务器ECS资源。</small>
+            <a href="https://www.runoob.com/">查看模板</a>
+          </div>
         </div>
-
       </div>
+      <br>
     </div>
-    <br>
+
+    <div id = "ossTemplate" style = "display: none;">
+      <div class="form-group row">
+        <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
+            <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">OSS通用模版</label>
+            <br>
+            <small id="resourceTemplateDescription" class="form-text text-muted">OSS通用模版, 可用于申请对象存储服务的Bucket。</small>
+            <a href="https://www.runoob.com/">查看模板</a>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
+
+    <div id = "logTemplate" style = "display: none;">
+      <div class="form-group row">
+        <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
+            <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">SLS通用模版</label>
+            <br>
+            <small id="resourceTemplateDescription" class="form-text text-muted">SLS通用模版, 可用于申请日志服务的project。</small>
+            <a href="https://www.runoob.com/">查看模板</a>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
 
 
     <h5>资源属性</h5>
-    <div class="form-group row">
-      <label for="regionId" class="col-sm-2 control-label">地域：</label>
-      <div class="col-sm-10">
-        <select class="form-select" id="regionId" required>
-          <option selected disabled value="">请选择地域</option>
-          <option value="cn-hangzhou">华东1(杭州)</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group row">
-      <label for="zoneId" class="col-sm-2 control-label">可用区：</label>
-      <div class="col-sm-10">
-        <select class="form-select" id="zoneId" required>
-          <option selected disabled value="">请选择可用区</option>
-          <option value="cn-hangzhou">华东1(杭州)</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group row">
-      <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
-      <div class="col-sm-10">
-        <select class="form-select" id="instanceType" required>
-          <option selected disabled value="">请选择实例规格</option>
-          <option value="cn-hangzhou">华东1(杭州)</option>
-        </select>
-      </div>
 
+    <div id="ecsResoureProperties" class="g-4">
+      <div class="form-group row">
+        <label for="regionId" class="col-sm-2 control-label">地域：</label>
+        <div class="col-sm-10">
+          <select class="form-select" id="regionId" required>
+            <option selected disabled value="">请选择地域</option>
+            <option value="cn-hangzhou">华东1(杭州)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="zoneId" class="col-sm-2 control-label">可用区：</label>
+        <div class="col-sm-10">
+          <select class="form-select" id="zoneId" required>
+            <option selected disabled value="">请选择可用区</option>
+            <option value="cn-hangzhou">华东1(杭州)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
+        <div class="col-sm-10">
+          <select class="form-select" id="instanceType" required>
+            <option selected disabled value="">请选择实例规格</option>
+            <option value="cn-hangzhou">华东1(杭州)</option>
+          </select>
+        </div>
+
+      </div>
+      <div class="form-group row">
+        <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
+        <div class="col-sm-5">
+          <input class="form-control" type="number" id="instanceNum" min="1" max="100">
+        </div>
+      </div>
     </div>
-    <div class="form-group row">
-      <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
-      <div class="col-sm-5">
-        <input class="form-control" type="number" id="instanceNum" min="1" max="100">
+
+    <div id = "ossResoureProperties" style = "display: none;">
+      <div class="form-group row">
+        <label for="bucketName" class="col-sm-2 control-label">Bucket名称: </label>
+        <div class="col-sm-5">
+          <input class="form-control" type="text" placeholder="请输入字符串" id="bucketName">
+        </div>
+      </div>
+    </div>
+
+    <div id = "logResoureProperties" style = "display: none;">
+      <div class="form-group row">
+        <label for="projectName" class="col-sm-2 control-label">Project名称: </label>
+        <div class="col-sm-5">
+          <input class="form-control" type="text" placeholder="请输入字符串" id="projectName">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="ProjectDescription" class="col-sm-2 control-label">Project描述: </label>
+        <div class="col-sm-5">
+          <input class="form-control" type="text" placeholder="请输入字符串" id="ProjectDescription">
+        </div>
       </div>
     </div>
 
@@ -205,145 +265,41 @@
 </div>
 
 
+
+
 <script>
 
-
-
-
-    var application = document.getElementById("application").value;
-    var environmentType = $("input[name='environmentType']:checked").val();
-    var applyResourceType = document.getElementById("applyResourceType").value;
-    var concreteResource = document.getElementById("concreteResource").value;
-    var permissionTemplate = $("input[name='permissionTemplate']:checked").val();
-    var policyDocument = document.getElementById("policyDocument").value;
-
-    // $(window).on('load', function() {
-    //   console.log("window load");
-    //   listResourcesByAppEnvAndResType();
-    //   generatePolicyDocument();
-    // });
-
-    // 单选按钮点击事件
-    $('input[type=radio][name=environmentType]').change(function () {
-      // console.log(this.value);
-      listResourcesByAppEnvAndResType();
-    });
-
-    $('input[type=radio][name=permissionTemplate]').change(function () {
-      // console.log(this.value);
-      generatePolicyDocument();
-    });
-
-    function akApplySubmit() {
-      application = document.getElementById("application").value;
-      environmentType = $("input[name='environmentType']:checked").val();
-      policyDocument = document.getElementById("policyDocument").value;
-
-      // console.log("application: " + application);
-      // console.log("environmentType: " + environmentType);
-      // console.log("policyDocument: " + policyDocument);
-
-      var params = {
-        applicationName: application,
-        environment: environmentType,
-        policyDocument: policyDocument
-      };
-
-      $.ajax({
-        url: "../" + "akApply/akApplySubmit.do",
-        type: "POST",
-        data: params,
-        async: false,
-        // dataType: "json",
-        success: function (data) {
-          // console.log("data: ");
-          // console.log(data.accessKeyId);
-          // console.log(data.accessKeySecret);
-          document.getElementById("accessKeyIdShow").innerText = data.accessKeyId;
-          document.getElementById("accessKeySecretShow").innerText = data.accessKeySecret;
-        },
-      });
-
-      $('#myModal').modal('show');
-
-      return false;
+  $('input[type=radio][name=resourceType]').change(function () {
+    var resourceType = $("input[name='resourceType']:checked").val();
+    if(resourceType == "ecs"){
+      document.getElementById("ecsTemplate").style.display = "";
+      document.getElementById("ossTemplate").style.display = "none";
+      document.getElementById("logTemplate").style.display = "none";
+      document.getElementById("ecsResoureProperties").style.display = "";
+      document.getElementById("ossResoureProperties").style.display = "none";
+      document.getElementById("logResoureProperties").style.display = "none";
+    }else if(resourceType == "oss"){
+      document.getElementById("ecsTemplate").style.display = "none";
+      document.getElementById("ossTemplate").style.display = "";
+      document.getElementById("logTemplate").style.display = "none";
+      document.getElementById("ecsResoureProperties").style.display = "none";
+      document.getElementById("ossResoureProperties").style.display = "";
+      document.getElementById("logResoureProperties").style.display = "none";
+    }else if(resourceType == "log"){
+      document.getElementById("ecsTemplate").style.display = "none";
+      document.getElementById("ossTemplate").style.display = "none";
+      document.getElementById("logTemplate").style.display = "";
+      document.getElementById("ecsResoureProperties").style.display = "none";
+      document.getElementById("ossResoureProperties").style.display = "none";
+      document.getElementById("logResoureProperties").style.display = "";
     }
 
-    function generatePolicyDocument() {
-      applyResourceType = document.getElementById("applyResourceType").value;
-      concreteResource = document.getElementById("concreteResource").value;
-      permissionTemplate = $("input[name='permissionTemplate']:checked").val();
-      // console.log("applyResourceType: " + applyResourceType);
-      // console.log("concreteResource: " + concreteResource);
-      // console.log("permissionTemplate: " + permissionTemplate);
-      if (applyResourceType == "" || concreteResource == "" || permissionTemplate == undefined) {
-        return;
-      }
-
-      // // 测试
-      // concreteResource = "buckettestjia";
-
-      var params = {
-        resourceType: applyResourceType,
-        resourceName: concreteResource,
-        actionCode: permissionTemplate
-      };
-
-      $.ajax({
-        url: "../" + "akApply/generatePolicyDocument.do",
-        type: "POST",
-        data: params,
-        // dataType: "json",
-        success: function (data) {
-          // console.log("data: " + data);
-          document.getElementById("policyDocument").value = data;
-        },
-      })
-    }
-
-    function listResourcesByAppEnvAndResType() {
-      application = document.getElementById("application").value;
-      environmentType = $("input[name='environmentType']:checked").val();
-      applyResourceType = document.getElementById("applyResourceType").value;
-      // console.log("application: " + application);
-      // console.log("environmentType: " + environmentType);
-      // console.log("applyResourceType: " + applyResourceType);
-      if (application == "" || environmentType == undefined || applyResourceType == "") {
-        return;
-      }
-      var params = {
-        applicationName: application,
-        environment: environmentType,
-        resourceType: applyResourceType
-      };
-
-      var concreteResource = document.getElementById("concreteResource");
-      // console.log(concreteResource.length);
-      // console.log(concreteResource.value);
-      for (var i = concreteResource.length - 1; i >= 1; i--) {
-        concreteResource.remove(i);
-      }
 
 
-      $.ajax({
-        url: "../" + "akApply/listResourcesByAppEnvAndResType.do",
-        type: "POST",
-        data: params,
-        // dataType: "json",
-        success: function (data) {
-          var concreteResource = document.getElementById("concreteResource");
-          // console.log(concreteResource.length);
-          // console.log(concreteResource.value);
-          for (var i = concreteResource.length - 1; i >= 1; i--) {
-            concreteResource.remove(i);
-          }
-          for (var i = 0; i < data.length; i++) {
-            concreteResource.options.add(new Option(data[i], data[i]));
-          }
-          concreteResource.value = "";
-        },
-      })
-    }
+  });
+
+
+
 
 
 

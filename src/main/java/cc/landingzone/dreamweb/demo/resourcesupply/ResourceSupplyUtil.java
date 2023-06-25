@@ -1,6 +1,7 @@
 package cc.landingzone.dreamweb.demo.resourcesupply;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.demo.akapply.AkApplyUtil;
 import com.alibaba.fastjson.JSON;
@@ -35,9 +36,11 @@ public class ResourceSupplyUtil {
 
 //        createOssBucket("buckettestapi1");
 
-        String regionId = "cn-hangzhou";
-        String generation = "ecs-3";
-        System.out.println(describeInstanceTypeFamilies(regionId, generation));
+        System.out.println(ServiceEnum.ECS.name());
+
+//        String regionId = "cn-hangzhou";
+//        String generation = "ecs-3";
+//        System.out.println(describeInstanceTypeFamilies(regionId, generation));
     }
 
     public static void createEcsInstance(String regionId, String vSwitchId, String instanceType, int amount) {
@@ -84,14 +87,13 @@ public class ResourceSupplyUtil {
         }
     }
 
-    public static void createOssBucket(String bucketName) {
+    public static String createOssBucket(String bucketName,String applicationName,String environmentName) {
         try {
 
             AsyncClient client = ServiceHelper.createOssClient
                     (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
 
             // 验证bucketName是否存在
-
 
             CreateBucketConfiguration createBucketConfiguration = CreateBucketConfiguration.builder()
                     .storageClass("Standard")
@@ -106,12 +108,16 @@ public class ResourceSupplyUtil {
             PutBucketResponse resp = response.get();
             System.out.println(new Gson().toJson(resp));
             client.close();
+            attachTagToResource(applicationName,environmentName,ServiceEnum.OSS.getResourceName(),Arrays.asList(bucketName));
+
+            return "success";
         }catch (Exception e) {
             logger.error(e.getMessage(), e);
+            return e.getMessage();
         }
     }
 
-    public static void createLogProject(String projectName,String description) {
+    public static String createLogProject(String projectName,String description,String applicationName,String environmentName) {
         try {
             Client client = ServiceHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
             //查询logProject是否存在
@@ -123,14 +129,17 @@ public class ResourceSupplyUtil {
                     .setProjectName(projectName);
             Map<String, String> headers = new HashMap<>();
             client.createProjectWithOptions(createProjectRequest, headers, runtime);
+            attachTagToResource(applicationName,environmentName,ServiceEnum.SLS.getResourceName(),Arrays.asList(projectName));
+            return "success";
         }catch (Exception e) {
             logger.error(e.getMessage(), e);
+            return e.getMessage();
         }
     }
 
     public static void attachTagToResource(String applicationName, String environment, String resourceType,
-                                           List<String> resourceNameList) {
-        try {
+                                           List<String> resourceNameList) throws Exception {
+
             Map<String,String> tags = new HashMap<>();
             tags.put(CommonConstants.APPLICATION_TAG_KEY, applicationName);
             tags.put(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY, environment);
@@ -143,9 +152,6 @@ public class ResourceSupplyUtil {
                     .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
             RuntimeOptions runtime = new RuntimeOptions();
             client.tagResourcesWithOptions(tagResourcesRequest, runtime);
-        }catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
     }
 
     // 查询云服务器ECS提供的实例规格族列表

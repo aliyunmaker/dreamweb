@@ -4,7 +4,6 @@ import com.aliyun.auth.credentials.Credential;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.sdk.service.oss20190517.AsyncClient;
 import darabonba.core.client.ClientOverrideConfiguration;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +81,12 @@ public class ServiceHelper {
     public static List<String> getResourceArn(String resourceType, List<String> resourceNameList, String accountId){
         List<String> resourceArn = new ArrayList<>();
         switch (resourceType){
+            case "ecs":
+                for (String resourceName : resourceNameList) {
+                    resourceArn.add("acs:ecs:" + CommonConstants.Aliyun_REGION_HANGZHOU + ":" +
+                            accountId + ":instance/" + resourceName);
+                }
+                break;
             case "oss":
                 for (String resourceName : resourceNameList) {
                     resourceArn.add("acs:oss:*:" + accountId + ":" + resourceName);

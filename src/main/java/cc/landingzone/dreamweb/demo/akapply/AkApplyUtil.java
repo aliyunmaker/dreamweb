@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class AkApplyUtil {
 
@@ -246,16 +247,13 @@ public class AkApplyUtil {
         try {
             com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient
                     (CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-            if ("log".equals(resourceType)){
-                resourceType = "sls";
-            }
             ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
                     .setValue(applicationName)
                     .setKey(CommonConstants.APPLICATION_TAG_KEY);
             ListResourcesByTagRequest listResourcesByTagRequest = new ListResourcesByTagRequest()
                     .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
                     .setMaxResult(1000)
-                    .setResourceType(ServiceEnum.valueOf(resourceType.toUpperCase()).getResourceType())
+                    .setResourceType(Objects.requireNonNull(ServiceEnum.getServiceEnumByResourceName(resourceType)).getResourceType())
                     .setIncludeAllTags(true)
                     .setTagFilter(tagFilter);
             RuntimeOptions runtime = new RuntimeOptions();
