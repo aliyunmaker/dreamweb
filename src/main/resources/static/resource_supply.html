@@ -2,22 +2,26 @@
 <html lang="en" data-bs-theme="auto">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
 
-  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
-  <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="bootstrapValidator/css/bootstrapValidator.css"/> -->
 
-  <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
-  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 
-  <!-- Bootstrap4 核心 JavaScript 文件 -->
-  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+
+    <!-- Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- <script type="text/javascript" src="bootstrapValidator/js/bootstrapValidator.js"></script> -->
 
 
-  <style>
+    <style>
     .iframe-container {
       width: 100%;
       height: 100vh;
@@ -31,32 +35,42 @@
       background-color: #8899f0;
     }
   </style>
+
+
+    <!--修改模态框 出现的位置-->
+    <style type="text/css">
+    .modal.fade.in {
+      top: 90px;
+    }
+  </style>
+
+
 </head>
 
-<body>
+<body onload="load()">
 <main>
-  <nav class="navbar navbar-expand bg-body-secondary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i>
-        Monitor Center</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link disabled">Project: [springrun]</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <!--    <div class="iframe-container">-->
-  <!--      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
-  <!--    </div>-->
+    <nav class="navbar navbar-expand bg-body-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i>
+                资源供给</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Project: [springrun]</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--    <div class="iframe-container">-->
+    <!--      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
+    <!--    </div>-->
 </main>
 
 <script>
@@ -84,223 +98,474 @@
 
   </script>
 
+<div class="px-5 py-5">
+    <div class="container">
+        <!--  <h1>资源供给</h1>-->
 
-<div class="container">
+        <form id="resource_supply" onsubmit="return createResource()" role="form">
+            <div class="row mb-3 mt-3">
+                <h5>基础信息</h5>
+            </div>
 
-  <h1>资源供给</h1>
-  <br>
-  <form id="resource_supply" onsubmit="return akApplySubmit()" role="form">
-    <h5>基础信息</h5>
 
-    <div class="form-group row">
-      <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
-      <div class="col-sm-10">
-        <select class="form-select" id="application" required>
-          <option selected disabled value="">请选择应用</option>
-          <option value="application1">应用1</option>
-          <option value="application2">应用2</option>
-          <option value="application3">应用3</option>
-        </select>
-      </div>
-    </div>
-    <br>
-
-    <div class="form-group row">
-      <label for="environmentType1"  class="col-sm-2 col-form-label">环境类型：</label>
-      <div class="col-sm-3">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product"
-                 checked>
-          <label class="form-check-label" for="environmentType1">生产</label>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
-          <label class="form-check-label" for="environmentType2">测试</label>
-        </div>
-      </div>
-    </div>
-    <br>
-
-    <div class="form-group row">
-      <label for="resourceType1" class="col-sm-2 col-form-label">资源类型：</label>
-      <div class="col-sm-3">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="resourceType1" name="resourceType" value="ecs" checked>
-          <label class="form-check-label" for="resourceType1">云服务器ECS</label>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="resourceType2" name="resourceType" value="oss">
-          <label class="form-check-label" for="resourceType1">对象存储服务OSS</label>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="resourceType3" name="resourceType" value="log">
-          <label class="form-check-label" for="resourceType1">日志服务SLS</label>
-        </div>
-      </div>
-    </div>
-    <br>
-
-    <div id = "ecsTemplate">
-      <div class="form-group row">
-        <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
-        <div class="col-sm-10">
-          <div class="form-check">
-            <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
-            <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">ECS通用模版</label>
+            <div class="form-group row">
+                <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
+                <div class="col-sm-10">
+                    <select class="form-select" id="application" required>
+                        <option selected disabled value="">请选择应用</option>
+                        <option value="application1">应用1</option>
+                        <option value="application2">应用2</option>
+                        <option value="application3">应用3</option>
+                    </select>
+                </div>
+            </div>
             <br>
-            <small id="resourceTemplateDescription" class="form-text text-muted">ECS通用模版, 可用于申请云服务器ECS资源。</small>
-            <a href="https://www.runoob.com/">查看模板</a>
-          </div>
-        </div>
-      </div>
-      <br>
-    </div>
 
-    <div id = "ossTemplate" style = "display: none;">
-      <div class="form-group row">
-        <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
-        <div class="col-sm-10">
-          <div class="form-check">
-            <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
-            <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">OSS通用模版</label>
+            <div class="form-group row">
+                <label for="environmentType1" class="col-sm-2 col-form-label">环境类型：</label>
+                <div class="col-sm-3">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product"
+                               checked>
+                        <label class="form-check-label" for="environmentType1">生产</label>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
+                        <label class="form-check-label" for="environmentType2">测试</label>
+                    </div>
+                </div>
+            </div>
             <br>
-            <small id="resourceTemplateDescription" class="form-text text-muted">OSS通用模版, 可用于申请对象存储服务的Bucket。</small>
-            <a href="https://www.runoob.com/">查看模板</a>
-          </div>
-        </div>
-      </div>
-      <br>
-    </div>
 
-    <div id = "logTemplate" style = "display: none;">
-      <div class="form-group row">
-        <label for="permissionTemplate1" class="col-sm-2 col-form-label">资源模版：</label>
-        <div class="col-sm-10">
-          <div class="form-check">
-            <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1">
-            <label class="form-check-label" for="permissionTemplate1" class="col-sm-2 col-form-label">SLS通用模版</label>
+            <div class="form-group row">
+                <label for="resourceType1" class="col-sm-2 col-form-label">资源类型：</label>
+                <div class="col-sm-3">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="resourceType1" name="resourceType" value="ecs" checked>
+                        <label class="form-check-label" for="resourceType1">云服务器ECS</label>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="resourceType2" name="resourceType" value="oss">
+                        <label class="form-check-label" for="resourceType2">对象存储服务OSS</label>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="resourceType3" name="resourceType" value="log">
+                        <label class="form-check-label" for="resourceType3">日志服务SLS</label>
+                    </div>
+                </div>
+            </div>
             <br>
-            <small id="resourceTemplateDescription" class="form-text text-muted">SLS通用模版, 可用于申请日志服务的project。</small>
-            <a href="https://www.runoob.com/">查看模板</a>
+
+            <div id="ecsTemplate">
+                <div class="form-group row">
+                    <label for="permissionTemplateEcs" class="col-sm-2 col-form-label">资源模版：</label>
+                    <div class="col-sm-10">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="permissionTemplateEcs" name="permissionTemplate"
+                                   value="1">
+                            <label class="form-check-label" for="permissionTemplateEcs"
+                                   class="col-sm-2 col-form-label">ECS通用模版</label>
+                            <br>
+                            <small id="resourceTemplateDescriptionEcs" class="form-text text-muted">ECS通用模版, 可用于申请云服务器ECS资源。</small>
+                            <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+
+            <div id="ossTemplate" style="display: none;">
+                <div class="form-group row">
+                    <label for="permissionTemplateOss" class="col-sm-2 col-form-label">资源模版：</label>
+                    <div class="col-sm-10">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="permissionTemplateOss" name="permissionTemplate"
+                                   value="1">
+                            <label class="form-check-label" for="permissionTemplateOss"
+                                   class="col-sm-2 col-form-label">OSS通用模版</label>
+                            <br>
+                            <small id="resourceTemplateDescriptionOss" class="form-text text-muted">OSS通用模版,
+                                可用于申请对象存储服务的Bucket。</small>
+                            <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+
+            <div id="logTemplate" style="display: none;">
+                <div class="form-group row">
+                    <label for="permissionTemplateLog" class="col-sm-2 col-form-label">资源模版：</label>
+                    <div class="col-sm-10">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="permissionTemplateLog" name="permissionTemplate"
+                                   value="1">
+                            <label class="form-check-label" for="permissionTemplateLog"
+                                   class="col-sm-2 col-form-label">SLS通用模版</label>
+                            <br>
+                            <small id="resourceTemplateDescriptionLog" class="form-text text-muted">SLS通用模版,
+                                可用于申请日志服务的project。</small>
+                            <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+
+            <div class="row mb-3 mt-3">
+                <h5>资源属性</h5>
+            </div>
+
+            <div id="ecsResoureProperties">
+                <div class="form-group row mb-3">
+                    <label for="regionId" class="col-sm-2 control-label">地域：</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="regionId">
+                            <option selected disabled value="">请选择地域</option>
+                            <option value="cn-hangzhou">华东1(杭州)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="vSwitch" class="col-sm-2 control-label">可用区：</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="vSwitch">
+                            <option selected disabled value="">请选择可用区</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="instanceType">
+                            <option selected disabled value="">请选择实例规格</option>
+                            <option value="ecs.n2.small">ecs.n2.small</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
+                    <div class="col-sm-5">
+                        <input class="form-control" type="number" id="instanceNum" min="1" max="100" value="1">
+                    </div>
+                </div>
+            </div>
+
+            <div id="ossResoureProperties" style="display: none;">
+                <div class="form-group row mb-3">
+                    <label for="bucketName" class="col-sm-2 control-label">Bucket名称: </label>
+                    <div class="col-sm-5">
+                        <input class="form-control" type="text" placeholder="请输入字符串" id="bucketName">
+                        <div class="form-text" id="bucketNameRule">长度在3~63字符之间，只能包括小写字母、数字和短划线（-），且必须以小写字母或者数字开头和结尾。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="logResoureProperties" style="display: none;">
+                <div class="form-group row mb-3">
+                    <label for="projectName" class="col-sm-2 control-label">Project名称: </label>
+                    <div class="col-sm-5">
+                        <input class="form-control" type="text" placeholder="请输入字符串" id="projectName">
+                        <div class="form-text" id="projectNameRule">长度在3~63字符之间，只能包括小写字母、数字和短划线（-），且必须以小写字母或者数字开头和结尾。
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="projectDescription" class="col-sm-2 control-label">Project描述: </label>
+                    <div class="col-sm-5">
+                        <input class="form-control" type="text" placeholder="请输入字符串" id="projectDescription">
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <button type="submit" class="btn btn-primary">申请</button>
+        </form>
+
+        <div class="row mt-4" id="creating" style="display: none;">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="text-nowrap" style="width: 10rem;">
+                <span class="fs-5">创建中...</span>
+            </div>
+        </div>
+
+        <div class="row mt-4" id="createSuccess" style="display: none;">
+
+
+            <div class="text-nowrap" style="width: 10rem;">
+                <span class="fs-5">创建成功</span>
+            </div>
+        </div>
+
+        <div class="row mt-4" id="createFail" style="display: none;">
+
+
+            <div class="text-nowrap" style="width: 10rem;">
+                <span class="fs-5">创建失败</span>
+            </div>
+        </div>
+
+        <div class="row mt-4 ms-2" id="createFailMessage" style="display: none;">
+            <textarea id="createFailMessageContent" class="form-control" rows="5" readonly></textarea>
+        </div>
+
+
+
+
+
+
+        <!-- 资源模板 Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel1">模板</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="templateContent" class="form-control" rows="10" readonly></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 申请响应 Modal -->
+        <!-- <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel2">申请结果</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p><span id="applyResult">init</span></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <br>
+        </div> -->
+
     </div>
-
-
-    <h5>资源属性</h5>
-
-    <div id="ecsResoureProperties" class="g-4">
-      <div class="form-group row">
-        <label for="regionId" class="col-sm-2 control-label">地域：</label>
-        <div class="col-sm-10">
-          <select class="form-select" id="regionId" required>
-            <option selected disabled value="">请选择地域</option>
-            <option value="cn-hangzhou">华东1(杭州)</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="zoneId" class="col-sm-2 control-label">可用区：</label>
-        <div class="col-sm-10">
-          <select class="form-select" id="zoneId" required>
-            <option selected disabled value="">请选择可用区</option>
-            <option value="cn-hangzhou">华东1(杭州)</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
-        <div class="col-sm-10">
-          <select class="form-select" id="instanceType" required>
-            <option selected disabled value="">请选择实例规格</option>
-            <option value="cn-hangzhou">华东1(杭州)</option>
-          </select>
-        </div>
-
-      </div>
-      <div class="form-group row">
-        <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
-        <div class="col-sm-5">
-          <input class="form-control" type="number" id="instanceNum" min="1" max="100">
-        </div>
-      </div>
-    </div>
-
-    <div id = "ossResoureProperties" style = "display: none;">
-      <div class="form-group row">
-        <label for="bucketName" class="col-sm-2 control-label">Bucket名称: </label>
-        <div class="col-sm-5">
-          <input class="form-control" type="text" placeholder="请输入字符串" id="bucketName">
-        </div>
-      </div>
-    </div>
-
-    <div id = "logResoureProperties" style = "display: none;">
-      <div class="form-group row">
-        <label for="projectName" class="col-sm-2 control-label">Project名称: </label>
-        <div class="col-sm-5">
-          <input class="form-control" type="text" placeholder="请输入字符串" id="projectName">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="ProjectDescription" class="col-sm-2 control-label">Project描述: </label>
-        <div class="col-sm-5">
-          <input class="form-control" type="text" placeholder="请输入字符串" id="ProjectDescription">
-        </div>
-      </div>
-    </div>
-
-    <br>
-    <button type="submit" class="btn btn-primary">申请</button>
-
-  </form>
 </div>
-
 
 
 
 <script>
 
-  $('input[type=radio][name=resourceType]').change(function () {
-    var resourceType = $("input[name='resourceType']:checked").val();
-    if(resourceType == "ecs"){
-      document.getElementById("ecsTemplate").style.display = "";
-      document.getElementById("ossTemplate").style.display = "none";
-      document.getElementById("logTemplate").style.display = "none";
-      document.getElementById("ecsResoureProperties").style.display = "";
-      document.getElementById("ossResoureProperties").style.display = "none";
-      document.getElementById("logResoureProperties").style.display = "none";
-    }else if(resourceType == "oss"){
-      document.getElementById("ecsTemplate").style.display = "none";
-      document.getElementById("ossTemplate").style.display = "";
-      document.getElementById("logTemplate").style.display = "none";
-      document.getElementById("ecsResoureProperties").style.display = "none";
-      document.getElementById("ossResoureProperties").style.display = "";
-      document.getElementById("logResoureProperties").style.display = "none";
-    }else if(resourceType == "log"){
-      document.getElementById("ecsTemplate").style.display = "none";
-      document.getElementById("ossTemplate").style.display = "none";
-      document.getElementById("logTemplate").style.display = "";
-      document.getElementById("ecsResoureProperties").style.display = "none";
-      document.getElementById("ossResoureProperties").style.display = "none";
-      document.getElementById("logResoureProperties").style.display = "";
+    $('input[type=radio][name=resourceType]').change(function () {
+      var resourceType = $("input[name='resourceType']:checked").val();
+      if (resourceType == "ecs") {
+        $("#ecsTemplate").show();
+        $("#ossTemplate").hide();
+        $("#logTemplate").hide();
+        $("#ecsResoureProperties").show();
+        $("#ossResoureProperties").hide();
+        $("#logResoureProperties").hide();
+      } else if (resourceType == "oss") {
+        $("#ecsTemplate").hide();
+        $("#ossTemplate").show();
+        $("#logTemplate").hide();
+        $("#ecsResoureProperties").hide();
+        $("#ossResoureProperties").show();
+        $("#logResoureProperties").hide();
+      } else if (resourceType == "log") {
+        $("#ecsTemplate").hide();
+        $("#ossTemplate").hide();
+        $("#logTemplate").show();
+        $("#ecsResoureProperties").hide();
+        $("#ossResoureProperties").hide();
+        $("#logResoureProperties").show();
+      }
+    });
+
+    function load() {
+      $.ajax({
+        url: "../" + "resourceSupply/getVSwitches.do",
+        type: "POST",
+        data: {},
+        contentType: "application/x-www-form-urlencoded",
+        // dataType: "json",
+        success: function (data) {
+          var vSwitch = document.getElementById("vSwitch");
+          for (var i = vSwitch.length - 1; i >= 1; i--) {
+            vSwitch.remove(i);
+          }
+          for (var i = 0; i < data.length; i++) {
+            var vSwitchId = data[i].split("/")[1].trim();
+            console.log("vSwitchId: " + vSwitchId);
+            vSwitch.options.add(new Option(data[i], vSwitchId));
+          }
+          vSwitch.value = "";
+        },
+      })
+    }
+
+    function getTemplateByResourceType() {
+      var resourceType = $("input[name='resourceType']:checked").val();
+      console.log("resourceType: " + resourceType);
+
+      var params = {
+        resourceType: resourceType
+      };
+
+      $.ajax({
+        url: "../" + "resourceSupply/getTemplateByResourceType.do",
+        type: "POST",
+        data: params,
+        // dataType: "json",
+        success: function (data) {
+          console.log("data: " + data);
+          let len = data.split("\n").length;
+          console.log(len)
+          $("#templateContent").attr("rows", len);
+          $("#templateContent").val(data);
+
+        },
+      })
+
+      $('#myModal').modal('show');
+    }
+
+
+    function createResource() {
+      var resourceType = $("input[name='resourceType']:checked").val();
+      $("#createFail").hide();
+      $("#createFailMessage").hide();
+      $("#createSuccess").hide();
+      $("#creating").show();
+      if (resourceType == "ecs") {
+        createEcsInstance();
+      } else if (resourceType == "oss") {
+        createOssBucket();
+      } else if (resourceType == "log") {
+        createLogProject();
+      }
+      return false;
     }
 
 
 
-  });
+    function createEcsInstance() {
+      var regionId = $("#regionId").val();
+      var vSwitchId = $("#vSwitch").val();
+      var instanceType = $("#instanceType").val();
+      var amount = $("#instanceNum").val();
+      var application = $("#application").val();
+      var environmentType = $("input[name='environmentType']:checked").val();
 
+      var params = {
+        applicationName: application,
+        environmentName: environmentType,
+        regionId: regionId,
+        vSwitchId: vSwitchId,
+        instanceType: instanceType,
+        amount: amount
+      };
 
+      $.ajax({
+        url: "../" + "resourceSupply/createEcsInstance.do",
+        type: "POST",
+        data: params,
+        // async: false,
+        // dataType: "json",
+        success: function (data) {
+          console.log("data: " + data);
+          $("#creating").hide();
+          if (data == "success") {
+            $("#createSuccess").show();
+          } else {
+            $("#createFail").show();
+            $("#createFailMessage").show();
+            $("#createFailMessageContent").text(data);
+          }
+        },
+      })
+    }
 
+    function createOssBucket() {
+      var bucketName = $("#bucketName").val();
+      var application = $("#application").val();
+      var environmentType = $("input[name='environmentType']:checked").val();
 
+      var params = {
+        bucketName: bucketName,
+        applicationName: application,
+        environmentName: environmentType
+      };
+
+      $.ajax({
+        url: "../" + "resourceSupply/createOssBucket.do",
+        type: "POST",
+        data: params,
+        // async: false,
+        // dataType: "json",
+        success: function (data) {
+          console.log("data: " + data);
+          $("#creating").hide();
+          if (data == "success") {
+            $("#createSuccess").show();
+          } else {
+            $("#createFail").show();
+            $("#createFailMessage").show();
+            $("#createFailMessageContent").text(data);
+          }
+        },
+      })
+    }
+
+    function createLogProject() {
+      var projectName = $("#projectName").val();
+      var description = $("#projectDescription").val();
+      var application = $("#application").val();
+      var environmentType = $("input[name='environmentType']:checked").val();
+
+      var params = {
+        projectName: projectName,
+        description: description,
+        applicationName: application,
+        environmentName: environmentType
+      };
+
+      $.ajax({
+        url: "../" + "resourceSupply/createLogProject.do",
+        type: "POST",
+        data: params,
+        // async: false,
+        // dataType: "json",
+        success: function (data) {
+          console.log("data: " + data);
+          $("#creating").hide();
+          if (data == "success") {
+            $("#createSuccess").show();
+          } else {
+            $("#createFail").show();
+            $("#createFailMessage").show();
+            $("#createFailMessageContent").text(data);
+          }
+        },
+      })
+    }
 
 
   </script>

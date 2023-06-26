@@ -91,7 +91,7 @@ public class AkApplyUtil {
         List<Statement> statementList = new ArrayList<>();
 
         Statement statement1 = new Statement();
-        List<String> resourceArn = ServiceHelper.getResourceArn(resourceType, resourceNameList, accountId);
+        List<String> resourceArn = ServiceHelper.getResourceArnInPolicy(resourceType, resourceNameList, accountId);
         List<String> action = getAction(resourceType, actionCode);
         statement1.setAction(action);
         statement1.setResource(resourceArn);

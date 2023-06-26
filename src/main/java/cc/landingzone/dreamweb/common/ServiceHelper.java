@@ -80,21 +80,23 @@ public class ServiceHelper {
         return new com.aliyun.actiontrail20200706.Client(config);
     }
 
+    public static com.aliyun.vpc20160428.Client createVpcClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "vpc.aliyuncs.com";
+        return new com.aliyun.vpc20160428.Client(config);
+    }
+
+
+
     /**
-     * 拼接资源ARN
+     * 权限策略 拼接资源ARN
      * @param resourceType:oss、log
-     * @param resourceNameList
-     * @return
      */
-    public static List<String> getResourceArn(String resourceType, List<String> resourceNameList, String accountId){
+    public static List<String> getResourceArnInPolicy(String resourceType, List<String> resourceNameList, String accountId){
         List<String> resourceArn = new ArrayList<>();
         switch (resourceType){
-            case "ecs":
-                for (String resourceName : resourceNameList) {
-                    resourceArn.add("acs:ecs:" + CommonConstants.Aliyun_REGION_HANGZHOU + ":" +
-                            accountId + ":instance/" + resourceName);
-                }
-                break;
             case "oss":
                 for (String resourceName : resourceNameList) {
                     resourceArn.add("acs:oss:*:" + accountId + ":" + resourceName);
@@ -110,6 +112,39 @@ public class ServiceHelper {
         }
         return resourceArn;
     }
+
+    /**
+     * tag标签 拼接资源ARN
+     * @param resourceType:ecs、oss、log
+     */
+    public static List<String> getResourceArnInTag(String resourceType, List<String> resourceNameList, String accountId){
+        List<String> resourceArn = new ArrayList<>();
+        switch (resourceType){
+            case "ecs":
+                for (String resourceName : resourceNameList) {
+                    resourceArn.add("acs:ecs:*:" +
+                            accountId + ":instance/" + resourceName);
+                }
+                break;
+            case "oss":
+                for (String resourceName : resourceNameList) {
+                    resourceArn.add("acs:oss:*:" +
+                            accountId + ":bucket/" + resourceName);
+                }
+                break;
+            case "log":
+                for (String resourceName : resourceNameList) {
+                    resourceArn.add("acs:log:*:" +
+                            accountId + ":project/" + resourceName);
+                }
+                break;
+            default:
+                break;
+        }
+        return resourceArn;
+    }
+
+
 
     /**
      * 拼接RAM用户的ARN：acs:ram::<account-id>:user/<user-name>
