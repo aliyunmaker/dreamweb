@@ -6,6 +6,7 @@ target/
 dreamweb.iml
 dreamweb.properties
 application-*.properties
+src/main/resources/application.properties
 
 config/
 !**/src/main/**/config/
