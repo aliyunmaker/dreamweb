@@ -1,6 +1,6 @@
 provider "alicloud" {
-  access_key = "LTAI5t6DFvJNSEhht4ZV72pi"
-  secret_key = "tEczF2eIsH8qSHH021Mi3vVggohx1o"
+  access_key = your_access_key
+  secret_key = your_secret_key
   region     = "cn-hangzhou"
 }
 module "tf-instances" {

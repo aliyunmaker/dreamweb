@@ -99,274 +99,278 @@
   </script>
 
 <div class="px-5 py-5">
-    <div class="container">
-        <!--  <h1>资源供给</h1>-->
+    <!--    <h2 class="pb-2 border-bottom fs-1"></h2>-->
+    <!-- <div class="container"> -->
+    <!--  <h1>资源供给</h1>-->
 
-        <form id="resource_supply" onsubmit="return createResource()" role="form">
-            <div class="row mb-3 mt-3">
-                <h5>基础信息</h5>
+    <form id="resource_supply" onsubmit="return createResource()" role="form">
+        <div class="row mb-3 mt-3">
+            <h5>基础信息</h5>
+        </div>
+
+
+        <div class="form-group row">
+            <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
+            <div class="col-sm-10">
+                <select class="form-select" id="application" required>
+                    <option selected disabled value="">请选择应用</option>
+                    <option value="application1">应用1</option>
+                    <option value="application2">应用2</option>
+                    <option value="application3">应用3</option>
+                </select>
             </div>
+        </div>
+        <br>
 
+        <div class="form-group row">
+            <label for="environmentType1" class="col-sm-2 col-form-label">环境类型：</label>
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product"
+                           checked>
+                    <label class="form-check-label" for="environmentType1">生产</label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
+                    <label class="form-check-label" for="environmentType2">测试</label>
+                </div>
+            </div>
+        </div>
+        <br>
 
+        <div class="form-group row">
+            <label for="resourceType1" class="col-sm-2 col-form-label">资源类型：</label>
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="resourceType1" name="resourceType" value="ecs" checked>
+                    <label class="form-check-label" for="resourceType1">云服务器ECS</label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="resourceType2" name="resourceType" value="oss">
+                    <label class="form-check-label" for="resourceType2">对象存储服务OSS</label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="resourceType3" name="resourceType" value="log">
+                    <label class="form-check-label" for="resourceType3">日志服务SLS</label>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div id="ecsTemplate">
             <div class="form-group row">
-                <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
+                <label for="permissionTemplateEcs" class="col-sm-2 col-form-label">资源模版：</label>
                 <div class="col-sm-10">
-                    <select class="form-select" id="application" required>
-                        <option selected disabled value="">请选择应用</option>
-                        <option value="application1">应用1</option>
-                        <option value="application2">应用2</option>
-                        <option value="application3">应用3</option>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="permissionTemplateEcs" name="permissionTemplate"
+                               value="1">
+                        <label class="form-check-label" for="permissionTemplateEcs"
+                               class="col-sm-2 col-form-label">ECS通用模版</label>
+                        <br>
+                        <small id="resourceTemplateDescriptionEcs" class="form-text text-muted">ECS通用模版, 可用于申请云服务器ECS资源。</small>
+                        <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+
+        <div id="ossTemplate" style="display: none;">
+            <div class="form-group row">
+                <label for="permissionTemplateOss" class="col-sm-2 col-form-label">资源模版：</label>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="permissionTemplateOss" name="permissionTemplate"
+                               value="1">
+                        <label class="form-check-label" for="permissionTemplateOss"
+                               class="col-sm-2 col-form-label">OSS通用模版</label>
+                        <br>
+                        <small id="resourceTemplateDescriptionOss" class="form-text text-muted">OSS通用模版,
+                            可用于申请对象存储服务的Bucket。</small>
+                        <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+
+        <div id="logTemplate" style="display: none;">
+            <div class="form-group row">
+                <label for="permissionTemplateLog" class="col-sm-2 col-form-label">资源模版：</label>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="permissionTemplateLog" name="permissionTemplate"
+                               value="1">
+                        <label class="form-check-label" for="permissionTemplateLog"
+                               class="col-sm-2 col-form-label">SLS通用模版</label>
+                        <br>
+                        <small id="resourceTemplateDescriptionLog" class="form-text text-muted">SLS通用模版,
+                            可用于申请日志服务的project。</small>
+                        <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+
+        <h2 class="pb-2 border-bottom fs-1"></h2>
+
+        <div class="row mb-3 mt-4">
+            <h5>资源属性</h5>
+        </div>
+
+        <div id="ecsResoureProperties">
+            <div class="form-group row mb-3">
+                <label for="regionId" class="col-sm-2 control-label">地域：</label>
+                <div class="col-sm-10">
+                    <select class="form-select" id="regionId">
+                        <option selected disabled value="">请选择地域</option>
+                        <option value="cn-hangzhou">华东1(杭州)</option>
                     </select>
                 </div>
             </div>
-            <br>
-
-            <div class="form-group row">
-                <label for="environmentType1" class="col-sm-2 col-form-label">环境类型：</label>
-                <div class="col-sm-3">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product"
-                               checked>
-                        <label class="form-check-label" for="environmentType1">生产</label>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
-                        <label class="form-check-label" for="environmentType2">测试</label>
-                    </div>
+            <div class="form-group row mb-3">
+                <label for="vSwitch" class="col-sm-2 control-label">可用区：</label>
+                <div class="col-sm-10">
+                    <select class="form-select" id="vSwitch">
+                        <option selected disabled value="">请选择可用区</option>
+                    </select>
                 </div>
             </div>
-            <br>
+            <div class="form-group row mb-3">
+                <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
+                <div class="col-sm-10">
+                    <select class="form-select" id="instanceType">
+                        <option selected disabled value="">请选择实例规格</option>
+                        <option value="ecs.n2.small">ecs.n2.small</option>
+                    </select>
+                </div>
 
-            <div class="form-group row">
-                <label for="resourceType1" class="col-sm-2 col-form-label">资源类型：</label>
-                <div class="col-sm-3">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="resourceType1" name="resourceType" value="ecs" checked>
-                        <label class="form-check-label" for="resourceType1">云服务器ECS</label>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="resourceType2" name="resourceType" value="oss">
-                        <label class="form-check-label" for="resourceType2">对象存储服务OSS</label>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="resourceType3" name="resourceType" value="log">
-                        <label class="form-check-label" for="resourceType3">日志服务SLS</label>
-                    </div>
-                </div>
             </div>
-            <br>
-
-            <div id="ecsTemplate">
-                <div class="form-group row">
-                    <label for="permissionTemplateEcs" class="col-sm-2 col-form-label">资源模版：</label>
-                    <div class="col-sm-10">
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" id="permissionTemplateEcs" name="permissionTemplate"
-                                   value="1">
-                            <label class="form-check-label" for="permissionTemplateEcs"
-                                   class="col-sm-2 col-form-label">ECS通用模版</label>
-                            <br>
-                            <small id="resourceTemplateDescriptionEcs" class="form-text text-muted">ECS通用模版, 可用于申请云服务器ECS资源。</small>
-                            <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
-                        </div>
-                    </div>
+            <div class="form-group row mb-3">
+                <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="number" id="instanceNum" min="1" max="100" value="1">
                 </div>
-                <br>
-            </div>
-
-            <div id="ossTemplate" style="display: none;">
-                <div class="form-group row">
-                    <label for="permissionTemplateOss" class="col-sm-2 col-form-label">资源模版：</label>
-                    <div class="col-sm-10">
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" id="permissionTemplateOss" name="permissionTemplate"
-                                   value="1">
-                            <label class="form-check-label" for="permissionTemplateOss"
-                                   class="col-sm-2 col-form-label">OSS通用模版</label>
-                            <br>
-                            <small id="resourceTemplateDescriptionOss" class="form-text text-muted">OSS通用模版,
-                                可用于申请对象存储服务的Bucket。</small>
-                            <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
-                        </div>
-                    </div>
-                </div>
-                <br>
-            </div>
-
-            <div id="logTemplate" style="display: none;">
-                <div class="form-group row">
-                    <label for="permissionTemplateLog" class="col-sm-2 col-form-label">资源模版：</label>
-                    <div class="col-sm-10">
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" id="permissionTemplateLog" name="permissionTemplate"
-                                   value="1">
-                            <label class="form-check-label" for="permissionTemplateLog"
-                                   class="col-sm-2 col-form-label">SLS通用模版</label>
-                            <br>
-                            <small id="resourceTemplateDescriptionLog" class="form-text text-muted">SLS通用模版,
-                                可用于申请日志服务的project。</small>
-                            <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
-                        </div>
-                    </div>
-                </div>
-                <br>
-            </div>
-
-            <div class="row mb-3 mt-3">
-                <h5>资源属性</h5>
-            </div>
-
-            <div id="ecsResoureProperties">
-                <div class="form-group row mb-3">
-                    <label for="regionId" class="col-sm-2 control-label">地域：</label>
-                    <div class="col-sm-10">
-                        <select class="form-select" id="regionId">
-                            <option selected disabled value="">请选择地域</option>
-                            <option value="cn-hangzhou">华东1(杭州)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row mb-3">
-                    <label for="vSwitch" class="col-sm-2 control-label">可用区：</label>
-                    <div class="col-sm-10">
-                        <select class="form-select" id="vSwitch">
-                            <option selected disabled value="">请选择可用区</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row mb-3">
-                    <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
-                    <div class="col-sm-10">
-                        <select class="form-select" id="instanceType">
-                            <option selected disabled value="">请选择实例规格</option>
-                            <option value="ecs.n2.small">ecs.n2.small</option>
-                        </select>
-                    </div>
-
-                </div>
-                <div class="form-group row mb-3">
-                    <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
-                    <div class="col-sm-5">
-                        <input class="form-control" type="number" id="instanceNum" min="1" max="100" value="1">
-                    </div>
-                </div>
-            </div>
-
-            <div id="ossResoureProperties" style="display: none;">
-                <div class="form-group row mb-3">
-                    <label for="bucketName" class="col-sm-2 control-label">Bucket名称: </label>
-                    <div class="col-sm-5">
-                        <input class="form-control" type="text" placeholder="请输入字符串" id="bucketName">
-                        <div class="form-text" id="bucketNameRule">长度在3~63字符之间，只能包括小写字母、数字和短划线（-），且必须以小写字母或者数字开头和结尾。
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="logResoureProperties" style="display: none;">
-                <div class="form-group row mb-3">
-                    <label for="projectName" class="col-sm-2 control-label">Project名称: </label>
-                    <div class="col-sm-5">
-                        <input class="form-control" type="text" placeholder="请输入字符串" id="projectName">
-                        <div class="form-text" id="projectNameRule">长度在3~63字符之间，只能包括小写字母、数字和短划线（-），且必须以小写字母或者数字开头和结尾。
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group row mb-3">
-                    <label for="projectDescription" class="col-sm-2 control-label">Project描述: </label>
-                    <div class="col-sm-5">
-                        <input class="form-control" type="text" placeholder="请输入字符串" id="projectDescription">
-                    </div>
-                </div>
-            </div>
-
-            <br>
-            <button type="submit" class="btn btn-primary">申请</button>
-        </form>
-
-        <div class="row mt-4" id="creating" style="display: none;">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="text-nowrap" style="width: 10rem;">
-                <span class="fs-5">创建中...</span>
             </div>
         </div>
 
-        <div class="row mt-4" id="createSuccess" style="display: none;">
-
-
-            <div class="text-nowrap" style="width: 10rem;">
-                <span class="fs-5">创建成功</span>
-            </div>
-        </div>
-
-        <div class="row mt-4" id="createFail" style="display: none;">
-
-
-            <div class="text-nowrap" style="width: 10rem;">
-                <span class="fs-5">创建失败</span>
-            </div>
-        </div>
-
-        <div class="row mt-4 ms-2" id="createFailMessage" style="display: none;">
-            <textarea id="createFailMessageContent" class="form-control" rows="5" readonly></textarea>
-        </div>
-
-
-
-
-
-
-        <!-- 资源模板 Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalLabel1">模板</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <textarea id="templateContent" class="form-control" rows="10" readonly></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <div id="ossResoureProperties" style="display: none;">
+            <div class="form-group row mb-3">
+                <label for="bucketName" class="col-sm-2 control-label">Bucket名称: </label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="text" placeholder="请输入字符串" id="bucketName">
+                    <div class="form-text" id="bucketNameRule">长度在3~63字符之间，只能包括小写字母、数字和短划线（-），且必须以小写字母或者数字开头和结尾。
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 申请响应 Modal -->
-        <!-- <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-          aria-hidden="true">
-          <div class="modal-dialog" role="document">
+        <div id="logResoureProperties" style="display: none;">
+            <div class="form-group row mb-3">
+                <label for="projectName" class="col-sm-2 control-label">Project名称: </label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="text" placeholder="请输入字符串" id="projectName">
+                    <div class="form-text" id="projectNameRule">长度在3~63字符之间，只能包括小写字母、数字和短划线（-），且必须以小写字母或者数字开头和结尾。
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label for="projectDescription" class="col-sm-2 control-label">Project描述: </label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="text" placeholder="请输入字符串" id="projectDescription">
+                </div>
+            </div>
+        </div>
+
+        <h2 class="pb-2 border-bottom fs-1"></h2>
+
+        <button type="submit" class="btn btn-primary mt-3">申请</button>
+    </form>
+
+    <div class="row mt-4" id="creating" style="display: none;">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="text-nowrap" style="width: 10rem;">
+            <span class="fs-5">创建中...</span>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="createSuccess" style="display: none;">
+
+
+        <div class="text-nowrap" style="width: 10rem;">
+            <span class="fs-5">创建成功</span>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="createFail" style="display: none;">
+
+
+        <div class="text-nowrap" style="width: 10rem;">
+            <span class="fs-5">创建失败</span>
+        </div>
+    </div>
+
+    <div class="row mt-4 ms-2" id="createFailMessage" style="display: none;">
+        <textarea id="createFailMessageContent" class="form-control" rows="5" readonly></textarea>
+    </div>
+
+
+
+
+
+
+    <!-- 资源模板 Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel2">申请结果</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p><span id="applyResult">init</span></p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-              </div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel1">模板</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="templateContent" class="form-control" rows="10" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 申请响应 Modal -->
+    <!-- <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel2">申请结果</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p><span id="applyResult">init</span></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
           </div>
-        </div> -->
+        </div>
+      </div> -->
 
-    </div>
+    <!-- </div> -->
 </div>
 
 
