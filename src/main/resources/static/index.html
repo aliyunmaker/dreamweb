@@ -7,6 +7,10 @@
   <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
   <style>
+    main {
+      overflow: hidden;
+    }
+
     .b-example-vr {
       flex-shrink: 0;
       width: 0;
@@ -23,6 +27,7 @@
     }
   </style>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+  <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
 </head>
 
 <body>
@@ -49,7 +54,7 @@
           </a>
         </li>
         <li>
-          <a href="#" class="nav-link text-white" data-link="log_center.html">
+          <a href="#" class="nav-link text-white" data-link="log_center/log_center.html" id="log-center-btn">
             <i class="iconfont icon-sls"></i>&nbsp;&nbsp;Log Center
           </a>
         </li>
@@ -106,6 +111,20 @@
         // Add active class to the clicked link
         e.target.classList.add("active");
       });
+    });
+
+    window.addEventListener('message', function(event) {
+      if (event.data.destination === "log_center") {
+        // Remove active class from all links
+        links.forEach(function (link) {
+          link.classList.remove("active");
+        });
+
+        // Add active class to the clicked link
+        document.getElementById('log-center-btn').classList.add("active");
+
+        iframe.setAttribute("src", event.data.url);
+      }
     });
   </script>
 </body>
