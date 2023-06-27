@@ -41,7 +41,7 @@ public class CommonConstants {
     public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";
 
     public static final String DEFAULT_IMAGE_ID = "ubuntu_18_04_64_20G_alibase_20190624.vhd";
-    public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp1j3v9i048rpldp8g20";
+    public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp103rdxtizwmfam0tfa";
     public static final String DEFAULT_ECS_HOSTNAME = "ECS-test";
     public static final String DEFAULT_ECS_PASSWORD = "ECS@test1234";
     public static final String ECS_CHARGETYPE_POSTPAID = "PostPaid";

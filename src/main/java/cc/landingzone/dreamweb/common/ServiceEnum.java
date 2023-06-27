@@ -4,23 +4,26 @@ public enum ServiceEnum {
     /**
      * ECS
      */
-    ECS("ecs","ALIYUN::ECS::INSTANCE"),
+    ECS("ecs", "ALIYUN::ECS::INSTANCE"),
     /**
      * OSS
      */
-    OSS("oss","ALIYUN::OSS::BUCKET"),
+    OSS("oss", "ALIYUN::OSS::BUCKET"),
     /**
      * SLB
      */
-    SLB("slb","ALIYUN::SLB::INSTANCE"),
+    SLB("slb", "ALIYUN::SLB::INSTANCE"),
     /**
      * RDS
      */
-    RDS("rds","ALIYUN::RDS::INSTANCE"),
+    RDS("rds", "ALIYUN::RDS::INSTANCE"),
     /**
      * SLS
      */
-    SLS("log","ALIYUN::LOG::PROJECT");
+    SLS("log", "ALIYUN::LOG::PROJECT"),
+
+    VSWITCH("vSwitch", "ALIYUN::VPC::VSWITCH"),
+    ;
 
 
     private String resourceName;
@@ -30,11 +33,10 @@ public enum ServiceEnum {
         this.resourceType = resourceType;
     }
 
-    ServiceEnum(String resourceName,String resourceType) {
+    ServiceEnum(String resourceName, String resourceType) {
         this.resourceName = resourceName;
         this.resourceType = resourceType;
     }
-
 
 
     public String getResourceType() {

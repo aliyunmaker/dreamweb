@@ -3,11 +3,21 @@ package cc.landingzone.dreamweb.common;
 import com.aliyun.auth.credentials.Credential;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.sdk.service.oss20190517.AsyncClient;
+import com.aliyun.tag20180828.models.ListResourcesByTagRequest;
+import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
+import com.aliyun.teautil.models.RuntimeOptions;
+import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesRequest;
 import darabonba.core.client.ClientOverrideConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceHelper {
+
+    private static Logger logger = LoggerFactory.getLogger(ServiceHelper.class);
+
     public static com.aliyun.ecs20140526.Client createEcsClient(String accessKeyId, String accessKeySecret) throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
                 .setAccessKeyId(accessKeyId)
@@ -58,8 +68,8 @@ public class ServiceHelper {
 
     public static com.aliyun.ram20150501.Client createRamClient(String accessKeyId, String accessKeySecret) throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                  .setAccessKeyId(accessKeyId)
-                  .setAccessKeySecret(accessKeySecret);
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
         config.endpoint = "ram.aliyuncs.com";
         return new com.aliyun.ram20150501.Client(config);
     }
@@ -89,14 +99,14 @@ public class ServiceHelper {
     }
 
 
-
     /**
      * 权限策略 拼接资源ARN
+     *
      * @param resourceType:oss、log
      */
-    public static List<String> getResourceArnInPolicy(String resourceType, List<String> resourceNameList, String accountId){
+    public static List<String> getResourceArnInPolicy(String resourceType, List<String> resourceNameList, String accountId) {
         List<String> resourceArn = new ArrayList<>();
-        switch (resourceType){
+        switch (resourceType) {
             case "oss":
                 for (String resourceName : resourceNameList) {
                     resourceArn.add("acs:oss:*:" + accountId + ":" + resourceName);
@@ -115,11 +125,12 @@ public class ServiceHelper {
 
     /**
      * tag标签 拼接资源ARN
+     *
      * @param resourceType:ecs、oss、log
      */
-    public static List<String> getResourceArnInTag(String resourceType, List<String> resourceNameList, String accountId){
+    public static List<String> getResourceArnInTag(String resourceType, List<String> resourceNameList, String accountId) {
         List<String> resourceArn = new ArrayList<>();
-        switch (resourceType){
+        switch (resourceType) {
             case "ecs":
                 for (String resourceName : resourceNameList) {
                     resourceArn.add("acs:ecs:*:" +
@@ -144,16 +155,69 @@ public class ServiceHelper {
         return resourceArn;
     }
 
-
-
     /**
      * 拼接RAM用户的ARN：acs:ram::<account-id>:user/<user-name>
+     *
      * @param userName
      * @param accountId
      * @return
      */
-    public static String getRamArn(String userName,String accountId){
+    public static String getRamArn(String userName, String accountId) {
         return "acs:ram::" + accountId + ":user/" + userName;
+    }
+
+
+    /**
+     * 基于标签查询资源
+     *
+     * @param applicationName
+     * @param environment
+     * @param resourceType
+     * @return
+     */
+    public static List<String> listResourcesByTag(String applicationName, String environment, String resourceType) throws Exception {
+        com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient
+                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
+                .setValue(applicationName)
+                .setKey(CommonConstants.APPLICATION_TAG_KEY);
+        ListResourcesByTagRequest listResourcesByTagRequest = new ListResourcesByTagRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setMaxResult(1000)
+                .setResourceType(resourceType)
+                .setIncludeAllTags(true)
+                .setTagFilter(tagFilter);
+        RuntimeOptions runtime = new RuntimeOptions();
+        List<String> resourceIds = new ArrayList<>();
+        List<ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources> resources = client.
+                listResourcesByTagWithOptions(listResourcesByTagRequest, runtime).getBody().getResources();
+        for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources resource : resources) {
+            for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResourcesTags tag : resource.tags) {
+                if (tag.key.equals(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY) && tag.value.equals(environment)) {
+                    resourceIds.add(resource.resourceId);
+                }
+            }
+        }
+        return resourceIds;
+
+    }
+
+    /**
+     * 查询指定交换机的配置信息,返回交换机名称
+     *
+     * @param vSwitchId
+     */
+    public static String describeVSwitchAttribute(String vSwitchId) throws Exception {
+        com.aliyun.vpc20160428.Client client = createVpcClient
+                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        DescribeVSwitchAttributesRequest describeVSwitchAttributesRequest = new DescribeVSwitchAttributesRequest()
+                .setRegionId("cn-hangzhou")
+                .setVSwitchId(vSwitchId)
+                .setDryRun(false);
+        RuntimeOptions runtime = new RuntimeOptions();
+        return client.describeVSwitchAttributesWithOptions(describeVSwitchAttributesRequest, runtime)
+                .getBody().getVSwitchName();
+
     }
 
 

@@ -6,20 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
-
-    <!-- <link rel="stylesheet" href="bootstrapValidator/css/bootstrapValidator.css"/> -->
-
-    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-
-    <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-
-    <!-- Bootstrap4 核心 JavaScript 文件 -->
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-    <!-- <script type="text/javascript" src="bootstrapValidator/js/bootstrapValidator.js"></script> -->
-
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
 
     <style>
     .iframe-container {
@@ -47,7 +37,7 @@
 
 </head>
 
-<body onload="load()">
+<body>
 <main>
     <nav class="navbar navbar-expand bg-body-secondary">
         <div class="container-fluid">
@@ -68,9 +58,6 @@
             </div>
         </div>
     </nav>
-    <!--    <div class="iframe-container">-->
-    <!--      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
-    <!--    </div>-->
 </main>
 
 <script>
@@ -98,11 +85,8 @@
 
   </script>
 
-<div class="px-5 py-5">
-    <!--    <h2 class="pb-2 border-bottom fs-1"></h2>-->
-    <!-- <div class="container"> -->
-    <!--  <h1>资源供给</h1>-->
 
+<div class="px-5 py-5">
     <form id="resource_supply" onsubmit="return createResource()" role="form">
         <div class="row mb-3 mt-3">
             <h5>基础信息</h5>
@@ -112,7 +96,7 @@
         <div class="form-group row">
             <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
             <div class="col-sm-10">
-                <select class="form-select" id="application" required>
+                <select class="form-select" id="application" onchange="getVSwitches()" required>
                     <option selected disabled value="">请选择应用</option>
                     <option value="application1">应用1</option>
                     <option value="application2">应用2</option>
@@ -174,7 +158,8 @@
                                class="col-sm-2 col-form-label">ECS通用模版</label>
                         <br>
                         <small id="resourceTemplateDescriptionEcs" class="form-text text-muted">ECS通用模版, 可用于申请云服务器ECS资源。</small>
-                        <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                        <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
+                           onclick="getTemplateByResourceType()">查看模板</a>
                     </div>
                 </div>
             </div>
@@ -193,7 +178,8 @@
                         <br>
                         <small id="resourceTemplateDescriptionOss" class="form-text text-muted">OSS通用模版,
                             可用于申请对象存储服务的Bucket。</small>
-                        <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                        <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
+                           onclick="getTemplateByResourceType()">查看模板</a>
                     </div>
                 </div>
             </div>
@@ -212,12 +198,26 @@
                         <br>
                         <small id="resourceTemplateDescriptionLog" class="form-text text-muted">SLS通用模版,
                             可用于申请日志服务的project。</small>
-                        <a href="javascript:;" onclick="getTemplateByResourceType()">查看模板</a>
+                        <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
+                           onclick="getTemplateByResourceType()">查看模板</a>
                     </div>
                 </div>
             </div>
             <br>
         </div>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel"
+             style="--bs-offcanvas-width: 60%;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">模板</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <textarea id="templateContent" class="form-control" rows="10" readonly></textarea>
+            </div>
+        </div>
+
+
 
         <h2 class="pb-2 border-bottom fs-1"></h2>
 
@@ -294,8 +294,9 @@
         <button type="submit" class="btn btn-primary mt-3">申请</button>
     </form>
 
+
     <div class="row mt-4" id="creating" style="display: none;">
-        <div class="spinner-border" role="status">
+        <div class="spinner-border ms-2" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
         <div class="text-nowrap" style="width: 10rem;">
@@ -304,17 +305,15 @@
     </div>
 
     <div class="row mt-4" id="createSuccess" style="display: none;">
-
-
-        <div class="text-nowrap" style="width: 10rem;">
+        <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: rgb(4, 152, 70); width: 2.5rem;"></i>
+        <div class="text-nowrap mt-2" style="width: 10rem;">
             <span class="fs-5">创建成功</span>
         </div>
     </div>
 
     <div class="row mt-4" id="createFail" style="display: none;">
-
-
-        <div class="text-nowrap" style="width: 10rem;">
+        <i class="bi bi-x-circle-fill" style="font-size: 2rem; color: rgb(187, 18, 15); width: 2.5rem;"></i>
+        <div class="text-nowrap mt-2" style="width: 10rem;">
             <span class="fs-5">创建失败</span>
         </div>
     </div>
@@ -322,55 +321,6 @@
     <div class="row mt-4 ms-2" id="createFailMessage" style="display: none;">
         <textarea id="createFailMessageContent" class="form-control" rows="5" readonly></textarea>
     </div>
-
-
-
-
-
-
-    <!-- 资源模板 Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel1">模板</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <textarea id="templateContent" class="form-control" rows="10" readonly></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 申请响应 Modal -->
-    <!-- <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalLabel2">申请结果</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p><span id="applyResult">init</span></p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-    <!-- </div> -->
 </div>
 
 
@@ -403,24 +353,43 @@
       }
     });
 
-    function load() {
+    // 单选按钮点击事件
+    $('input[type=radio][name=environmentType]').change(function () {
+      getVSwitches();
+    });
+
+    function getVSwitches() {
+      var application = $("#application").val();
+      var environmentType = $("input[name='environmentType']:checked").val();
+
+
+      var params = {
+        applicationName: application,
+        environmentName: environmentType,
+      };
+
       $.ajax({
         url: "../" + "resourceSupply/getVSwitches.do",
         type: "POST",
-        data: {},
+        data: params,
         contentType: "application/x-www-form-urlencoded",
-        // dataType: "json",
-        success: function (data) {
-          var vSwitch = document.getElementById("vSwitch");
-          for (var i = vSwitch.length - 1; i >= 1; i--) {
-            vSwitch.remove(i);
+        success: function (result) {
+          if (result.success) {
+            var vSwitch = document.getElementById("vSwitch");
+            for (var i = vSwitch.length - 1; i >= 1; i--) {
+              vSwitch.remove(i);
+            }
+            data = result.data;
+            for (var i = 0; i < data.length; i++) {
+              var vSwitchId = data[i].split("/")[1].trim();
+              console.log("vSwitchId: " + vSwitchId);
+              vSwitch.options.add(new Option(data[i], vSwitchId));
+            }
+            vSwitch.value = "";
+          } else {
+            console.log("result.errorMsg: " + result.errorMsg);
+            alert(result.errorMsg);
           }
-          for (var i = 0; i < data.length; i++) {
-            var vSwitchId = data[i].split("/")[1].trim();
-            console.log("vSwitchId: " + vSwitchId);
-            vSwitch.options.add(new Option(data[i], vSwitchId));
-          }
-          vSwitch.value = "";
         },
       })
     }
@@ -437,18 +406,18 @@
         url: "../" + "resourceSupply/getTemplateByResourceType.do",
         type: "POST",
         data: params,
-        // dataType: "json",
-        success: function (data) {
-          console.log("data: " + data);
-          let len = data.split("\n").length;
-          console.log(len)
-          $("#templateContent").attr("rows", len);
-          $("#templateContent").val(data);
-
+        success: function (result) {
+          if (result.success) {
+            let len = result.data.split("\n").length;
+            console.log(len);
+            $("#templateContent").attr("rows", len);
+            $("#templateContent").val(result.data);
+          } else {
+            console.log("result.errorMsg: " + result.errorMsg);
+            alert(result.errorMsg);
+          }
         },
       })
-
-      $('#myModal').modal('show');
     }
 
 
@@ -491,17 +460,14 @@
         url: "../" + "resourceSupply/createEcsInstance.do",
         type: "POST",
         data: params,
-        // async: false,
-        // dataType: "json",
-        success: function (data) {
-          console.log("data: " + data);
+        success: function (result) {
           $("#creating").hide();
-          if (data == "success") {
+          if (result.success) {
             $("#createSuccess").show();
           } else {
             $("#createFail").show();
             $("#createFailMessage").show();
-            $("#createFailMessageContent").text(data);
+            $("#createFailMessageContent").text(result.errorMsg);
           }
         },
       })
@@ -522,17 +488,14 @@
         url: "../" + "resourceSupply/createOssBucket.do",
         type: "POST",
         data: params,
-        // async: false,
-        // dataType: "json",
-        success: function (data) {
-          console.log("data: " + data);
+        success: function (result) {
           $("#creating").hide();
-          if (data == "success") {
+          if (result.success) {
             $("#createSuccess").show();
           } else {
             $("#createFail").show();
             $("#createFailMessage").show();
-            $("#createFailMessageContent").text(data);
+            $("#createFailMessageContent").text(result.errorMsg);
           }
         },
       })
@@ -555,22 +518,18 @@
         url: "../" + "resourceSupply/createLogProject.do",
         type: "POST",
         data: params,
-        // async: false,
-        // dataType: "json",
-        success: function (data) {
-          console.log("data: " + data);
+        success: function (result) {
           $("#creating").hide();
-          if (data == "success") {
+          if (result.success) {
             $("#createSuccess").show();
           } else {
             $("#createFail").show();
             $("#createFailMessage").show();
-            $("#createFailMessageContent").text(data);
+            $("#createFailMessageContent").text(result.errorMsg);
           }
         },
       })
     }
-
 
   </script>
 
