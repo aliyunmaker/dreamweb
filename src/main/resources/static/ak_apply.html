@@ -11,8 +11,9 @@
 
   <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
   <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+  <!--  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>-->
 
   <style>
     .iframe-container {
@@ -134,8 +135,8 @@
         <select class="form-select" id="concreteResource" onchange="generatePolicyDocument()" required>
           <option selected disabled value="">请选择具体资源</option>
           <!-- <option value="resource1">资源1</option>
-      <option value="resource2">资源2</option>
-      <option value="resource3">资源3</option> -->
+    <option value="resource2">资源2</option>
+    <option value="resource3">资源3</option> -->
         </select>
       </div>
 
@@ -161,7 +162,7 @@
       </div>
 
       <!-- <label for="policyDocument"></label>
-      <textarea class="form-control ms-2" id="policyDocument" rows="10" required></textarea> -->
+    <textarea class="form-control ms-2" id="policyDocument" rows="10" required></textarea> -->
     </div>
 
     <div class="form-group row mt-1 mb-4">
@@ -177,7 +178,7 @@
   </form>
 
 
-  <!-- Modal -->
+  <!-- success modal -->
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
        aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -199,8 +200,33 @@
       </div>
     </div>
   </div>
+
+  <!-- fail modal -->
+  <div class="modal fade" id="modalFail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">申请失败</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="failMessage">init</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- </div> -->
 </div>
+
+
 
 <script>
     var application = document.getElementById("application").value;
@@ -249,15 +275,22 @@
         async: false,
         // dataType: "json",
         success: function (data) {
-          // console.log("data: ");
+          console.log("data: " + data);
           // console.log(data.accessKeyId);
           // console.log(data.accessKeySecret);
-          document.getElementById("accessKeyIdShow").innerText = data.accessKeyId;
-          document.getElementById("accessKeySecretShow").innerText = data.accessKeySecret;
+          if (data.code == "200") {
+            document.getElementById("accessKeyIdShow").innerText = data.data.accessKeyId;
+            document.getElementById("accessKeySecretShow").innerText = data.data.accessKeySecret;
+            $('#myModal').modal('show');
+          } else {
+            console.log("data.message: " + data.message);
+            document.getElementById("failMessage").innerText = data.message;
+            $('#modalFail').modal('show');
+          }
         },
       });
 
-      $('#myModal').modal('show');
+
 
       return false;
     }

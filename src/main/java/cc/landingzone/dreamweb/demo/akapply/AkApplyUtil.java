@@ -119,8 +119,8 @@ public class AkApplyUtil {
      * 创建RAM用户
      * @param userName
      */
-    public static void createRamUser(String userName){
-         try {
+    public static void createRamUser(String userName) throws Exception {
+
              Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
              RuntimeOptions runtime = new RuntimeOptions();
              // 查询所有RAM用户
@@ -177,9 +177,7 @@ public class AkApplyUtil {
             // 创建RAM用户
             CreateUserRequest createUserRequest = new CreateUserRequest().setUserName(userName);
             client.createUserWithOptions(createUserRequest, runtime);
-        }catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+
     }
 
     /**
@@ -187,17 +185,15 @@ public class AkApplyUtil {
      * @param policyName：权限策略名称
      * @param policyDocument：权限策略内容
      */
-    public static void createPolicy(String policyName,String policyDocument)  {
-         try {
-             Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-             CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest()
-                     .setPolicyName(policyName)
-                     .setPolicyDocument(policyDocument);
-             RuntimeOptions runtime = new RuntimeOptions();
-             client.createPolicyWithOptions(createPolicyRequest, runtime);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+    public static void createPolicy(String policyName,String policyDocument) throws Exception {
+
+         Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
+         CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest()
+                 .setPolicyName(policyName)
+                 .setPolicyDocument(policyDocument);
+         RuntimeOptions runtime = new RuntimeOptions();
+         client.createPolicyWithOptions(createPolicyRequest, runtime);
+
     }
 
 
@@ -208,8 +204,8 @@ public class AkApplyUtil {
      * @param policyName
      * @param policyType：System为系统策略，Custom为自定义策略
      */
-    public static void attachPolicyToUser(String userName,String policyName,String policyType) {
-         try {
+    public static void attachPolicyToUser(String userName,String policyName,String policyType) throws Exception{
+
              Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
              AttachPolicyToUserRequest attachPolicyToUserRequest = new AttachPolicyToUserRequest()
                      .setUserName(userName)
@@ -217,9 +213,7 @@ public class AkApplyUtil {
                      .setPolicyType(policyType);
              RuntimeOptions runtime = new RuntimeOptions();
              client.attachPolicyToUserWithOptions(attachPolicyToUserRequest, runtime);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+
     }
 
     /**
@@ -227,17 +221,15 @@ public class AkApplyUtil {
      * @param userName
      * @return
      */
-    public static CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey createAccessKey(String userName){
-        try {
+    public static CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey createAccessKey(String userName)
+            throws Exception{
+
             Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
             CreateAccessKeyRequest createAccessKeyRequest = new CreateAccessKeyRequest().setUserName(userName);
             RuntimeOptions runtime = new RuntimeOptions();
             return client.createAccessKeyWithOptions(createAccessKeyRequest, runtime)
                     .getBody().getAccessKey();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
+
     }
 
 

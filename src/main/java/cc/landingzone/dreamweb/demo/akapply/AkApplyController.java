@@ -4,6 +4,7 @@ import cc.landingzone.dreamweb.common.BaseController;
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.common.ServiceHelper;
+import cc.landingzone.dreamweb.common.response.ResponseBaseResult;
 import com.aliyun.ram20150501.models.CreateAccessKeyResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -51,29 +52,37 @@ public class AkApplyController extends BaseController {
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
     )
     public void akApplySubmit(HttpServletRequest request, HttpServletResponse response) {
-        String applicationName = request.getParameter("applicationName");
-        String environment = request.getParameter("environment");
-        String policyDocument = request.getParameter("policyDocument");
-        String policyName = applicationName + "-" + environment + "-" + UUID.randomUUID();
-        String username = applicationName + "-" + environment;
-        logger.info("username: " + username);
-        logger.info("policyName: " + policyName);
-        long startTime = System.currentTimeMillis();
-        AkApplyUtil.createPolicy(policyName, policyDocument);
-        long createPolicyTime = System.currentTimeMillis();
-        logger.info("createPolicyTime: " + (createPolicyTime - startTime) + "ms");
-        AkApplyUtil.createRamUser(username);
-        long createRamUserTime = System.currentTimeMillis();
-        logger.info("createRamUserTime: " + (createRamUserTime - createPolicyTime) + "ms");
-        AkApplyUtil.attachPolicyToUser(username, policyName, "Custom");
-        long attachPolicyToUserTime = System.currentTimeMillis();
-        logger.info("attachPolicyToUserTime: " + (attachPolicyToUserTime - createRamUserTime) + "ms");
-        CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey accessKey = AkApplyUtil.createAccessKey(username);
-        assert accessKey != null;
-        logger.info("accessKeyId: " + accessKey.accessKeyId);
-        logger.info("accessKeySecret: " + accessKey.accessKeySecret);
-        logger.info("createAccessKeyTime: " + (System.currentTimeMillis() - attachPolicyToUserTime) + "ms");
-        outputToJSON(response, accessKey);
+        try {
+            String applicationName = request.getParameter("applicationName");
+            String environment = request.getParameter("environment");
+            String policyDocument = request.getParameter("policyDocument");
+            String policyName = applicationName + "-" + environment + "-" + UUID.randomUUID();
+            String username = applicationName + "-" + environment;
+            logger.info("username: " + username);
+            logger.info("policyName: " + policyName);
+            long startTime = System.currentTimeMillis();
+            AkApplyUtil.createPolicy(policyName, policyDocument);
+            long createPolicyTime = System.currentTimeMillis();
+            logger.info("createPolicyTime: " + (createPolicyTime - startTime) + "ms");
+            AkApplyUtil.createRamUser(username);
+            long createRamUserTime = System.currentTimeMillis();
+            logger.info("createRamUserTime: " + (createRamUserTime - createPolicyTime) + "ms");
+            AkApplyUtil.attachPolicyToUser(username, policyName, "Custom");
+            long attachPolicyToUserTime = System.currentTimeMillis();
+            logger.info("attachPolicyToUserTime: " + (attachPolicyToUserTime - createRamUserTime) + "ms");
+            CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey accessKey = AkApplyUtil.createAccessKey(username);
+            assert accessKey != null;
+            logger.info("accessKeyId: " + accessKey.accessKeyId);
+            logger.info("accessKeySecret: " + accessKey.accessKeySecret);
+            logger.info("createAccessKeyTime: " + (System.currentTimeMillis() - attachPolicyToUserTime) + "ms");
+            ResponseBaseResult<CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey> successResponse =
+                    ResponseBaseResult.createSuccessResponse(accessKey);
+            outputToJSON(response, successResponse);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            outputToJSON(response, ResponseBaseResult.createErrorResponse(e.getMessage()));
+        }
+
     }
 
     @PostMapping(
