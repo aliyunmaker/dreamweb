@@ -1,6 +1,8 @@
 package cc.landingzone.dreamweb.demo.resourcesupply;
 
 import cc.landingzone.dreamweb.common.BaseController;
+import cc.landingzone.dreamweb.common.ServiceEnum;
+import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.common.utils.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -117,7 +120,23 @@ public class ResourceSupplyController extends BaseController {
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
     )
     public void getVSwitches(HttpServletRequest request, HttpServletResponse response) {
-        List<String> vSwitches = ResourceSupplyUtil.describeVSwitches();
+        String applicationName = request.getParameter("applicationName");
+        String environment = request.getParameter("environmentName");
+        Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
+        Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
+        logger.info("applicationName: " + applicationName);
+        logger.info("environment: " + environment);
+        long startTime = System.currentTimeMillis();
+        String resourceType = ServiceEnum.VSWITCH.getResourceType();
+        List<String> resourceIds = ServiceHelper.listResourcesByTag(applicationName, environment,resourceType);
+        logger.info("listResourcesByTag(): " + (System.currentTimeMillis() - startTime) + "ms");
+        List<String> vSwitches = new ArrayList<>();
+        for (String resourceId : resourceIds) {
+           String vSwitchName = ServiceHelper.describeVSwitchAttribute(resourceId);
+           vSwitches.add(vSwitchName + " / " + resourceId);
+        }
+        logger.info("vSwitches: " + vSwitches);
+        logger.info("getVSwitches(): " + (System.currentTimeMillis() - startTime) + "ms");
         outputToJSON(response, vSwitches);
     }
 }

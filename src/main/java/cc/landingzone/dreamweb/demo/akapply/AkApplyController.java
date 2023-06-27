@@ -2,6 +2,8 @@ package cc.landingzone.dreamweb.demo.akapply;
 
 import cc.landingzone.dreamweb.common.BaseController;
 import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.ServiceEnum;
+import cc.landingzone.dreamweb.common.ServiceHelper;
 import com.aliyun.ram20150501.models.CreateAccessKeyResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Controller
@@ -80,7 +83,8 @@ public class AkApplyController extends BaseController {
     public void listResourcesByAppEnvAndResType(HttpServletRequest request, HttpServletResponse response) {
         String applicationName = request.getParameter("applicationName");
         String environment = request.getParameter("environment");
-        String resourceType = request.getParameter("resourceType");
+        String resourceType = Objects.requireNonNull(ServiceEnum.getServiceEnumByResourceName
+                (request.getParameter("resourceType"))).getResourceType();
         Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
         Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
         Assert.isTrue(StringUtils.isNotEmpty(resourceType), "resourceType can not be empty");
@@ -88,7 +92,8 @@ public class AkApplyController extends BaseController {
         logger.info("environment: " + environment);
         logger.info("resourceType: " + resourceType);
         long startTime = System.currentTimeMillis();
-        List<String> resourceNames = AkApplyUtil.listResourcesByTag(applicationName, environment,resourceType);
+        List<String> resourceNames = ServiceHelper.listResourcesByTag(applicationName, environment,resourceType);
+        logger.info("resourceNames: " + resourceNames);
         logger.info("listResourcesByTagTime: " + (System.currentTimeMillis() - startTime) + "ms");
         outputToJSON(response, resourceNames);
     }

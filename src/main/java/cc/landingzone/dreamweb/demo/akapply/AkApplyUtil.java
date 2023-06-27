@@ -1,7 +1,6 @@
 package cc.landingzone.dreamweb.demo.akapply;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.demo.akapply.model.Condition;
 import cc.landingzone.dreamweb.demo.akapply.model.PolicyDocument;
@@ -11,8 +10,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyun.ram20150501.Client;
 import com.aliyun.ram20150501.models.*;
-import com.aliyun.tag20180828.models.ListResourcesByTagRequest;
-import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class AkApplyUtil {
 
@@ -172,9 +168,10 @@ public class AkApplyUtil {
                                 .setUserAccessKeyId(accessKey.accessKeyId);
                          client.deleteAccessKeyWithOptions(deleteAccessKeyRequest, runtime);
                     }
-                    // 删除RAM用户
-                    DeleteUserRequest deleteUserRequest = new DeleteUserRequest().setUserName(userName);
-                    client.deleteUserWithOptions(deleteUserRequest, runtime);
+//                    // 删除RAM用户
+//                    DeleteUserRequest deleteUserRequest = new DeleteUserRequest().setUserName(userName);
+//                    client.deleteUserWithOptions(deleteUserRequest, runtime);
+                    return;
                 }
             }
             // 创建RAM用户
@@ -240,37 +237,6 @@ public class AkApplyUtil {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
-        }
-    }
-
-    public static List<String> listResourcesByTag(String applicationName, String environment, String resourceType) {
-        try {
-            com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient
-                    (CommonConstants.Aliyun_AccessKeyId,CommonConstants.Aliyun_AccessKeySecret);
-            ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
-                    .setValue(applicationName)
-                    .setKey(CommonConstants.APPLICATION_TAG_KEY);
-            ListResourcesByTagRequest listResourcesByTagRequest = new ListResourcesByTagRequest()
-                    .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
-                    .setMaxResult(1000)
-                    .setResourceType(Objects.requireNonNull(ServiceEnum.getServiceEnumByResourceName(resourceType)).getResourceType())
-                    .setIncludeAllTags(true)
-                    .setTagFilter(tagFilter);
-            RuntimeOptions runtime = new RuntimeOptions();
-            List<String> resourceName = new ArrayList<>();
-            List<ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources> resources = client.
-                    listResourcesByTagWithOptions(listResourcesByTagRequest, runtime).getBody().getResources();
-            for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources resource : resources) {
-                for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResourcesTags tag : resource.tags) {
-                    if(tag.key.equals(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY) && tag.value.equals(environment)){
-                        resourceName.add(resource.resourceId);
-                    }
-                }
-            }
-            return resourceName;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return new ArrayList<>();
         }
     }
 
