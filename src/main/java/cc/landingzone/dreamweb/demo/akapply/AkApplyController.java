@@ -4,7 +4,7 @@ import cc.landingzone.dreamweb.common.BaseController;
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.common.ServiceHelper;
-import cc.landingzone.dreamweb.common.response.ResponseBaseResult;
+import cc.landingzone.dreamweb.common.model.WebResult;
 import com.aliyun.ram20150501.models.CreateAccessKeyResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -52,6 +52,7 @@ public class AkApplyController extends BaseController {
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
     )
     public void akApplySubmit(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
         try {
             String applicationName = request.getParameter("applicationName");
             String environment = request.getParameter("environment");
@@ -75,14 +76,13 @@ public class AkApplyController extends BaseController {
             logger.info("accessKeyId: " + accessKey.accessKeyId);
             logger.info("accessKeySecret: " + accessKey.accessKeySecret);
             logger.info("createAccessKeyTime: " + (System.currentTimeMillis() - attachPolicyToUserTime) + "ms");
-            ResponseBaseResult<CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey> successResponse =
-                    ResponseBaseResult.createSuccessResponse(accessKey);
-            outputToJSON(response, successResponse);
-        }catch (Exception e){
+            result.setData(accessKey);
+        } catch (Exception e) {
             logger.error(e.getMessage());
-            outputToJSON(response, ResponseBaseResult.createErrorResponse(e.getMessage()));
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
         }
-
+        outputToJSON(response, result);
     }
 
     @PostMapping(
@@ -90,20 +90,28 @@ public class AkApplyController extends BaseController {
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
     )
     public void listResourcesByAppEnvAndResType(HttpServletRequest request, HttpServletResponse response) {
-        String applicationName = request.getParameter("applicationName");
-        String environment = request.getParameter("environment");
-        String resourceType = Objects.requireNonNull(ServiceEnum.getServiceEnumByResourceName
-                (request.getParameter("resourceType"))).getResourceType();
-        Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
-        Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
-        Assert.isTrue(StringUtils.isNotEmpty(resourceType), "resourceType can not be empty");
-        logger.info("applicationName: " + applicationName);
-        logger.info("environment: " + environment);
-        logger.info("resourceType: " + resourceType);
-        long startTime = System.currentTimeMillis();
-        List<String> resourceNames = ServiceHelper.listResourcesByTag(applicationName, environment,resourceType);
-        logger.info("resourceNames: " + resourceNames);
-        logger.info("listResourcesByTagTime: " + (System.currentTimeMillis() - startTime) + "ms");
-        outputToJSON(response, resourceNames);
+        WebResult result = new WebResult();
+        try {
+            String applicationName = request.getParameter("applicationName");
+            String environment = request.getParameter("environment");
+            String resourceType = Objects.requireNonNull(ServiceEnum.getServiceEnumByResourceName
+                    (request.getParameter("resourceType"))).getResourceType();
+            Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
+            Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
+            Assert.isTrue(StringUtils.isNotEmpty(resourceType), "resourceType can not be empty");
+            logger.info("applicationName: " + applicationName);
+            logger.info("environment: " + environment);
+            logger.info("resourceType: " + resourceType);
+            long startTime = System.currentTimeMillis();
+            List<String> resourceNames = ServiceHelper.listResourcesByTag(applicationName, environment, resourceType);
+            logger.info("resourceNames: " + resourceNames);
+            logger.info("listResourcesByTagTime: " + (System.currentTimeMillis() - startTime) + "ms");
+            result.setData(resourceNames);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
     }
 }

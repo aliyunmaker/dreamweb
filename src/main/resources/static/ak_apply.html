@@ -6,14 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
-  <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 
-  <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
   <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-  <!--  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>-->
 
   <style>
     .iframe-container {
@@ -52,9 +48,6 @@
       </div>
     </div>
   </nav>
-  <!--    <div class="iframe-container">-->
-  <!--      <iframe id="iframe" src="loading.html" width="100%" height="100%"></iframe>-->
-  <!--    </div>-->
 </main>
 
 <script>
@@ -83,13 +76,6 @@
   </script>
 
 <div class="px-5 py-5">
-  <!-- <div class="container"> -->
-  <!--  <h2 class="pb-2 border-bottom fs-1">-->
-  <!--    <i class="iconfont icon-aliyun"-->
-  <!--                                         style="font-size: 2.6rem;"></i>&nbsp;&nbsp;aliyun-->
-  <!--  </h2>-->
-  <!--  <h1>AK申请</h1>-->
-  <!-- <br> -->
   <form id="ak-apply" onsubmit="return akApplySubmit()" role="form">
     <div class="form-group row">
       <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
@@ -125,7 +111,6 @@
       <label for="applyResourceType" class="col-sm-2 col-form-label">申请资源：</label>
       <div class="col-sm-5">
         <select class="form-select" id="applyResourceType" onchange="listResourcesByAppEnvAndResType()" required>
-          <!-- <option selected disabled value="">请选择资源类型</option> -->
           <option value="oss">OSS Bucket</option>
           <option value="log">sls project</option>
         </select>
@@ -134,9 +119,6 @@
       <div class="col-sm-5">
         <select class="form-select" id="concreteResource" onchange="generatePolicyDocument()" required>
           <option selected disabled value="">请选择具体资源</option>
-          <!-- <option value="resource1">资源1</option>
-    <option value="resource2">资源2</option>
-    <option value="resource3">资源3</option> -->
         </select>
       </div>
 
@@ -160,9 +142,6 @@
           <small id="permissionTemplate2Description" class="form-text text-muted">具有对指定资源的读写权限</small>
         </div>
       </div>
-
-      <!-- <label for="policyDocument"></label>
-    <textarea class="form-control ms-2" id="policyDocument" rows="10" required></textarea> -->
     </div>
 
     <div class="form-group row mt-1 mb-4">
@@ -221,26 +200,11 @@
       </div>
     </div>
   </div>
-
-
-  <!-- </div> -->
 </div>
 
 
 
 <script>
-    var application = document.getElementById("application").value;
-    var environmentType = $("input[name='environmentType']:checked").val();
-    var applyResourceType = document.getElementById("applyResourceType").value;
-    var concreteResource = document.getElementById("concreteResource").value;
-    var permissionTemplate = $("input[name='permissionTemplate']:checked").val();
-    var policyDocument = document.getElementById("policyDocument").value;
-
-    // $(window).on('load', function() {
-    //   console.log("window load");
-    //   listResourcesByAppEnvAndResType();
-    //   generatePolicyDocument();
-    // });
 
     // 单选按钮点击事件
     $('input[type=radio][name=environmentType]').change(function () {
@@ -249,7 +213,6 @@
     });
 
     $('input[type=radio][name=permissionTemplate]').change(function () {
-      // console.log(this.value);
       generatePolicyDocument();
     });
 
@@ -257,11 +220,6 @@
       application = document.getElementById("application").value;
       environmentType = $("input[name='environmentType']:checked").val();
       policyDocument = document.getElementById("policyDocument").value;
-
-      // console.log("application: " + application);
-      // console.log("environmentType: " + environmentType);
-      // console.log("policyDocument: " + policyDocument);
-
       var params = {
         applicationName: application,
         environment: environmentType,
@@ -273,25 +231,18 @@
         type: "POST",
         data: params,
         async: false,
-        // dataType: "json",
-        success: function (data) {
-          console.log("data: " + data);
-          // console.log(data.accessKeyId);
-          // console.log(data.accessKeySecret);
-          if (data.code == "200") {
-            document.getElementById("accessKeyIdShow").innerText = data.data.accessKeyId;
-            document.getElementById("accessKeySecretShow").innerText = data.data.accessKeySecret;
+        success: function (result) {
+          if (result.success) {
+            document.getElementById("accessKeyIdShow").innerText = result.data.accessKeyId;
+            document.getElementById("accessKeySecretShow").innerText = result.data.accessKeySecret;
             $('#myModal').modal('show');
           } else {
-            console.log("data.message: " + data.message);
-            document.getElementById("failMessage").innerText = data.message;
+            console.log("data.message: " + result.errorMsg);
+            document.getElementById("failMessage").innerText = result.errorMsg;
             $('#modalFail').modal('show');
           }
         },
       });
-
-
-
       return false;
     }
 
@@ -299,16 +250,12 @@
       applyResourceType = document.getElementById("applyResourceType").value;
       concreteResource = document.getElementById("concreteResource").value;
       permissionTemplate = $("input[name='permissionTemplate']:checked").val();
-      // console.log("applyResourceType: " + applyResourceType);
-      // console.log("concreteResource: " + concreteResource);
-      // console.log("permissionTemplate: " + permissionTemplate);
       if (applyResourceType == "" || concreteResource == "" || permissionTemplate == undefined) {
         return;
       }
 
       // // 测试
       // concreteResource = "buckettestjia";
-
       var params = {
         resourceType: applyResourceType,
         resourceName: concreteResource,
@@ -319,9 +266,7 @@
         url: "../" + "akApply/generatePolicyDocument.do",
         type: "POST",
         data: params,
-        // dataType: "json",
         success: function (data) {
-          // console.log("data: " + data);
           document.getElementById("policyDocument").value = data;
         },
       })
@@ -331,9 +276,6 @@
       application = document.getElementById("application").value;
       environmentType = $("input[name='environmentType']:checked").val();
       applyResourceType = document.getElementById("applyResourceType").value;
-      // console.log("application: " + application);
-      // console.log("environmentType: " + environmentType);
-      // console.log("applyResourceType: " + applyResourceType);
       if (application == "" || environmentType == undefined || applyResourceType == "") {
         return;
       }
@@ -344,8 +286,6 @@
       };
 
       var concreteResource = document.getElementById("concreteResource");
-      // console.log(concreteResource.length);
-      // console.log(concreteResource.value);
       for (var i = concreteResource.length - 1; i >= 1; i--) {
         concreteResource.remove(i);
       }
@@ -355,23 +295,24 @@
         url: "../" + "akApply/listResourcesByAppEnvAndResType.do",
         type: "POST",
         data: params,
-        // dataType: "json",
-        success: function (data) {
-          var concreteResource = document.getElementById("concreteResource");
-          // console.log(concreteResource.length);
-          // console.log(concreteResource.value);
-          for (var i = concreteResource.length - 1; i >= 1; i--) {
-            concreteResource.remove(i);
+        success: function (result) {
+          if (result.success) {
+            var concreteResource = document.getElementById("concreteResource");
+            var data = result.data;
+            for (var i = concreteResource.length - 1; i >= 1; i--) {
+              concreteResource.remove(i);
+            }
+            for (var i = 0; i < data.length; i++) {
+              concreteResource.options.add(new Option(data[i], data[i]));
+            }
+            concreteResource.value = "";
+          } else {
+            console.log("data.message: " + result.errorMsg);
+            alert(result.errorMsg);
           }
-          for (var i = 0; i < data.length; i++) {
-            concreteResource.options.add(new Option(data[i], data[i]));
-          }
-          concreteResource.value = "";
         },
       })
     }
-
-
 
   </script>
 
