@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+  <style>
+    .iframe-container {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .nav-link:hover {
+      background-color: #a5b6c6;
+    }
+
+    .active {
+      background-color: #8899f0;
+    }
+  </style>
+  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+  <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+</head>
+
+<body>
+  <main>
+    <nav class="navbar navbar-expand bg-body-secondary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"><i class="iconfont icon-sls" style="font-size: 1.3rem;"></i> Log Center</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect">
+                <option selected>Please select application</option>
+                <option value="application1">application1</option>
+                <option value="application2">application2</option>
+                <option value="application3">application3</option>
+                <option value="application4">application4</option>
+                <option value="application5">application5</option>
+              </select>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"
+                data-link="../signSLS.do?logStore=access-log" id="access-log-btn">Access log</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"
+                data-link="../signSLS.do?logStore=business-log" id="business-log-btn">Business log</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="iframe-container">
+      <iframe id="iframe" src="../loading.html" width="100%" height="100%"></iframe>
+    </div>
+  </main>
+  <script>
+    var appName;
+    var iframe = document.getElementById("iframe");
+
+    $(document).ready(function() {
+      var queryString = window.location.search;
+      var urlParams = new URLSearchParams(queryString);
+      appName = urlParams.get('appName');
+      if (appName !== null) {
+        document.getElementById("logAppsSelect").value = appName;
+        var page = "../signSLS.do?projectName="+appName+"-dreamweb";
+        iframe.setAttribute("src", page);
+        document.getElementById("access-log-btn").classList.add("active");
+      }
+    });
+
+    var links = document.querySelectorAll(".navbar-nav a");
+
+    links.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        var page = e.target.getAttribute("data-link");
+        page += "&projectName=" + $("#logAppsSelect").val() + "-dreamweb";
+        iframe.setAttribute("src", page);
+
+        // Remove active class from all links
+        links.forEach(function (link) {
+          link.classList.remove("active");
+        });
+
+        // Add active class to the clicked link
+        e.target.classList.add("active");
+      });
+    });
+
+
+    // var queryString = "null";
+    // window.addEventListener('message', function (e) {
+    //   console.log(e);
+    //   // slsShareURL = e.data.shareUrl;
+    //   queryString = e.data.queryString;
+    // });
+
+    // var showQueryString = function(){
+    //   alert(queryString);
+    // }
+
+
+  </script>
+</body>
+
+</html>

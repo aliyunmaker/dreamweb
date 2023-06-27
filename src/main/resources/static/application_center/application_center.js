@@ -69,7 +69,7 @@ function createCards(appName) {
                             data-bs-toggle="dropdown" aria-expanded="false"></a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="#">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="#">Log Center</a></li>
+                                <li><a class="dropdown-item" href="#" onclick=jumpToLogCenter('${app.appName}')>Log Center</a></li>
                             </ul>
                         </div>
                         <h4 class="card-title">
@@ -176,8 +176,8 @@ function listResourcesDetails(appName, queryServiceName) {
                     <td>${resource.regionId}</td>
                     <td>
                         <a href=# class="text-decoration-none" onclick="getResourceDetail('${serviceName}', '${resource.resourceId}')">查看</a>
-                        <a target="_blank" class="text-decoration-none" href=${resource.operations["consoleUrl"]}>Console</a>
-                        <a href="${resource.operations["operationUrl"]}" class="text-decoration-none">${resource.operations["operationName"]}</a>
+                        <a target="_blank" class="text-decoration-none" href="../apps/signInConsole.do?serviceName=${serviceName}&regionId=${resource.regionId}&resourceId=${resource.resourceId}">Console</a>
+                        <a target="_blank" class="text-decoration-none" href="${resource.operations["operationUrl"]}">${resource.operations["operationName"]}</a>
                     </td>
                 </tr>`;
 
@@ -189,92 +189,15 @@ function listResourcesDetails(appName, queryServiceName) {
 
 // 资源详情
 function getResourceDetail(serviceName, resourceId) {
-    $("#navbarResourceId").text("ResourceId: "+resourceId);
-    $.ajax({
-        url: "../apps/getResourceDetail.do?serviceName="+serviceName+"&resourceId="+resourceId,
-        success: function(result){
-            if (result.success) {
-                resourceDetail = result.data;
-                showResourceDetail(resourceId);
-                console.log(resourceDetail);
-            } else {
-                alert(result.errorMsg);
-            }
-        }
-    });
+    var page = "application_center/resource_detail.html?serviceName=" + serviceName + "&resourceId=" + resourceId;
+    var iframe = parent.document.getElementById("iframe");
+    iframe.setAttribute("src", page);
 }
 
-function showResourceDetail(resourceId) {
-    var page = $("#appCenterPage");
-    page.empty();
-    var content = `
-    <h3 class="pb-3 fs-2">Resource Detail</h3>
-      <h4 class="pb-2 fs-4">Basic Information</h4>
-      <div class="row pb-2">
-        <p class="col-2 fw-semibold">
-          Resource ID
-        </p>
-        <p class="col-4">
-          ${resourceDetail.resource.resourceId}
-        </p>
-        <p class="col-2 fw-semibold">
-          Resource Name
-        </p>
-        <p class="col-4">
-          ${resourceDetail.resource.resourceName}
-        </p>
-      </div>
-      <div class="row pb-2">
-        <p class="col-2 fw-semibold">
-          Resource Type
-        </p>
-        <p class="col-4">
-          ${resourceDetail.resource.resourceType}
-        </p>
-        <p class="col-2 fw-semibold">
-          Resource Region
-        </p>
-        <p class="col-4">
-          ${resourceDetail.resource.regionId}
-        </p>
-      </div>
-      <div class="row pb-4">
-        <p class="col-2 fw-semibold">
-          Create Time
-        </p>
-        <p class="col-4">
-          ${resourceDetail.resource.createTime}
-        </p>
-      </div>
-      <h4 class="pb-2 fs-4">Event History</h4>
-        <table class="table" id=${resourceId}-events-table>
-            <thead>
-            <tr>
-                <th scope="col">Event Time</th>
-                <th scope="col">Operator</th>
-                <th scope="col">Event Name</th>
-                <th scope="col">Resource</th>
-                <th scope="col">Operations</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>`;
-    page.append(content);
-
-    $("#"+resourceId+"-events-table tbody").empty();
-    resourceDetail.events.forEach(function(event) {
-        var row = `
-        <tr>
-            <td>${event.eventTime}</td>
-            <td>
-              <div>name: ${event.userIdentity.userName}</div>
-              <div>type: ${event.userIdentity.type}</div>
-            </td>
-            <td>${event.eventName}</td>
-            <td>${event.resource}</td>
-            <td>Operations</td>
-        </tr>`;
-        $("#"+resourceId+"-events-table tbody").append(row);
-    })
+// 跳转到日志中心
+function jumpToLogCenter(appName) {
+    var message = {};
+    message.destination = "log_center";
+    message.url = "log_center/log_center.html?appName=" + appName;
+    window.parent.postMessage(message, "*");
 }

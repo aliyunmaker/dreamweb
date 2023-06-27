@@ -197,7 +197,8 @@ public class GetResourceHelper {
         String resourceId = resource.getResourceId();
         com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.ecs20140526.models.DescribeInstancesRequest describeInstancesRequest = new com.aliyun.ecs20140526.models.DescribeInstancesRequest()
-                .setInstanceIds(resourceId);
+                .setInstanceIds("[\""+resourceId+"\"]")
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
         List<DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstance> instances = client
@@ -236,7 +237,8 @@ public class GetResourceHelper {
         String resourceId = resource.getResourceId();
         com.aliyun.slb20140515.Client client = ServiceHelper.createSlbClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.slb20140515.models.DescribeLoadBalancersRequest describeLoadBalancersRequest = new com.aliyun.slb20140515.models.DescribeLoadBalancersRequest()
-                .setLoadBalancerId(resourceId);
+                .setLoadBalancerId(resourceId)
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
         com.aliyun.slb20140515.models.DescribeLoadBalancersResponse response = client.describeLoadBalancersWithOptions(describeLoadBalancersRequest, runtime);

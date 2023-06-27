@@ -1,11 +1,14 @@
 package cc.landingzone.dreamweb.common;
 
+import cc.landingzone.dreamweb.demo.ssologin.model.SSOUserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class CommonConstants {
@@ -17,6 +20,7 @@ public class CommonConstants {
     public static final String Aliyun_AccessKeySecret;
 
     public static final String Aliyun_UserId;
+    public static final String AWS_UserId;
 
     public static final String Aliyun_REGION_HANGZHOU = "cn-hangzhou";
 
@@ -26,9 +30,15 @@ public class CommonConstants {
 
     public static final String[] ENVIRONMENT_TYPE_TAG_VALUES = {"product", "test"};
 
-    public static final String[] SSO_LOGIN_USER_IDS = {"test-user"};
-    public static final String[] SSO_LOGIN_ROLE_IDS = {"dreamweb-test-role"};
-    public static final String[] SSO_LOGIN_CLOUD_USER_IDS = {"tianyu"};
+    // SSO登录的用户和角色列表
+    public static final List<SSOUserRole> SSO_LOGIN_USER_IDS = new ArrayList<>();
+    public static final List<SSOUserRole> SSO_LOGIN_ROLE_IDS = new ArrayList<>();
+    public static final List<SSOUserRole> SSO_LOGIN_CLOUD_USER_IDS = new ArrayList<>();
+
+    /**
+     * 用于免密登录的RAM角色ARN
+     */
+    public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";
 
     public static final String DEFAULT_IMAGE_ID = "ubuntu_18_04_64_20G_alibase_20190624.vhd";
     public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp1j3v9i048rpldp8g20";
@@ -53,16 +63,31 @@ public class CommonConstants {
 
     static {
         Properties properties = loadProperties();
+        addSSOUsersRoles();
         ENV_ONLINE = Boolean.parseBoolean(properties.getProperty("dreamweb.env_online"));
         Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         Aliyun_UserId = properties.getProperty("dreamweb.aliyun_userid");
+        AWS_UserId = properties.getProperty("dreamweb.aws_userid");
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";
         } else {
             LOGOUT_SUCCESS_URL = logoutSuccessUrl;
         }
+    }
+
+    public static void addSSOUsersRoles() {
+        SSOUserRole ssoRole = new SSOUserRole("aliyun", "管理员", "kidccc@gmail.com", "dreamweb-test-role");
+        SSO_LOGIN_ROLE_IDS.add(ssoRole);
+
+        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "kidccc@gmail.com", "test-user");
+        SSO_LOGIN_USER_IDS.add(aliyunUser);
+        SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "me@chengchao.name", "Dreamweb-test-user");
+        SSO_LOGIN_USER_IDS.add(awsUser);
+
+        SSOUserRole ssoCloudUser = new SSOUserRole("aliyun", "CloudSSO-管理员", "20210603demo1", "tianyu");
+        SSO_LOGIN_CLOUD_USER_IDS.add(ssoCloudUser);
     }
 
     public static Properties loadProperties() {

@@ -12,7 +12,7 @@ public class ServiceHelper {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
                 .setAccessKeyId(accessKeyId)
                 .setAccessKeySecret(accessKeySecret)
-                .setEndpoint("ecs.aliyuncs.com");
+                .setEndpoint("ecs-cn-hangzhou.aliyuncs.com");
         return new com.aliyun.ecs20140526.Client(config);
     }
 

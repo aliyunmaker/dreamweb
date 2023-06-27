@@ -5,11 +5,10 @@ public enum ApplicationEnum {
      * Application 1
      */
     application1("Description of app1"),
-    APP1("Description of app1"),
-    APP2("Description of app2"),
-    APP3("Description of app3"),
-    APP4("Description of app4"),
-    APP5("Description of app5");
+    application2("Description of app2"),
+    application3("Description of app3"),
+    application4("Description of app4"),
+    application5("Description of app5");
 
     private String description;
 

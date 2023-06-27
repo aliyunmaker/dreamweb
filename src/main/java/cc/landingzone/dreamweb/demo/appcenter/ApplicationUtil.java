@@ -1,6 +1,10 @@
 package cc.landingzone.dreamweb.demo.appcenter;
 
-import cc.landingzone.dreamweb.common.*;
+import cc.landingzone.dreamweb.common.ApplicationEnum;
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.ServiceEnum;
+import cc.landingzone.dreamweb.common.ServiceHelper;
+import cc.landingzone.dreamweb.common.utils.AliyunAPIUtils;
 import cc.landingzone.dreamweb.demo.appcenter.model.Application;
 import cc.landingzone.dreamweb.demo.appcenter.model.Event;
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
@@ -8,8 +12,11 @@ import cc.landingzone.dreamweb.demo.appcenter.model.Service;
 import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
 import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static cc.landingzone.dreamweb.common.ServiceHelper.createTagClient;
@@ -37,7 +44,9 @@ public class ApplicationUtil {
             if ("LOG".equals(serviceName)) {
                 serviceName = "SLS";
             }
-            servicesCount.merge(serviceName, 1, Integer::sum);
+            if (servicesCount.get(serviceName) != null) {
+                servicesCount.merge(serviceName, 1, Integer::sum);
+            }
         }
 
         return servicesCount;
@@ -135,15 +144,12 @@ public class ApplicationUtil {
 
         for (Resource resource: resources) {
             String serviceName = resource.getServiceName();
-//            GetResourceHelper.getResourceDetail(resource); // 根据resourceId把resource detail查出来，一次查一个
             List<Resource> resourceList = servicesResources.get(serviceName);
-            resourceList.add(resource);
-            servicesResources.put(serviceName, resourceList);
+            if (resourceList != null) {
+                resourceList.add(resource);
+                servicesResources.put(serviceName, resourceList);
+            }
         }
-
-//        for (String serviceName: servicesResources.keySet()) {
-//            GetResourceHelper.setResourcesDetails(appName, serviceName, servicesResources.get(serviceName)); // 根据serviceName把resource details查出来，一次查多个
-//        }
 
         return servicesResources;
     }
@@ -168,47 +174,45 @@ public class ApplicationUtil {
         }
     }
 
-    public static void setOperations(Map<String, List<Resource>> servicesResources) {
+    /**
+     * 获得ECS和RDS的特殊操作url
+     * @param servicesResources
+     */
+    public static void setOperations(Map<String, List<Resource>> servicesResources) throws Exception {
         for (String serviceName: servicesResources.keySet()) {
             ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
             for (Resource resource: servicesResources.get(serviceName)) {
                 resource.setResourceType(serviceEnum.getResourceType());
                 Map<String, String> operations = new HashMap<>();
-                operations.put("operationName", "");
-                operations.put("operationUrl", "");
-                if ("ECS".equals(serviceName)) {
-                    String consoleUrl = "https://"+resource.getServiceName().toLowerCase()+".console.aliyun.com/server/region"+"/"+resource.getServiceName().toLowerCase()+"-"+resource.getRegionId()+"/"+resource.getResourceId();
-                    String terminalUrl = "https://ecs-workbench.aliyun.com/?instanceType="+resource.getServiceName().toLowerCase()+"&regionId="+resource.getRegionId()+"&instanceId="+resource.getResourceId();
-                    operations.put("consoleUrl", consoleUrl);
-                    operations.put("operationName", "Terminal");
-                    operations.put("operationUrl", terminalUrl);
-                } else if ("OSS".equals(serviceName)) {
-                    //试过了
-                    String consoleUrl = "https://"+resource.getServiceName().toLowerCase()+".console.aliyun.com/"+resource.getResourceType().split("::")[2].toLowerCase()+"/"+resource.getServiceName().toLowerCase()+"-"+resource.getRegionId()+"/"+resource.getResourceId();
-                    operations.put("consoleUrl", consoleUrl);
-                } else if ("SLB".equals(serviceName)) {
-                    String consoleUrl = "https://"+resource.getServiceName().toLowerCase()+".console.aliyun.com/"+resource.getResourceType().split("::")[2]+"/"+resource.getServiceName().toLowerCase()+"-"+resource.getRegionId()+"/"+resource.getResourceId();
-                    operations.put("consoleUrl", consoleUrl);
-                } else if ("RDS".equals(serviceName)) {
-                    String consoleUrl = "https://"+resource.getServiceName().toLowerCase()+".console.aliyun.com/"+resource.getResourceType().split("::")[2]+"/"+resource.getServiceName().toLowerCase()+"-"+resource.getRegionId()+"/"+resource.getResourceId();
-                    String sqlConsoleUrl = "https://dms.aliyun.com/?regionId="+resource.getRegionId()+"&dbType=mysql&instanceId="+resource.getResourceId()+"&instanceSource="+resource.getServiceName();
-                    operations.put("consoleUrl", consoleUrl);
-                    operations.put("operationName", "SQL Console");
-                    operations.put("operationUrl", sqlConsoleUrl);
+                if (!"ECS".equals(serviceName) && !"RDS".equals(serviceName)) {
+                    operations.put("operationName", "");
+                    operations.put("operationUrl", "");
                 } else {
-                    //试过了
-                    String consoleUrl = "https://"+resource.getServiceName().toLowerCase()+".console.aliyun.com/lognext/"+resource.getResourceType().split("::")[2].toLowerCase()+"/"+resource.getResourceId()+"/overview";
-                    operations.put("consoleUrl", consoleUrl);
+                    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                    String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
+                            CommonConstants.Aliyun_AccessKeySecret,
+                            CommonConstants.ADMIN_ROLE_ARN, username, false);
+                    String url;
+                    if ("ECS".equals(serviceName)) {
+                        url = "https://ecs-workbench.aliyun.com/?instanceType=" + resource.getServiceName().toLowerCase() + "&regionId=" + resource.getRegionId() + "&instanceId=" + resource.getResourceId();
+                        operations.put("operationName", "Terminal");
+                    } else {
+                        url = "https://dms.aliyun.com/?regionId="+resource.getRegionId()+"&dbType=mysql&instanceId="+resource.getResourceId()+"&instanceSource="+resource.getServiceName();
+                        operations.put("operationName", "SQL Console");
+                    }
+
+                    String redirectUrl = "https://signin.aliyun.com/federation?Action=Login&Destination="
+                            + URLEncoder.encode(url, StandardCharsets.UTF_8.displayName())
+                            + "&LoginUrl=https%3a%2f%2faliyun.com&SigninToken="
+                            + signToken;
+                    operations.put("operationUrl", redirectUrl);
                 }
                 resource.setOperations(operations);
             }
         }
     }
 
-    public static List<Event> listResourceEvents(String resourceId, Integer durationDays) throws Exception {
-        Date now = new Date();
-
-
+    public static List<Event> listResourceEvents(String resourceId) throws Exception {
         List<Event> events = new ArrayList<>();
 
         com.aliyun.actiontrail20200706.Client client = ServiceHelper.createTrailClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
