@@ -1,9 +1,5 @@
 package cc.landingzone.dreamweb.demo.sso;
 
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.List;
-
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.core.impl.ResponseMarshaller;
@@ -23,6 +19,10 @@ import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.List;
 
 public class SamlGenerator {
 //    static {
