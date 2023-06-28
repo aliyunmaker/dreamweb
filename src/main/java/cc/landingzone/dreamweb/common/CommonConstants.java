@@ -78,8 +78,10 @@ public class CommonConstants {
     }
 
     public static void addSSOUsersRoles() {
-        SSOUserRole ssoRole = new SSOUserRole("aliyun", "管理员", "kidccc@gmail.com", "dreamweb-test-role");
-        SSO_LOGIN_ROLE_IDS.add(ssoRole);
+        SSOUserRole aliyunRole = new SSOUserRole("aliyun", "管理员", "kidccc@gmail.com", "dreamweb-test-role");
+        SSO_LOGIN_ROLE_IDS.add(aliyunRole);
+        SSOUserRole awsRole = new SSOUserRole("aws", "管理员", "me@chengchao.name", "dreamweb-test-role");
+        SSO_LOGIN_ROLE_IDS.add(awsRole);
 
         SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "kidccc@gmail.com", "test-user");
         SSO_LOGIN_USER_IDS.add(aliyunUser);
