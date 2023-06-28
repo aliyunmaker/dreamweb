@@ -51,7 +51,7 @@ public class CommonConstants {
     public static final String DEFAULT_ECS_SYSTEM_DISK_CATEGORY = "cloud_ssd";
     public static final String DEFAULT_ECS_DATA_DISK_SIZE = "100";
     public static final String DEFAULT_ECS_DATA_DISK_CATEGORY = "cloud_ssd";
-
+    public static final String VSWITCH_RESOURCETYPE = "ALIYUN::VPC::VSWITCH";
 
 
     public static final String LOGOUT_SUCCESS_URL;

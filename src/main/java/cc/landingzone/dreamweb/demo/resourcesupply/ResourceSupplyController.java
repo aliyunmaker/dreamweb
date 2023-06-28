@@ -1,7 +1,7 @@
 package cc.landingzone.dreamweb.demo.resourcesupply;
 
 import cc.landingzone.dreamweb.common.BaseController;
-import cc.landingzone.dreamweb.common.ServiceEnum;
+import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.common.model.WebResult;
 import cc.landingzone.dreamweb.common.utils.FileUtil;
@@ -141,7 +141,7 @@ public class ResourceSupplyController extends BaseController {
             logger.info("applicationName: " + applicationName);
             logger.info("environment: " + environment);
             long startTime = System.currentTimeMillis();
-            String resourceType = ServiceEnum.VSWITCH.getResourceType();
+            String resourceType = CommonConstants.VSWITCH_RESOURCETYPE;
             List<String> resourceIds = ServiceHelper.listResourcesByTag(applicationName, environment, resourceType);
             logger.info("listResourcesByTag(): " + (System.currentTimeMillis() - startTime) + "ms");
             List<String> vSwitches = new ArrayList<>();

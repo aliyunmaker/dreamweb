@@ -20,11 +20,7 @@ public enum ServiceEnum {
     /**
      * SLS
      */
-    SLS("log", "ALIYUN::LOG::PROJECT"),
-
-    VSWITCH("vSwitch", "ALIYUN::VPC::VSWITCH"),
-    ;
-
+    SLS("log", "ALIYUN::LOG::PROJECT");
 
     private String resourceName;
     private String resourceType;
