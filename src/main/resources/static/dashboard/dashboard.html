@@ -61,7 +61,7 @@
       var queryString = window.location.search;
       var urlParams = new URLSearchParams(queryString);
       appName = urlParams.get('appName');
-    //   appName = appName === null ? "application1" : appName;
+      appName = appName === null ? "application1" : appName;
       if (appName !== null) {
         document.getElementById("logAppsSelect").value = appName;
         var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb";

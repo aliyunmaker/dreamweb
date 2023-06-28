@@ -21,6 +21,7 @@ public class DashboardController extends BaseController {
     public void signSLSDashboard(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
+            long start = System.currentTimeMillis();
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             String destination = request.getParameter("destination");
             String projectName = request.getParameter("projectName");
@@ -35,8 +36,10 @@ public class DashboardController extends BaseController {
             }
 
             if (StringUtils.isBlank(destination)) {
-                destination = "https://sls4service.console.aliyun.com/lognext/app/monitor/" + projectName
-                        + "/" + instanceId + "?isShare=true&hideTopbar=true&hideSidebar=true&ignoreTabLocalStorage=true";
+               destination = "https://sls4service.console.aliyun.com/lognext/app/monitor/" + projectName
+                        + "/" + instanceId + "?resource=/fullmonitor/project/" + projectName +
+                        "/logstore/logstore/dashboardtemplate/fullstack-monitor-host-common-detail" +
+                        "&isShare=true&hideTopbar=true&hideSidebar=true&ignoreTabLocalStorage=true";
             }
 
             String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
@@ -47,6 +50,7 @@ public class DashboardController extends BaseController {
                     + "&LoginUrl=https%3a%2f%2faliyun.com&SigninToken="
                     + signToken;
             response.sendRedirect(redirectUrl);
+            logger.info("signSLSDashboard cost: " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
