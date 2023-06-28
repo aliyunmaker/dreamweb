@@ -2,17 +2,17 @@
 <html lang="en" data-bs-theme="auto">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_4061551_u9myutoezf.css"/>
 
-  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="ak_apply.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="ak_apply.js"></script>
 
-  <style>
+    <style>
     .iframe-container {
       width: 100%;
       height: 100vh;
@@ -25,158 +25,165 @@
     .active {
       background-color: #8899f0;
     }
-  </style>
+
+    </style>
 </head>
 
 <body>
 <main>
-  <nav class="navbar navbar-expand bg-body-secondary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i>
-        Ak申请</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link disabled">Project: [springrun]</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    <nav class="navbar navbar-expand bg-body-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i>
+                Ak申请</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Project: [springrun]</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 </main>
 
 <div class="px-5 py-5">
-  <form id="ak-apply" onsubmit="return akApplySubmit()" role="form">
-    <div class="form-group row">
-      <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
-      <div class="col-sm-10">
-        <select class="form-select" id="application" onchange="listResourcesByAppEnvAndResType()" required>
-          <option selected disabled value="">请选择应用</option>
-          <option value="application1">应用1</option>
-          <option value="application2">应用2</option>
-          <option value="application3">应用3</option>
-        </select>
-      </div>
+    <form id="ak-apply" onsubmit="return akApplySubmit()" role="form">
+        <div class="form-group row">
+            <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
+            <div class="col-sm-10">
+                <select class="form-select" id="application" onchange="listResourcesByAppEnvAndResType()" required>
+                    <option selected disabled value="">请选择应用</option>
+                    <option value="application1">应用1</option>
+                    <option value="application2">应用2</option>
+                    <option value="application3">应用3</option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="form-group row">
+            <label for="environmentType1" class="col-sm-2 col-form-label">环境类型：</label>
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="environmentType1" name="environmentType"
+                           value="product"
+                           checked>
+                    <label class="form-check-label" for="environmentType1">生产</label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="environmentType2" name="environmentType"
+                           value="test">
+                    <label class="form-check-label" for="environmentType2">测试</label>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div class="form-group row">
+            <label for="applyResourceType" class="col-sm-2 col-form-label">申请资源：</label>
+            <div class="col-sm-5">
+                <select class="form-select" id="applyResourceType" onchange="listResourcesByAppEnvAndResType()"
+                        required>
+                    <option value="oss">OSS Bucket</option>
+                    <option value="log">sls project</option>
+                </select>
+            </div>
+            <div class="col-sm-5">
+                <select class="form-select" id="concreteResource" onchange="generatePolicyDocument()" required>
+                    <option selected disabled value="">请选择具体资源</option>
+                </select>
+            </div>
+
+        </div>
+        <br>
+        <div class="form-group row">
+            <label for="permissionTemplate1" class="col-sm-2 col-form-label">权限模版：</label>
+            <div class="col-sm-5">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate"
+                           value="1"
+                           checked>
+                    <label class="form-check-label" for="permissionTemplate1">ReadOnly Access</label>
+                    <small id="permissionTemplate1Description"
+                           class="form-text text-muted">具有对指定资源的只读权限</small>
+                </div>
+            </div>
+
+            <div class="col-sm-5">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="permissionTemplate2" name="permissionTemplate"
+                           value="2">
+                    <label class="form-check-label" for="permissionTemplate2">Full Access</label>
+                    <small id="permissionTemplate2Description"
+                           class="form-text text-muted">具有对指定资源的读写权限</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row mt-1 mb-4">
+            <label for="policyDocument" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <textarea class="form-control ms-2" id="policyDocument" rows="10" required></textarea>
+            </div>
+        </div>
+
+        <h2 class="pb-2 border-bottom fs-1"></h2>
+
+        <button type="submit" class="btn btn-primary mt-3">申请</button>
+    </form>
+
+
+    <!-- success modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">查看 Secret</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>请保存或发送 AccessKey 至对应用户。当前窗口关闭后，无法再次查询 Secret。如果您遗失这个 AccessKey,
+                        可以创建新的来替代。</p>
+                    <p>AccessKey ID: <span id="accessKeyIdShow">init</span></p>
+                    <p>AccessKey Secret: <span id="accessKeySecretShow">init</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <br>
-    <div class="form-group row">
-      <label for="environmentType1" class="col-sm-2 col-form-label">环境类型：</label>
-      <div class="col-sm-3">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="environmentType1" name="environmentType" value="product"
-                 checked>
-          <label class="form-check-label" for="environmentType1">生产</label>
+
+    <!-- fail modal -->
+    <div class="modal fade" id="modalFail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel2">申请失败</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="failMessage">init</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="environmentType2" name="environmentType" value="test">
-          <label class="form-check-label" for="environmentType2">测试</label>
-        </div>
-      </div>
     </div>
-    <br>
-
-    <div class="form-group row">
-      <label for="applyResourceType" class="col-sm-2 col-form-label">申请资源：</label>
-      <div class="col-sm-5">
-        <select class="form-select" id="applyResourceType" onchange="listResourcesByAppEnvAndResType()" required>
-          <option value="oss">OSS Bucket</option>
-          <option value="log">sls project</option>
-        </select>
-
-      </div>
-      <div class="col-sm-5">
-        <label for="concreteResource"></label>
-        <select class="form-select" id="concreteResource" onchange="generatePolicyDocument()" required>
-          <option selected disabled value="">请选择具体资源</option>
-        </select>
-      </div>
-
-    </div>
-    <br>
-    <div class="form-group row">
-      <label for="permissionTemplate1" class="col-sm-2 col-form-label">权限模版：</label>
-      <div class="col-sm-5">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="permissionTemplate1" name="permissionTemplate" value="1"
-                 checked>
-          <label class="form-check-label" for="permissionTemplate1">ReadOnly Access</label>
-          <small id="permissionTemplate1Description" class="form-text text-muted">具有对指定资源的只读权限</small>
-        </div>
-      </div>
-
-      <div class="col-sm-5">
-        <div class="form-check">
-          <input type="radio" class="form-check-input" id="permissionTemplate2" name="permissionTemplate" value="2">
-          <label class="form-check-label" for="permissionTemplate2">Full Access</label>
-          <small id="permissionTemplate2Description" class="form-text text-muted">具有对指定资源的读写权限</small>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group row mt-1 mb-4">
-      <label for="policyDocument" class="col-sm-2 col-form-label"></label>
-      <div class="col-sm-10">
-        <textarea class="form-control ms-2" id="policyDocument" rows="10" required></textarea>
-      </div>
-    </div>
-
-    <h2 class="pb-2 border-bottom fs-1"></h2>
-
-    <button type="submit" class="btn btn-primary mt-3">申请</button>
-  </form>
-
-
-  <!-- success modal -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-       aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">查看 Secret</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>请保存或发送 AccessKey 至对应用户。当前窗口关闭后，无法再次查询 Secret。如果您遗失这个 AccessKey, 可以创建新的来替代。</p>
-          <p>AccessKey ID: <span id="accessKeyIdShow">init</span> </p>
-          <p>AccessKey Secret: <span id="accessKeySecretShow">init</span></p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- fail modal -->
-  <div class="modal fade" id="modalFail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-       aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel2">申请失败</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p id="failMessage">init</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 
