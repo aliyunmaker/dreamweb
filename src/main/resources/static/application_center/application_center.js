@@ -68,13 +68,12 @@ function createCards(appName) {
                             <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
                             data-bs-toggle="dropdown" aria-expanded="false"></a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="#" onclick=jumpToDashboard('${app.appName}')>Dashboard</a></li>
                                 <li><a class="dropdown-item" href="#" onclick=jumpToLogCenter('${app.appName}')>Log Center</a></li>
                             </ul>
                         </div>
                         <h4 class="card-title">
-                            <a class="text-black text-decoration-none" data-bs-toggle="offcanvas"
-                             href="#offcanvas-${app.appName}" role="button" onclick=getAppDetail('${app.appName}') aria-controls="offcanvasExample">${app.appName}</a>
+                            <a href="#" class="text-black text-decoration-none" onclick="getAppDetail('${app.appName}', 'all')">${app.appName}</a>
                         </h4>
                         <p class="card-text">${app.description}</p>
                         <div class="row row-cols-1 row-cols-lg-5" id="services-${app.appName}"></div>
@@ -84,51 +83,12 @@ function createCards(appName) {
             $("#cardContainer").append(card);
             for (var serviceName in app.servicesCounts) {
                 var service = `
-                <div class="col align-items-start" id=${app.appName}-${serviceName}>
+                <a href="#" class="col align-items-start text-black text-decoration-none" id=${app.appName}-${serviceName} onclick="getAppDetail('${app.appName}', '${serviceName}')">
                     <h5>${app.servicesCounts[serviceName]}</h5>
                     <p>${serviceName}</p>
-                </div>`;
+                </a>`;
                 $("#services-" + app.appName).append(service);
             };
-            var appDetail = `
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-${app.appName}" aria-labelledby="offcanvasExampleLabel" style="--bs-offcanvas-width: 80%;">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasLabel-${app.appName}">${app.appName}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body" id="offcanvas-body-${app.appName}">
-                </div>
-            </div>`;
-            $("#card-"+app.appName).append(appDetail);
-            var offcanvasTab = `<ul class="nav nav-tabs" id="tabs-${app.appName}"></ul>`;
-            $("#offcanvas-body-"+app.appName).append(offcanvasTab);
-            $("#tabs-"+app.appName).append(`<li class="nav-item">
-                <a class="nav-link text-black active" aria-current="page" id="tab-${app.appName}-all" onclick="listResourcesDetails('${app.appName}', 'all')">All</a>
-                </li>`);
-            for (var serviceName in app.servicesCounts) {
-                var tab = `
-                <li class="nav-item">
-                    <a class="nav-link text-black" aria-current="page" id="tab-${app.appName}-${serviceName}"
-                     onclick="listResourcesDetails('${app.appName}', '${serviceName}')">${serviceName}(${app.servicesCounts[serviceName]})</a>
-                </li>`;
-                $("#tabs-" + app.appName).append(tab);
-            };
-            var table = `
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Resource ID/name</th>
-                        <th scope="col">Resource Type</th>
-                        <th scope="col">Environment Type</th>
-                        <th scope="col">Region</th>
-                        <th scope="col">Operations</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            `;
-            $("#offcanvas-body-"+app.appName).append(table);
         }
     });
     if (appName === undefined) {
@@ -142,54 +102,8 @@ function createFilteredCards() {
 }
 
 // 应用详情
-function getAppDetail(appName) {
-    $.ajax({
-        url: "../apps/getAppDetail.do?appName="+appName,
-        success: function(result){
-            if (result.success) {
-                appDetail = result.data;
-                listResourcesDetails(appName, 'all');
-                console.log(appDetail);
-            } else {
-                alert(result.errorMsg);
-            }
-        }
-    });
-}
-
-function listResourcesDetails(appName, queryServiceName) {
-    var tabs = document.querySelectorAll("#tabs-"+appName+" a");
-    tabs.forEach(function(tab) {
-        tab.classList.remove("active");
-    });
-    document.querySelector("#tab-"+appName+"-"+queryServiceName).classList.add("active");
-    $("#offcanvas-body-"+appName+" tbody").empty();
-    
-    for (var serviceName in appDetail) {
-        if (queryServiceName === "all" || serviceName === queryServiceName) {
-            appDetail[serviceName].forEach(function(resource) {
-                var row = `
-                <tr>
-                    <td><a href=# class="text-decoration-none" onclick="getResourceDetail('${serviceName}', '${resource.resourceId}')">${resource.resourceId}</a></td>
-                    <td>${resource.serviceName}</td>
-                    <td>${resource.environmentType}</td>
-                    <td>${resource.regionId}</td>
-                    <td>
-                        <a href=# class="text-decoration-none" onclick="getResourceDetail('${serviceName}', '${resource.resourceId}')">查看</a>
-                        <a target="_blank" class="text-decoration-none" href="../apps/signInConsole.do?serviceName=${serviceName}&regionId=${resource.regionId}&resourceId=${resource.resourceId}">Console</a>
-                        <a target="_blank" class="text-decoration-none" href="${resource.operations["operationUrl"]}">${resource.operations["operationName"]}</a>
-                    </td>
-                </tr>`;
-
-                $("#offcanvas-body-"+appName+" tbody").append(row);
-            })
-        }
-    }
-}
-
-// 资源详情
-function getResourceDetail(serviceName, resourceId) {
-    var page = "application_center/resource_detail.html?serviceName=" + serviceName + "&resourceId=" + resourceId;
+function getAppDetail(appName, serviceName) {
+    var page = "application_center/application_detail.html?appName=" + appName + "&serviceName=" + serviceName;
     var iframe = parent.document.getElementById("iframe");
     iframe.setAttribute("src", page);
 }
@@ -199,5 +113,13 @@ function jumpToLogCenter(appName) {
     var message = {};
     message.destination = "log_center";
     message.url = "log_center/log_center.html?appName=" + appName;
+    window.parent.postMessage(message, "*");
+}
+
+// 跳转到dashboard
+function jumpToDashboard(appName) {
+    var message = {};
+    message.destination = "dashboard";
+    message.url = "dashboard/dashboard.html?appName=" + appName;
     window.parent.postMessage(message, "*");
 }
