@@ -1,16 +1,17 @@
 var aliyunUserId;
-var roleIds;
-var userIds;
-var cloudUserIds;
+var roles;
+var users;
+var cloudUsers;
 $(document).ready(function() {
     $.ajax({
         url: "../listLoginUsers.do",
         success: function(result){
             if (result.success) {
+                console.log(result.data);
                 aliyunUserId = result.data.aliyunUserId;
-                roleIds = result.data.roleIds;
-                userIds = result.data.userIds;
-                cloudUserIds = result.data.cloudUserIds;
+                roles = result.data.roles;
+                users = result.data.users;
+                cloudUsers = result.data.cloudUsers;
                 listLoginUsers();
             } else {
                 alert(result.errorMsg);
@@ -20,31 +21,36 @@ $(document).ready(function() {
 });
 
 function listLoginUsers() {
-    var aliyunLoginContainer = $("#aliyunLoginContainer");
-    aliyunLoginContainer.empty();
+    $("#aliyunLoginContainer").empty();
+    $("#awsLoginContainer").empty();
+    $("#tencentLoginContainer").empty();
 
-    roleIds.forEach(function(roleId) {
+    roles.forEach(function(role) {
         var item = `
         <div class="col d-flex align-items-start">
           <div
             class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-6 flex-shrink-0 me-3">
             <i class="iconfont icon-clothes" style="font-size: 1.8rem;"></i>
           </div>
-          <div>
-            <h3 class="fs-5">管理员</h3>
-            <p>account: ${aliyunUserId}<br /> role: ${roleId}</p>
-            <a target="_blank" href="../sso/login.do?sp=aliyun&userRoleId=${roleId}" class="btn btn-primary">
+          <div id="${role.id}-info">
+            <h3 class="fs-5">${role.name}</h3>
+            <p>account: ${role.account}<br /> role: ${role.id}</p>
+            <a target="_blank" href="../sso/login.do?sp=${role.provider}&userRoleId=${role.id}" class="btn btn-primary">
               <i class="iconfont icon-login" ></i> Console
-            </a>
-            <a target="_blank" href="../sso/downloadToken.do?sp=aliyun&userRoleId=${roleId}" class="btn btn-success">
-              <i class="iconfont icon-download" ></i> STS Token
             </a>
           </div>
         </div>`;
-        aliyunLoginContainer.append(item);
+        $("#" + role.provider + "LoginContainer").append(item);
+        if (role.provider === "aliyun") {
+          var stsTokenBtn = `
+          <a target="_blank" href="../sso/downloadToken.do?sp=${role.provider}&userRoleId=${role.id}" class="btn btn-success">
+          <i class="iconfont icon-download" ></i> STS Token
+          </a>`;
+          $("#" + role.id + "-info").append(stsTokenBtn);
+        }
     });
 
-    userIds.forEach(function(userId) {
+    users.forEach(function(user) {
         var item = `
         <div class="col d-flex align-items-start">
           <div
@@ -52,17 +58,17 @@ function listLoginUsers() {
             <i class="iconfont icon-user-blank" style="font-size: 1.8rem;"></i>
           </div>
           <div>
-            <h3 class="fs-5">云效账号</h3>
-            <p>account: ${aliyunUserId}<br /> user: ${userId}</p>
-            <a target="_blank" href="../sso/login.do?sp=aliyun_user&userRoleId=${userId}" class="btn btn-primary">
+            <h3 class="fs-5">${user.name}</h3>
+            <p>account: ${user.account}<br /> user: ${user.id}</p>
+            <a target="_blank" href="../sso/login.do?sp=${user.provider}_user&userRoleId=${user.id}" class="btn btn-primary">
               <i class="iconfont icon-login" ></i> Console
             </a>
           </div>
         </div>`;
-        aliyunLoginContainer.append(item);
+        $("#" + user.provider + "LoginContainer").append(item);
     });
 
-    cloudUserIds.forEach(function(cloudUserId) {
+    cloudUsers.forEach(function(cloudUser) {
         var item = `
         <div class="col d-flex align-items-start">
           <div
@@ -70,13 +76,13 @@ function listLoginUsers() {
             <i class="iconfont icon-user-blank" style="font-size: 1.8rem;"></i>
           </div>
           <div>
-            <h3 class="fs-5">CloudSSO-管理员</h3>
-            <p>account: ${aliyunUserId}<br /> cloud sso user: ${cloudUserId}</p>
-            <a target="_blank" href="../sso/login.do?sp=aliyun_user_cloudsso&userRoleId=${cloudUserId}" class="btn btn-primary">
+            <h3 class="fs-5">${cloudUser.name}</h3>
+            <p>account: ${cloudUser.account}<br /> cloud sso user: ${cloudUser.id}</p>
+            <a target="_blank" href="../sso/login.do?sp=${cloudUser.provider}_user_cloudsso&userRoleId=${cloudUser.id}" class="btn btn-primary">
               <i class="iconfont icon-login" ></i> Console
             </a>
           </div>
         </div>`;
-        aliyunLoginContainer.append(item);
+        $("#" + cloudUser.provider + "LoginContainer").append(item);
     });
 }

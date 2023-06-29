@@ -135,7 +135,22 @@ public class SSOConstants {
     private static final String AWS_ATTRIBUTE_KEY_ROLE = "https://aws.amazon.com/SAML/Attributes/Role";
 
     // aws user sso
-    private static final String AWS_USER_IDENTIFIER = "[aws user sso] must be replaced identifier";
-    private static final String AWS_USER_REPLY_URL = "[aws user sso] must be replaced replyUrl";// "https://us-east-2.signin.aws.amazon.com/platform/saml/acs/6b9f0caa-6290-41d0-b4de-bd190139324e";
+//    private static final String AWS_USER_IDENTIFIER = "[aws user sso] must be replaced identifier";
+//    private static final String AWS_USER_REPLY_URL = "[aws user sso] must be replaced replyUrl";// "https://us-east-2.signin.aws.amazon.com/platform/saml/acs/6b9f0caa-6290-41d0-b4de-bd190139324e";
+    private static final String AWS_USER_IDENTIFIER = "https://us-east-1.signin.aws.amazon.com/platform/saml/d-90679adb49";
+    private static final String AWS_USER_REPLY_URL = "https://us-east-1.signin.aws.amazon.com/platform/saml/acs/d4563f17-f40b-4e75-ab03-224b7162c54e";
 
+    public static String getSSOSpUserId(SSOSpEnum ssoSp) {
+        switch (ssoSp) {
+            case aliyun:
+            case aliyun_user:
+            case aliyun_user_cloudsso:
+                return CommonConstants.Aliyun_UserId;
+            case aws:
+            case aws_user:
+                return CommonConstants.AWS_UserId;
+            default:
+                throw new RuntimeException("not support type:" + ssoSp);
+        }
+    }
 }

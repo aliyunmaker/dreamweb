@@ -1,41 +1,50 @@
 package cc.landingzone.dreamweb.demo.sso;
 
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.core.Response;
-import org.opensaml.saml2.core.impl.ResponseMarshaller;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml2.metadata.KeyDescriptor;
-import org.opensaml.saml2.metadata.SingleSignOnService;
-import org.opensaml.saml2.metadata.impl.*;
-import org.opensaml.xml.security.credential.UsageType;
-import org.opensaml.xml.signature.KeyInfo;
-import org.opensaml.xml.signature.X509Certificate;
-import org.opensaml.xml.signature.X509Data;
-import org.opensaml.xml.signature.impl.KeyInfoBuilder;
-import org.opensaml.xml.signature.impl.X509CertificateBuilder;
-import org.opensaml.xml.signature.impl.X509DataBuilder;
-import org.opensaml.xml.util.XMLHelper;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.impl.ResponseMarshaller;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.KeyDescriptor;
+import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+import org.opensaml.saml.saml2.metadata.impl.*;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.xmlsec.signature.KeyInfo;
+import org.opensaml.xmlsec.signature.X509Certificate;
+import org.opensaml.xmlsec.signature.X509Data;
+import org.opensaml.xmlsec.signature.impl.KeyInfoBuilder;
+import org.opensaml.xmlsec.signature.impl.X509CertificateBuilder;
+import org.opensaml.xmlsec.signature.impl.X509DataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 
 public class SamlGenerator {
-//    static {
-//        try {
-//            // 初始化证书
-//            CertManager.initSigningCredential();
-//            DefaultBootstrap.bootstrap();
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
-//    }
+    // static {
+    // try {
+    // // 初始化证书
+    // CertManager.initSigningCredential();
+    // DefaultBootstrap.bootstrap();
+    // } catch (Throwable e) {
+    // e.printStackTrace();
+    // }
+    // }
 
     private static Logger logger = LoggerFactory.getLogger(SamlGenerator.class);
+
+    public static String generateResponse(String identifier, String replyUrl, String nameID,
+                                          HashMap<String, List<String>> attributes) throws Exception {
+        return generateResponse(null, identifier, replyUrl, nameID, attributes);
+
+    }
 
     /**
      * 生成base64的SAMLResponse
@@ -43,23 +52,27 @@ public class SamlGenerator {
      * @return
      * @throws Throwable
      */
-    public static String generateResponse(String identifier, String replyUrl, String nameID,
+    public static String generateResponse(String samlRequestID, String identifier, String replyUrl, String nameID,
                                           HashMap<String, List<String>> attributes) throws Exception {
-        Response responseInitial = SamlAssertionProducer.createSAMLResponse(identifier, replyUrl, nameID, attributes);
+        Response responseInitial = SamlAssertionProducer.createSAMLResponse(samlRequestID, identifier, replyUrl,
+                nameID, attributes);
         // output Response
         ResponseMarshaller marshaller = new ResponseMarshaller();
         Element element = marshaller.marshall(responseInitial);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        XMLHelper.writeNode(element, baos);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(new DOMSource(element), new StreamResult(baos));
+        // XMLHelper.writeNode(element, baos);
         String responseStr = new String(baos.toByteArray());
         String base64Encode = java.util.Base64.getEncoder().encodeToString(responseStr.getBytes());
 
         logger.info("********************************SAML Response XML*******************************");
         logger.info(responseStr);
         logger.info("********************************************************************************");
-//        logger.info("************************Response Base64*************************");
-//        logger.info(base64Encode);
-//        logger.info("****************************************************************");
+        // logger.info("************************Response
+        // Base64*************************");
+        // logger.info(base64Encode);
+        // logger.info("****************************************************************");
         return base64Encode;
     }
 
@@ -95,32 +108,39 @@ public class SamlGenerator {
         keyDescriptor.setKeyInfo(keyInfo);
         idpssoDescriptor.getKeyDescriptors().add(keyDescriptor);
 
-//        NameIDFormatBuilder nameIDFormatBuilder = new NameIDFormatBuilder();
-//        NameIDFormat nameIDFormat = nameIDFormatBuilder.buildObject();
-//        nameIDFormat.setFormat(NameIDType.UNSPECIFIED);
-//        idpssoDescriptor.getNameIDFormats().add(nameIDFormat);
+        // NameIDFormatBuilder nameIDFormatBuilder = new NameIDFormatBuilder();
+        // NameIDFormat nameIDFormat = nameIDFormatBuilder.buildObject();
+        // nameIDFormat.setFormat(NameIDType.UNSPECIFIED);
+        // idpssoDescriptor.getNameIDFormats().add(nameIDFormat);
 
         // 符合aws user sso的要求,需要增加
-//        <?xml version="1.0" encoding="UTF-8"?>
-//        <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://chengchao.name/b65d76ce4260/">
-//            <md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
-//                <md:KeyDescriptor use="signing">
-//                    <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-//                        <ds:X509Data>
-//                            <ds:X509Certificate>XBhPpgWPLxLmuuFslanasyQjvREB</ds:X509Certificate>
-//                        </ds:X509Data>
-//                    </ds:KeyInfo>
-//                </md:KeyDescriptor>
-//                <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://chengchao.name/login" />
-//                <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://chengchao.name/login" />
-//                <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://chengchao.name/login" />
-//            </md:IDPSSODescriptor>
-//        </md:EntityDescriptor>
+        // <?xml version="1.0" encoding="UTF-8"?>
+        // <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+        // entityID="https://chengchao.name/b65d76ce4260/">
+        // <md:IDPSSODescriptor WantAuthnRequestsSigned="false"
+        // protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        // <md:KeyDescriptor use="signing">
+        // <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        // <ds:X509Data>
+        // <ds:X509Certificate>XBhPpgWPLxLmuuFslanasyQjvREB</ds:X509Certificate>
+        // </ds:X509Data>
+        // </ds:KeyInfo>
+        // </md:KeyDescriptor>
+        // <md:SingleLogoutService
+        // Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        // Location="https://chengchao.name/login" />
+        // <md:SingleSignOnService
+        // Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        // Location="https://chengchao.name/login" />
+        // <md:SingleSignOnService
+        // Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+        // Location="https://chengchao.name/login" />
+        // </md:IDPSSODescriptor>
+        // </md:EntityDescriptor>
 
         SingleSignOnServiceBuilder singleSignOnServiceBuilder = new SingleSignOnServiceBuilder();
         SingleSignOnService singleSignOnService = singleSignOnServiceBuilder.buildObject();
         singleSignOnService.setBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        //cloud sso会校验这个字段
         singleSignOnService.setLocation(SSOConstants.IDP_ENTITY_ID);
         idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);
 
@@ -128,7 +148,9 @@ public class SamlGenerator {
         EntityDescriptorMarshaller marshaller = new EntityDescriptorMarshaller();
         Element element = marshaller.marshall(entityDescriptor);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        XMLHelper.writeNode(element, baos);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(new DOMSource(element), new StreamResult(baos));
+        // XMLHelper.writeNode(element, baos);
         String metaXMLStr = new String(baos.toByteArray());
 
         System.out.println("===============MetaXML================");

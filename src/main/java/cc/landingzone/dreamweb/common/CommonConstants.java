@@ -35,9 +35,7 @@ public class CommonConstants {
     public static final List<SSOUserRole> SSO_LOGIN_ROLE_IDS = new ArrayList<>();
     public static final List<SSOUserRole> SSO_LOGIN_CLOUD_USER_IDS = new ArrayList<>();
 
-    /**
-     * 用于免密登录的RAM角色ARN
-     */
+    // 用于免密登录的RAM角色ARN
     public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";
 
     public static final String DEFAULT_IMAGE_ID = "ubuntu_18_04_64_20G_alibase_20190624.vhd";
@@ -80,13 +78,17 @@ public class CommonConstants {
     public static void addSSOUsersRoles() {
         SSOUserRole aliyunRole = new SSOUserRole("aliyun", "管理员", "kidccc@gmail.com", "dreamweb-test-role");
         SSO_LOGIN_ROLE_IDS.add(aliyunRole);
-        SSOUserRole awsRole = new SSOUserRole("aws", "管理员", "me@chengchao.name", "dreamweb-test-role");
+        SSOUserRole awsRole = new SSOUserRole("aws", "管理员", "me@chengchao.name", "myrole");
         SSO_LOGIN_ROLE_IDS.add(awsRole);
+        SSOUserRole tencentRole = new SSOUserRole("tencent", "管理员", "100000543428", "superadmin");
+        SSO_LOGIN_ROLE_IDS.add(tencentRole);
 
         SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "kidccc@gmail.com", "test-user");
         SSO_LOGIN_USER_IDS.add(aliyunUser);
-        SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "me@chengchao.name", "Dreamweb-test-user");
+        SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "kenmako555@gmail.com", "kenmako555@gmail.com");
         SSO_LOGIN_USER_IDS.add(awsUser);
+        SSOUserRole tencentUser = new SSOUserRole("tencent", "个人账号", "100000543428", "chengchao");
+        SSO_LOGIN_USER_IDS.add(tencentUser);
 
         SSOUserRole ssoCloudUser = new SSOUserRole("aliyun", "CloudSSO-管理员", "20210603demo1", "tianyu");
         SSO_LOGIN_CLOUD_USER_IDS.add(ssoCloudUser);

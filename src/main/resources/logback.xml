@@ -17,7 +17,7 @@
 
         <!-- sls 项目配置 -->
         <project>application1-dreamweb</project>
-        <logStore>dreamweb-backend-log</logStore>
+        <logStore>access-log</logStore>
         <!--必选项 (end)-->
 
         <!-- 可选项 -->
