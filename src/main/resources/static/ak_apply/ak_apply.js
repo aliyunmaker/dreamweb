@@ -1,13 +1,34 @@
+var editor;
 $(document).ready(function() {
-  // 单选按钮点击事件
-  $('input[type=radio][name=environmentType]').change(function () {
+    // 单选按钮点击事件
+    $('input[type=radio][name=environmentType]').change(function () {
     listResourcesByAppEnvAndResType();
-  });
+    });
 
-  $('input[type=radio][name=permissionTemplate]').change(function () {
+    $('input[type=radio][name=permissionTemplate]').change(function () {
     generatePolicyDocument();
-  });
+    });
+
+    //根据DOM元素的id构造出一个编辑器
+    editor = CodeMirror.fromTextArea(document.getElementById("policyDocument"), {
+            mode:"application/json",
+            lineNumbers: true,  //显示行号
+            theme: "default",   //设置主题
+            lineWrapping: false, //false则超过宽带会显示水平滚动条，true不会显示
+            foldGutter: true,   //代码是否可折叠
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            matchBrackets: true,    //括号匹配
+            indentWithTabs: true,  //前 N*tabSize 个空格是否应替换为 N 个制表符
+            smartIndent: true,   //上下文相关缩进（即是否缩进与之前的行相同）
+            autofocus: true,
+            styleActiveLine: true, //光标所在行高亮
+            //readOnly: true,      //只读
+    });
+    
+    
+
 });
+
 
 var links = document.querySelectorAll(".navbar-nav a");
 var iframe = document.getElementById("iframe");
@@ -33,7 +54,7 @@ links.forEach(function (link) {
 function akApplySubmit() {
   application = document.getElementById("application").value;
   environmentType = $("input[name='environmentType']:checked").val();
-  policyDocument = document.getElementById("policyDocument").value;
+  policyDocument = editor.getValue();
   var params = {
     applicationName: application,
     environment: environmentType,
@@ -81,7 +102,8 @@ function generatePolicyDocument() {
     type: "POST",
     data: params,
     success: function (data) {
-      document.getElementById("policyDocument").value = data;
+        editor.setValue(data);
+//      document.getElementById("policyDocument").value = data;
     },
   })
 }

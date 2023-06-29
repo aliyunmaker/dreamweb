@@ -29,21 +29,27 @@ public class ResourceSupplyController extends BaseController {
         WebResult result = new WebResult();
         try {
             String resourceType = request.getParameter("resourceType");
+            String fileType = request.getParameter("fileType");
+
             logger.info("resourceType: " + resourceType);
-            String template = "";
-            switch (resourceType) {
-                case "ecs":
-                    template = FileUtil.fileToString("src/main/resources/terraform/ecs_module.tf");
-                    break;
-                case "oss":
-                    template = FileUtil.fileToString("src/main/resources/terraform/oss.tf");
-                    break;
-                case "log":
-                    template = FileUtil.fileToString("src/main/resources/terraform/sls.tf");
+            logger.info("fileType: " + fileType);
+            String filePath = "src/main/resources/" + fileType + "/" + resourceType + "/" + resourceType + ".";
+
+            switch (fileType) {
+                case "terraform":
+                   filePath += ".tf";
+                   break;
+                case "java":
+                     filePath += ".java";
+                     break;
+                case "ccapi":
+                    filePath += ".ccapi";
                     break;
                 default:
-                    break;
+                    throw new Exception("fileType not supported");
             }
+            logger.info("filePath: " + filePath);
+            String template = FileUtil.fileToString(filePath);
             logger.info("template: " + template);
             result.setData(template);
         } catch (Exception e) {
