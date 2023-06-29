@@ -32,7 +32,7 @@ public class DashboardController extends BaseController {
             }
 
             if (StringUtils.isBlank(instanceId)) {
-                instanceId = "dreamweb-monitor";
+                instanceId = "application1-monitor";
             }
 
             if (StringUtils.isBlank(destination)) {
