@@ -1,15 +1,16 @@
 package cc.landingzone.dreamweb.common.utils;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FreeMarkerUtils {
 
@@ -71,4 +72,24 @@ public class FreeMarkerUtils {
         return result;
     }
 
+    /**
+     * 生成freemark模板
+     *
+     * @param templateName
+     * @param context
+     * @return
+     */
+    public static String buildFreemarkPage(String templateName, Map<String, Object> context) {
+        Assert.hasText(templateName, "templateName can not be blank!");
+        String result = "";
+        try {
+            Template temp = cfg.getTemplate(templateName);
+            Writer out = new StringWriter();
+            temp.process(context, out);
+            result = out.toString();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return result;
+    }
 }
