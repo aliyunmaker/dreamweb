@@ -99,7 +99,8 @@ function getTemplateByResourceType(fileType) {
   console.log("resourceType: " + resourceType);
 
   var params = {
-    resourceType: resourceType
+    resourceType: resourceType,
+    fileType: fileType
   };
 
   $.ajax({

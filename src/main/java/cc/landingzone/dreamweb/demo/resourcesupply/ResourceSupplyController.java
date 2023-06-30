@@ -33,7 +33,7 @@ public class ResourceSupplyController extends BaseController {
 
             logger.info("resourceType: " + resourceType);
             logger.info("fileType: " + fileType);
-            String filePath = "src/main/resources/resource_supply_template" + fileType + "/" + resourceType + "/" + resourceType;
+            String filePath = "src/main/resources/resource_supply_template/" + fileType + "/" + resourceType + "/" + resourceType;
 
             switch (fileType) {
                 case "terraform":
