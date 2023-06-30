@@ -4,7 +4,6 @@ variable "access_key" {
 
 variable "secret_key" {
   type = string
-  default = "tEczF2eIsH8qSHH021Mi3vVggohx1o"
 }
 
 variable "region" {
@@ -54,7 +53,7 @@ provider "alicloud" {
 }
 
 resource "alicloud_log_project" "create_new_project" {
-  project = var.project_name
+  name = var.project_name
   description = var.project_description
   tags   = var.tags
 }
