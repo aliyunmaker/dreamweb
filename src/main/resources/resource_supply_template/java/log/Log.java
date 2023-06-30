@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-public class sls {
+public class Sls {
 
     public static void main(String[] args) throws Exception {
         String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");

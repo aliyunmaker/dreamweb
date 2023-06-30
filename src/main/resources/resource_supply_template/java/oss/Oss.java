@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class oss {
+public class Oss {
 
     public static void main(String[] args) throws Exception {
         String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");

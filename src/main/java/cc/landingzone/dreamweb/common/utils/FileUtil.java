@@ -16,20 +16,18 @@ import java.util.stream.Stream;
 public class FileUtil {
     private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-    public static void main(String[] args) throws Exception {
-//        fileToString("/terraform/oss.tf");
-        System.out.println(fileToString("src/main/resources/terraform/oss.tf"));
-    }
+//    public static void main(String[] args) throws Exception {
+////        fileToString("/terraform/Oss.tf");
+//        System.out.println(fileToString("src/main/resources/terraform/Oss.tf"));
+//    }
 
 
     public static String fileToString(String filePath) throws Exception{
-
             Path path = Paths.get(filePath);
             Stream<String> lines = Files.lines(path);
             String content = lines.collect(Collectors.joining(System.lineSeparator()));
             lines.close();
             return content;
-
     }
 
 }
