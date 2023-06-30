@@ -4,7 +4,6 @@ variable "access_key" {
 
 variable "secret_key" {
   type = string
-  default = "tEczF2eIsH8qSHH021Mi3vVggohx1o"
 }
 
 variable "region" {
