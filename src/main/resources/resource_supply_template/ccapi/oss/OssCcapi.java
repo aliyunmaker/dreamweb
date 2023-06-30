@@ -1,0 +1,32 @@
+package cc.landingzone.dreamweb;
+
+import com.aliyun.tea.TeaConverter;
+import com.aliyun.tea.TeaPair;
+
+public class OssCcapi {
+    public static void main(String[] args_) throws Exception {
+        String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
+        String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
+
+        com.aliyun.cloudcontrol20220830.Client client = createClient(accessKeyId, accessKeySecret);
+        String requestPath = "/api/v1/providers/Aliyun/products/OSS/resources/Bucket";
+        java.util.Map<String, String> body = TeaConverter.buildMap(
+                new TeaPair("StorageClass", "Standard"),
+                new TeaPair("BucketName", "dreamweb-oss-test")
+        );
+        com.aliyun.cloudcontrol20220830.models.CreateResourceRequest createResourceRequest = new com.aliyun.cloudcontrol20220830.models.CreateResourceRequest()
+                .setBody(body)
+                .setRegionId("cn-hangzhou");
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        java.util.Map<String, String> headers = new java.util.HashMap<>();
+        client.createResourceWithOptions(requestPath, createResourceRequest, headers, runtime);
+    }
+
+    public static com.aliyun.cloudcontrol20220830.Client createClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "cloudcontrol.aliyuncs.com";
+        return new com.aliyun.cloudcontrol20220830.Client(config);
+    }
+}
