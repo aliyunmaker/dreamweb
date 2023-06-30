@@ -1,48 +1,60 @@
-// This file is auto-generated, don't edit it. Thanks.
-package com.aliyun.sample;
+package cc.landingzone.dreamweb;
 
-import com.aliyun.tea.*;
+import com.alibaba.fastjson.JSON;
+import com.aliyun.sls20201230.Client;
+import com.aliyun.sls20201230.models.CreateProjectRequest;
+import com.aliyun.tag20180828.models.TagResourcesRequest;
+import com.aliyun.teautil.models.RuntimeOptions;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+public class sls {
 
-public class Sample {
+    public static void main(String[] args) throws Exception {
+        String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");
+        String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
+        String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
 
-    /**
-     * 使用AK&SK初始化账号Client
-     * @param accessKeyId
-     * @param accessKeySecret
-     * @return Client
-     * @throws Exception
-     */
-    public static com.aliyun.sls20201230.Client createClient(String accessKeyId, String accessKeySecret) throws Exception {
+        String projectName = "dreamwebtest";
+        // 创建logProject
+        Client client = createSlsClient(accessKeyId,accessKeySecret);
+        RuntimeOptions runtime = new RuntimeOptions();
+        CreateProjectRequest createProjectRequest = new CreateProjectRequest()
+                .setDescription("description")
+                .setProjectName(projectName);
+        Map<String, String> headers = new HashMap<>();
+        client.createProjectWithOptions(createProjectRequest, headers, runtime);
+
+        // 添加标签
+        com.aliyun.tag20180828.Client tagClient = createTagClient(accessKeyId, accessKeySecret);
+        Map<String, String> tags = new HashMap<>();
+        tags.put("application", "application1");
+        tags.put("environmentType", "product");
+        String tagStr = JSON.toJSONString(tags);
+        List<String> resourceArn = new ArrayList<>();
+        resourceArn.add("acs:log:*:" + accountId + ":project/" + projectName);
+        TagResourcesRequest tagResourcesRequest = new TagResourcesRequest()
+                .setResourceARN(resourceArn)
+                .setTags(tagStr)
+                .setRegionId("cn-hangzhou");
+        tagClient.tagResourcesWithOptions(tagResourcesRequest, runtime);
+    }
+
+    public static Client createSlsClient(String accessKeyId, String accessKeySecret) throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                // 必填，您的 AccessKey ID
                 .setAccessKeyId(accessKeyId)
-                // 必填，您的 AccessKey Secret
-                .setAccessKeySecret(accessKeySecret);
-        // 访问的域名
-        config.endpoint = "cn-hangzhou.log.aliyuncs.com";
-        return new com.aliyun.sls20201230.Client(config);
+                .setAccessKeySecret(accessKeySecret)
+                .setEndpoint("cn-hangzhou.log.aliyuncs.com");
+        return new Client(config);
     }
 
-    public static void main(String[] args_) throws Exception {
-        java.util.List<String> args = java.util.Arrays.asList(args_);
-        // 请确保代码运行环境设置了环境变量 ALIBABA_CLOUD_ACCESS_KEY_ID 和 ALIBABA_CLOUD_ACCESS_KEY_SECRET。
-        // 工程代码泄露可能会导致 AccessKey 泄露，并威胁账号下所有资源的安全性。以下代码示例使用环境变量获取 AccessKey 的方式进行调用，仅供参考，建议使用更安全的 STS 方式，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378657.html
-        com.aliyun.sls20201230.Client client = Sample.createClient(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"), System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET"));
-        com.aliyun.sls20201230.models.CreateProjectRequest createProjectRequest = new com.aliyun.sls20201230.models.CreateProjectRequest()
-                .setDescription("java-test")
-                .setProjectName("java-test-project");
-        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-        java.util.Map<String, String> headers = new java.util.HashMap<>();
-        try {
-            // 复制代码运行请自行打印 API 的返回值
-            client.createProjectWithOptions(createProjectRequest, headers, runtime);
-        } catch (TeaException error) {
-            // 如有需要，请打印 error
-            com.aliyun.teautil.Common.assertAsString(error.message);
-        } catch (Exception _error) {
-            TeaException error = new TeaException(_error.getMessage(), _error);
-            // 如有需要，请打印 error
-            com.aliyun.teautil.Common.assertAsString(error.message);
-        }        
+    public static com.aliyun.tag20180828.Client createTagClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "tag.aliyuncs.com";
+        return new com.aliyun.tag20180828.Client(config);
     }
+
 }
