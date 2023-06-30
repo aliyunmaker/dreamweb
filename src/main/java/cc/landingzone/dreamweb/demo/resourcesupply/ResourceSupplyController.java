@@ -33,7 +33,7 @@ public class ResourceSupplyController extends BaseController {
 
             logger.info("resourceType: " + resourceType);
             logger.info("fileType: " + fileType);
-            String filePath = "src/main/resources/" + fileType + "/" + resourceType + "/" + resourceType + ".";
+            String filePath = "src/main/resources/resource_supply_template" + fileType + "/" + resourceType + "/" + resourceType;
 
             switch (fileType) {
                 case "terraform":
@@ -43,7 +43,7 @@ public class ResourceSupplyController extends BaseController {
                      filePath += ".java";
                      break;
                 case "ccapi":
-                    filePath += ".ccapi";
+                    filePath += "Ccapi" + ".java";
                     break;
                 default:
                     throw new Exception("fileType not supported");
