@@ -88,7 +88,13 @@ function getVSwitches() {
   })
 }
 
-function getTemplateByResourceType() {
+function getTemplateByResourceType(fileType) {
+  var tabs = document.querySelectorAll(".nav-tabs a");
+  tabs.forEach(function(tab) {
+      tab.classList.remove("active");
+  });
+  document.querySelector("#tab-"+fileType).classList.add("active");
+
   var resourceType = $("input[name='resourceType']:checked").val();
   console.log("resourceType: " + resourceType);
 

@@ -126,7 +126,7 @@
                         <br>
                         <small id="resourceTemplateDescriptionEcs" class="form-text text-muted">ECS通用模版, 可用于申请云服务器ECS资源。</small>
                         <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
-                           onclick="getTemplateByResourceType()">查看模板</a>
+                           onclick="getTemplateByResourceType('Terraform')">查看模板</a>
                     </div>
                 </div>
             </div>
@@ -146,7 +146,7 @@
                         <small id="resourceTemplateDescriptionOss" class="form-text text-muted">OSS通用模版,
                             可用于申请对象存储服务的Bucket。</small>
                         <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
-                           onclick="getTemplateByResourceType()">查看模板</a>
+                           onclick="getTemplateByResourceType('Terraform')">查看模板</a>
                     </div>
                 </div>
             </div>
@@ -166,7 +166,7 @@
                         <small id="resourceTemplateDescriptionLog" class="form-text text-muted">SLS通用模版,
                             可用于申请日志服务的project。</small>
                         <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
-                           onclick="getTemplateByResourceType()">查看模板</a>
+                           onclick="getTemplateByResourceType('Terraform')">查看模板</a>
                     </div>
                 </div>
             </div>
@@ -180,6 +180,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link text-black active" aria-current="page" href="#" id="tab-Terraform" onclick="getTemplateByResourceType('Terraform')">Terraform</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-black" href="#" id="tab-Java" onclick="getTemplateByResourceType('Java')">Java</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-black" href="#" id="tab-CCAPI" onclick="getTemplateByResourceType('CCAPI')">CCAPI</a>
+                    </li>
+                  </ul>
                 <label for="templateContent"></label>
                 <textarea id="templateContent" class="form-control" rows="10" readonly></textarea>
             </div>
