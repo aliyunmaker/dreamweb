@@ -1,4 +1,5 @@
 var templateContentEditor;
+var createFailEditor;
 $(document).ready(function() {
     // 单选按钮点击事件
     $('input[type=radio][name=resourceType]').change(function () {
@@ -45,9 +46,20 @@ $(document).ready(function() {
         styleActiveLine: true, //光标所在行高亮
         //readOnly: true,      //只读
     });
-
     templateContentEditor.setSize(null, "510px");
 
+    createFailEditor = CodeMirror.fromTextArea(document.getElementById("createFailMessageContent"), {
+        mode: "null",
+        theme: "night",   //设置主题
+        lineWrapping: true, //false则超过宽带会显示水平滚动条，true不会显示
+        foldGutter: true,   //代码是否可折叠
+        matchBrackets: true,    //括号匹配
+        indentWithTabs: true,  //前 N*tabSize 个空格是否应替换为 N 个制表符
+        smartIndent: true,   //上下文相关缩进（即是否缩进与之前的行相同）
+        autofocus: true,
+        styleActiveLine: true, //光标所在行高亮
+        //readOnly: true,      //只读
+});
  });
 
  var links = document.querySelectorAll(".navbar-nav a");
@@ -186,7 +198,7 @@ $(document).ready(function() {
        } else {
          $("#createFail").show();
          $("#createFailMessage").show();
-         $("#createFailMessageContent").text(result.errorMsg);
+         createFailEditor.setValue(result.errorMsg);
        }
      },
    })
@@ -214,7 +226,7 @@ $(document).ready(function() {
        } else {
          $("#createFail").show();
          $("#createFailMessage").show();
-         $("#createFailMessageContent").text(result.errorMsg);
+         createFailEditor.setValue(result.errorMsg);
        }
      },
    })
@@ -244,7 +256,7 @@ $(document).ready(function() {
        } else {
          $("#createFail").show();
          $("#createFailMessage").show();
-         $("#createFailMessageContent").text(result.errorMsg);
+         createFailEditor.setValue(result.errorMsg);
        }
      },
    })
