@@ -15,6 +15,7 @@ import com.aliyun.sdk.service.oss20190517.models.PutBucketResponse;
 import com.aliyun.sls20201230.Client;
 import com.aliyun.sls20201230.models.CreateProjectRequest;
 import com.aliyun.tag20180828.models.TagResourcesRequest;
+import com.aliyun.tag20180828.models.TagResourcesResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.aliyun.vpc20160428.models.DescribeVSwitchesRequest;
 import com.google.gson.Gson;
@@ -149,7 +150,14 @@ public class ResourceSupplyUtil {
                 .setTags(tagStr)
                 .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
         RuntimeOptions runtime = new RuntimeOptions();
-        client.tagResourcesWithOptions(tagResourcesRequest, runtime);
+        List<TagResourcesResponseBody.TagResourcesResponseBodyFailedResourcesFailedResource> failedResource
+                = client.tagResourcesWithOptions(tagResourcesRequest, runtime).getBody().getFailedResources().getFailedResource();
+        logger.info("failedResource:{}", JSON.toJSONString(failedResource));
+        // 如果添加失败，继续重试
+        while (failedResource != null && failedResource.size() > 0) {
+            failedResource = client.tagResourcesWithOptions(tagResourcesRequest, runtime).getBody().getFailedResources().getFailedResource();
+            logger.info("failedResource:{}", JSON.toJSONString(failedResource));
+        }
     }
 
     /**
