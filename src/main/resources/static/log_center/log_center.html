@@ -67,17 +67,17 @@
                 console.log(result.data);
                 applist = result.data;
                 addSelectOptions(applist);
+                if (appName !== null) {
+                  document.getElementById("logAppsSelect").value = appName;
+                  var page = "../signSLS.do?projectName="+appName+"-dreamweb";
+                  iframe.setAttribute("src", page);
+                  document.getElementById("access-log-btn").classList.add("active");
+                }
             } else {
                 alert(result.errorMsg);
             }
         }
       });
-      if (appName !== null) {
-        document.getElementById("logAppsSelect").value = appName;
-        var page = "../signSLS.do?projectName="+appName+"-dreamweb";
-        iframe.setAttribute("src", page);
-        document.getElementById("access-log-btn").classList.add("active");
-      }
     });
 
     var links = document.querySelectorAll(".navbar-nav a");
