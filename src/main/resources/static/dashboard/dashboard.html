@@ -34,9 +34,6 @@
           <li class="nav-item">
             <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSDashboard()">
               <option selected disabled value="">Please select application</option>
-              <option value="application1">应用1</option>
-              <option value="application2">应用2</option>
-              <option value="application3">应用3</option>
             </select>
           </li>
           <!--          <li class="nav-item">-->
@@ -80,15 +77,15 @@
             }
         }
       });
-      // appName = appName === null ? "application1" : appName;
-      if (appName !== null) {
-        document.getElementById("logAppsSelect").value = appName;
-        var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
-        iframe.setAttribute("src", page);
-        // document.getElementById("dreamweb-monitor-btn").classList.add("active");
-        console.log("page:" + page);
-      }
-      getApplication();
+      // // appName = appName === null ? "application1" : appName;
+      // if (appName !== null) {
+      //   document.getElementById("logAppsSelect").value = appName;
+      //   var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
+      //   iframe.setAttribute("src", page);
+      //   // document.getElementById("dreamweb-monitor-btn").classList.add("active");
+      //   console.log("page:" + page);
+      // }
+      // getApplication();
     });
 
     var links = document.querySelectorAll(".navbar-nav a");
@@ -116,6 +113,15 @@
       var page = "../signSLSDashboard.do?projectName="+$("#logAppsSelect").val()+"-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
       iframe.setAttribute("src", page);
       console.log("page:" + page);
+    }
+
+    function addSelectOptions(applist) {
+      applist.forEach(function(app) {
+        var option = `
+        <option value="${app}">${app}</option>
+        `;
+        $("#logAppsSelect").append(option);
+      })
     }
 
     function getApplication() {
