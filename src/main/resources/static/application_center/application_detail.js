@@ -15,13 +15,14 @@ $(document).ready(function() {
         </div>
     </div>`;
     $("#appCenterPage").append(appDetailPage);
-    var tab = `<ul class="nav nav-tabs" id="tabs"></ul>`;
-    $("#appDetailBody").append(tab);
     $.ajax({
         url: "../apps/listApps.do",
         success: function(result){
             if (result.success) {
                 appsInfo = result.data;
+                $("#appDetailBody").empty();
+                var tab = `<ul class="nav nav-tabs" id="tabs"></ul>`;
+                $("#appDetailBody").append(tab);
                 appsInfo.forEach(function (app) {
                     if (app.appName === appName) {
                         var sumCount = 0;
@@ -41,27 +42,34 @@ $(document).ready(function() {
                         };
                     }
                 });
+                var table = `
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Resource ID/name</th>
+                        <th scope="col">Resource Type</th>
+                        <th scope="col">Environment Type</th>
+                        <th scope="col">Region</th>
+                        <th scope="col">Operations</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            `;
+            $("#appDetailBody").append(table);
+            $("#appDetailBody tbody").append(
+                `<div class="position-absolute top-50 start-50 translate-middle">
+                <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`
+            );
             } else {
                 alert(result.errorMsg);
             }
         }
     });
-    var table = `
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Resource ID/name</th>
-                <th scope="col">Resource Type</th>
-                <th scope="col">Environment Type</th>
-                <th scope="col">Region</th>
-                <th scope="col">Operations</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    `;
-    $("#appDetailBody").append(table);
     $.ajax({
         url: "../apps/getAppDetail.do?appName="+appName,
         success: function(result){

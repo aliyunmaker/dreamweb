@@ -7,6 +7,13 @@ $(document).ready(function() {
     var urlParams = new URLSearchParams(queryString);
     serviceName = urlParams.get('serviceName');
     resourceId = urlParams.get('resourceId');
+    $("#appCenterPage").append(
+      `<div class="position-absolute top-50 start-50 translate-middle">
+      <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>`
+  );
     $.ajax({
         url: "../apps/getResourceDetail.do?serviceName="+serviceName+"&resourceId="+resourceId,
         success: function(result){
