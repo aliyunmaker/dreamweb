@@ -72,8 +72,18 @@ public class ResourceSupplyController extends BaseController {
             String regionId = request.getParameter("regionId");
             String vSwitchId = request.getParameter("vSwitchId");
             String instanceType = request.getParameter("instanceType");
+            String instanceName = request.getParameter("instanceName");
             int amount = Integer.parseInt(request.getParameter("amount"));
-            ResourceSupplyUtil.createEcsInstance(regionId, vSwitchId, instanceType, amount, applicationName, environmentName);
+            Assert.isTrue(StringUtils.isNotBlank(applicationName), "applicationName must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(environmentName), "environmentName must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(regionId), "regionId must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(vSwitchId), "vSwitchId must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(instanceType), "instanceType must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(instanceName), "instanceName must not be blank");
+            Assert.isTrue(amount > 0, "amount must be greater than 0");
+            Assert.isTrue(amount <= 100, "amount must be less than 100");
+            ResourceSupplyUtil.createEcsInstance(regionId, vSwitchId, instanceType, amount, applicationName,
+                    environmentName,instanceName);
         } catch (Exception e) {
             logger.error(e.getMessage());
             result.setSuccess(false);
@@ -92,6 +102,8 @@ public class ResourceSupplyController extends BaseController {
             String bucketName = request.getParameter("bucketName");
             String applicationName = request.getParameter("applicationName");
             String environmentName = request.getParameter("environmentName");
+            Assert.isTrue(StringUtils.isNotBlank(applicationName), "applicationName must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(environmentName), "environmentName must not be blank");
             Assert.isTrue(bucketName.length() <= 63, "bucketName length must be less than 63");
             Assert.isTrue(bucketName.length() >= 3, "bucketName length must be more than 3");
             Assert.isTrue(bucketName.matches("^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"),
@@ -119,6 +131,8 @@ public class ResourceSupplyController extends BaseController {
             String description = request.getParameter("description");
             String applicationName = request.getParameter("applicationName");
             String environmentName = request.getParameter("environmentName");
+            Assert.isTrue(StringUtils.isNotBlank(applicationName), "applicationName must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(environmentName), "environmentName must not be blank");
             Assert.isTrue(projectName.length() <= 63, "projectName length must be less than 63");
             Assert.isTrue(projectName.length() >= 3, "projectName length must be more than 3");
             Assert.isTrue(projectName.matches("^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"),

@@ -51,21 +51,21 @@
 <main>
     <nav class="navbar navbar-expand bg-body-secondary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i>
-                资源供给</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link disabled">Project: [springrun]</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>
-                    </li>
-                </ul>
-            </div>
+            <a class="navbar-brand" href="#"><i class="iconfont icon-rocket" style="font-size: 1.3rem;"></i>
+                资源申请</a>
+<!--            <div class="collapse navbar-collapse">-->
+<!--                <ul class="navbar-nav me-auto">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link disabled">Project: [springrun]</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
         </div>
     </nav>
 </main>
@@ -248,7 +248,12 @@
                         <option value="ecs.n2.small">ecs.n2.small</option>
                     </select>
                 </div>
-
+            </div>
+            <div class="form-group row mb-3">
+                <label for="instanceName" class="col-sm-2 control-label">实例名称：</label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="text" placeholder="请输入字符串" id="instanceName">
+                </div>
             </div>
             <div class="form-group row mb-3">
                 <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
