@@ -30,10 +30,10 @@ public class ResourceSupplyController extends BaseController {
         try {
             String resourceType = request.getParameter("resourceType");
             String fileType = request.getParameter("fileType");
-
             logger.info("resourceType: " + resourceType);
             logger.info("fileType: " + fileType);
-            String filePath = "src/main/resources/resource_supply_template/" + fileType + "/" + resourceType + "/" + resourceType;
+            String filePath = "src/main/resources/resource_supply_template/" +
+                    fileType + "/" + resourceType + "/" + StringUtils.capitalize(resourceType);
 
             switch (fileType) {
                 case "terraform":
