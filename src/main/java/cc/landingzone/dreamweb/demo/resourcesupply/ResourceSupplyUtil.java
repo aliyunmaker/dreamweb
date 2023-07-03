@@ -46,7 +46,7 @@ public class ResourceSupplyUtil {
     }
 
     public static void createEcsInstance(String regionId, String vSwitchId, String instanceType, int amount,
-                                         String applicationName, String environmentName) throws Exception {
+                                         String applicationName, String environmentName, String instanceName) throws Exception {
         com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         RuntimeOptions runtime = new RuntimeOptions();
@@ -77,6 +77,7 @@ public class ResourceSupplyUtil {
                 .setDataDisk(dataDisks)
                 // uuid: 标识唯一ECS
                 .setHostName(CommonConstants.DEFAULT_ECS_HOSTNAME + UUID.randomUUID())
+                .setInstanceName(instanceName)
                 // 为HostName和InstanceName自动添加有序后缀
                 .setUniqueSuffix(true)
                 .setPassword(CommonConstants.DEFAULT_ECS_PASSWORD)

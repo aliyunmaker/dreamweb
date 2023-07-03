@@ -179,6 +179,7 @@ function createEcsInstance() {
     var amount = $("#instanceNum").val();
     var application = $("#application").val();
     var environmentType = $("input[name='environmentType']:checked").val();
+    var instanceName = $("#instanceName").val();
 
     var params = {
         applicationName: application,
@@ -186,7 +187,8 @@ function createEcsInstance() {
         regionId: regionId,
         vSwitchId: vSwitchId,
         instanceType: instanceType,
-        amount: amount
+        amount: amount,
+        instanceName: instanceName
     };
 
     $.ajax({

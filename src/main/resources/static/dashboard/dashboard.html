@@ -28,11 +28,15 @@
 <main>
   <nav class="navbar navbar-expand bg-body-secondary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="iconfont icon-sls" style="font-size: 1.3rem;"></i> Dashboard</a>
+      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Dashboard</a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
             <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSDashboard()">
+              <option selected disabled value="">Please select application</option>
+              <option value="application1">应用1</option>
+              <option value="application2">应用2</option>
+              <option value="application3">应用3</option>
             </select>
           </li>
           <!--          <li class="nav-item">-->
@@ -56,19 +60,7 @@
       var queryString = window.location.search;
       var urlParams = new URLSearchParams(queryString);
       appName = urlParams.get('appName');
-      appName = appName === null ? "application1" : appName;
-      $.ajax({
-        url: "../common/getApplication.do",
-        success: function(result){
-            if (result.success) {
-                console.log(result.data);
-                applist = result.data;
-                addSelectOptions(applist);
-            } else {
-                alert(result.errorMsg);
-            }
-        }
-      });
+      // appName = appName === null ? "application1" : appName;
       if (appName !== null) {
         document.getElementById("logAppsSelect").value = appName;
         var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
@@ -76,12 +68,10 @@
         // document.getElementById("dreamweb-monitor-btn").classList.add("active");
         console.log("page:" + page);
       }
+      getApplication();
     });
 
     var links = document.querySelectorAll(".navbar-nav a");
-
-
-
 
     // links.forEach(function (link) {
     //   link.addEventListener("click", function (e) {
@@ -108,15 +98,29 @@
       console.log("page:" + page);
     }
 
-    function addSelectOptions(applist) {
-      applist.forEach(function(app) {
-        var option = `
-        <option value="${app}">${app}</option>
-        `;
-        $("#logAppsSelect").append(option);
-      })
-    }
-
+    function getApplication() {
+    $.ajax({
+        url: "../" + "common/getApplication.do",
+        type: "POST",
+        data: {},
+        success: function (result) {
+            if (result.success) {
+                var application = document.getElementById("logAppsSelect");
+                var data = result.data;
+                for (var i = application.length - 1; i >= 1; i--) {
+                    application.remove(i);
+                }
+                for (var i = 0; i < data.length; i++) {
+                    application.options.add(new Option(data[i], data[i]));
+                }
+                application.value = "";
+            } else {
+                console.log("data.message: " + result.errorMsg);
+                alert(result.errorMsg);
+            }
+        },
+    })
+  }
 
   </script>
 </body>
