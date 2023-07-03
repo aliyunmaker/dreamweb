@@ -68,7 +68,7 @@ function createCards(appName) {
                             <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
                             data-bs-toggle="dropdown" aria-expanded="false"></a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" onclick=jumpToDashboard('${app.appName}')>Dashboard</a></li>
+                                <li><a class="dropdown-item" href="#" onclick=jumpToMonitor('${app.appName}')>Monitor</a></li>
                                 <li><a class="dropdown-item" href="#" onclick=jumpToLogCenter('${app.appName}')>Log Center</a></li>
                             </ul>
                         </div>
@@ -116,10 +116,10 @@ function jumpToLogCenter(appName) {
     window.parent.postMessage(message, "*");
 }
 
-// 跳转到dashboard
-function jumpToDashboard(appName) {
+// 跳转到monitor
+function jumpToMonitor(appName) {
     var message = {};
-    message.destination = "dashboard";
-    message.url = "dashboard/dashboard.html?appName=" + appName;
+    message.destination = "monitor";
+    message.url = "monitor/monitor.html?appName=" + appName;
     window.parent.postMessage(message, "*");
 }

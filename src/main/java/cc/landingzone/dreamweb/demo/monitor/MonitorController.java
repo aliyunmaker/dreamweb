@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.demo.dashboard;
+package cc.landingzone.dreamweb.demo.monitor;
 
 import cc.landingzone.dreamweb.common.BaseController;
 import cc.landingzone.dreamweb.common.CommonConstants;
@@ -15,10 +15,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Controller
-public class DashboardController extends BaseController {
+public class MonitorController extends BaseController {
 
-    @RequestMapping("/signSLSDashboard.do")
-    public void signSLSDashboard(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("/signSLSMonitor.do")
+    public void signSLSMonitor(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
             long start = System.currentTimeMillis();
@@ -50,7 +50,7 @@ public class DashboardController extends BaseController {
                     + "&LoginUrl=https%3a%2f%2faliyun.com&SigninToken="
                     + signToken;
             response.sendRedirect(redirectUrl);
-            logger.info("signSLSDashboard cost: " + (System.currentTimeMillis() - start) + "ms");
+            logger.info("signSLSMonitor cost: " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

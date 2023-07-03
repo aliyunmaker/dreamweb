@@ -281,14 +281,14 @@ public class SSOController extends BaseController implements InitializingBean {
             String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
-            String uid = CommonConstants.Aliyun_UserId;
+            String uid = SSOConstants.getSSOSpUserId(ssoSp);
             String userRoleId = request.getParameter("userRoleId");
             String idpEntityId = SSOConstants.IDP_ENTITY_ID;
 
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
-            String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider" + idpEntityId;
+            String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
             roleSet.add(userRoleValue);
             List<String> roleStringList = new ArrayList<String>(roleSet);
             attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);

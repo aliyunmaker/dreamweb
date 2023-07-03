@@ -32,8 +32,7 @@
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect">
-                <option selected>Please select application</option>
+              <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSLogCenter()">
               </select>
             </li>
             <li class="nav-item">
@@ -60,19 +59,17 @@
       var queryString = window.location.search;
       var urlParams = new URLSearchParams(queryString);
       appName = urlParams.get('appName');
+      appName = appName === null ? "application1" : appName;
       $.ajax({
         url: "../common/getApplication.do",
         success: function(result){
             if (result.success) {
-                console.log(result.data);
                 applist = result.data;
                 addSelectOptions(applist);
-                if (appName !== null) {
-                  document.getElementById("logAppsSelect").value = appName;
-                  var page = "../signSLS.do?projectName="+appName+"-dreamweb";
-                  iframe.setAttribute("src", page);
-                  document.getElementById("access-log-btn").classList.add("active");
-                }
+                document.getElementById("logAppsSelect").value = appName;
+                var page = "../signSLS.do?projectName="+appName+"-dreamweb";
+                iframe.setAttribute("src", page);
+                document.getElementById("access-log-btn").classList.add("active");
             } else {
                 alert(result.errorMsg);
             }
@@ -106,6 +103,15 @@
         `;
         $("#logAppsSelect").append(option);
       })
+    }
+
+    function signSLSLogCenter() {
+      links.forEach(function (link) {
+          link.classList.remove("active");
+        });
+      document.getElementById("access-log-btn").classList.add("active");
+      var page = "../signSLS.do?projectName="+$("#logAppsSelect").val()+"-dreamweb";
+      iframe.setAttribute("src", page);
     }
 
 

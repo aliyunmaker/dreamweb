@@ -28,12 +28,11 @@
 <main>
   <nav class="navbar navbar-expand bg-body-secondary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Dashboard</a>
+      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Monitor</a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSDashboard()">
-              <option selected disabled value="">Please select application</option>
+            <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSMonitor()">
             </select>
           </li>
           <!--          <li class="nav-item">-->
@@ -62,16 +61,13 @@
         url: "../common/getApplication.do",
         success: function(result){
             if (result.success) {
-                console.log(result.data);
                 applist = result.data;
                 addSelectOptions(applist);
-                if (appName !== null) {
-                  document.getElementById("logAppsSelect").value = appName;
-                  var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
-                  iframe.setAttribute("src", page);
-                  // document.getElementById("dreamweb-monitor-btn").classList.add("active");
-                  console.log("page:" + page);
-                }
+                document.getElementById("logAppsSelect").value = appName;
+                var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
+                iframe.setAttribute("src", page);
+                // document.getElementById("dreamweb-monitor-btn").classList.add("active");
+                console.log("page:" + page);
             } else {
                 alert(result.errorMsg);
             }
@@ -109,8 +105,8 @@
     //   });
     // });
 
-    function signSLSDashboard() {
-      var page = "../signSLSDashboard.do?projectName="+$("#logAppsSelect").val()+"-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
+    function signSLSMonitor() {
+      var page = "../signSLSMonitor.do?projectName="+$("#logAppsSelect").val()+"-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
       iframe.setAttribute("src", page);
       console.log("page:" + page);
     }

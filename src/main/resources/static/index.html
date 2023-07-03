@@ -49,8 +49,8 @@
           </a>
         </li>
         <li>
-          <a href="#" class="nav-link text-white" data-link="dashboard/dashboard.html" id="dashboard-btn">
-            <i class="iconfont icon-dashboard"></i>&nbsp;&nbsp;Dashboard
+          <a href="#" class="nav-link text-white" data-link="monitor/monitor.html" id="monitor-btn">
+            <i class="iconfont icon-dashboard"></i>&nbsp;&nbsp;Monitor
           </a>
         </li>
         <li>
@@ -124,14 +124,14 @@
         document.getElementById('log-center-btn').classList.add("active");
 
         iframe.setAttribute("src", event.data.url);
-      } else if (event.data.destination === "dashboard") {
+      } else if (event.data.destination === "monitor") {
         // Remove active class from all links
         links.forEach(function (link) {
           link.classList.remove("active");
         });
 
         // Add active class to the clicked link
-        document.getElementById('dashboard-btn').classList.add("active");
+        document.getElementById('monitor-btn').classList.add("active");
 
         iframe.setAttribute("src", event.data.url);
       }
