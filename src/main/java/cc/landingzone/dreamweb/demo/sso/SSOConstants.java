@@ -125,8 +125,8 @@ public class SSOConstants {
     private static final String ALIYUN_USER_REPLY_URL = "https://signin.aliyun.com/saml/SSO";
 
     // aliyun user cloud sso
-    private static final String ALIYUN_USER_CLOUDSSO_IDENTIFIER = "https://signin-cn-shanghai.alibabacloudsso.com/saml/sp/d-00b51e6dt935";
-    private static final String ALIYUN_USER_CLOUDSSO_REPLY_URL = "https://signin-cn-shanghai.alibabacloudsso.com/saml/acs/8ea99d48-bc72-45be-83a5-7e49d67be446";
+    private static final String ALIYUN_USER_CLOUDSSO_IDENTIFIER = "https://signin-cn-shanghai.alibabacloudsso.com/saml/sp/d-00ku3dzn9l01";
+    private static final String ALIYUN_USER_CLOUDSSO_REPLY_URL = "https://signin-cn-shanghai.alibabacloudsso.com/saml/acs/35f4bddf-2d3c-4347-b520-2cb7241e7e6d";
 
     // aws role sso
     private static final String AWS_IDENTIFIER = "urn:amazon:webservices";
@@ -145,7 +145,7 @@ public class SSOConstants {
             case aliyun:
             case aliyun_user:
             case aliyun_user_cloudsso:
-                return CommonConstants.Aliyun_UserId;
+                return CommonConstants.Aliyun_SSO_UserId;
             case aws:
             case aws_user:
                 return CommonConstants.AWS_UserId;

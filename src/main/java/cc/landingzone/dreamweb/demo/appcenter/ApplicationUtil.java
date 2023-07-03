@@ -44,8 +44,15 @@ public class ApplicationUtil {
             if ("LOG".equals(serviceName)) {
                 serviceName = "SLS";
             }
-            if (servicesCount.get(serviceName) != null) {
-                servicesCount.merge(serviceName, 1, Integer::sum);
+            String resourceType = resource.getResourceARN().split(":")[5].split("/")[0];
+            try {
+                ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
+                // resourceType要为特定类型，如：ecs instance
+                if (servicesCount.get(serviceName) != null && resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase())) {
+                    servicesCount.merge(serviceName, 1, Integer::sum);
+                }
+            } catch (Exception ignored) {
+
             }
         }
 
@@ -116,20 +123,29 @@ public class ApplicationUtil {
         List<ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources> resourcesResponse = getResourcesByTag(CommonConstants.APPLICATION_TAG_KEY, appName);
 
         for (ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources resourceResponse: resourcesResponse) {
-            // ARN format: arn:acs:${Service}:${Region}:${Account}:${ResourceType}/${ResourceId}
+            // ARN format: arn:acs:${Service}:${Region}:${Account}:${ResourceType(e.g.instance)}/${ResourceId}
             String[] splitArn = resourceResponse.getResourceARN().split(":");
             String serviceName = splitArn[2].toUpperCase();
             if ("LOG".equals(serviceName)) {
                 serviceName = "SLS";
             }
             String regionId = splitArn[3];
+            String resourceType = splitArn[5].split("/")[0];
             String resourceId = splitArn[5].split("/")[1];
 
-            Resource resource = new Resource();
-            resource.setServiceName(serviceName);
-            resource.setRegionId(regionId);
-            resource.setResourceId(resourceId);
-            resources.add(resource);
+            try {
+                ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
+                // resourceType要为特定类型，如：ecs instance
+                if (resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase())) {
+                    Resource resource = new Resource();
+                    resource.setServiceName(serviceName);
+                    resource.setRegionId(regionId);
+                    resource.setResourceId(resourceId);
+                    resources.add(resource);
+                }
+            } catch (Exception ignored) {
+                // 如果serviceName不在ServiceEnum里面，跳过这个resource
+            }
         }
 
         return resources;

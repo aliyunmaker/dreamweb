@@ -117,7 +117,6 @@ public class SSOController extends BaseController implements InitializingBean {
             } else if (SSOSpEnum.aliyun_user_cloudsso.equals(ssoSp)) {
                 nameID = userRoleId;
             }  else {
-                nameID = "kenmako555@gmail.com";
                 attributes = new HashMap<String, List<String>>();
                 // 只有role sso 才需要这些参数
                 Set<String> roleSet = new HashSet<String>();

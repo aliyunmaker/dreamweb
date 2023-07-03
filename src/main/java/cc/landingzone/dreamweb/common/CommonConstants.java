@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,6 +21,7 @@ public class CommonConstants {
 
     public static final String Aliyun_UserId;
     public static final String AWS_UserId;
+    public static final String Aliyun_SSO_UserId;
 
     public static final String Aliyun_REGION_HANGZHOU = "cn-hangzhou";
 
@@ -35,8 +35,6 @@ public class CommonConstants {
     public static final List<SSOUserRole> SSO_LOGIN_USER_IDS = new ArrayList<>();
     public static final List<SSOUserRole> SSO_LOGIN_ROLE_IDS = new ArrayList<>();
     public static final List<SSOUserRole> SSO_LOGIN_CLOUD_USER_IDS = new ArrayList<>();
-    public static final List<String> applicationList = Arrays.asList("application1", "application2", "application3",
-            "application4", "application5");
 
     // 用于免密登录的RAM角色ARN
     public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";
@@ -70,6 +68,7 @@ public class CommonConstants {
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         Aliyun_UserId = properties.getProperty("dreamweb.aliyun_userid");
         AWS_UserId = properties.getProperty("dreamweb.aws_userid");
+        Aliyun_SSO_UserId = properties.getProperty("dreamweb.aliyun_sso_userid");
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";

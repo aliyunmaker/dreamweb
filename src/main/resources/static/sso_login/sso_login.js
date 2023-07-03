@@ -7,7 +7,6 @@ $(document).ready(function() {
         url: "../listLoginUsers.do",
         success: function(result){
             if (result.success) {
-                console.log(result.data);
                 aliyunUserId = result.data.aliyunUserId;
                 roles = result.data.roles;
                 users = result.data.users;

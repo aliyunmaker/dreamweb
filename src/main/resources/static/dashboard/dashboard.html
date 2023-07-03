@@ -33,11 +33,6 @@
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
             <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSDashboard()">
-              <option value="application1">application1</option>
-              <option value="application2">application2</option>
-              <option value="application3">application3</option>
-              <option value="application4">application4</option>
-              <option value="application5">application5</option>
             </select>
           </li>
           <!--          <li class="nav-item">-->
@@ -62,6 +57,18 @@
       var urlParams = new URLSearchParams(queryString);
       appName = urlParams.get('appName');
       appName = appName === null ? "application1" : appName;
+      $.ajax({
+        url: "../common/getApplication.do",
+        success: function(result){
+            if (result.success) {
+                console.log(result.data);
+                applist = result.data;
+                addSelectOptions(applist);
+            } else {
+                alert(result.errorMsg);
+            }
+        }
+      });
       if (appName !== null) {
         document.getElementById("logAppsSelect").value = appName;
         var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
@@ -99,6 +106,15 @@
       var page = "../signSLSDashboard.do?projectName="+$("#logAppsSelect").val()+"-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
       iframe.setAttribute("src", page);
       console.log("page:" + page);
+    }
+
+    function addSelectOptions(applist) {
+      applist.forEach(function(app) {
+        var option = `
+        <option value="${app}">${app}</option>
+        `;
+        $("#logAppsSelect").append(option);
+      })
     }
 
 

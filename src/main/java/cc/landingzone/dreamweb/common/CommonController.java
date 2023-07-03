@@ -14,7 +14,7 @@ public class CommonController extends BaseController{
     @RequestMapping("/getApplication.do")
     public void getApplication(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
-        result.setData(CommonConstants.applicationList);
+        result.setData(ApplicationEnum.values());
         outputToJSON(response, result);
     }
 

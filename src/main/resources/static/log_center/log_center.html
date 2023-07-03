@@ -34,11 +34,6 @@
             <li class="nav-item">
               <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect">
                 <option selected>Please select application</option>
-                <option value="application1">application1</option>
-                <option value="application2">application2</option>
-                <option value="application3">application3</option>
-                <option value="application4">application4</option>
-                <option value="application5">application5</option>
               </select>
             </li>
             <li class="nav-item">
@@ -65,6 +60,18 @@
       var queryString = window.location.search;
       var urlParams = new URLSearchParams(queryString);
       appName = urlParams.get('appName');
+      $.ajax({
+        url: "../common/getApplication.do",
+        success: function(result){
+            if (result.success) {
+                console.log(result.data);
+                applist = result.data;
+                addSelectOptions(applist);
+            } else {
+                alert(result.errorMsg);
+            }
+        }
+      });
       if (appName !== null) {
         document.getElementById("logAppsSelect").value = appName;
         var page = "../signSLS.do?projectName="+appName+"-dreamweb";
@@ -91,6 +98,15 @@
         e.target.classList.add("active");
       });
     });
+
+    function addSelectOptions(applist) {
+      applist.forEach(function(app) {
+        var option = `
+        <option value="${app}">${app}</option>
+        `;
+        $("#logAppsSelect").append(option);
+      })
+    }
 
 
     // var queryString = "null";
