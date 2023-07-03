@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +35,8 @@ public class CommonConstants {
     public static final List<SSOUserRole> SSO_LOGIN_USER_IDS = new ArrayList<>();
     public static final List<SSOUserRole> SSO_LOGIN_ROLE_IDS = new ArrayList<>();
     public static final List<SSOUserRole> SSO_LOGIN_CLOUD_USER_IDS = new ArrayList<>();
+    public static final List<String> applicationList = Arrays.asList("application1", "application2", "application3",
+            "application4", "application5");
 
     // 用于免密登录的RAM角色ARN
     public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";

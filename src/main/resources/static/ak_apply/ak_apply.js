@@ -24,9 +24,8 @@ $(document).ready(function() {
             styleActiveLine: true, //光标所在行高亮
             //readOnly: true,      //只读
     });
-    
-    
 
+    getApplication();
 });
 
 
@@ -126,7 +125,6 @@ function listResourcesByAppEnvAndResType() {
     concreteResource.remove(i);
   }
 
-
   $.ajax({
     url: "../" + "akApply/listResourcesByAppEnvAndResType.do",
     type: "POST",
@@ -142,6 +140,30 @@ function listResourcesByAppEnvAndResType() {
           concreteResource.options.add(new Option(data[i], data[i]));
         }
         concreteResource.value = "";
+      } else {
+        console.log("data.message: " + result.errorMsg);
+        alert(result.errorMsg);
+      }
+    },
+  })
+}
+
+function getApplication(){
+  $.ajax({
+    url: "../" + "common/getApplication.do",
+    type: "POST",
+    data: {},
+    success: function (result) {
+      if (result.success) {
+        var application = document.getElementById("application");
+        var data = result.data;
+        for (var i = application.length - 1; i >= 1; i--) {
+          application.remove(i);
+        }
+        for (var i = 0; i < data.length; i++) {
+          application.options.add(new Option(data[i], data[i]));
+        }
+        application.value = "";
       } else {
         console.log("data.message: " + result.errorMsg);
         alert(result.errorMsg);
