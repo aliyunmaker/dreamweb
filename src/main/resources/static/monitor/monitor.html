@@ -45,7 +45,7 @@
     </div>
   </nav>
   <div class="iframe-container">
-    <iframe id="iframe" src="../loading.html" width="100%" height="100%"></iframe>
+    <iframe id="iframe" src="../loading_spinner.html" width="100%" height="100%"></iframe>
   </div>
 </main>
 <script>
@@ -64,7 +64,7 @@
                 applist = result.data;
                 addSelectOptions(applist);
                 document.getElementById("logAppsSelect").value = appName;
-                var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
+                var page = "../signSLSMonitor.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
                 iframe.setAttribute("src", page);
                 // document.getElementById("dreamweb-monitor-btn").classList.add("active");
                 console.log("page:" + page);
