@@ -5,6 +5,8 @@ import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.common.model.WebResult;
 import cc.landingzone.dreamweb.common.utils.FileUtil;
+import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
+import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -156,21 +158,24 @@ public class ResourceSupplyController extends BaseController {
         try {
             String applicationName = request.getParameter("applicationName");
             String environment = request.getParameter("environmentName");
+            String vpcId = request.getParameter("vpcId");
             Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
             Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
+            Assert.isTrue(StringUtils.isNotEmpty(vpcId), "vpcId can not be empty");
             logger.info("applicationName: " + applicationName);
             logger.info("environment: " + environment);
-            long startTime = System.currentTimeMillis();
-            String resourceType = CommonConstants.VSWITCH_RESOURCETYPE;
-            List<String> resourceIds = ServiceHelper.listResourcesByTag(applicationName, environment, resourceType);
-            logger.info("listResourcesByTag(): " + (System.currentTimeMillis() - startTime) + "ms");
+            logger.info("vpcId: " + vpcId);
+            DescribeVpcAttributeResponseBody.DescribeVpcAttributeResponseBodyVSwitchIds vSwitchIds =
+                    ServiceHelper.describeVpcAttribute(vpcId).getVSwitchIds();
             List<String> vSwitches = new ArrayList<>();
-            for (String resourceId : resourceIds) {
-                String vSwitchName = ServiceHelper.describeVSwitchAttribute(resourceId);
-                vSwitches.add(vSwitchName + " / " + resourceId);
+            for (String vSwitchId : vSwitchIds.getVSwitchId()) {
+                DescribeVSwitchAttributesResponseBody responseBody =
+                        ServiceHelper.describeVSwitchAttribute(vSwitchId);
+                if(ResourceSupplyUtil.isVSwitchTagMatch(responseBody, applicationName, environment)) {
+                    vSwitches.add(responseBody.getVSwitchName() + " / " + vSwitchId);
+                }
             }
             logger.info("vSwitches: " + vSwitches);
-            logger.info("getVSwitches(): " + (System.currentTimeMillis() - startTime) + "ms");
             result.setData(vSwitches);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -179,4 +184,35 @@ public class ResourceSupplyController extends BaseController {
         }
         outputToJSON(response, result);
     }
+
+    @PostMapping(
+            path = "/getVpcList.do",
+            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+    )
+    public void getVpcList(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String applicationName = request.getParameter("applicationName");
+            String environment = request.getParameter("environmentName");
+            Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
+            Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
+            logger.info("applicationName: " + applicationName);
+            logger.info("environment: " + environment);
+            String resourceType = CommonConstants.VPC_RESOURCETYPE;
+            List<String> resourceIds = ServiceHelper.listResourcesByTag(applicationName, environment, resourceType);
+            List<String> vpcList = new ArrayList<>();
+            for (String resourceId : resourceIds) {
+                String vpcName = ServiceHelper.describeVpcAttribute(resourceId).getVpcName();
+                vpcList.add(vpcName + " / " + resourceId);
+            }
+            logger.info("vpcList: " + vpcList);
+            result.setData(vpcList);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
 }

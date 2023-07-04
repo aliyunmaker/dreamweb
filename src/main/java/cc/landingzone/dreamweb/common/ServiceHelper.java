@@ -7,6 +7,8 @@ import com.aliyun.tag20180828.models.ListResourcesByTagRequest;
 import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesRequest;
+import com.aliyun.vpc20160428.models.DescribeVpcAttributeRequest;
+import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
 import darabonba.core.client.ClientOverrideConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,11 +205,11 @@ public class ServiceHelper {
     }
 
     /**
-     * 查询指定交换机的配置信息,返回交换机名称
+     * 查询指定交换机的配置信息,返回交换机信息
      *
      * @param vSwitchId
      */
-    public static String describeVSwitchAttribute(String vSwitchId) throws Exception {
+    public static com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody describeVSwitchAttribute(String vSwitchId) throws Exception {
         com.aliyun.vpc20160428.Client client = createVpcClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         DescribeVSwitchAttributesRequest describeVSwitchAttributesRequest = new DescribeVSwitchAttributesRequest()
@@ -216,8 +218,22 @@ public class ServiceHelper {
                 .setDryRun(false);
         RuntimeOptions runtime = new RuntimeOptions();
         return client.describeVSwitchAttributesWithOptions(describeVSwitchAttributesRequest, runtime)
-                .getBody().getVSwitchName();
+                .getBody();
+    }
 
+    /**
+     * 查询指定VPC的配置信息,返回VPC信息
+     *
+     * @param vpcId
+     */
+    public static DescribeVpcAttributeResponseBody describeVpcAttribute(String vpcId) throws Exception {
+        com.aliyun.vpc20160428.Client client = createVpcClient
+                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        DescribeVpcAttributeRequest describeVpcAttributeRequest = new DescribeVpcAttributeRequest()
+                .setVpcId(vpcId)
+                .setRegionId("cn-hangzhou");
+        RuntimeOptions runtime = new RuntimeOptions();
+        return client.describeVpcAttributeWithOptions(describeVpcAttributeRequest, runtime).getBody();
     }
 
 

@@ -29,7 +29,7 @@ $(document).ready(function () {
     });
 
     $('input[type=radio][name=environmentType]').change(function () {
-        getVSwitches();
+        getVpcList();
     });
 
     getApplication();
@@ -85,14 +85,50 @@ links.forEach(function (link) {
     });
 });
 
+function getVpcList() {
+    var application = $("#application").val();
+    var environmentType = $("input[name='environmentType']:checked").val();
+    var params = {
+        applicationName: application,
+        environmentName: environmentType,
+    };
+    $.ajax({
+        url: "../" + "resourceSupply/getVpcList.do",
+        type: "POST",
+        data: params,
+        contentType: "application/x-www-form-urlencoded",
+        success: function (result) {
+            if (result.success) {
+                var vpc = document.getElementById("vpc");
+                for (var i = vpc.length - 1; i >= 1; i--) {
+                    vpc.remove(i);
+                }
+                data = result.data;
+                for (var i = 0; i < data.length; i++) {
+                    var vpcId = data[i].split("/")[1].trim();
+                    console.log("vpcId: " + vpcId);
+                    vpc.options.add(new Option(data[i], vpcId));
+                }
+                vpc.value = "";
+            } else {
+                console.log("result.errorMsg: " + result.errorMsg);
+                alert(result.errorMsg);
+            }
+        },
+    })
+}
+
+
+
 function getVSwitches() {
     var application = $("#application").val();
     var environmentType = $("input[name='environmentType']:checked").val();
-
+    var vpcId = $("#vpc").val();
 
     var params = {
         applicationName: application,
         environmentName: environmentType,
+        vpcId: vpcId
     };
 
     $.ajax({

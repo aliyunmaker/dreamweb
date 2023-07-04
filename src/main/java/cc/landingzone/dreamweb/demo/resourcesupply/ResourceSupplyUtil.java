@@ -17,6 +17,7 @@ import com.aliyun.sls20201230.models.CreateProjectRequest;
 import com.aliyun.tag20180828.models.TagResourcesRequest;
 import com.aliyun.tag20180828.models.TagResourcesResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
+import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
 import com.aliyun.vpc20160428.models.DescribeVSwitchesRequest;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -30,7 +31,21 @@ public class ResourceSupplyUtil {
 
     public static Logger logger = LoggerFactory.getLogger(AkApplyUtil.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+//        String vpcId = "vpc-bp1b50s9blogw7ra0zppz";
+//        DescribeVpcAttributeResponseBody.DescribeVpcAttributeResponseBodyVSwitchIds vSwitchIds =
+//                ServiceHelper.describeVpcAttribute(vpcId).getVSwitchIds();
+//        List<String> vSwitches = new ArrayList<>();
+//        for (String vSwitchId : vSwitchIds.getVSwitchId()) {
+//            DescribeVSwitchAttributesResponseBody responseBody =
+//                    ServiceHelper.describeVSwitchAttribute(vSwitchId);
+//            if(ResourceSupplyUtil.isVSwitchTagMatch(responseBody, "application1", "product")) {
+//                vSwitches.add(responseBody.getVSwitchName() + " / " + vSwitchId);
+//            }
+//        }
+//        logger.info("vSwitches: {}", vSwitches);
+
+
 //       String regionId = "cn-hangzhou";
 //       String vSwitchId = "vsw-bp1xbv82k61y8izq0wq3h";
 //       String instanceType = "ecs.i2.xlarge";
@@ -39,7 +54,7 @@ public class ResourceSupplyUtil {
 
 //        createOssBucket("buckettestapi1");
 
-        System.out.println(ServiceEnum.ECS.name());
+//        System.out.println(ServiceEnum.ECS.name());
 
 //        String regionId = "cn-hangzhou";
 //        String generation = "ecs-3";
@@ -197,7 +212,25 @@ public class ResourceSupplyUtil {
                     vSwitchList.add(vSwitch.getVSwitchName() + " / " + vSwitch.getVSwitchId());
                 });
         return vSwitchList;
+    }
 
+    /**
+     * 判断vSwitch的标签是否为application和environmentName
+     */
+    public static boolean isVSwitchTagMatch(DescribeVSwitchAttributesResponseBody describeVSwitchAttributesResponseBody
+            , String applicationName, String environmentName) throws Exception {
+        if (describeVSwitchAttributesResponseBody.getTags() == null) {
+            return false;
+        }
+        List<DescribeVSwitchAttributesResponseBody.DescribeVSwitchAttributesResponseBodyTagsTag> tagList =
+                describeVSwitchAttributesResponseBody.getTags().getTag();
+        for (DescribeVSwitchAttributesResponseBody.DescribeVSwitchAttributesResponseBodyTagsTag describeVSwitchAttributesResponseBodyTagsTag : tagList) {
+            if (!describeVSwitchAttributesResponseBodyTagsTag.getValue().equals(applicationName) &&
+                    !describeVSwitchAttributesResponseBodyTagsTag.getValue().equals(environmentName)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
