@@ -1,13 +1,10 @@
-package cc.landingzone.dreamweb.demo.resourcesupply;
+package cc.landingzone.dreamweb.demo.resourceapply;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.common.ServiceHelper;
-import cc.landingzone.dreamweb.demo.akapply.AkApplyUtil;
 import com.alibaba.fastjson.JSON;
-import com.aliyun.ecs20140526.models.DescribeInstanceTypeFamiliesRequest;
-import com.aliyun.ecs20140526.models.RunInstancesRequest;
-import com.aliyun.ecs20140526.models.RunInstancesResponse;
+import com.aliyun.ecs20140526.models.*;
 import com.aliyun.sdk.service.oss20190517.AsyncClient;
 import com.aliyun.sdk.service.oss20190517.models.CreateBucketConfiguration;
 import com.aliyun.sdk.service.oss20190517.models.PutBucketRequest;
@@ -18,7 +15,6 @@ import com.aliyun.tag20180828.models.TagResourcesRequest;
 import com.aliyun.tag20180828.models.TagResourcesResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
-import com.aliyun.vpc20160428.models.DescribeVSwitchesRequest;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +23,12 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
-public class ResourceSupplyUtil {
+public class ResourceApplyUtil {
 
-    public static Logger logger = LoggerFactory.getLogger(AkApplyUtil.class);
+    public static Logger logger = LoggerFactory.getLogger(ResourceApplyUtil.class);
 
     public static void main(String[] args) throws Exception {
+        System.out.println(getSecurityGroupIdByVpc("vpc-bp11fr9p1t7m93gebxj02", "application1", "product"));
 //        String vpcId = "vpc-bp1b50s9blogw7ra0zppz";
 //        DescribeVpcAttributeResponseBody.DescribeVpcAttributeResponseBodyVSwitchIds vSwitchIds =
 //                ServiceHelper.describeVpcAttribute(vpcId).getVSwitchIds();
@@ -61,21 +58,21 @@ public class ResourceSupplyUtil {
 //        System.out.println(describeInstanceTypeFamilies(regionId, generation));
     }
 
-    public static void createEcsInstance(String regionId, String vSwitchId, String instanceType, int amount,
+    public static void createEcsInstance(String regionId, String vpcId, String vSwitchId, String instanceType, int amount,
                                          String applicationName, String environmentName, String instanceName) throws Exception {
         com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         RuntimeOptions runtime = new RuntimeOptions();
 
-        RunInstancesRequest.RunInstancesRequestSystemDisk systemDisk = new RunInstancesRequest.RunInstancesRequestSystemDisk();
-        systemDisk.setSize(CommonConstants.DEFAULT_ECS_SYSTEM_DISK_SIZE);
-        // 系统盘类型: cloud_efficiency(高效云盘), cloud_ssd(SSD云盘), cloud_essd(ESSD云盘)
-        systemDisk.setCategory(CommonConstants.DEFAULT_ECS_SYSTEM_DISK_CATEGORY);
-        List<RunInstancesRequest.RunInstancesRequestDataDisk> dataDisks = new ArrayList<>();
-        RunInstancesRequest.RunInstancesRequestDataDisk dataDisk = new RunInstancesRequest.RunInstancesRequestDataDisk();
-        dataDisk.setSize(Integer.valueOf(CommonConstants.DEFAULT_ECS_DATA_DISK_SIZE));
-        dataDisk.setCategory(CommonConstants.DEFAULT_ECS_DATA_DISK_CATEGORY);
-        dataDisks.add(dataDisk);
+//        RunInstancesRequest.RunInstancesRequestSystemDisk systemDisk = new RunInstancesRequest.RunInstancesRequestSystemDisk();
+//        systemDisk.setSize(CommonConstants.DEFAULT_ECS_SYSTEM_DISK_SIZE);
+//        // 系统盘类型: cloud_efficiency(高效云盘), cloud_ssd(SSD云盘), cloud_essd(ESSD云盘)
+//        systemDisk.setCategory(CommonConstants.DEFAULT_ECS_SYSTEM_DISK_CATEGORY);
+//        List<RunInstancesRequest.RunInstancesRequestDataDisk> dataDisks = new ArrayList<>();
+//        RunInstancesRequest.RunInstancesRequestDataDisk dataDisk = new RunInstancesRequest.RunInstancesRequestDataDisk();
+//        dataDisk.setSize(Integer.valueOf(CommonConstants.DEFAULT_ECS_DATA_DISK_SIZE));
+//        dataDisk.setCategory(CommonConstants.DEFAULT_ECS_DATA_DISK_CATEGORY);
+//        dataDisks.add(dataDisk);
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .setRegionId(regionId)
@@ -84,13 +81,13 @@ public class ResourceSupplyUtil {
                 // 镜像ID
                 .setImageId(CommonConstants.DEFAULT_IMAGE_ID)
                 // 安全组ID
-                .setSecurityGroupId(CommonConstants.DEFAULT_SECURITY_GROUP_ID)
+                .setSecurityGroupId(getSecurityGroupIdByVpc(vpcId, applicationName, environmentName))
                 // 虚拟交换机ID,可用ID
                 .setVSwitchId(vSwitchId)
                 // 付费方式: PostPaid(按量付费), PrePaid(包年包月)
                 .setInstanceChargeType(CommonConstants.ECS_CHARGETYPE_POSTPAID)
-                .setSystemDisk(systemDisk)
-                .setDataDisk(dataDisks)
+//                .setSystemDisk(systemDisk)
+//                .setDataDisk(dataDisks)
                 // uuid: 标识唯一ECS
                 .setHostName(CommonConstants.DEFAULT_ECS_HOSTNAME + UUID.randomUUID())
                 .setInstanceName(instanceName)
@@ -105,7 +102,6 @@ public class ResourceSupplyUtil {
         logger.info("instanceIdSet:{}", JSON.toJSONString(instanceIdSet));
         attachTagToResource(applicationName, environmentName, ServiceEnum.ECS.getResourceName(),
                 instanceIdSet);
-
     }
 
     public static void createOssBucket(String bucketName, String applicationName, String environmentName) throws Exception {
@@ -175,44 +171,44 @@ public class ResourceSupplyUtil {
         }
     }
 
-    /**
-     * 查询云服务器ECS提供的实例规格族列表
-     *
-     * @param regionId
-     * @param generation
-     * @return
-     */
-    public static List<String> describeInstanceTypeFamilies(String regionId, String generation) throws Exception {
+//    /**
+//     * 查询云服务器ECS提供的实例规格族列表
+//     *
+//     * @param regionId
+//     * @param generation
+//     * @return
+//     */
+//    public static List<String> describeInstanceTypeFamilies(String regionId, String generation) throws Exception {
+//
+//        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
+//                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+//        RuntimeOptions runtime = new RuntimeOptions();
+//        DescribeInstanceTypeFamiliesRequest describeInstanceTypeFamiliesRequest = new DescribeInstanceTypeFamiliesRequest()
+//                .setRegionId(regionId)
+//                .setGeneration(generation);
+//        List<String> instanceTypeFamilies = new ArrayList<>();
+//        client.describeInstanceTypeFamiliesWithOptions(describeInstanceTypeFamiliesRequest, runtime).getBody().
+//                getInstanceTypeFamilies().getInstanceTypeFamily().forEach((instanceTypeFamily) -> {
+//                    instanceTypeFamilies.add(instanceTypeFamily.getInstanceTypeFamilyId());
+//                });
+//        return instanceTypeFamilies;
+//
+//    }
 
-        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
-                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-        RuntimeOptions runtime = new RuntimeOptions();
-        DescribeInstanceTypeFamiliesRequest describeInstanceTypeFamiliesRequest = new DescribeInstanceTypeFamiliesRequest()
-                .setRegionId(regionId)
-                .setGeneration(generation);
-        List<String> instanceTypeFamilies = new ArrayList<>();
-        client.describeInstanceTypeFamiliesWithOptions(describeInstanceTypeFamiliesRequest, runtime).getBody().
-                getInstanceTypeFamilies().getInstanceTypeFamily().forEach((instanceTypeFamily) -> {
-                    instanceTypeFamilies.add(instanceTypeFamily.getInstanceTypeFamilyId());
-                });
-        return instanceTypeFamilies;
-
-    }
-
-    public static List<String> describeVSwitches() throws Exception {
-
-        com.aliyun.vpc20160428.Client client = ServiceHelper.createVpcClient
-                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-        RuntimeOptions runtime = new RuntimeOptions();
-        DescribeVSwitchesRequest describeVSwitchesRequest = new DescribeVSwitchesRequest()
-                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
-        List<String> vSwitchList = new ArrayList<>();
-        client.describeVSwitchesWithOptions(describeVSwitchesRequest, runtime).getBody().
-                getVSwitches().getVSwitch().forEach((vSwitch) -> {
-                    vSwitchList.add(vSwitch.getVSwitchName() + " / " + vSwitch.getVSwitchId());
-                });
-        return vSwitchList;
-    }
+//    public static List<String> describeVSwitches() throws Exception {
+//
+//        com.aliyun.vpc20160428.Client client = ServiceHelper.createVpcClient
+//                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+//        RuntimeOptions runtime = new RuntimeOptions();
+//        DescribeVSwitchesRequest describeVSwitchesRequest = new DescribeVSwitchesRequest()
+//                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
+//        List<String> vSwitchList = new ArrayList<>();
+//        client.describeVSwitchesWithOptions(describeVSwitchesRequest, runtime).getBody().
+//                getVSwitches().getVSwitch().forEach((vSwitch) -> {
+//                    vSwitchList.add(vSwitch.getVSwitchName() + " / " + vSwitch.getVSwitchId());
+//                });
+//        return vSwitchList;
+//    }
 
     /**
      * 判断vSwitch的标签是否为application和environmentName
@@ -231,6 +227,48 @@ public class ResourceSupplyUtil {
             }
         }
         return true;
+    }
+
+    /**
+     * get securityGroupId by vpcId,if not exist,create one
+     */
+    public static String getSecurityGroupIdByVpc(String vpcId,String applicationName,String environment) throws Exception {
+        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
+                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        List<DescribeSecurityGroupsRequest.DescribeSecurityGroupsRequestTag> tagList = new ArrayList<>();
+        tagList.add(new DescribeSecurityGroupsRequest.DescribeSecurityGroupsRequestTag()
+                .setKey(CommonConstants.APPLICATION_TAG_KEY)
+                .setValue(applicationName));
+        tagList.add(new DescribeSecurityGroupsRequest.DescribeSecurityGroupsRequestTag()
+                .setKey(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY)
+                .setValue(environment));
+        com.aliyun.ecs20140526.models.DescribeSecurityGroupsRequest describeSecurityGroupsRequest = new com.aliyun.ecs20140526.models.DescribeSecurityGroupsRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setVpcId(vpcId)
+                .setNetworkType("vpc")
+                .setTag(tagList);
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        List<DescribeSecurityGroupsResponseBody.DescribeSecurityGroupsResponseBodySecurityGroupsSecurityGroup>
+                securityGroup = client.describeSecurityGroupsWithOptions
+                (describeSecurityGroupsRequest, runtime).getBody().getSecurityGroups().getSecurityGroup();
+        if (securityGroup == null || securityGroup.size() == 0) {
+            // create securityGroup
+            List<CreateSecurityGroupRequest.CreateSecurityGroupRequestTag> tagList2 = new ArrayList<>();
+            tagList2.add(new CreateSecurityGroupRequest.CreateSecurityGroupRequestTag()
+                    .setKey(CommonConstants.APPLICATION_TAG_KEY)
+                    .setValue(applicationName));
+            tagList2.add(new CreateSecurityGroupRequest.CreateSecurityGroupRequestTag()
+                    .setKey(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY)
+                    .setValue(environment));
+            com.aliyun.ecs20140526.models.CreateSecurityGroupRequest createSecurityGroupRequest = new com.aliyun.ecs20140526.models.CreateSecurityGroupRequest()
+                    .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                    .setVpcId(vpcId)
+                    .setSecurityGroupName(vpcId + UUID.randomUUID().toString())
+                    .setTag(tagList2);
+            return client.createSecurityGroupWithOptions(createSecurityGroupRequest, runtime).getBody().getSecurityGroupId();
+        }else {
+            return securityGroup.get(0).getSecurityGroupId();
+        }
     }
 
 }

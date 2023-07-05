@@ -1,13 +1,11 @@
-package cc.landingzone.dreamweb.demo.resourcesupply;
+package cc.landingzone.dreamweb.demo.resourceapply;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import cc.landingzone.dreamweb.common.BaseController;
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.ServiceHelper;
+import cc.landingzone.dreamweb.common.model.WebResult;
+import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
+import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -16,17 +14,16 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
-import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
-
-import cc.landingzone.dreamweb.common.BaseController;
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.ServiceHelper;
-import cc.landingzone.dreamweb.common.model.WebResult;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/resourceSupply")
-public class ResourceSupplyController extends BaseController {
+public class ResourceApplyController extends BaseController {
 
     @PostMapping(
             path = "/getTemplateByResourceType.do",
@@ -40,21 +37,7 @@ public class ResourceSupplyController extends BaseController {
             logger.info("resourceType: " + resourceType);
             logger.info("fileType: " + fileType);
             String filePath = "src/main/resources/resource_supply_template/" +
-                    fileType + "/" + resourceType + "/" + StringUtils.capitalize(resourceType);
-
-            switch (fileType) {
-                case "terraform":
-                   filePath += ".tf";
-                   break;
-                case "java":
-                     filePath += ".java";
-                     break;
-                case "ccapi":
-                    filePath += "Ccapi" + ".java";
-                    break;
-                default:
-                    throw new Exception("fileType not supported");
-            }
+                    fileType + "/" + resourceType + "/" + resourceType + ".txt";
             logger.info("filePath: " + filePath);
             String template = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);
             logger.info("template: " + template);
@@ -77,6 +60,7 @@ public class ResourceSupplyController extends BaseController {
             String applicationName = request.getParameter("applicationName");
             String environmentName = request.getParameter("environmentName");
             String regionId = request.getParameter("regionId");
+            String vpcId = request.getParameter("vpcId");
             String vSwitchId = request.getParameter("vSwitchId");
             String instanceType = request.getParameter("instanceType");
             String instanceName = request.getParameter("instanceName");
@@ -84,12 +68,13 @@ public class ResourceSupplyController extends BaseController {
             Assert.isTrue(StringUtils.isNotBlank(applicationName), "applicationName must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(environmentName), "environmentName must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(regionId), "regionId must not be blank");
+            Assert.isTrue(StringUtils.isNotBlank(vpcId), "vpcId must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(vSwitchId), "vSwitchId must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(instanceType), "instanceType must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(instanceName), "instanceName must not be blank");
             Assert.isTrue(amount > 0, "amount must be greater than 0");
             Assert.isTrue(amount <= 100, "amount must be less than 100");
-            ResourceSupplyUtil.createEcsInstance(regionId, vSwitchId, instanceType, amount, applicationName,
+            ResourceApplyUtil.createEcsInstance(regionId, vpcId,vSwitchId, instanceType, amount, applicationName,
                     environmentName,instanceName);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -118,7 +103,7 @@ public class ResourceSupplyController extends BaseController {
             logger.info("bucketName: " + bucketName);
             logger.info("applicationName: " + applicationName);
             logger.info("environment: " + environmentName);
-            ResourceSupplyUtil.createOssBucket(bucketName, applicationName, environmentName);
+            ResourceApplyUtil.createOssBucket(bucketName, applicationName, environmentName);
         } catch (Exception e) {
             logger.error(e.getMessage());
             result.setSuccess(false);
@@ -145,7 +130,7 @@ public class ResourceSupplyController extends BaseController {
             Assert.isTrue(projectName.matches("^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"),
                     "projectName 只能包括小写字母、数字和短划线（-）, 且必须以小写字母或者数字开头和结尾");
             Assert.isTrue(StringUtils.isNotEmpty(description), "description can not be empty");
-            ResourceSupplyUtil.createLogProject(projectName, description, applicationName, environmentName);
+            ResourceApplyUtil.createLogProject(projectName, description, applicationName, environmentName);
         } catch (Exception e) {
             logger.error(e.getMessage());
             result.setSuccess(false);
@@ -176,7 +161,7 @@ public class ResourceSupplyController extends BaseController {
             for (String vSwitchId : vSwitchIds.getVSwitchId()) {
                 DescribeVSwitchAttributesResponseBody responseBody =
                         ServiceHelper.describeVSwitchAttribute(vSwitchId);
-                if(ResourceSupplyUtil.isVSwitchTagMatch(responseBody, applicationName, environment)) {
+                if(ResourceApplyUtil.isVSwitchTagMatch(responseBody, applicationName, environment)) {
                     vSwitches.add(responseBody.getVSwitchName() + " / " + vSwitchId);
                 }
             }

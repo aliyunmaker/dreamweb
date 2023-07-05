@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.common;
 
+import com.aliyun.teautil.models.RuntimeOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class CommonConstants {
     public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";
 
     public static final String DEFAULT_IMAGE_ID = "ubuntu_18_04_64_20G_alibase_20190624.vhd";
-    public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp103rdxtizwmfam0tfa";
+//    public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp103rdxtizwmfam0tfa";
     public static final String DEFAULT_ECS_HOSTNAME = "ECS-test-";
     public static final String DEFAULT_ECS_PASSWORD = "ECS@test1234";
     public static final String ECS_CHARGETYPE_POSTPAID = "PostPaid";
@@ -59,7 +60,7 @@ public class CommonConstants {
         ENV_ONLINE = Boolean.parseBoolean(properties.getProperty("dreamweb.env_online"));
         Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
-        Aliyun_UserId = properties.getProperty("dreamweb.aliyun_userid");
+        Aliyun_UserId = getCallerIdentity();
         AWS_UserId = properties.getProperty("dreamweb.aws_userid");
         Aliyun_SSO_UserId = properties.getProperty("dreamweb.aliyun_sso_userid");
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
@@ -69,6 +70,7 @@ public class CommonConstants {
             LOGOUT_SUCCESS_URL = logoutSuccessUrl;
         }
     }
+
 
     public static Properties loadProperties() {
         Properties properties = new Properties();
@@ -84,5 +86,16 @@ public class CommonConstants {
         }
         return properties;
     }
+
+    public static String getCallerIdentity(){
+        try {
+            com.aliyun.sts20150401.Client client = ServiceHelper.createStsClient(Aliyun_AccessKeyId,Aliyun_AccessKeySecret);
+            RuntimeOptions runtime = new RuntimeOptions();
+            return client.getCallerIdentityWithOptions(runtime).getBody().getAccountId();
+        }catch (Exception e){
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+     }
 
 }

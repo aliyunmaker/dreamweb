@@ -7,11 +7,9 @@ public class OssCcapi {
     public static void main(String[] args_) throws Exception {
         String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
         String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
-
         com.aliyun.cloudcontrol20220830.Client client = createClient(accessKeyId, accessKeySecret);
         String requestPath = "/api/v1/providers/Aliyun/products/OSS/resources/Bucket";
         java.util.Map<String, String> body = TeaConverter.buildMap(
-                new TeaPair("StorageClass", "Standard"),
                 new TeaPair("BucketName", "dreamweb-oss-test")
         );
         com.aliyun.cloudcontrol20220830.models.CreateResourceRequest createResourceRequest = new com.aliyun.cloudcontrol20220830.models.CreateResourceRequest()

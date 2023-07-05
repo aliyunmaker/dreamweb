@@ -1,0 +1,58 @@
+provider "alicloud" {
+  region = var.region
+}
+
+resource "alicloud_instance" "instance" {
+  vswitch_id          = var.vswitch_id
+  instance_type       = var.instance_type
+  instance_name       = var.instance_name
+  count               = var.number_of_instances
+
+  image_id           = var.image_id
+  security_groups     = var.security_groups
+  tags = var.tags
+}
+
+variable "region" {
+  type = string
+  default = "cn-hangzhou"
+}
+
+variable "number_of_instances" {
+  type = number
+  default = 1
+}
+
+variable "instance_type" {
+  type = string
+  default = "ecs.n2.small"
+}
+
+variable "image_id" {
+  type = string
+  default = "ubuntu_18_04_64_20G_alibase_20190624.vhd"
+}
+
+variable "vswitch_id" {
+  type = string
+  default = "vsw-bp1tipegxihb0brq0qy61"
+}
+
+variable "security_groups" {
+  type = list(string)
+  default = ["sg-bp103rdxtizwmfam0tfa"]
+}
+
+variable "instance_name" {
+  type = string
+  default = "instance_name_test"
+}
+
+variable "tags" {
+  type = map(string)
+  default = {
+    application = "application1"
+    environmentType = "product"
+  }
+}
+

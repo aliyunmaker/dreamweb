@@ -1,8 +1,5 @@
 package cc.landingzone.dreamweb.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.aliyun.auth.credentials.Credential;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.sdk.service.oss20190517.AsyncClient;
@@ -12,8 +9,10 @@ import com.aliyun.teautil.models.RuntimeOptions;
 import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesRequest;
 import com.aliyun.vpc20160428.models.DescribeVpcAttributeRequest;
 import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
-
 import darabonba.core.client.ClientOverrideConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceHelper {
 
@@ -81,6 +80,14 @@ public class ServiceHelper {
                 .setAccessKeySecret(accessKeySecret);
         config.endpoint = "tag.aliyuncs.com";
         return new com.aliyun.tag20180828.Client(config);
+    }
+
+    public static com.aliyun.sts20150401.Client createStsClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "sts.cn-hangzhou.aliyuncs.com";
+        return new com.aliyun.sts20150401.Client(config);
     }
 
     public static com.aliyun.actiontrail20200706.Client createTrailClient(String accessKeyId, String accessKeySecret) throws Exception {
@@ -234,6 +241,8 @@ public class ServiceHelper {
         RuntimeOptions runtime = new RuntimeOptions();
         return client.describeVpcAttributeWithOptions(describeVpcAttributeRequest, runtime).getBody();
     }
+
+
 
 
 }
