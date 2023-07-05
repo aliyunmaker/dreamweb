@@ -105,17 +105,17 @@ public class ApplicationUtil {
         return response.getBody().getTagResources();
     }
 
-    private static List<ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources> getTagResourcesByApplication(String appName) throws Exception {
-        com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-
-        com.aliyun.tag20180828.models.ListTagResourcesRequest listTagResourcesRequest = new com.aliyun.tag20180828.models.ListTagResourcesRequest()
-                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
-                .setTags("{\"" + CommonConstants.APPLICATION_TAG_KEY + "\":\""+ appName + "\"}")
-                .setPageSize(1000);
-        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-        com.aliyun.tag20180828.models.ListTagResourcesResponse response = client.listTagResourcesWithOptions(listTagResourcesRequest, runtime);
-        return response.getBody().getTagResources();
-    }
+//    private static List<ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources> getTagResourcesByApplication(String appName) throws Exception {
+//        com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+//
+//        com.aliyun.tag20180828.models.ListTagResourcesRequest listTagResourcesRequest = new com.aliyun.tag20180828.models.ListTagResourcesRequest()
+//                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+//                .setTags("{\"" + CommonConstants.APPLICATION_TAG_KEY + "\":\""+ appName + "\"}")
+//                .setPageSize(1000);
+//        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+//        com.aliyun.tag20180828.models.ListTagResourcesResponse response = client.listTagResourcesWithOptions(listTagResourcesRequest, runtime);
+//        return response.getBody().getTagResources();
+//    }
 
     public static List<Resource> listResourcesByApplication(String appName) throws Exception {
         List<Resource> resources = new ArrayList<>();

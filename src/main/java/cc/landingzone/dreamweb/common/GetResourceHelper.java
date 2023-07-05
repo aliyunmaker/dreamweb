@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+
 public class GetResourceHelper {
     // 一次获取多个资源的信息
     public static void setResourcesDetails(String appName, String serviceName, List<Resource> resources) throws Exception {
@@ -241,8 +242,6 @@ public class GetResourceHelper {
                 .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
-        com.aliyun.slb20140515.models.DescribeLoadBalancersResponse response = client.describeLoadBalancersWithOptions(describeLoadBalancersRequest, runtime);
-
         List<DescribeLoadBalancersResponseBody.DescribeLoadBalancersResponseBodyLoadBalancersLoadBalancer> loadBalancers = client
                 .describeLoadBalancersWithOptions(describeLoadBalancersRequest, runtime).getBody().getLoadBalancers().getLoadBalancer();
         for (DescribeLoadBalancersResponseBody.DescribeLoadBalancersResponseBodyLoadBalancersLoadBalancer loadBalancer: loadBalancers) {
@@ -264,8 +263,6 @@ public class GetResourceHelper {
         com.aliyun.rds20140815.models.DescribeDBInstanceAttributeRequest describeDBInstanceAttributeRequest = new com.aliyun.rds20140815.models.DescribeDBInstanceAttributeRequest()
                 .setDBInstanceId(resourceId);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-
-        com.aliyun.rds20140815.models.DescribeDBInstanceAttributeResponse response = client.describeDBInstanceAttributeWithOptions(describeDBInstanceAttributeRequest, runtime);
 
         List<DescribeDBInstanceAttributeResponseBody.DescribeDBInstanceAttributeResponseBodyItemsDBInstanceAttribute> DBInstanceAttributes = client
                 .describeDBInstanceAttributeWithOptions(describeDBInstanceAttributeRequest, runtime).getBody().getItems().getDBInstanceAttribute();

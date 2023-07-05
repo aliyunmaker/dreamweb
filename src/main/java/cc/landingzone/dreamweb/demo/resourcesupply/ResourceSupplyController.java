@@ -1,12 +1,14 @@
 package cc.landingzone.dreamweb.demo.resourcesupply;
 
-import cc.landingzone.dreamweb.common.BaseController;
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.ServiceHelper;
-import cc.landingzone.dreamweb.common.model.WebResult;
-import cc.landingzone.dreamweb.common.utils.FileUtil;
-import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
-import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -14,10 +16,13 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
+import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
+
+import cc.landingzone.dreamweb.common.BaseController;
+import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.ServiceHelper;
+import cc.landingzone.dreamweb.common.model.WebResult;
 
 @Controller
 @RequestMapping("/resourceSupply")
@@ -51,7 +56,7 @@ public class ResourceSupplyController extends BaseController {
                     throw new Exception("fileType not supported");
             }
             logger.info("filePath: " + filePath);
-            String template = FileUtil.fileToString(filePath);
+            String template = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);
             logger.info("template: " + template);
             result.setData(template);
         } catch (Exception e) {

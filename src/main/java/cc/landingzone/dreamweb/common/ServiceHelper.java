@@ -1,5 +1,8 @@
 package cc.landingzone.dreamweb.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.aliyun.auth.credentials.Credential;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.sdk.service.oss20190517.AsyncClient;
@@ -9,16 +12,12 @@ import com.aliyun.teautil.models.RuntimeOptions;
 import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesRequest;
 import com.aliyun.vpc20160428.models.DescribeVpcAttributeRequest;
 import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
-import darabonba.core.client.ClientOverrideConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import darabonba.core.client.ClientOverrideConfiguration;
 
 public class ServiceHelper {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceHelper.class);
+//    private static Logger logger = LoggerFactory.getLogger(ServiceHelper.class);
 
     public static com.aliyun.ecs20140526.Client createEcsClient(String accessKeyId, String accessKeySecret) throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
