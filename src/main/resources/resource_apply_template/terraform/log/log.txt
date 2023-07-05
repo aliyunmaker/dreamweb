@@ -1,11 +1,13 @@
 provider "alicloud" {
-  region = var.region
+  region = "cn-hangzhou"
 }
 
 resource "alicloud_log_project" "create_new_project" {
   name = var.project_name
-  description = var.project_description
-  tags   = var.tags
+  tags   = {
+        application = "application1"
+        environmentType = "product"
+    }
 }
 
 output "this_sls_project_id" {
@@ -13,23 +15,6 @@ output "this_sls_project_id" {
   value = alicloud_log_project.create_new_project.id
 }
 
-variable "region" {
-  type = string
-  default = "cn-hangzhou"
-}
-
 variable "project_name" {
   type = string
-}
-
-variable "project_description" {
-  type = string
-}
-
-variable "tags" {
-  type = map(string)
-  default = {
-    application = "application1"
-    environmentType = "product"
-  }
 }

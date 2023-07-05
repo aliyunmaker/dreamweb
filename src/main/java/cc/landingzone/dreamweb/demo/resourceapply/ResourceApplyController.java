@@ -36,7 +36,7 @@ public class ResourceApplyController extends BaseController {
             String fileType = request.getParameter("fileType");
             logger.info("resourceType: " + resourceType);
             logger.info("fileType: " + fileType);
-            String filePath = "src/main/resources/resource_supply_template/" +
+            String filePath = "src/main/resources/resource_apply_template/" +
                     fileType + "/" + resourceType + "/" + resourceType + ".txt";
             logger.info("filePath: " + filePath);
             String template = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);

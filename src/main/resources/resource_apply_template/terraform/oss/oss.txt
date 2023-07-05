@@ -1,10 +1,13 @@
 provider "alicloud" {
-  region = var.region
+  region = "cn-hangzhou"
 }
 
 resource "alicloud_oss_bucket" "create_new_bucket" {
   bucket = var.bucket_name
-  tags   = var.tags
+  tags   = {
+        application = "application1"
+        environmentType = "product"
+    }
 }
 
 output "this_oss_bucket_id" {
@@ -12,19 +15,6 @@ output "this_oss_bucket_id" {
   value = alicloud_oss_bucket.create_new_bucket.id
 }
 
-variable "region" {
-  type = string
-  default = "cn-hangzhou"
-}
-
 variable "bucket_name" {
   type = string
-}
-
-variable "tags" {
-  type = map(string)
-  default = {
-    application = "application1"
-    environmentType = "product"
-  }
 }
