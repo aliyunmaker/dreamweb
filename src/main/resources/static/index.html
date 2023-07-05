@@ -134,6 +134,8 @@
         document.getElementById('monitor-btn').classList.add("active");
 
         iframe.setAttribute("src", event.data.url);
+      } else if (event.data.destination === "login") {
+        window.location.href="/login.html";
       }
     });
   </script>
