@@ -210,6 +210,7 @@ function createResource() {
 
 function createEcsInstance() {
     var regionId = $("#regionId").val();
+    var vpcId = $("#vpc").val();
     var vSwitchId = $("#vSwitch").val();
     var instanceType = $("#instanceType").val();
     var amount = $("#instanceNum").val();
@@ -221,6 +222,7 @@ function createEcsInstance() {
         applicationName: application,
         environmentName: environmentType,
         regionId: regionId,
+        vpcId: vpcId,
         vSwitchId: vSwitchId,
         instanceType: instanceType,
         amount: amount,

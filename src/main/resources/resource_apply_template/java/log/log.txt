@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-public class Sls {
 
+public class sls {
     public static void main(String[] args) throws Exception {
         String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");
         String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
         String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
-
         String projectName = "dreamwebtest";
         // 创建logProject
         Client client = createSlsClient(accessKeyId,accessKeySecret);
@@ -25,7 +24,6 @@ public class Sls {
                 .setProjectName(projectName);
         Map<String, String> headers = new HashMap<>();
         client.createProjectWithOptions(createProjectRequest, headers, runtime);
-
         // 添加标签
         com.aliyun.tag20180828.Client tagClient = createTagClient(accessKeyId, accessKeySecret);
         Map<String, String> tags = new HashMap<>();
@@ -56,5 +54,4 @@ public class Sls {
         config.endpoint = "tag.aliyuncs.com";
         return new com.aliyun.tag20180828.Client(config);
     }
-
 }

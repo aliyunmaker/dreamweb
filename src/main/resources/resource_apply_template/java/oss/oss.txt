@@ -11,19 +11,15 @@ import com.aliyun.tag20180828.models.TagResourcesRequest;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.google.gson.Gson;
 import darabonba.core.client.ClientOverrideConfiguration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class Oss {
+public class oss {
 
     public static void main(String[] args) throws Exception {
         String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");
         String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
         String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
-
         String bucketName = "dreamwebtest";
         // 创建bucket
         AsyncClient client = createOssClient(accessKeyId,accessKeySecret);
@@ -39,7 +35,6 @@ public class Oss {
         PutBucketResponse resp = response.get();
         System.out.println(new Gson().toJson(resp));
         client.close();
-
         // 添加标签
         com.aliyun.tag20180828.Client tagClient = createTagClient(accessKeyId, accessKeySecret);
         Map<String, String> tags = new HashMap<>();
@@ -67,8 +62,7 @@ public class Oss {
                 .overrideConfiguration(
                         ClientOverrideConfiguration.create()
                                 .setEndpointOverride("oss-cn-hangzhou.aliyuncs.com")
-                )
-                .build();
+                ).build();
     }
 
     public static com.aliyun.tag20180828.Client createTagClient(String accessKeyId, String accessKeySecret) throws Exception {
@@ -78,5 +72,4 @@ public class Oss {
         config.endpoint = "tag.aliyuncs.com";
         return new com.aliyun.tag20180828.Client(config);
     }
-
 }
