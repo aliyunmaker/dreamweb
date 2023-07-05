@@ -3,7 +3,7 @@ provider "alicloud" {
 }
 
 resource "alicloud_log_project" "create_new_project" {
-  name = var.project_name
+  name = "project-name"
   tags   = {
         application = "application1"
         environmentType = "product"
@@ -13,8 +13,4 @@ resource "alicloud_log_project" "create_new_project" {
 output "this_sls_project_id" {
   description = "The name of the project:"
   value = alicloud_log_project.create_new_project.id
-}
-
-variable "project_name" {
-  type = string
 }

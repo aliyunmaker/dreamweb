@@ -51,28 +51,30 @@
 <script>
     var appName;
     var iframe = document.getElementById("iframe");
+    page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
+    iframe.setAttribute("src", page);
+    // $(document).ready(function() {
+    //   var queryString = window.location.search;
+    //   var urlParams = new URLSearchParams(queryString);
+    //   appName = urlParams.get('appName');
+    //   appName = appName === null ? "application1" : appName;
+    //   $.ajax({
+    //     url: "../common/getApplication.do",
+    //     success: function(result){
+    //         if (result.success) {
+    //             applist = result.data;
+    //             addSelectOptions(applist);
+    //             document.getElementById("logAppsSelect").value = appName;
+    //             var page = "../signSLSMonitor.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
+    //             iframe.setAttribute("src", page);
+    //             // document.getElementById("dreamweb-monitor-btn").classList.add("active");
+    //             console.log("page:" + page);
+    //         } else {
+    //             alert(result.errorMsg);
+    //         }
+    //     }
+    //   });
 
-    $(document).ready(function() {
-      var queryString = window.location.search;
-      var urlParams = new URLSearchParams(queryString);
-      appName = urlParams.get('appName');
-      appName = appName === null ? "application1" : appName;
-      $.ajax({
-        url: "../common/getApplication.do",
-        success: function(result){
-            if (result.success) {
-                applist = result.data;
-                addSelectOptions(applist);
-                document.getElementById("logAppsSelect").value = appName;
-                var page = "../signSLSMonitor.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
-                iframe.setAttribute("src", page);
-                // document.getElementById("dreamweb-monitor-btn").classList.add("active");
-                console.log("page:" + page);
-            } else {
-                alert(result.errorMsg);
-            }
-        }
-      });
       // // appName = appName === null ? "application1" : appName;
       // if (appName !== null) {
       //   document.getElementById("logAppsSelect").value = appName;
@@ -82,7 +84,7 @@
       //   console.log("page:" + page);
       // }
       // getApplication();
-    });
+    // });
 
     var links = document.querySelectorAll(".navbar-nav a");
 

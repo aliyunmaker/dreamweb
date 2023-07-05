@@ -3,7 +3,7 @@ provider "alicloud" {
 }
 
 resource "alicloud_oss_bucket" "create_new_bucket" {
-  bucket = var.bucket_name
+  bucket = "bucket-name"
   tags   = {
         application = "application1"
         environmentType = "product"
@@ -13,8 +13,4 @@ resource "alicloud_oss_bucket" "create_new_bucket" {
 output "this_oss_bucket_id" {
   description = "The name of the bucket:"
   value = alicloud_oss_bucket.create_new_bucket.id
-}
-
-variable "bucket_name" {
-  type = string
 }
