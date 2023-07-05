@@ -2,6 +2,7 @@ var appName;
 var serviceName;
 var appInfo;
 var appDetail;
+var sortedServiceName = ["ECS", "RDS", "SLB", "OSS", "SLS"];
 
 $(document).ready(function() {
     var queryString = window.location.search;
@@ -38,7 +39,7 @@ $(document).ready(function() {
                         $("#tabs").append(`<li class="nav-item">
                             <a class="nav-link text-black" aria-current="page" id="tab-all" onclick="listResourcesDetails('all')">All(${sumCount})</a>
                             </li>`);
-                        for (var serviceName in app.servicesCounts) {
+                        for (var serviceName of sortedServiceName) {
                             var tab = `
                             <li class="nav-item">
                                 <a class="nav-link text-black" aria-current="page" id="tab-${serviceName}"
@@ -98,7 +99,7 @@ function listResourcesDetails(queryServiceName) {
     document.querySelector("#tab-"+queryServiceName).classList.add("active");
     $("#appDetailBody tbody").empty();
     
-    for (var serviceName in appDetail) {
+    for (var serviceName of sortedServiceName) {
         if (queryServiceName === "all" || serviceName === queryServiceName) {
             appDetail[serviceName].forEach(function(resource) {
                 var row = `
