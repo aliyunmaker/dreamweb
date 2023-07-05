@@ -105,16 +105,13 @@ public class SSOController extends BaseController implements InitializingBean {
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
             String uid = SSOConstants.getSSOSpUserId(ssoSp);
-            String idpEntityId = SSOConstants.IDP_ENTITY_ID;
+            // String idpEntityId = SSOConstants.IDP_ENTITY_ID;
             HashMap<String, List<String>> attributes = null;
             // 如果是user sso,需要特殊处理,拆分出uid和nameid,而且不支持多个
             if (SSOSpEnum.aliyun_user.equals(ssoSp)) {
                 identifier = identifier.replace("{uid}", uid);
-                replyUrl = replyUrl.replace("{uid}", uid);
                 nameID = userRoleId + "@" + uid + ".onaliyun.com";
-            } else if (SSOSpEnum.aws_user.equals(ssoSp)) {
-                nameID = userRoleId;
-            } else if (SSOSpEnum.aliyun_user_cloudsso.equals(ssoSp)) {
+            } else if (SSOSpEnum.aws_user.equals(ssoSp) || SSOSpEnum.aliyun_user_cloudsso.equals(ssoSp)) {
                 nameID = userRoleId;
             }  else {
                 attributes = new HashMap<String, List<String>>();
@@ -122,9 +119,11 @@ public class SSOController extends BaseController implements InitializingBean {
                 Set<String> roleSet = new HashSet<String>();
                 String userRoleValue = null;
                 if (SSOSpEnum.aliyun.equals(ssoSp)) {
-                    userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
+                    // userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
+                    userRoleValue = SSOConstants.ALIYUN_SSO_LOGIN_ROLE_ID_ARN.get(userRoleId);
                 } else if (SSOSpEnum.aws.equals(ssoSp)) {
-                    userRoleValue = "arn:aws:iam::" + uid + ":role/" + userRoleId + ",arn:aws:iam::" + uid + ":saml-provider/dreamweb";
+                    // userRoleValue = "arn:aws:iam::" + uid + ":role/" + userRoleId + ",arn:aws:iam::" + uid + ":saml-provider/dreamweb";
+                    userRoleValue = SSOConstants.AWS_SSO_LOGIN_ROLE_ID_ARN.get(userRoleId);
                 }
                 roleSet.add(userRoleValue);
                 List<String> roleStringList = new ArrayList<String>(roleSet);
@@ -254,7 +253,7 @@ public class SSOController extends BaseController implements InitializingBean {
 
     @RequestMapping("/downloadToken.do")
     public void downloadToken(HttpServletRequest request, HttpServletResponse response) {
-        String result = new String();
+        WebResult result = new WebResult();
         try {
 
             String sp = request.getParameter("sp");
@@ -288,7 +287,8 @@ public class SSOController extends BaseController implements InitializingBean {
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
-            String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
+//            String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
+            String userRoleValue = SSOConstants.ALIYUN_SSO_LOGIN_ROLE_ID_ARN.get(userRoleId);
             roleSet.add(userRoleValue);
             List<String> roleStringList = new ArrayList<String>(roleSet);
             attributes.put(SSOConstants.getSSOSpAttributeKeyRole(ssoSp), roleStringList);
@@ -303,12 +303,12 @@ public class SSOController extends BaseController implements InitializingBean {
             logger.info("roleArn:" + roleArn);
             logger.info("samlProviderArn:" + samlProviderArn);
 
-            result = RAMSamlHelper.querySAMLToken(profile, samlProviderArn, roleArn, samlAssertion, stsEndpoint);
+            result.setData(RAMSamlHelper.querySAMLToken(profile, samlProviderArn, roleArn, samlAssertion, stsEndpoint));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            result = e.getMessage();
+            result.setErrorMsg(e.getMessage());
         }
-        outputToString(response, result);
+        outputToJSON(response, result);
     }
 
     /**

@@ -10,6 +10,12 @@ $(document).ready(function() {
     serviceName = urlParams.get('serviceName');
     var appDetailPage = `
     <div class="row pb-2 d-flex">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" onclick="showAppCenterPage()">Application center</a></li>
+                <li class="breadcrumb-item" aria-current="page">Application detail</li>
+            </ol>
+        </nav>
         <h5 class="pb-3 fs-2">Resources - ${appName}</h5>
         <div class="row pb-2" id="appDetailBody">
         </div>
@@ -116,7 +122,7 @@ function listResourcesDetails(queryServiceName) {
 
 // 资源详情
 function getResourceDetail(serviceName, resourceId) {
-    var page = "application_center/resource_detail.html?serviceName=" + serviceName + "&resourceId=" + resourceId;
+    var page = "application_center/resource_detail.html?appName=" + appName + "&serviceName=" + serviceName + "&resourceId=" + resourceId;
     var iframe = parent.document.getElementById("iframe");
     iframe.setAttribute("src", page);
 }

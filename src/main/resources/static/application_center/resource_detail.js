@@ -1,3 +1,4 @@
+var appName;
 var resourceDetail;
 var serviceName;
 var resourceId;
@@ -5,15 +6,16 @@ var resourceId;
 $(document).ready(function() {
     var queryString = window.location.search;
     var urlParams = new URLSearchParams(queryString);
+    appName = urlParams.get('appName');
     serviceName = urlParams.get('serviceName');
     resourceId = urlParams.get('resourceId');
     $("#appCenterPage").append(
-      `<div class="position-absolute top-50 start-50 translate-middle">
+    `<div class="position-absolute top-50 start-50 translate-middle">
       <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>`
-  );
+    );
     $.ajax({
         url: "../apps/getResourceDetail.do?serviceName="+serviceName+"&resourceId="+resourceId,
         success: function(result){
@@ -33,6 +35,13 @@ function showResourceDetail(resourceId) {
     page.empty();
     var content = `
     <div class="row pb-2 d-flex">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#" onclick="showAppCenterPage()">Application center</a></li>
+          <li class="breadcrumb-item"><a href="#" onclick="getAppDetail('${appName}','all')">Application detail</a></li>
+          <li class="breadcrumb-item" aria-current="page">Resource detail</li>
+        </ol>
+      </nav>
       <h3 class="pb-3 fs-2">Resource Detail</h3>
       <h4 class="pb-2 fs-4">Basic Information</h4>
       <div class="row pb-2">
@@ -101,4 +110,11 @@ function showAppCenterPage() {
     var page = "application_center/application_center.html";
     var iframe = parent.document.getElementById("iframe");
     iframe.setAttribute("src", page);
+}
+
+// 返回应用详情
+function getAppDetail(appName, serviceName) {
+  var page = "application_center/application_detail.html?appName=" + appName + "&serviceName=" + serviceName;
+  var iframe = parent.document.getElementById("iframe");
+  iframe.setAttribute("src", page);
 }

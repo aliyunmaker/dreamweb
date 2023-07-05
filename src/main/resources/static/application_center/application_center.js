@@ -49,13 +49,18 @@ function showAppCenterPage() {
     page.empty();
     var skeleton = `
     <div class="row d-flex">
-      <div class="col input-group">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">Application center</li>
+            </ol>
+        </nav>
+        <div class="col input-group">
         <input id="searchApp" class="form-control" type="text" placeholder="Please enter the application name">
         <button class="btn btn-outline-secondary" type="button" id="button-search-app" onclick=createFilteredCards()><i class="bi bi-search"></i></button>
-      </div>
-      <div class="col">
+        </div>
+        <div class="col">
         <button class="btn btn-outline-secondary" type="button" id="button-reset-search-app" onclick=createCards()><i class="bi bi-arrow-clockwise"></i></button>
-      </div>
+        </div>
     </div>
     <div class="row g-4 py-3 row-cols-1 row-cols-lg-3" id="cardContainer">
     </div>`;

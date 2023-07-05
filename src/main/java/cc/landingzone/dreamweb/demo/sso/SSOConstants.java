@@ -3,9 +3,10 @@ package cc.landingzone.dreamweb.demo.sso;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.model.enums.SSOSpEnum;
+import cc.landingzone.dreamweb.demo.ssologin.model.SSOUserRole;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Properties;
+import java.util.*;
 
 public class SSOConstants {
     // 是否自动提交表单,默认为false,方便调试
@@ -26,14 +27,47 @@ public class SSOConstants {
     // IDP_ENTITY_ID 唯一ID,代表IDP
     public static final String IDP_ENTITY_ID;
 
+    // SSO登录的用户和角色列表
+    public static final List<SSOUserRole> SSO_LOGIN_ROLE_IDS = new ArrayList<>();
+    public static final List<SSOUserRole> SSO_LOGIN_USER_IDS = new ArrayList<>();
+    public static final List<SSOUserRole> SSO_LOGIN_CLOUD_USER_IDS = new ArrayList<>();
+
+    // SSO登录的用户和角色对应的ARN
+    public static final Map<String, String> ALIYUN_SSO_LOGIN_ROLE_ID_ARN = new HashMap<>();
+    public static final Map<String, String> AWS_SSO_LOGIN_ROLE_ID_ARN = new HashMap<>();
+
     static {
         Properties properties = CommonConstants.loadProperties();
+        addSSOUsersRoles();
         String idpEntityId = properties.getProperty("dreamweb.idp_entityid");
         if (StringUtils.isBlank(idpEntityId) || "<your_idp_entityid>".equals(idpEntityId)) {
             IDP_ENTITY_ID = "dreamweb.default";
         } else {
             IDP_ENTITY_ID = idpEntityId;
         }
+    }
+
+    public static void addSSOUsersRoles() {
+        SSOUserRole aliyunRole = new SSOUserRole("aliyun", "管理员", "kidccc@gmail.com", "dreamweb-test-role");
+        SSO_LOGIN_ROLE_IDS.add(aliyunRole);
+        ALIYUN_SSO_LOGIN_ROLE_ID_ARN.put("dreamweb-test-role", "acs:ram::1426447221208365:role/dreamweb-test-role,acs:ram::1426447221208365:saml-provider/dreamweb.test");
+
+        SSOUserRole awsRole = new SSOUserRole("aws", "管理员", "me@chengchao.name", "myrole");
+        SSO_LOGIN_ROLE_IDS.add(awsRole);
+        AWS_SSO_LOGIN_ROLE_ID_ARN.put("myrole", "arn:aws:iam::626847370191:role/myrole,arn:aws:iam::626847370191:saml-provider/dreamweb");
+
+        SSOUserRole tencentRole = new SSOUserRole("tencent", "管理员", "100000543428", "superadmin");
+        SSO_LOGIN_ROLE_IDS.add(tencentRole);
+
+        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "kidccc@gmail.com", "test-user");
+        SSO_LOGIN_USER_IDS.add(aliyunUser);
+        SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "kenmako555@gmail.com", "kenmako555@gmail.com");
+        SSO_LOGIN_USER_IDS.add(awsUser);
+        SSOUserRole tencentUser = new SSOUserRole("tencent", "个人账号", "100000543428", "chengchao");
+        SSO_LOGIN_USER_IDS.add(tencentUser);
+
+        SSOUserRole ssoCloudUser = new SSOUserRole("aliyun", "CloudSSO-管理员", "20210603demo1", "tianyu");
+        SSO_LOGIN_CLOUD_USER_IDS.add(ssoCloudUser);
     }
 
     public static String getSSOSpIdentifier(SSOSpEnum ssoSp) {

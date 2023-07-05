@@ -42,10 +42,28 @@ function listLoginUsers() {
         $("#" + role.provider + "LoginContainer").append(item);
         if (role.provider === "aliyun") {
           var stsTokenBtn = `
-          <a target="_blank" href="../sso/downloadToken.do?sp=${role.provider}&userRoleId=${role.id}" class="btn btn-success">
+          <a onclick="getSTSToken('${role.id}')" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#STSTokenModal-${role.id}">
           <i class="iconfont icon-download" ></i> STS Token
           </a>`;
           $("#" + role.id + "-info").append(stsTokenBtn);
+          var tokenModal = `
+          <div class="modal fade" id="STSTokenModal-${role.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">STS Token</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modelBody-${role.id}" style="word-wrap: break-word;">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" onclick="copyToken('${role.id}')">Copy token</button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+          $("#mainContainer").append(tokenModal);
         }
     });
 
@@ -84,4 +102,34 @@ function listLoginUsers() {
         </div>`;
         $("#" + cloudUser.provider + "LoginContainer").append(item);
     });
+}
+
+function getSTSToken(roleId) {
+  $.ajax({
+    url: "../sso/downloadToken.do?sp=aliyun&userRoleId=" + roleId,
+    success: function(result){
+        if (result) {
+            var tokenContent = result.data;
+            showSTSToken(roleId, tokenContent);
+        } else {
+            alert(result.errorMsg);
+        }
+    }
+  });
+}
+
+function showSTSToken(roleId, tokenContent) {
+  document.getElementById("modelBody-" + roleId).append(tokenContent);
+  $("#STSTokenModal-" + roleId).modal('show');
+}
+
+async function copyToken(roleId) {
+  try {
+    await navigator.clipboard.writeText(document.getElementById("modelBody-" + roleId).innerText);
+    // document.getElementById("modelBody-" + roleId).append('\nContent copied to clipboard');
+    alert('Content copied to clipboard');
+  } catch (err) {
+    // document.getElementById("modelBody-" + roleId).append('\nFailed to copy: ', err);
+    alert('Failed to copy: ', err);
+  }
 }
