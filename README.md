@@ -1,9 +1,5 @@
 # 环境准备
 
-### 数据库
-database: dreamweb
-create sql: src/main/resources/mysql/database_dreamweb.sql
-
 ### 单点登录证书生成
 
 ```shell
@@ -19,9 +15,36 @@ openssl pkcs8 -topk8 -inform PEM -outform DER -in saml.pem -out saml.pkcs8 -nocr
 ### 启动类(springboot)
 cc.landingzone.dreamweb.DreamwebApplication
 
-### 文档
-[通过token实现自动登录](docs/auto_login_by_token.md)
+### 配置
+application.properties
 
-### 配置更新
-2021.08.02：新增配置项dreamweb.idp_entityid=<your_idp_entityid>
-2022.06.06：新增activiti相关配置
+```
+#spring.profiles.active=prod
+
+# thymeleaf
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.check-template-location=true
+spring.thymeleaf.suffix=.html
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.mode=HTML
+spring.thymeleaf.cache=false
+spring.thymeleaf.servlet.content-type=text/html
+
+logging.level.cc.landingzone.dreamweb.dao=INFO
+
+server.servlet.encoding.charset=utf-8
+server.servlet.encoding.enabled=true
+server.servlet.encoding.force=true
+
+# dreamweb
+dreamweb.env_online=false
+# company account
+dreamweb.aliyun_accesskeyid=
+dreamweb.aliyun_accesskeysecret=
+dreamweb.aliyun_userid=
+dreamweb.aliyun_sso_userid=
+dreamweb.aws_userid=
+dreamweb.idp_entityid=
+dreamweb.logout_success_url=<your_logout_success_url>
+```
+
