@@ -182,7 +182,7 @@ public class AliyunAPIUtils {
         System.out.println(signinToken);
     }
 
-    public static String getSigninToken(String accessKeyID, String accessKeySecret, String roleArn, String sessionName,
+    public static String getSigninToken(String accessKeyID, String accessKeySecret, String roleArn, String sessionName, String policy,
                                         boolean needTicketType)
             throws Exception {
         IAcsClient client = AliyunAPIUtils.buildClient_Hangzhou(accessKeyID, accessKeySecret);
@@ -190,9 +190,12 @@ public class AliyunAPIUtils {
         AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest();
         assumeRoleRequest.setRoleArn(roleArn);
         assumeRoleRequest.setRoleSessionName(sessionName);
-//        assumeRoleRequest.setPolicy(policy);
         AssumeRoleResponse assumeRoleResponse = client.getAcsResponse(assumeRoleRequest);
         assumeRoleResponse.getCredentials();
+
+        if (!policy.isBlank()) {
+            assumeRoleRequest.setPolicy(policy);
+        }
 
         Map<String, String> paramsMap = new HashMap<>();
         paramsMap.put("Action", "GetSigninToken");

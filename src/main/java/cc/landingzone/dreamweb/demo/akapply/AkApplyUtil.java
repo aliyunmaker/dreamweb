@@ -2,21 +2,11 @@ package cc.landingzone.dreamweb.demo.akapply;
 
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceHelper;
-import cc.landingzone.dreamweb.demo.akapply.model.Condition;
-import cc.landingzone.dreamweb.demo.akapply.model.PolicyDocument;
-import cc.landingzone.dreamweb.demo.akapply.model.Statement;
-import cc.landingzone.dreamweb.demo.akapply.model.StringEquals;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyun.ram20150501.Client;
 import com.aliyun.ram20150501.models.*;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class AkApplyUtil {
 
@@ -47,73 +37,6 @@ public class AkApplyUtil {
 //        System.out.println(accessKey.accessKeySecret);
     }
 
-
-    /**
-     * 拼接action
-     *
-     * @param resourceType: oss、log
-     * @param actionCode:   1(readOnly)、2(fullAccess)
-     * @return
-     */
-    public static List<String> getAction(String resourceType, int actionCode) {
-        List<String> action = new ArrayList<>();
-        switch (actionCode) {
-            case 1:
-                action.add(resourceType + ":Get*");
-                action.add(resourceType + ":List*");
-                break;
-            case 2:
-                action.add(resourceType + ":*");
-                break;
-            default:
-                break;
-        }
-        return action;
-    }
-
-
-    /**
-     * 生成权限策略内容
-     *
-     * @param resourceType
-     * @param resourceNameList
-     * @param actionCode
-     * @param accountId
-     * @return
-     */
-    public static String generatePolicyDocument(String resourceType, List<String> resourceNameList,
-                                                int actionCode, String accountId) {
-        PolicyDocument policyDocument = new PolicyDocument();
-        List<Statement> statementList = new ArrayList<>();
-
-        Statement statement1 = new Statement();
-        List<String> resourceArn = ServiceHelper.getResourceArnInPolicy(resourceType, resourceNameList, accountId);
-        List<String> action = getAction(resourceType, actionCode);
-        statement1.setAction(action);
-        statement1.setResource(resourceArn);
-        statementList.add(statement1);
-
-        // 日志服务的fullAccess需要额外的权限
-        if ("log".equals(resourceType) && actionCode == 2) {
-            Statement statement2 = new Statement();
-            List<String> action2 = new ArrayList<>();
-            action2.add("ram:CreateServiceLinkedRole");
-            statement2.setAction(action2);
-            List<String> resourceArn2 = new ArrayList<>();
-            resourceArn2.add("*");
-            statement2.setResource(resourceArn2);
-            Condition condition = new Condition();
-            StringEquals stringEquals = new StringEquals();
-            stringEquals.setRamServiceName(Arrays.asList("audit.log.aliyuncs.com", "alert.log.aliyuncs.com"));
-            condition.setStringEquals(stringEquals);
-
-            statement2.setCondition(condition);
-
-            statementList.add(statement2);
-        }
-        policyDocument.setStatement(statementList);
-        return JSON.toJSONString(policyDocument, SerializerFeature.PrettyFormat);
-    }
 
     /**
      * 创建RAM用户

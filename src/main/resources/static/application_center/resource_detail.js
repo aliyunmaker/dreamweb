@@ -17,7 +17,7 @@ $(document).ready(function() {
     </div>`
     );
     $.ajax({
-        url: "../apps/getResourceDetail.do?serviceName="+serviceName+"&resourceId="+resourceId,
+        url: "../resources/getResourceDetail.do?serviceName="+serviceName+"&resourceId="+resourceId,
         success: function(result){
             if (result.success) {
                 resourceDetail = result.data;

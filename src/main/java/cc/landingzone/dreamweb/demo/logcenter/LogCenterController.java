@@ -37,7 +37,7 @@ public class LogCenterController extends BaseController {
 
             String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
                     CommonConstants.Aliyun_AccessKeySecret,
-                    CommonConstants.ADMIN_ROLE_ARN, username, true);
+                    CommonConstants.ADMIN_ROLE_ARN, username, "", true);
             String redirectUrl = "https://signin.aliyun.com/federation?Action=Login&Destination="
                     + URLEncoder.encode(destination, StandardCharsets.UTF_8.displayName())
                     + "&LoginUrl=https%3a%2f%2faliyun.com&SigninToken="

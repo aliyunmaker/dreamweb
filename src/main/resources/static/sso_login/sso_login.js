@@ -109,7 +109,7 @@ function getSTSToken(roleId) {
     url: "../sso/downloadToken.do?sp=aliyun&userRoleId=" + roleId,
     success: function(result){
         if (result) {
-            var tokenContent = result.data;
+            var tokenContent = JSON.parse(result.data);
             showSTSToken(roleId, tokenContent);
         } else {
             alert(result.errorMsg);
@@ -119,17 +119,26 @@ function getSTSToken(roleId) {
 }
 
 function showSTSToken(roleId, tokenContent) {
-  document.getElementById("modelBody-" + roleId).append(tokenContent);
+  // var modalBody = document.getElementById("modelBody-" + roleId);
+  var modalBody = $("#modelBody-" + roleId);
+  // var token = "AccessKeyId: " + tokenContent.Credentials.AccessKeyId
+  // + "\r\nAccessKeySecret: " + tokenContent.Credentials.AccessKeySecret
+  // + "\r\nSecurityToken: " + tokenContent.Credentials.SecurityToken;
+  var token = `<b>AccessKeyId: </b>${tokenContent.Credentials.AccessKeyId}
+  \r\n<b>AccessKeySecret: </b>${tokenContent.Credentials.AccessKeySecret}
+  \r\n<b>SecurityToken: </b>${tokenContent.Credentials.SecurityToken}`;
+  modalBody.append(token);
   $("#STSTokenModal-" + roleId).modal('show');
 }
 
 async function copyToken(roleId) {
   try {
-    await navigator.clipboard.writeText(document.getElementById("modelBody-" + roleId).innerText);
+    var str = document.getElementById("modelBody-" + roleId).innerText;
+    await navigator.clipboard.writeText(str);
     // document.getElementById("modelBody-" + roleId).append('\nContent copied to clipboard');
-    alert('Content copied to clipboard');
+    // alert('Content copied to clipboard');
   } catch (err) {
     // document.getElementById("modelBody-" + roleId).append('\nFailed to copy: ', err);
-    alert('Failed to copy: ', err);
+    // alert('Failed to copy: ', err);
   }
 }

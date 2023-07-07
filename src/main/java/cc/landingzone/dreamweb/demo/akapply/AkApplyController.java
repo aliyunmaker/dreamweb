@@ -41,7 +41,7 @@ public class AkApplyController extends BaseController {
         logger.info("resourceType: " + resourceType);
         logger.info("resourceNameList: " + resourceNameList);
         logger.info("actionCode: " + actionCode);
-        String generatePolicyDocument = AkApplyUtil.generatePolicyDocument
+        String generatePolicyDocument = ServiceHelper.generatePolicyDocument
                 (resourceType, resourceNameList, actionCode, accountId);
         logger.info("generatePolicyDocument: " + generatePolicyDocument);
         outputToString(response, generatePolicyDocument);

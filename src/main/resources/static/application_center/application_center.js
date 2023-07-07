@@ -76,17 +76,15 @@ function createCards(appName) {
             <div class="col align-items-start" id="card-${app.appName}">
                 <div class="card">
                     <div class="card-body">
-                        <div class="dropdown-left float-end">
-                            <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-expanded="false"></a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" onclick=jumpToMonitor('${app.appName}')>Monitor</a></li>
-                                <li><a class="dropdown-item" href="#" onclick=jumpToLogCenter('${app.appName}')>Log Center</a></li>
-                            </ul>
-                        </div>
-                        <h4 class="card-title">
+                        <div class="row">
+                        <h4 class="col-9 card-title">
                             <a href="#" class="text-black text-decoration-none" onclick="getAppDetail('${app.appName}', 'all')">${app.appName}</a>
                         </h4>
+                        <div class="col-3">
+                        <a class="iconfont icon-dashboard text-black text-decoration-none" href="#" onclick=jumpToMonitor('${app.appName}')></a>
+                        <a class="iconfont icon-sls text-black text-decoration-none" href="#" onclick=jumpToLogCenter('${app.appName}')></a>
+                        </div>
+                        </div>
                         <p class="card-text">${app.description}</p>
                         <div class="row row-cols-1 row-cols-lg-5" id="services-${app.appName}"></div>
                     </div>
@@ -135,3 +133,12 @@ function jumpToMonitor(appName) {
     message.url = "monitor/monitor.html?appName=" + appName;
     window.parent.postMessage(message, "*");
 }
+
+{/* <div class="dropdown-left float-end">
+    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
+    data-bs-toggle="dropdown" aria-expanded="false"></a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#" onclick=jumpToMonitor('${app.appName}')>Monitor</a></li>
+        <li><a class="dropdown-item" href="#" onclick=jumpToLogCenter('${app.appName}')>Log Center</a></li>
+    </ul>
+</div> */}
