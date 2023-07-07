@@ -171,3 +171,18 @@ function getApplication(){
     },
   })
 }
+
+async function copyToken() {
+  try {
+    var accessKeyId = document.getElementById("accessKeyIdShow").innerText;
+    var accessKeySecret = document.getElementById("accessKeySecretShow").innerText;
+    var copyText = "AccessKey ID: " + accessKeyId + "\nAccessKey Secret: " + accessKeySecret;
+    // console.log(copyText);
+    await navigator.clipboard.writeText(copyText);
+    // document.getElementById("modelBody-" + roleId).append('\nContent copied to clipboard');
+    alert('Content copied to clipboard');
+  } catch (err) {
+    // document.getElementById("modelBody-" + roleId).append('\nFailed to copy: ', err);
+    alert('Failed to copy: ', err);
+  }
+}

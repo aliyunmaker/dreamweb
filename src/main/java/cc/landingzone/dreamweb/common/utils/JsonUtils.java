@@ -88,4 +88,9 @@ public class JsonUtils {
         }
         return JSON.toJSONString(object, serializeConfig, features);
     }
+
+    public static String toJsonStringDefault(Object object) {
+        return JSON.toJSONString(object);
+    }
+
 }
