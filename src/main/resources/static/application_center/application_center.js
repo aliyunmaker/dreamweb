@@ -49,11 +49,6 @@ function showAppCenterPage() {
     page.empty();
     var skeleton = `
     <div class="row d-flex">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item" aria-current="page">Application center</li>
-            </ol>
-        </nav>
         <div class="col input-group">
         <input id="searchApp" class="form-control" type="text" placeholder="Please enter the application name">
         <button class="btn btn-outline-secondary" type="button" id="button-search-app" onclick=createFilteredCards()><i class="bi bi-search"></i></button>
@@ -80,9 +75,14 @@ function createCards(appName) {
                         <h4 class="col-9 card-title">
                             <a href="#" class="text-black text-decoration-none" onclick="getAppDetail('${app.appName}', 'all')">${app.appName}</a>
                         </h4>
-                        <div class="col-3">
-                        <a class="iconfont icon-dashboard text-black text-decoration-none" href="#" onclick=jumpToMonitor('${app.appName}')></a>
-                        <a class="iconfont icon-sls text-black text-decoration-none" href="#" onclick=jumpToLogCenter('${app.appName}')></a>
+                        <div class="col-3 d-flex justify-content-end">
+                        <a class="iconfont icon-dashboard text-black text-decoration-none" 
+                        data-bs-toggle="tooltip" data-bs-title="Monitor"
+                        href="#" onclick=jumpToMonitor('${app.appName}')></a>
+                        <span style="margin-left: 10px;"></span>
+                        <a class="iconfont icon-sls text-black text-decoration-none" 
+                        data-bs-toggle="tooltip" data-bs-title="Log Center"
+                        href="#" onclick=jumpToLogCenter('${app.appName}')></a>
                         </div>
                         </div>
                         <p class="card-text">${app.description}</p>
@@ -101,6 +101,7 @@ function createCards(appName) {
             };
         }
     });
+    $(function() { $("[data-bs-toggle='tooltip']").tooltip();});
     if (appName === undefined) {
         $("#searchApp").val("");
     }
