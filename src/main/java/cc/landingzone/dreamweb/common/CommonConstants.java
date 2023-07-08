@@ -18,8 +18,6 @@ public class CommonConstants {
     public static final String Aliyun_AccessKeySecret;
 
     public static final String Aliyun_UserId;
-    public static final String AWS_UserId;
-    public static final String Aliyun_SSO_UserId;
 
     public static final String Aliyun_REGION_HANGZHOU = "cn-hangzhou";
 
@@ -61,8 +59,6 @@ public class CommonConstants {
         Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         Aliyun_UserId = getCallerIdentity();
-        AWS_UserId = properties.getProperty("dreamweb.aws_userid");
-        Aliyun_SSO_UserId = properties.getProperty("dreamweb.aliyun_sso_userid");
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";

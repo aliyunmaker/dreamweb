@@ -113,6 +113,14 @@ public class ServiceHelper {
         return new com.aliyun.vpc20160428.Client(config);
     }
 
+    public static com.aliyun.resourcemanager20200331.Client createResourceManagerClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "resourcemanager.aliyuncs.com";
+        return new com.aliyun.resourcemanager20200331.Client(config);
+    }
+
 
     /**
      * 权限策略 拼接资源ARN

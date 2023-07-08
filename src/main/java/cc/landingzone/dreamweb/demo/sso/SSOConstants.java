@@ -32,7 +32,8 @@ public class SSOConstants {
     public static final List<SSOUserRole> SSO_LOGIN_USER_IDS = new ArrayList<>();
     public static final List<SSOUserRole> SSO_LOGIN_CLOUD_USER_IDS = new ArrayList<>();
 
-    // SSO登录的用户和角色对应的ARN
+    // SSO登录的User Principal Name和角色对应的ARN
+    public static final Map<String, String> ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME = new HashMap<>();
     public static final Map<String, String> ALIYUN_SSO_LOGIN_ROLE_ID_ARN = new HashMap<>();
     public static final Map<String, String> AWS_SSO_LOGIN_ROLE_ID_ARN = new HashMap<>();
 
@@ -61,6 +62,8 @@ public class SSOConstants {
 
         SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "kidccc@gmail.com", "test-user");
         SSO_LOGIN_USER_IDS.add(aliyunUser);
+        ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.put("test-user", "test-user@1426447221208365.onaliyun.com");
+
         SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "kenmako555@gmail.com", "kenmako555@gmail.com");
         SSO_LOGIN_USER_IDS.add(awsUser);
         SSOUserRole tencentUser = new SSOUserRole("tencent", "个人账号", "100000543428", "chengchao");
@@ -176,13 +179,12 @@ public class SSOConstants {
 
     public static String getSSOSpUserId(SSOSpEnum ssoSp) {
         switch (ssoSp) {
-            case aliyun:
             case aliyun_user:
+                return CommonConstants.Aliyun_UserId;
+            case aliyun:
             case aliyun_user_cloudsso:
-                return CommonConstants.Aliyun_SSO_UserId;
             case aws:
             case aws_user:
-                return CommonConstants.AWS_UserId;
             default:
                 throw new RuntimeException("not support type:" + ssoSp);
         }

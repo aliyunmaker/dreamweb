@@ -104,13 +104,13 @@ public class SSOController extends BaseController implements InitializingBean {
             String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
-            String uid = SSOConstants.getSSOSpUserId(ssoSp);
             // String idpEntityId = SSOConstants.IDP_ENTITY_ID;
             HashMap<String, List<String>> attributes = null;
             // 如果是user sso,需要特殊处理,拆分出uid和nameid,而且不支持多个
             if (SSOSpEnum.aliyun_user.equals(ssoSp)) {
+                String uid = SSOConstants.getSSOSpUserId(ssoSp);
                 identifier = identifier.replace("{uid}", uid);
-                nameID = userRoleId + "@" + uid + ".onaliyun.com";
+                nameID = SSOConstants.ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.get(userRoleId);
             } else if (SSOSpEnum.aws_user.equals(ssoSp) || SSOSpEnum.aliyun_user_cloudsso.equals(ssoSp)) {
                 nameID = userRoleId;
             }  else {
@@ -280,14 +280,14 @@ public class SSOController extends BaseController implements InitializingBean {
             String nameID = username;
             String identifier = SSOConstants.getSSOSpIdentifier(ssoSp);
             String replyUrl = SSOConstants.getSSOSpReplyUrl(ssoSp);
-            String uid = SSOConstants.getSSOSpUserId(ssoSp);
+            // String uid = SSOConstants.getSSOSpUserId(ssoSp);
             String userRoleId = request.getParameter("userRoleId");
-            String idpEntityId = SSOConstants.IDP_ENTITY_ID;
+            // String idpEntityId = SSOConstants.IDP_ENTITY_ID;
 
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             // 只有role sso 才需要这些参数
             Set<String> roleSet = new HashSet<String>();
-//            String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
+            // String userRoleValue = "acs:ram::" + uid + ":role/" + userRoleId + ",acs:ram::" + uid + ":saml-provider/" + idpEntityId;
             String userRoleValue = SSOConstants.ALIYUN_SSO_LOGIN_ROLE_ID_ARN.get(userRoleId);
             roleSet.add(userRoleValue);
             List<String> roleStringList = new ArrayList<String>(roleSet);

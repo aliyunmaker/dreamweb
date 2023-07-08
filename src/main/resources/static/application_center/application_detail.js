@@ -187,7 +187,7 @@ function getSessionPolicy(serviceName, resourceId) {
 // 展示policy内容
 function showSessionPolicy(resourceId, sessionPolicy) {
     $("#sessionPolicyModal-" + resourceId).modal('show');
-    editor[resourceId].setSize(null, 350);
+    // editor[resourceId].setSize(null, 350);
     editor[resourceId].setValue(sessionPolicy);
 }
 

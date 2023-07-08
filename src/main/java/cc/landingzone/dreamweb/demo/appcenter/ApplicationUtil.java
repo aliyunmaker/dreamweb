@@ -2,6 +2,7 @@ package cc.landingzone.dreamweb.demo.appcenter;
 
 import cc.landingzone.dreamweb.common.ApplicationEnum;
 import cc.landingzone.dreamweb.common.CommonConstants;
+import cc.landingzone.dreamweb.common.ResourceUtil;
 import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.demo.appcenter.model.Application;
 import cc.landingzone.dreamweb.demo.appcenter.model.Service;

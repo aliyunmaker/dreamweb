@@ -1,11 +1,9 @@
-package cc.landingzone.dreamweb.demo.appcenter;
+package cc.landingzone.dreamweb.common;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.ServiceEnum;
-import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.common.utils.AliyunAPIUtils;
 import cc.landingzone.dreamweb.demo.appcenter.model.Event;
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
+import com.aliyun.resourcemanager20200331.models.ListResourcesResponseBody;
 import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -188,5 +186,45 @@ public class ResourceUtil {
         }
 
         return events;
+    }
+
+    public static Map<String, Integer> listResourcesCountsByRegion(String region) throws Exception {
+        Map<String, Integer> resourcesCounts = new HashMap<>(ServiceEnum.values().length);
+
+        for (ServiceEnum serviceEnum: ServiceEnum.values()) {
+            resourcesCounts.put(serviceEnum.name(), 0);
+        }
+
+        com.aliyun.resourcemanager20200331.Client client = ServiceHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.resourcemanager20200331.models.ListResourcesRequest listResourcesRequest = new com.aliyun.resourcemanager20200331.models.ListResourcesRequest()
+                .setRegion(region)
+                .setPageSize(100)
+                .setPageNumber(1);
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+
+        List<ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource> resourceList = client.listResourcesWithOptions(listResourcesRequest, runtime).getBody().getResources().resource;
+
+        for (ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource resource: resourceList) {
+            String serviceName = resource.getService().toUpperCase();
+            if ("LOG".equals(serviceName)) {
+                serviceName = "SLS";
+            }
+            String resourceType = resource.getResourceType();
+            try {
+                ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
+                // resourceType要为特定类型，如：ecs instance
+                // 但slb和rds返回的ResourceType参数值与ServiceEnum中resourceType的值不一致，这里暂时hard code
+                if (resourcesCounts.get(serviceName) != null &&
+                        (resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase()) ||
+                                "SLB".equals(serviceName) && "loadbalancer".equals(resourceType) ||
+                                "RDS".equals(serviceName) && "dbinstance".equals(resourceType))) {
+                    resourcesCounts.merge(serviceName, 1, Integer::sum);
+                }
+            } catch (Exception ignored) {
+
+            }
+        }
+
+        return resourcesCounts;
     }
 }
