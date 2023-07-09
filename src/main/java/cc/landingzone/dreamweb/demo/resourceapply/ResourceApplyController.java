@@ -63,7 +63,7 @@ public class ResourceApplyController extends BaseController {
             String vpcId = request.getParameter("vpcId");
             String vSwitchId = request.getParameter("vSwitchId");
             String instanceType = request.getParameter("instanceType");
-            String instanceName = request.getParameter("instanceName");
+//            String instanceName = request.getParameter("instanceName");
             int amount = Integer.parseInt(request.getParameter("amount"));
             Assert.isTrue(StringUtils.isNotBlank(applicationName), "applicationName must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(environmentName), "environmentName must not be blank");
@@ -71,11 +71,11 @@ public class ResourceApplyController extends BaseController {
             Assert.isTrue(StringUtils.isNotBlank(vpcId), "vpcId must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(vSwitchId), "vSwitchId must not be blank");
             Assert.isTrue(StringUtils.isNotBlank(instanceType), "instanceType must not be blank");
-            Assert.isTrue(StringUtils.isNotBlank(instanceName), "instanceName must not be blank");
+//            Assert.isTrue(StringUtils.isNotBlank(instanceName), "instanceName must not be blank");
             Assert.isTrue(amount > 0, "amount must be greater than 0");
             Assert.isTrue(amount <= 100, "amount must be less than 100");
             ResourceApplyUtil.createEcsInstance(regionId, vpcId,vSwitchId, instanceType, amount, applicationName,
-                    environmentName,instanceName);
+                    environmentName);
         } catch (Exception e) {
             logger.error(e.getMessage());
             result.setSuccess(false);

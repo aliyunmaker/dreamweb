@@ -1,5 +1,6 @@
 var templateContentEditor;
 var createFailEditor;
+var instanceType;
 $(document).ready(function () {
     // 单选按钮点击事件
     $('input[type=radio][name=resourceType]').change(function () {
@@ -62,6 +63,14 @@ $(document).ready(function () {
         styleActiveLine: true, //光标所在行高亮
         //readOnly: true,      //只读
     });
+
+  $(".card").click(function() {
+    $(".card").removeClass("selected"); // 移除所有卡片的选中状态
+    $(this).addClass("selected"); // 添加当前点击的卡片的选中状态
+
+    instanceType = $(this).find(".card-title").text();
+  });
+
 });
 
 var links = document.querySelectorAll(".navbar-nav a");
@@ -212,11 +221,15 @@ function createEcsInstance() {
     var regionId = $("#regionId").val();
     var vpcId = $("#vpc").val();
     var vSwitchId = $("#vSwitch").val();
-    var instanceType = $("#instanceType").val();
+    // var instanceType = $("#instanceType").val();
     var amount = $("#instanceNum").val();
     var application = $("#application").val();
     var environmentType = $("input[name='environmentType']:checked").val();
-    var instanceName = $("#instanceName").val();
+//    var instanceName = $("#instanceName").val();
+    if (instanceType == "") {
+        alert("请选择实例类型");
+        return;
+    }
 
     var params = {
         applicationName: application,
@@ -226,7 +239,7 @@ function createEcsInstance() {
         vSwitchId: vSwitchId,
         instanceType: instanceType,
         amount: amount,
-        instanceName: instanceName
+//        instanceName: instanceName
     };
 
     $.ajax({

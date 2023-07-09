@@ -43,7 +43,13 @@
     .active {
       background-color: #8899f0;
     }
+
+    .card.selected{
+        border-color:blue;
+        box-shadow: 0 0 5px blue;
+    }
   </style>
+
 
 </head>
 
@@ -53,19 +59,19 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="iconfont icon-rocket" style="font-size: 1.3rem;"></i>
                 资源申请</a>
-<!--            <div class="collapse navbar-collapse">-->
-<!--                <ul class="navbar-nav me-auto">-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link disabled">Project: [springrun]</a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
+            <!--            <div class="collapse navbar-collapse">-->
+            <!--                <ul class="navbar-nav me-auto">-->
+            <!--                    <li class="nav-item">-->
+            <!--                        <a class="nav-link disabled">Project: [springrun]</a>-->
+            <!--                    </li>-->
+            <!--                    <li class="nav-item">-->
+            <!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>-->
+            <!--                    </li>-->
+            <!--                    <li class="nav-item">-->
+            <!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>-->
+            <!--                    </li>-->
+            <!--                </ul>-->
+            <!--            </div>-->
         </div>
     </nav>
 </main>
@@ -132,7 +138,7 @@
         </div>
         <br>
 
-        <div id="ecsTemplate">
+        <!-- <div id="ecsTemplate">
             <div class="form-group row">
                 <label for="permissionTemplateEcs" class="col-sm-2 col-form-label">资源模版：</label>
                 <div class="col-sm-10">
@@ -149,6 +155,59 @@
                 </div>
             </div>
             <br>
+        </div> -->
+        <div id="ecsTemplate">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">实例规格：</label>
+                <div class="col-sm-3">
+                    <div class="card" style="width: 15rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">ecs.n2.small</h5>
+                            <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+                            <!-- <p class="card-text">1 vCPU</p>
+                            <p class="card-text">4 Gib</p>
+                            <p class="card-text">X86 计算-共享型</p> -->
+                            <div>1 vCPU</div>
+                            <div>4 Gib</div>
+<!--                            <div class="mb-1">X86 计算-共享型</div>-->
+                            <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
+                               onclick="getTemplateByResourceType('terraform')">查看模板</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card" style="width: 15rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">ecs.n2.medium</h5>
+                            <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+                            <!-- <p class="card-text">1 vCPU</p>
+                            <p class="card-text">4 Gib</p>
+                            <p class="card-text">X86 计算-共享型</p> -->
+                            <div>2 vCPU</div>
+                            <div>8 Gib</div>
+<!--                            <div class="mb-1">X86 计算-共享型</div>-->
+                            <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
+                               onclick="getTemplateByResourceType('terraform')">查看模板</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card" style="width: 15rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">ecs.n2.large</h5>
+                            <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+                            <!-- <p class="card-text">1 vCPU</p>
+                            <p class="card-text">4 Gib</p>
+                            <p class="card-text">X86 计算-共享型</p> -->
+                            <div>4 vCPU</div>
+                            <div>16 Gib</div>
+<!--                            <div class="mb-1">X86 计算-共享型</div>-->
+                            <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
+                               onclick="getTemplateByResourceType('terraform')">查看模板</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="ossTemplate" style="display: none;">
@@ -168,7 +227,6 @@
                     </div>
                 </div>
             </div>
-            <br>
         </div>
 
         <div id="logTemplate" style="display: none;">
@@ -188,7 +246,6 @@
                     </div>
                 </div>
             </div>
-            <br>
         </div>
 
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel"
@@ -200,15 +257,15 @@
             <div class="offcanvas-body">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                      <a class="nav-link text-black active" aria-current="page" href="#" id="tab-terraform" onclick="getTemplateByResourceType('terraform')">Terraform</a>
+                        <a class="nav-link text-black active" aria-current="page" href="#" id="tab-terraform" onclick="getTemplateByResourceType('terraform')">Terraform</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link text-black" href="#" id="tab-java" onclick="getTemplateByResourceType('java')">Java</a>
+                        <a class="nav-link text-black" href="#" id="tab-java" onclick="getTemplateByResourceType('java')">Java</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link text-black" href="#" id="tab-ccapi" onclick="getTemplateByResourceType('ccapi')">CCAPI</a>
+                        <a class="nav-link text-black" href="#" id="tab-ccapi" onclick="getTemplateByResourceType('ccapi')">CCAPI</a>
                     </li>
-                  </ul>
+                </ul>
                 <label for="templateContent"></label>
                 <textarea id="templateContent" class="form-control"></textarea>
             </div>
@@ -216,7 +273,7 @@
 
 
 
-        <h2 class="pb-2 border-bottom fs-1"></h2>
+        <h2 class="pb-2 border-bottom fs-1 mt-2"></h2>
 
         <div class="row mb-3 mt-4">
             <h5>资源属性</h5>
@@ -245,25 +302,25 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group row mb-3">
-                <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>
-                <div class="col-sm-5">
-                    <select class="form-select" id="instanceType">
-                        <option selected disabled value="">请选择实例规格</option>
-                        <option value="ecs.n2.small">ecs.n2.small</option>
-                        <option value="ecs.mn4.small">ecs.mn4.small</option>
-                        <option value="ecs.n4.large">ecs.n4.large</option>
-                        <option value="ecs.n1.medium">ecs.n1.medium</option>
-                        <option value="ecs.e3.small">ecs.e3.small</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mb-3">
-                <label for="instanceName" class="col-sm-2 control-label">实例名称：</label>
-                <div class="col-sm-5">
-                    <input class="form-control" type="text" placeholder="请输入字符串" id="instanceName">
-                </div>
-            </div>
+            <!--            <div class="form-group row mb-3">-->
+            <!--                <label for="instanceType" class="col-sm-2 control-label">实例规格：</label>-->
+            <!--                <div class="col-sm-5">-->
+            <!--                    <select class="form-select" id="instanceType">-->
+            <!--                        <option selected disabled value="">请选择实例规格</option>-->
+            <!--                        <option value="ecs.n2.small">ecs.n2.small</option>-->
+            <!--                        <option value="ecs.mn4.small">ecs.mn4.small</option>-->
+            <!--                        <option value="ecs.n4.large">ecs.n4.large</option>-->
+            <!--                        <option value="ecs.n1.medium">ecs.n1.medium</option>-->
+            <!--                        <option value="ecs.e3.small">ecs.e3.small</option>-->
+            <!--                    </select>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <!--            <div class="form-group row mb-3">-->
+            <!--                <label for="instanceName" class="col-sm-2 control-label">实例名称：</label>-->
+            <!--                <div class="col-sm-5">-->
+            <!--                    <input class="form-control" type="text" placeholder="请输入字符串" id="instanceName">-->
+            <!--                </div>-->
+            <!--            </div>-->
             <div class="form-group row mb-3">
                 <label for="instanceNum" class="col-sm-2 control-label">实例数量：</label>
                 <div class="col-sm-5">

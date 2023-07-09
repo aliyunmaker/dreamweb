@@ -14,10 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-/**
- * 作者：珈贺
- * 描述：
- */
 @Controller
 @RequestMapping("/employeeList")
 public class EmployeeListController extends BaseController {
@@ -101,8 +97,10 @@ public class EmployeeListController extends BaseController {
     public void getAllUser(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
+            long startTime = System.currentTimeMillis();
             List<ScimUser> scimUserList = ScimUserService.getAllScimUser();
             result.setData(scimUserList);
+            logger.info("getAllUser cost: " + (System.currentTimeMillis() - startTime) + "ms");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
@@ -165,8 +163,10 @@ public class EmployeeListController extends BaseController {
     public void getAllGroup(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
+            long startTime = System.currentTimeMillis();
             List<ScimGroup> scimGroupList = ScimGroupService.getAllScimGroup();
             result.setData(scimGroupList);
+            logger.info("getAllGroup cost: " + (System.currentTimeMillis() - startTime) + "ms");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

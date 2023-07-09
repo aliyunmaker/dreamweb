@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.demo.resourceapply;
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.common.ServiceHelper;
+import cc.landingzone.dreamweb.common.utils.UUIDUtils;
 import com.alibaba.fastjson.JSON;
 import com.aliyun.ecs20140526.models.*;
 import com.aliyun.sdk.service.oss20190517.AsyncClient;
@@ -59,7 +60,7 @@ public class ResourceApplyUtil {
     }
 
     public static void createEcsInstance(String regionId, String vpcId, String vSwitchId, String instanceType, int amount,
-                                         String applicationName, String environmentName, String instanceName) throws Exception {
+                                         String applicationName, String environmentName) throws Exception {
         com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         RuntimeOptions runtime = new RuntimeOptions();
@@ -90,7 +91,7 @@ public class ResourceApplyUtil {
 //                .setDataDisk(dataDisks)
                 // uuid: 标识唯一ECS
                 .setHostName(CommonConstants.DEFAULT_ECS_HOSTNAME + UUID.randomUUID())
-                .setInstanceName(instanceName)
+                .setInstanceName(applicationName + "-" + UUIDUtils.generateUUID().substring(0,8))
                 // 为HostName和InstanceName自动添加有序后缀
                 .setUniqueSuffix(true)
                 .setPassword(CommonConstants.DEFAULT_ECS_PASSWORD)

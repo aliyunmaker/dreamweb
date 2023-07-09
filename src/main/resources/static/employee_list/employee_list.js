@@ -1,9 +1,13 @@
 $(document).ready(function() {
+    $("#loading").removeClass("d-none");
     // var data = [['1','用户名', '姓', '名', '显示名称', 'Email','externalId','type']]
     var data = getData();
+
     var titles = ['ID','用户名/组名', '姓', '名', '显示名称', 'Email','externalId','type']
     var table = $('#userTable').DataTable({
         data: data,
+        width: "100%",
+        autoWidth: false,
         "pagingType": "full_numbers",
         "bSort": true,
         "language": {
@@ -41,6 +45,11 @@ $(document).ready(function() {
         "lengthMenu": [5,10,20,50]
       });
 
+    // 初始化完成后显示具体内容
+      $("#loading").addClass("d-none");
+      $("#content").show();
+
+        // 为每一行添加序号
 //      table.on('order.dt search.dt', function() {
 //        table.column(0, {
 //          search: 'applied',
@@ -286,7 +295,6 @@ $(document).ready(function() {
 
   function getData(){
     var tableData = [];
-
     $.ajax({
         url: "../" + "employeeList/getAllUser.do",
         type: "POST",
@@ -325,25 +333,7 @@ $(document).ready(function() {
     return tableData;
   }
 
-
-  var links = document.querySelectorAll(".navbar-nav a");
-  var iframe = document.getElementById("iframe");
-
-  links.forEach(function (link) {
-    link.addEventListener("click", function (e) {
-      e.preventDefault();
-      var page = e.target.getAttribute("data-link");
-      iframe.setAttribute("src", page);
-
-      // Remove active class from all links
-      deleteAccessKeyRequest = new com.aliyun.ram20150501.models.DeleteAccessKeyRequest()
-        .setUserName("aaa")
-        .setUserAccessKeyId("111"); links.forEach(function (link) {
-          link.classList.remove("active");
-        });
-
-      // Add active class to the clicked link
-      e.target.classList.add("active");
-    });
-  });
-
+//$(window).on("load", function() {
+//  $("#loading").addClass("d-none");
+//  $("#content").show();
+//});

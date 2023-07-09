@@ -53,9 +53,14 @@
     </nav>
 </main>
 
+<div id="loading" class="d-flex justify-content-center align-items-center vh-100">
+    <!-- 使用 Bootstrap 的加载图标类 -->
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
 
-
-<div class="px-5 py-5">
+<div class="px-5 py-5" id="content" style="display: none;">
     <section class="content">
         <div class="btn-group operation mb-3">
             <button id="btn_add" type="button" class="btn bg-primary mb-3">
