@@ -53,7 +53,8 @@
     var iframe = document.getElementById("iframe");
     page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
     iframe.setAttribute("src", page);
-    // $(document).ready(function() {
+    $(document).ready(function() {
+      getApplication();
     //   var queryString = window.location.search;
     //   var urlParams = new URLSearchParams(queryString);
     //   appName = urlParams.get('appName');
@@ -83,8 +84,8 @@
       //   // document.getElementById("dreamweb-monitor-btn").classList.add("active");
       //   console.log("page:" + page);
       // }
-      // getApplication();
-    // });
+
+    });
 
     var links = document.querySelectorAll(".navbar-nav a");
 
@@ -137,7 +138,7 @@
                 for (var i = 0; i < data.length; i++) {
                     application.options.add(new Option(data[i], data[i]));
                 }
-                application.value = "";
+                application.options[0].selected = true;
             } else {
                 console.log("data.message: " + result.errorMsg);
                 alert(result.errorMsg);
