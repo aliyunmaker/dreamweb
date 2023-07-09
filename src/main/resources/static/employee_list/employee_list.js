@@ -8,6 +8,7 @@ $(document).ready(function() {
         data: data,
         width: "100%",
         autoWidth: false,
+        deferRender: true, // 延迟渲染
         "pagingType": "full_numbers",
         "bSort": true,
         "language": {
@@ -42,12 +43,16 @@ $(document).ready(function() {
         "order": [[7, 'asc']],
         // true代表后台处理分页，false代表前台处理分页
         "serverSide":false,
-        "lengthMenu": [5,10,20,50]
+        "lengthMenu": [5,10,20,50],
+        initComplete: function() {
+            $("#loading").addClass("d-none");
+            $("#content").show();
+        }
       });
 
-    // 初始化完成后显示具体内容
-      $("#loading").addClass("d-none");
-      $("#content").show();
+//    // 初始化完成后显示具体内容
+//      $("#loading").addClass("d-none");
+//      $("#content").show();
 
         // 为每一行添加序号
 //      table.on('order.dt search.dt', function() {
