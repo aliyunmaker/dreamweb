@@ -27,6 +27,9 @@ public class CommonConstants {
 
     public static final String[] ENVIRONMENT_TYPE_TAG_VALUES = {"product", "test"};
 
+    // resource center admin name
+    public static final String RESOURCE_CENTER_ADMIN_NAME = "管理账号";
+
     // log center的默认查询语句
     public static final String QUERY_STRING = "remote_addr:100.127.198.61";
 

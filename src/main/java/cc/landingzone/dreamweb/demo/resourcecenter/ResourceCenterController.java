@@ -1,8 +1,10 @@
 package cc.landingzone.dreamweb.demo.resourcecenter;
 
 import cc.landingzone.dreamweb.common.BaseController;
+import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ResourceUtil;
 import cc.landingzone.dreamweb.common.model.WebResult;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,9 +19,14 @@ public class ResourceCenterController extends BaseController {
     public void listResources(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            Map<String, Map<String, Map<String, Integer>>> resourcesCounts = ResourceUtil.listAccountRegionResourcesCounts();
-            result.setTotal(resourcesCounts.size());
-            result.setData(resourcesCounts);
+            String resourceDirectoryId = ResourceUtil.getResourceDirectoryId();
+            Map<String, Map<String, Map<String, Integer>>> accountRegionResourcesCounts = ResourceUtil.listAccountRegionResourcesCounts(resourceDirectoryId);
+            JSONObject data = new JSONObject();
+            data.put("resourceDirectoryId", resourceDirectoryId);
+            data.put("resourceCenterAdminName", CommonConstants.RESOURCE_CENTER_ADMIN_NAME);
+            data.put("accountRegionResourcesCounts", accountRegionResourcesCounts);
+            result.setTotal(data.size());
+            result.setData(data);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);

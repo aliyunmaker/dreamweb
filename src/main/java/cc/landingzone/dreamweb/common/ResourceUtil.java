@@ -194,10 +194,14 @@ public class ResourceUtil {
         return client.getResourceDirectoryWithOptions(runtime).getBody().getResourceDirectory().getResourceDirectoryId();
     }
 
-    public static Map<String, Map<String, Map<String, Integer>>> listAccountRegionResourcesCounts() throws Exception {
+    public static Map<String, String> getAccountNames() throws Exception {
+        Map<String, String> accountNames = new HashMap<>();
+        return accountNames;
+    }
+
+    public static Map<String, Map<String, Map<String, Integer>>> listAccountRegionResourcesCounts(String resourceDirectoryId) throws Exception {
         Map<String, Map<String, Map<String, Integer>>> accountRegionResourcesCounts = new HashMap<>();
 
-        String resourceDirectoryId = getResourceDirectoryId();
         String nextToken = null;
         List<SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources> resources = new ArrayList<>();
 
@@ -218,6 +222,10 @@ public class ResourceUtil {
 
         for (SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources resource: resources) {
             String accountId = resource.getAccountId();
+            if (accountId.equals(CommonConstants.Aliyun_UserId)) {
+                accountId = CommonConstants.RESOURCE_CENTER_ADMIN_NAME;
+            }
+
             String regionId = resource.getRegionId();
             String serviceResourceType = resource.getResourceType();
 
@@ -233,7 +241,22 @@ public class ResourceUtil {
                 accountRegionResourcesCounts.get(accountId).put(regionId, resourcesCounts);
             }
 
+            // add up resources to resource directory id
+            if (accountRegionResourcesCounts.get(resourceDirectoryId) == null) {
+                Map<String, Map<String, Integer>> regionResourcesCounts = new HashMap<>();
+                accountRegionResourcesCounts.put(resourceDirectoryId, regionResourcesCounts);
+            }
+            if (accountRegionResourcesCounts.get(resourceDirectoryId).get(regionId) == null) {
+                Map<String, Integer> resourcesCounts = new HashMap<>(ServiceEnum.values().length);
+                for (ServiceEnum serviceEnum: ServiceEnum.values()) {
+                    resourcesCounts.put(serviceEnum.name(), 0);
+                }
+                accountRegionResourcesCounts.get(resourceDirectoryId).put(regionId, resourcesCounts);
+            }
+
             Map<String, Integer> resourcesCounts = accountRegionResourcesCounts.get(accountId).get(regionId);
+            Map<String, Integer> directoryResourcesCounts = accountRegionResourcesCounts.get(resourceDirectoryId).get(regionId);
+
             String serviceName = serviceResourceType.split("::")[1];
             String resourceType = serviceResourceType.split("::")[2].toLowerCase();
             try {
@@ -245,6 +268,12 @@ public class ResourceUtil {
                                 "SLB".equals(serviceName) && "loadbalancer".equals(resourceType) ||
                                 "RDS".equals(serviceName) && "dbinstance".equals(resourceType))) {
                     resourcesCounts.merge(serviceName, 1, Integer::sum);
+                }
+                if (directoryResourcesCounts.get(serviceName) != null &&
+                        (resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase()) ||
+                                "SLB".equals(serviceName) && "loadbalancer".equals(resourceType) ||
+                                "RDS".equals(serviceName) && "dbinstance".equals(resourceType))) {
+                    directoryResourcesCounts.merge(serviceName, 1, Integer::sum);
                 }
             } catch (Exception ignored) {
 
