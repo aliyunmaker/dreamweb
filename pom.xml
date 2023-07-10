@@ -275,6 +275,12 @@
 
         <dependency>
             <groupId>com.aliyun</groupId>
+            <artifactId>resourcecenter20221201</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-sts</artifactId>
             <version>3.0.0</version>
         </dependency>

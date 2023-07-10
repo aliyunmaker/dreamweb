@@ -10,7 +10,7 @@ $(document).ready(function() {
     </div>`
     );
     $.ajax({
-        url: "../resources/listResourcesByRegion.do",
+        url: "../resources/listResources.do",
         success: function(result){
             if (result.success) {
                 resourcesCounts = result.data;

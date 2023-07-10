@@ -3,7 +3,7 @@ package cc.landingzone.dreamweb.common;
 import cc.landingzone.dreamweb.common.utils.AliyunAPIUtils;
 import cc.landingzone.dreamweb.demo.appcenter.model.Event;
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
-import com.aliyun.resourcemanager20200331.models.ListResourcesResponseBody;
+import com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesResponseBody;
 import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -188,49 +188,69 @@ public class ResourceUtil {
         return events;
     }
 
-    public static Map<String, Map<String, Integer>> listResourcesCountsByRegion(List<String> regions) throws Exception {
-        Map<String, Map<String, Integer>> resourcesCounts = new HashMap<>();
-
+    public static String getResourceDirectoryId() throws Exception {
         com.aliyun.resourcemanager20200331.Client client = ServiceHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        return client.getResourceDirectoryWithOptions(runtime).getBody().getResourceDirectory().getResourceDirectoryId();
+    }
 
-        for (String region: regions) {
-            com.aliyun.resourcemanager20200331.models.ListResourcesRequest listResourcesRequest = new com.aliyun.resourcemanager20200331.models.ListResourcesRequest()
-                    .setRegion(region)
-                    .setPageSize(100)
-                    .setPageNumber(1);
+    public static Map<String, Map<String, Map<String, Integer>>> listAccountRegionResourcesCounts() throws Exception {
+        Map<String, Map<String, Map<String, Integer>>> accountRegionResourcesCounts = new HashMap<>();
+
+        String resourceDirectoryId = getResourceDirectoryId();
+        String nextToken = null;
+        List<SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources> resources = new ArrayList<>();
+
+        com.aliyun.resourcecenter20221201.Client client = ServiceHelper.createResourceCenterClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+
+        do {
+            com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesRequest searchMultiAccountResourcesRequest = new com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesRequest()
+                    .setScope(resourceDirectoryId)
+                    .setMaxResults(100)
+                    .setNextToken(nextToken);
             com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
-            List<ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource> resourceList = client.listResourcesWithOptions(listResourcesRequest, runtime).getBody().getResources().resource;
+            com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesResponseBody searchMultiAccountResourcesResponseBody = client.searchMultiAccountResourcesWithOptions(searchMultiAccountResourcesRequest, runtime).getBody();
 
-            Map<String, Integer> resourcesCount = new HashMap<>(ServiceEnum.values().length);
-            for (ServiceEnum serviceEnum: ServiceEnum.values()) {
-                resourcesCount.put(serviceEnum.name(), 0);
+            nextToken = searchMultiAccountResourcesResponseBody.getNextToken();
+            resources.addAll(searchMultiAccountResourcesResponseBody.getResources());
+        } while (nextToken != null);
+
+        for (SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources resource: resources) {
+            String accountId = resource.getAccountId();
+            String regionId = resource.getRegionId();
+            String serviceResourceType = resource.getResourceType();
+
+            if (accountRegionResourcesCounts.get(accountId) == null) {
+                Map<String, Map<String, Integer>> regionResourcesCounts = new HashMap<>();
+                accountRegionResourcesCounts.put(accountId, regionResourcesCounts);
+            }
+            if (accountRegionResourcesCounts.get(accountId).get(regionId) == null) {
+                Map<String, Integer> resourcesCounts = new HashMap<>(ServiceEnum.values().length);
+                for (ServiceEnum serviceEnum: ServiceEnum.values()) {
+                    resourcesCounts.put(serviceEnum.name(), 0);
+                }
+                accountRegionResourcesCounts.get(accountId).put(regionId, resourcesCounts);
             }
 
-            for (ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource resource: resourceList) {
-                String serviceName = resource.getService().toUpperCase();
-                if ("LOG".equals(serviceName)) {
-                    serviceName = "SLS";
+            Map<String, Integer> resourcesCounts = accountRegionResourcesCounts.get(accountId).get(regionId);
+            String serviceName = serviceResourceType.split("::")[1];
+            String resourceType = serviceResourceType.split("::")[2].toLowerCase();
+            try {
+                ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
+                // resourceType要为特定类型，如：ecs instance
+                // 但slb和rds返回的ResourceType参数值与ServiceEnum中resourceType的值不一致，这里暂时hard code
+                if (resourcesCounts.get(serviceName) != null &&
+                        (resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase()) ||
+                                "SLB".equals(serviceName) && "loadbalancer".equals(resourceType) ||
+                                "RDS".equals(serviceName) && "dbinstance".equals(resourceType))) {
+                    resourcesCounts.merge(serviceName, 1, Integer::sum);
                 }
-                String resourceType = resource.getResourceType();
-                try {
-                    ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
-                    // resourceType要为特定类型，如：ecs instance
-                    // 但slb和rds返回的ResourceType参数值与ServiceEnum中resourceType的值不一致，这里暂时hard code
-                    if (resourcesCount.get(serviceName) != null &&
-                            (resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase()) ||
-                                    "SLB".equals(serviceName) && "loadbalancer".equals(resourceType) ||
-                                    "RDS".equals(serviceName) && "dbinstance".equals(resourceType))) {
-                        resourcesCount.merge(serviceName, 1, Integer::sum);
-                    }
-                } catch (Exception ignored) {
+            } catch (Exception ignored) {
 
-                }
             }
-            resourcesCounts.put(region, resourcesCount);
         }
 
-
-        return resourcesCounts;
+        return accountRegionResourcesCounts;
     }
 }

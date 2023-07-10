@@ -121,6 +121,15 @@ public class ServiceHelper {
         return new com.aliyun.resourcemanager20200331.Client(config);
     }
 
+    public static com.aliyun.resourcecenter20221201.Client createResourceCenterClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        // 访问的域名
+        config.endpoint = "resourcecenter.aliyuncs.com";
+        return new com.aliyun.resourcecenter20221201.Client(config);
+    }
+
 
     /**
      * 权限策略 拼接资源ARN
