@@ -5,6 +5,8 @@ import cc.landingzone.dreamweb.common.model.WebResult;
 import cc.landingzone.dreamweb.common.utils.JsonUtils;
 import cc.landingzone.dreamweb.demo.employeelist.model.ScimGroup;
 import cc.landingzone.dreamweb.demo.employeelist.model.ScimUser;
+import cc.landingzone.dreamweb.demo.employeelist.model.SyncRequest;
+import cc.landingzone.dreamweb.demo.employeelist.service.LdapService;
 import cc.landingzone.dreamweb.demo.employeelist.service.ScimGroupService;
 import cc.landingzone.dreamweb.demo.employeelist.service.ScimUserService;
 import org.springframework.stereotype.Controller;
@@ -175,14 +177,21 @@ public class EmployeeListController extends BaseController {
         outputToJSON(response, result);
     }
 
-    @RequestMapping("/syncUser.do")
-    public void syncUser(HttpServletRequest request, HttpServletResponse response) {
-
-    }
-
-    @RequestMapping("/syncGroup.do")
-    public void syncGroup(HttpServletRequest request, HttpServletResponse response) {
-
+    @RequestMapping("/sync.do")
+    public void sync(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String formString = request.getParameter("formString");
+            List<SyncRequest> syncRequestList = JsonUtils.parseArray(formString, SyncRequest.class);
+            boolean removeUnselected = Boolean.parseBoolean(request.getParameter("removeUnselected"));
+            String resultData = LdapService.syncLdaptoScim(syncRequestList, removeUnselected);
+            result.setData(resultData);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
     }
 
 }
