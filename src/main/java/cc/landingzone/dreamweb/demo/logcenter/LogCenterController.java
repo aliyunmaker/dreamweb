@@ -25,6 +25,7 @@ public class LogCenterController extends BaseController {
             String destination = request.getParameter("destination");
             String appName = request.getParameter("projectName");
             String logStore = request.getParameter("logStore");
+            String queryString = CommonConstants.QUERY_STRING;
 
             // 默认查看access log
             if (StringUtils.isBlank(logStore)) {
@@ -33,6 +34,9 @@ public class LogCenterController extends BaseController {
 
             if (StringUtils.isBlank(destination)) {
                 destination = "https://sls4service.console.aliyun.com/lognext/project/" + appName + "/logsearch/" + logStore + "?hideTopbar=true&hideSidebar=true&ignoreTabLocalStorage=true";
+                if ("access-log".equals(logStore)) {
+                    destination += "&queryString=" + queryString;
+                }
             }
 
             String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,

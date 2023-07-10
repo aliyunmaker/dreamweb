@@ -27,6 +27,8 @@ public class CommonConstants {
 
     public static final String[] ENVIRONMENT_TYPE_TAG_VALUES = {"product", "test"};
 
+    // log center的默认查询语句
+    public static final String QUERY_STRING = "remote_addr:100.127.198.61";
 
     // 用于免密登录的RAM角色ARN
     public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";

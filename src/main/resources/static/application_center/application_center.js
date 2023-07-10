@@ -1,6 +1,8 @@
 var appsInfo;
 var appDetail;
 var resourceDetail;
+var sortedServiceNames = ["ECS", "RDS", "SLB", "OSS", "SLS"];
+
 $(document).ready(function() {
     $("#appCenterPage").append(
         `<div class="position-absolute top-50 start-50 translate-middle">
@@ -20,25 +22,6 @@ $(document).ready(function() {
                 alert(result.errorMsg);
             }
         }
-    });
-});
-
-var links = document.querySelectorAll(".navbar-nav a");
-var iframe = document.getElementById("iframe");
-
-links.forEach(function (link) {
-    link.addEventListener("click", function (e) {
-        e.preventDefault();
-        var page = e.target.getAttribute("data-link");
-        iframe.setAttribute("src", page);
-
-        // Remove active class from all links
-        links.forEach(function (link) {
-            link.classList.remove("active");
-        });
-
-        // Add active class to the clicked link
-        e.target.classList.add("active");
     });
 });
 
@@ -91,7 +74,7 @@ function createCards(appName) {
                 </div>
             </div>`;
             $("#cardContainer").append(card);
-            for (var serviceName in app.servicesCounts) {
+            for (var serviceName of sortedServiceNames) {
                 var service = `
                 <a href="#" class="col align-items-start text-black text-decoration-none" id=${app.appName}-${serviceName} onclick="getAppDetail('${app.appName}', '${serviceName}')">
                     <h5>${app.servicesCounts[serviceName]}</h5>

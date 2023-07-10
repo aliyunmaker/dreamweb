@@ -188,42 +188,48 @@ public class ResourceUtil {
         return events;
     }
 
-    public static Map<String, Integer> listResourcesCountsByRegion(String region) throws Exception {
-        Map<String, Integer> resourcesCounts = new HashMap<>(ServiceEnum.values().length);
-
-        for (ServiceEnum serviceEnum: ServiceEnum.values()) {
-            resourcesCounts.put(serviceEnum.name(), 0);
-        }
+    public static Map<String, Map<String, Integer>> listResourcesCountsByRegion(List<String> regions) throws Exception {
+        Map<String, Map<String, Integer>> resourcesCounts = new HashMap<>();
 
         com.aliyun.resourcemanager20200331.Client client = ServiceHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-        com.aliyun.resourcemanager20200331.models.ListResourcesRequest listResourcesRequest = new com.aliyun.resourcemanager20200331.models.ListResourcesRequest()
-                .setRegion(region)
-                .setPageSize(100)
-                .setPageNumber(1);
-        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
-        List<ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource> resourceList = client.listResourcesWithOptions(listResourcesRequest, runtime).getBody().getResources().resource;
+        for (String region: regions) {
+            com.aliyun.resourcemanager20200331.models.ListResourcesRequest listResourcesRequest = new com.aliyun.resourcemanager20200331.models.ListResourcesRequest()
+                    .setRegion(region)
+                    .setPageSize(100)
+                    .setPageNumber(1);
+            com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
-        for (ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource resource: resourceList) {
-            String serviceName = resource.getService().toUpperCase();
-            if ("LOG".equals(serviceName)) {
-                serviceName = "SLS";
+            List<ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource> resourceList = client.listResourcesWithOptions(listResourcesRequest, runtime).getBody().getResources().resource;
+
+            Map<String, Integer> resourcesCount = new HashMap<>(ServiceEnum.values().length);
+            for (ServiceEnum serviceEnum: ServiceEnum.values()) {
+                resourcesCount.put(serviceEnum.name(), 0);
             }
-            String resourceType = resource.getResourceType();
-            try {
-                ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
-                // resourceType要为特定类型，如：ecs instance
-                // 但slb和rds返回的ResourceType参数值与ServiceEnum中resourceType的值不一致，这里暂时hard code
-                if (resourcesCounts.get(serviceName) != null &&
-                        (resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase()) ||
-                                "SLB".equals(serviceName) && "loadbalancer".equals(resourceType) ||
-                                "RDS".equals(serviceName) && "dbinstance".equals(resourceType))) {
-                    resourcesCounts.merge(serviceName, 1, Integer::sum);
+
+            for (ListResourcesResponseBody.ListResourcesResponseBodyResourcesResource resource: resourceList) {
+                String serviceName = resource.getService().toUpperCase();
+                if ("LOG".equals(serviceName)) {
+                    serviceName = "SLS";
                 }
-            } catch (Exception ignored) {
+                String resourceType = resource.getResourceType();
+                try {
+                    ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
+                    // resourceType要为特定类型，如：ecs instance
+                    // 但slb和rds返回的ResourceType参数值与ServiceEnum中resourceType的值不一致，这里暂时hard code
+                    if (resourcesCount.get(serviceName) != null &&
+                            (resourceType.equals(serviceEnum.getResourceType().split("::")[2].toLowerCase()) ||
+                                    "SLB".equals(serviceName) && "loadbalancer".equals(resourceType) ||
+                                    "RDS".equals(serviceName) && "dbinstance".equals(resourceType))) {
+                        resourcesCount.merge(serviceName, 1, Integer::sum);
+                    }
+                } catch (Exception ignored) {
 
+                }
             }
+            resourcesCounts.put(region, resourcesCount);
         }
+
 
         return resourcesCounts;
     }
