@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.demo.resourceapply;
 
+import cc.landingzone.dreamweb.common.ClientHelper;
 import cc.landingzone.dreamweb.common.CommonConstants;
 import cc.landingzone.dreamweb.common.ServiceEnum;
 import cc.landingzone.dreamweb.common.ServiceHelper;
@@ -61,7 +62,7 @@ public class ResourceApplyUtil {
 
     public static void createEcsInstance(String regionId, String vpcId, String vSwitchId, String instanceType, int amount,
                                          String applicationName, String environmentName) throws Exception {
-        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
+        com.aliyun.ecs20140526.Client client = ClientHelper.createEcsClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         RuntimeOptions runtime = new RuntimeOptions();
 
@@ -106,7 +107,7 @@ public class ResourceApplyUtil {
     }
 
     public static void createOssBucket(String bucketName, String applicationName, String environmentName) throws Exception {
-        AsyncClient client = ServiceHelper.createOssClient
+        AsyncClient client = ClientHelper.createOssClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
 
         CreateBucketConfiguration createBucketConfiguration = CreateBucketConfiguration.builder()
@@ -130,7 +131,7 @@ public class ResourceApplyUtil {
     public static void createLogProject(String projectName, String description, String applicationName,
                                         String environmentName) throws Exception {
 
-        Client client = ServiceHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        Client client = ClientHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         //查询logProject是否存在
 
         // 创建logProject
@@ -152,7 +153,7 @@ public class ResourceApplyUtil {
         tags.put(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY, environment);
         String tagStr = JSON.toJSONString(tags);
         logger.info("tagStr:{}", tagStr);
-        com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient
+        com.aliyun.tag20180828.Client client = ClientHelper.createTagClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         List<String> resourceArn = ServiceHelper.getResourceArnInTag
                 (resourceType, resourceNameList, CommonConstants.Aliyun_UserId);
@@ -234,7 +235,7 @@ public class ResourceApplyUtil {
      * get securityGroupId by vpcId,if not exist,create one
      */
     public static String getSecurityGroupIdByVpc(String vpcId,String applicationName,String environment) throws Exception {
-        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient
+        com.aliyun.ecs20140526.Client client = ClientHelper.createEcsClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         List<DescribeSecurityGroupsRequest.DescribeSecurityGroupsRequestTag> tagList = new ArrayList<>();
         tagList.add(new DescribeSecurityGroupsRequest.DescribeSecurityGroupsRequestTag()

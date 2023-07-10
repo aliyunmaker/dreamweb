@@ -1,4 +1,4 @@
-package cc.landingzone.dreamweb.demo.akapply.model;
+package cc.landingzone.dreamweb.demo.akapply.model.policytemplate;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;

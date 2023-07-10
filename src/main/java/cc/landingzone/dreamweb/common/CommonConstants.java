@@ -95,7 +95,7 @@ public class CommonConstants {
 
     public static String getCallerIdentity(){
         try {
-            com.aliyun.sts20150401.Client client = ServiceHelper.createStsClient(Aliyun_AccessKeyId,Aliyun_AccessKeySecret);
+            com.aliyun.sts20150401.Client client = ClientHelper.createStsClient(Aliyun_AccessKeyId,Aliyun_AccessKeySecret);
             RuntimeOptions runtime = new RuntimeOptions();
             return client.getCallerIdentityWithOptions(runtime).getBody().getAccountId();
         }catch (Exception e){

@@ -1,9 +1,6 @@
 package cc.landingzone.dreamweb.demo.akapply;
 
-import cc.landingzone.dreamweb.common.BaseController;
-import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.ServiceEnum;
-import cc.landingzone.dreamweb.common.ServiceHelper;
+import cc.landingzone.dreamweb.common.*;
 import cc.landingzone.dreamweb.common.model.WebResult;
 import com.aliyun.ram20150501.models.CreateAccessKeyResponseBody;
 import org.apache.commons.lang3.StringUtils;
@@ -62,16 +59,16 @@ public class AkApplyController extends BaseController {
             logger.info("username: " + username);
             logger.info("policyName: " + policyName);
             long startTime = System.currentTimeMillis();
-            AkApplyUtil.createPolicy(policyName, policyDocument);
+            RamHelper.createPolicy(policyName, policyDocument);
             long createPolicyTime = System.currentTimeMillis();
             logger.info("createPolicyTime: " + (createPolicyTime - startTime) + "ms");
             AkApplyUtil.createRamUser(username);
             long createRamUserTime = System.currentTimeMillis();
             logger.info("createRamUserTime: " + (createRamUserTime - createPolicyTime) + "ms");
-            AkApplyUtil.attachPolicyToUser(username, policyName, "Custom");
+            RamHelper.attachPolicyToUser(username, policyName, "Custom");
             long attachPolicyToUserTime = System.currentTimeMillis();
             logger.info("attachPolicyToUserTime: " + (attachPolicyToUserTime - createRamUserTime) + "ms");
-            CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey accessKey = AkApplyUtil.createAccessKey(username);
+            CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey accessKey = RamHelper.createAccessKey(username);
             assert accessKey != null;
             logger.info("accessKeyId: " + accessKey.accessKeyId);
             logger.info("accessKeySecret: " + accessKey.accessKeySecret);

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cc.landingzone.dreamweb.common.ServiceHelper.createTagClient;
+import static cc.landingzone.dreamweb.common.ClientHelper.createTagClient;
 
 /**
  * Utils for application center

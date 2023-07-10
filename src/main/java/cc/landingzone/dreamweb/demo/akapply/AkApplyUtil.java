@@ -1,7 +1,7 @@
 package cc.landingzone.dreamweb.demo.akapply;
 
+import cc.landingzone.dreamweb.common.ClientHelper;
 import cc.landingzone.dreamweb.common.CommonConstants;
-import cc.landingzone.dreamweb.common.ServiceHelper;
 import com.aliyun.ram20150501.Client;
 import com.aliyun.ram20150501.models.*;
 import com.aliyun.teautil.models.RuntimeOptions;
@@ -45,7 +45,7 @@ public class AkApplyUtil {
      */
     public static void createRamUser(String userName) throws Exception {
 
-        Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        Client client = ClientHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         RuntimeOptions runtime = new RuntimeOptions();
         // 查询所有RAM用户
         ListUsersRequest listUsersRequest = new ListUsersRequest();
@@ -101,60 +101,6 @@ public class AkApplyUtil {
         // 创建RAM用户
         CreateUserRequest createUserRequest = new CreateUserRequest().setUserName(userName);
         client.createUserWithOptions(createUserRequest, runtime);
-
-    }
-
-    /**
-     * 创建一个自定义权限策略
-     *
-     * @param policyName：权限策略名称
-     * @param policyDocument：权限策略内容
-     */
-    public static void createPolicy(String policyName, String policyDocument) throws Exception {
-
-        Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-        CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest()
-                .setPolicyName(policyName)
-                .setPolicyDocument(policyDocument);
-        RuntimeOptions runtime = new RuntimeOptions();
-        client.createPolicyWithOptions(createPolicyRequest, runtime);
-
-    }
-
-
-    /**
-     * 为指定用户添加权限
-     *
-     * @param userName
-     * @param policyName
-     * @param policyType：System为系统策略，Custom为自定义策略
-     */
-    public static void attachPolicyToUser(String userName, String policyName, String policyType) throws Exception {
-
-        Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-        AttachPolicyToUserRequest attachPolicyToUserRequest = new AttachPolicyToUserRequest()
-                .setUserName(userName)
-                .setPolicyName(policyName)
-                .setPolicyType(policyType);
-        RuntimeOptions runtime = new RuntimeOptions();
-        client.attachPolicyToUserWithOptions(attachPolicyToUserRequest, runtime);
-
-    }
-
-    /**
-     * 为RAM用户创建访问密钥
-     *
-     * @param userName
-     * @return
-     */
-    public static CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey createAccessKey(String userName)
-            throws Exception {
-
-        Client client = ServiceHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-        CreateAccessKeyRequest createAccessKeyRequest = new CreateAccessKeyRequest().setUserName(userName);
-        RuntimeOptions runtime = new RuntimeOptions();
-        return client.createAccessKeyWithOptions(createAccessKeyRequest, runtime)
-                .getBody().getAccessKey();
 
     }
 

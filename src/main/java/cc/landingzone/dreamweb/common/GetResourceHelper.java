@@ -37,7 +37,7 @@ public class GetResourceHelper {
 
     private static void setEcsResourcesDetails(String appName, List<Resource> resources) throws Exception {
         Map<String, DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstance> resourceDetails = new HashMap<>();
-        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.ecs20140526.Client client = ClientHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
 
         com.aliyun.ecs20140526.models.DescribeInstancesRequest.DescribeInstancesRequestTag tag0 = new com.aliyun.ecs20140526.models.DescribeInstancesRequest.DescribeInstancesRequestTag()
                 .setKey(CommonConstants.APPLICATION_TAG_KEY)
@@ -70,7 +70,7 @@ public class GetResourceHelper {
 
     private static void setOssResourcesDetails(List<Resource> resources) throws Exception {
         Map<String, com.aliyun.sdk.service.oss20190517.models.Bucket> resourceDetails = new HashMap<>();
-        AsyncClient client = ServiceHelper.createOssClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        AsyncClient client = ClientHelper.createOssClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         ListBucketsRequest listBucketsRequest = ListBucketsRequest.builder()
                 .maxKeys(1000L)
                 .build();
@@ -97,7 +97,7 @@ public class GetResourceHelper {
     private static void setSlbResourcesDetails(String appName, List<Resource> resources) throws Exception {
         Map<String, DescribeLoadBalancersResponseBody.DescribeLoadBalancersResponseBodyLoadBalancersLoadBalancer> resourceDetails = new HashMap<>();
 
-        com.aliyun.slb20140515.Client client = ServiceHelper.createSlbClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.slb20140515.Client client = ClientHelper.createSlbClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.slb20140515.models.DescribeLoadBalancersRequest describeLoadBalancersRequest = new com.aliyun.slb20140515.models.DescribeLoadBalancersRequest()
                 .setPageNumber(1)
                 .setPageSize(100)
@@ -126,7 +126,7 @@ public class GetResourceHelper {
     private static void setRdsResourcesDetails(String appName, List<Resource> resources) throws Exception {
         Map<String, DescribeDBInstancesResponseBody.DescribeDBInstancesResponseBodyItemsDBInstance> resourceDetails = new HashMap<>();
 
-        com.aliyun.rds20140815.Client client = ServiceHelper.createRdsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.rds20140815.Client client = ClientHelper.createRdsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.rds20140815.models.DescribeDBInstancesRequest describeDBInstancesRequest = new com.aliyun.rds20140815.models.DescribeDBInstancesRequest()
                 .setPageNumber(1)
                 .setPageSize(100)
@@ -154,7 +154,7 @@ public class GetResourceHelper {
 
     private static void setSlsResourcesDetails(List<Resource> resources) throws Exception {
         Map<String, Project> resourceDetails = new HashMap<>();
-        com.aliyun.sls20201230.Client client = ServiceHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.sls20201230.Client client = ClientHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.sls20201230.models.ListProjectRequest listProjectRequest = new com.aliyun.sls20201230.models.ListProjectRequest()
                 .setSize(500);
 
@@ -196,7 +196,7 @@ public class GetResourceHelper {
 
     private static void getEcsResource(Resource resource) throws Exception {
         String resourceId = resource.getResourceId();
-        com.aliyun.ecs20140526.Client client = ServiceHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.ecs20140526.Client client = ClientHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.ecs20140526.models.DescribeInstancesRequest describeInstancesRequest = new com.aliyun.ecs20140526.models.DescribeInstancesRequest()
                 .setInstanceIds("[\""+resourceId+"\"]")
                 .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
@@ -219,7 +219,7 @@ public class GetResourceHelper {
 
     private static void getOssResource(Resource resource) throws Exception {
         String resourceId = resource.getResourceId();
-        AsyncClient client = ServiceHelper.createOssClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        AsyncClient client = ClientHelper.createOssClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         GetBucketInfoRequest getBucketInfoRequest = GetBucketInfoRequest.builder()
                 .bucket(resourceId)
                 .build();
@@ -236,7 +236,7 @@ public class GetResourceHelper {
 
     private static void getSlbResource(Resource resource) throws Exception {
         String resourceId = resource.getResourceId();
-        com.aliyun.slb20140515.Client client = ServiceHelper.createSlbClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.slb20140515.Client client = ClientHelper.createSlbClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.slb20140515.models.DescribeLoadBalancersRequest describeLoadBalancersRequest = new com.aliyun.slb20140515.models.DescribeLoadBalancersRequest()
                 .setLoadBalancerId(resourceId)
                 .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
@@ -259,7 +259,7 @@ public class GetResourceHelper {
 
     private static void getRdsResource(Resource resource) throws Exception {
         String resourceId = resource.getResourceId();
-        com.aliyun.rds20140815.Client client = ServiceHelper.createRdsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.rds20140815.Client client = ClientHelper.createRdsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.rds20140815.models.DescribeDBInstanceAttributeRequest describeDBInstanceAttributeRequest = new com.aliyun.rds20140815.models.DescribeDBInstanceAttributeRequest()
                 .setDBInstanceId(resourceId);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
@@ -277,7 +277,7 @@ public class GetResourceHelper {
 
     private static void getSlsResource(Resource resource) throws Exception {
         String resourceId = resource.getResourceId();
-        com.aliyun.sls20201230.Client client = ServiceHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.sls20201230.Client client = ClientHelper.createSlsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
         java.util.Map<String, String> headers = new java.util.HashMap<>();

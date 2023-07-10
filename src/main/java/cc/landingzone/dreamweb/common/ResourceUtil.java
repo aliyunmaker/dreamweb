@@ -21,7 +21,7 @@ public class ResourceUtil {
 //    }
 
     public static List<ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources> getResourcesByTag(String tagKey, String tagValue) throws Exception {
-        com.aliyun.tag20180828.Client client = ServiceHelper.createTagClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.tag20180828.Client client = ClientHelper.createTagClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
 
         com.aliyun.tag20180828.models.ListTagResourcesRequest listTagResourcesRequest = new com.aliyun.tag20180828.models.ListTagResourcesRequest()
                 .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
@@ -167,7 +167,7 @@ public class ResourceUtil {
     public static List<Event> listResourceEvents(String resourceId) throws Exception {
         List<Event> events = new ArrayList<>();
 
-        com.aliyun.actiontrail20200706.Client client = ServiceHelper.createTrailClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.actiontrail20200706.Client client = ClientHelper.createTrailClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.actiontrail20200706.models.LookupEventsRequest.LookupEventsRequestLookupAttribute lookupAttribute0 = new com.aliyun.actiontrail20200706.models.LookupEventsRequest.LookupEventsRequestLookupAttribute()
                 .setKey("ResourceName")
                 .setValue(resourceId);
@@ -189,7 +189,7 @@ public class ResourceUtil {
     }
 
     public static String getResourceDirectoryId() throws Exception {
-        com.aliyun.resourcemanager20200331.Client client = ServiceHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.resourcemanager20200331.Client client = ClientHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         return client.getResourceDirectoryWithOptions(runtime).getBody().getResourceDirectory().getResourceDirectoryId();
     }
@@ -205,7 +205,7 @@ public class ResourceUtil {
         String nextToken = null;
         List<SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources> resources = new ArrayList<>();
 
-        com.aliyun.resourcecenter20221201.Client client = ServiceHelper.createResourceCenterClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.resourcecenter20221201.Client client = ClientHelper.createResourceCenterClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
 
         do {
             com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesRequest searchMultiAccountResourcesRequest = new com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesRequest()
