@@ -10,6 +10,8 @@
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>-->
+
     <!--md格式内容转换-->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!--codemirror:实现textarea效果-->
@@ -74,7 +76,7 @@
 </main>
 
 <div class="px-5 py-5">
-    <form id="ak-apply" onsubmit="return akApplySubmit()" role="form">
+    <form id="ak_apply" onsubmit="return akApplySubmit()" role="form">
         <div class="form-group row">
             <label for="application" class="col-sm-2 col-form-label">所属应用：</label>
             <div class="col-sm-10">
@@ -159,6 +161,15 @@
 
         <button type="submit" class="btn btn-primary mt-3">申请</button>
     </form>
+
+    <div class="row mt-4" id="creating" style="display: none;">
+        <div class="spinner-border ms-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="text-nowrap" style="width: 10rem;">
+            <span class="fs-5">申请中...</span>
+        </div>
+    </div>
 
 
     <!-- success modal -->

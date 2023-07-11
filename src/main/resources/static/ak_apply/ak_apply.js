@@ -51,6 +51,7 @@ links.forEach(function (link) {
 });
 
 function akApplySubmit() {
+  $("#creating").show();
   application = document.getElementById("application").value;
   environmentType = $("input[name='environmentType']:checked").val();
   policyDocument = editor.getValue();
@@ -61,17 +62,17 @@ function akApplySubmit() {
   };
 
   var secretName;
-
   $.ajax({
     url: "../" + "akApply/akApplySubmit.do",
     type: "POST",
     data: params,
-    async: false,
+//    async: false,
     success: function (result) {
       if (result.success) {
         secretName = result.data;
         document.getElementById("secretName").innerText = secretName;
-
+        $("#creating").hide();
+        $('#modalSuccess').modal('show');
       } else {
         console.log("data.message: " + result.errorMsg);
         document.getElementById("failMessage").innerText = result.errorMsg;
@@ -84,7 +85,7 @@ function akApplySubmit() {
     url: "../" + "akApply/getSecretNameUseSample.do",
     type: "POST",
     data: {},
-    async: false,
+//    async: false,
     success: function (result) {
       if (result.success) {
         var secretNameUseSample = result.data;
@@ -96,8 +97,6 @@ function akApplySubmit() {
       }
     },
   });
-
-  $('#modalSuccess').modal('show');
 
   return false;
 }
