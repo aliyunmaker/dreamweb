@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -21,10 +22,12 @@ public class ResourceCenterController extends BaseController {
         try {
             String resourceDirectoryId = ResourceUtil.getResourceDirectoryId();
             Map<String, Map<String, Map<String, Integer>>> accountRegionResourcesCounts = ResourceUtil.listAccountRegionResourcesCounts(resourceDirectoryId);
+            List<String> accountsWithoutResources = ResourceUtil.listAccountsWithoutResources(accountRegionResourcesCounts);
             JSONObject data = new JSONObject();
             data.put("resourceDirectoryId", resourceDirectoryId);
             data.put("resourceCenterAdminName", CommonConstants.RESOURCE_CENTER_ADMIN_NAME);
             data.put("accountRegionResourcesCounts", accountRegionResourcesCounts);
+            data.put("accountsWithoutResources", accountsWithoutResources);
             result.setTotal(data.size());
             result.setData(data);
         } catch (Exception e) {

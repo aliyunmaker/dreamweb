@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Controller
@@ -82,6 +83,7 @@ public class SSOController extends BaseController implements InitializingBean {
         try {
             String sp = request.getParameter("sp");
             String userRoleId = request.getParameter("userRoleId");
+            String relayState = "";
             // 默认是aliyun的role sso
             if (StringUtils.isBlank(sp)) {
                 sp = SSOSpEnum.aliyun.toString();
@@ -111,6 +113,8 @@ public class SSOController extends BaseController implements InitializingBean {
                 String uid = SSOConstants.getSSOSpUserId(ssoSp);
                 identifier = identifier.replace("{uid}", uid);
                 nameID = SSOConstants.ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.get(userRoleId);
+                // user现在只需要跳转云效，先写死之后再改
+                relayState = SSOConstants.YUNXIAO_URL;
             } else if (SSOSpEnum.aws_user.equals(ssoSp) || SSOSpEnum.aliyun_user_cloudsso.equals(ssoSp)) {
                 nameID = userRoleId;
             }  else {
@@ -146,21 +150,25 @@ public class SSOController extends BaseController implements InitializingBean {
             // ***************************************************************************
             String samlResponse = SamlGenerator.generateResponse(identifier, replyUrl, nameID, attributes);
             response.setContentType("text/html;charset=UTF-8");
-            String responseStr = FreeMarkerUtils.getSSOPage(replyUrl, onloadSubmit, samlResponse, formVisible);
-            response.getWriter().write(responseStr);
-            response.getWriter().flush();
-
-//            Map<String, Object> contextMap = new HashMap<String, Object>();
-//            contextMap.put("ssoURL", replyUrl);
-//            contextMap.put("onloadSubmit", onloadSubmit);
-//            contextMap.put("samlResponse", samlResponse);
-//            contextMap.put("samlResponseDecode",
-//                    new String(java.util.Base64.getDecoder().decode(samlResponse), StandardCharsets.UTF_8));
-//            contextMap.put("formVisible", formVisible);
-//            contextMap.put("ssoSp", ssoSp);
-//            String responseStr = FreeMarkerUtils.buildFreemarkPage("sso.ftl", contextMap);
+//            String responseStr = FreeMarkerUtils.getSSOPage(replyUrl, onloadSubmit, samlResponse, formVisible);
 //            response.getWriter().write(responseStr);
 //            response.getWriter().flush();
+
+            Map<String, Object> contextMap = new HashMap<String, Object>();
+            contextMap.put("ssoURL", replyUrl);
+            contextMap.put("onloadSubmit", onloadSubmit);
+            contextMap.put("samlResponse", samlResponse);
+            contextMap.put("samlResponseDecode",
+                    new String(java.util.Base64.getDecoder().decode(samlResponse), StandardCharsets.UTF_8));
+            if (!relayState.isBlank()) {
+                contextMap.put("relayState", relayState);
+            }
+            contextMap.put("formVisible", formVisible);
+            contextMap.put("ssoSp", ssoSp);
+
+            String responseStr = FreeMarkerUtils.buildFreemarkPage("sso.ftl", contextMap);
+            response.getWriter().write(responseStr);
+            response.getWriter().flush();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             outputToString(response, e.getMessage());

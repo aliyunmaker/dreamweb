@@ -4,6 +4,7 @@ import cc.landingzone.dreamweb.common.utils.AliyunAPIUtils;
 import cc.landingzone.dreamweb.demo.appcenter.model.Event;
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
 import com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesResponseBody;
+import com.aliyun.resourcemanager20200331.models.ListAccountsResponseBody;
 import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class ResourceUtil {
 
         com.aliyun.tag20180828.models.ListTagResourcesRequest listTagResourcesRequest = new com.aliyun.tag20180828.models.ListTagResourcesRequest()
                 .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
-                .setTags("{\""+ tagKey + "\":\""+ tagValue + "\"}")
+                .setTags("{\"" + tagKey + "\":\"" + tagValue + "\"}")
                 .setPageSize(1000);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         com.aliyun.tag20180828.models.ListTagResourcesResponse response = client.listTagResourcesWithOptions(listTagResourcesRequest, runtime);
@@ -49,7 +50,7 @@ public class ResourceUtil {
 
         List<ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources> resourcesResponse = getResourcesByTag(CommonConstants.APPLICATION_TAG_KEY, appName);
 
-        for (ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources resourceResponse: resourcesResponse) {
+        for (ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources resourceResponse : resourcesResponse) {
             // ARN format: arn:acs:${Service}:${Region}:${Account}:${ResourceType(e.g.instance)}/${ResourceId}
             String[] splitArn = resourceResponse.getResourceARN().split(":");
             String serviceName = splitArn[2].toUpperCase();
@@ -81,11 +82,11 @@ public class ResourceUtil {
     public static Map<String, List<Resource>> getResourcesByServices(List<Resource> resources) {
         Map<String, List<Resource>> servicesResources = new HashMap<>(ServiceEnum.values().length);
 
-        for (ServiceEnum serviceEnum: ServiceEnum.values()) {
+        for (ServiceEnum serviceEnum : ServiceEnum.values()) {
             servicesResources.put(serviceEnum.name(), new ArrayList<>());
         }
 
-        for (Resource resource: resources) {
+        for (Resource resource : resources) {
             String serviceName = resource.getServiceName();
             List<Resource> resourceList = servicesResources.get(serviceName);
             if (resourceList != null) {
@@ -100,16 +101,16 @@ public class ResourceUtil {
     public static void setEnvironmentType(List<Resource> resources) throws Exception {
         Map<String, String> resourceEnvType = new HashMap<>();
 
-        for (String environmentType: CommonConstants.ENVIRONMENT_TYPE_TAG_VALUES) {
+        for (String environmentType : CommonConstants.ENVIRONMENT_TYPE_TAG_VALUES) {
             List<ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources> resourcesResponse = getResourcesByTag(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY, environmentType);
-            for (ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources resourceResponse: resourcesResponse) {
+            for (ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources resourceResponse : resourcesResponse) {
                 String[] splitArn = resourceResponse.getResourceARN().split(":");
                 String resourceId = splitArn[5].split("/")[1];
                 resourceEnvType.put(resourceId, environmentType);
             }
         }
 
-        for (Resource resource: resources) {
+        for (Resource resource : resources) {
             String envType = resourceEnvType.get(resource.getResourceId());
             if (StringUtils.isNotBlank(envType)) {
                 resource.setEnvironmentType(envType);
@@ -119,12 +120,13 @@ public class ResourceUtil {
 
     /**
      * 获得ECS和RDS的特殊操作url
+     *
      * @param servicesResources
      */
     public static void setOperations(Map<String, List<Resource>> servicesResources) throws Exception {
-        for (String serviceName: servicesResources.keySet()) {
+        for (String serviceName : servicesResources.keySet()) {
             ServiceEnum serviceEnum = ServiceEnum.valueOf(serviceName);
-            for (Resource resource: servicesResources.get(serviceName)) {
+            for (Resource resource : servicesResources.get(serviceName)) {
                 resource.setResourceType(serviceEnum.getResourceType());
                 Map<String, String> operations = new HashMap<>();
                 if (!"ECS".equals(serviceName) && !"RDS".equals(serviceName)) {
@@ -150,7 +152,7 @@ public class ResourceUtil {
                     String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
                             CommonConstants.Aliyun_AccessKeySecret,
                             CommonConstants.ADMIN_ROLE_ARN, username, policy, false);
-                    String sqlConsoleUrl = "https://dms.aliyun.com/?regionId="+resource.getRegionId()+"&dbType=mysql&instanceId="+resource.getResourceId()+"&instanceSource="+resource.getServiceName();
+                    String sqlConsoleUrl = "https://dms.aliyun.com/?regionId=" + resource.getRegionId() + "&dbType=mysql&instanceId=" + resource.getResourceId() + "&instanceSource=" + resource.getServiceName();
                     operations.put("operationName", "SQL Console");
 
                     String redirectUrl = "https://signin.aliyun.com/federation?Action=Login&Destination="
@@ -176,8 +178,8 @@ public class ResourceUtil {
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
 
-        List<Map<String,?>> detailedEvents = client.lookupEventsWithOptions(lookupEventsRequest, runtime).getBody().getEvents();
-        for (Map<String,?> detailedEvent: detailedEvents) {
+        List<Map<String, ?>> detailedEvents = client.lookupEventsWithOptions(lookupEventsRequest, runtime).getBody().getEvents();
+        for (Map<String, ?> detailedEvent : detailedEvents) {
             Event event = new Event();
             event.setEventTime(detailedEvent.get("eventTime").toString());
             event.setEventName(detailedEvent.get("eventName").toString());
@@ -194,8 +196,24 @@ public class ResourceUtil {
         return client.getResourceDirectoryWithOptions(runtime).getBody().getResourceDirectory().getResourceDirectoryId();
     }
 
+    /**
+     * 获取accountId及其对应的accountName, 不包括管理账号
+     *
+     * @return Map<String, String> accountNames
+     * @throws Exception
+     */
     public static Map<String, String> getAccountNames() throws Exception {
         Map<String, String> accountNames = new HashMap<>();
+        com.aliyun.resourcemanager20200331.Client client = ClientHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.resourcemanager20200331.models.ListAccountsRequest listAccountsRequest = new com.aliyun.resourcemanager20200331.models.ListAccountsRequest();
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        List<ListAccountsResponseBody.ListAccountsResponseBodyAccountsAccount> accounts =
+                client.listAccountsWithOptions(listAccountsRequest, runtime).getBody().getAccounts().getAccount();
+        for (ListAccountsResponseBody.ListAccountsResponseBodyAccountsAccount account : accounts) {
+            String accountId = account.getAccountId();
+            String accountName = account.getDisplayName();
+            accountNames.put(accountId, accountName);
+        }
         return accountNames;
     }
 
@@ -220,25 +238,32 @@ public class ResourceUtil {
             resources.addAll(searchMultiAccountResourcesResponseBody.getResources());
         } while (nextToken != null);
 
-        for (SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources resource: resources) {
+        Map<String, String> accountNames = getAccountNames();
+        // 如果没有任何资源的账号也需要返回，加上这一段代码
+
+
+        for (SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources resource : resources) {
             String accountId = resource.getAccountId();
+            String accountName;
             if (accountId.equals(CommonConstants.Aliyun_UserId)) {
-                accountId = CommonConstants.RESOURCE_CENTER_ADMIN_NAME;
+                accountName = CommonConstants.RESOURCE_CENTER_ADMIN_NAME;
+            } else {
+                accountName = accountNames.get(accountId);
             }
 
             String regionId = resource.getRegionId();
             String serviceResourceType = resource.getResourceType();
 
-            if (accountRegionResourcesCounts.get(accountId) == null) {
+            if (accountRegionResourcesCounts.get(accountName) == null) {
                 Map<String, Map<String, Integer>> regionResourcesCounts = new HashMap<>();
-                accountRegionResourcesCounts.put(accountId, regionResourcesCounts);
+                accountRegionResourcesCounts.put(accountName, regionResourcesCounts);
             }
-            if (accountRegionResourcesCounts.get(accountId).get(regionId) == null) {
+            if (accountRegionResourcesCounts.get(accountName).get(regionId) == null) {
                 Map<String, Integer> resourcesCounts = new HashMap<>(ServiceEnum.values().length);
-                for (ServiceEnum serviceEnum: ServiceEnum.values()) {
+                for (ServiceEnum serviceEnum : ServiceEnum.values()) {
                     resourcesCounts.put(serviceEnum.name(), 0);
                 }
-                accountRegionResourcesCounts.get(accountId).put(regionId, resourcesCounts);
+                accountRegionResourcesCounts.get(accountName).put(regionId, resourcesCounts);
             }
 
             // add up resources to resource directory id
@@ -248,13 +273,13 @@ public class ResourceUtil {
             }
             if (accountRegionResourcesCounts.get(resourceDirectoryId).get(regionId) == null) {
                 Map<String, Integer> resourcesCounts = new HashMap<>(ServiceEnum.values().length);
-                for (ServiceEnum serviceEnum: ServiceEnum.values()) {
+                for (ServiceEnum serviceEnum : ServiceEnum.values()) {
                     resourcesCounts.put(serviceEnum.name(), 0);
                 }
                 accountRegionResourcesCounts.get(resourceDirectoryId).put(regionId, resourcesCounts);
             }
 
-            Map<String, Integer> resourcesCounts = accountRegionResourcesCounts.get(accountId).get(regionId);
+            Map<String, Integer> resourcesCounts = accountRegionResourcesCounts.get(accountName).get(regionId);
             Map<String, Integer> directoryResourcesCounts = accountRegionResourcesCounts.get(resourceDirectoryId).get(regionId);
 
             String serviceName = serviceResourceType.split("::")[1];
@@ -281,5 +306,16 @@ public class ResourceUtil {
         }
 
         return accountRegionResourcesCounts;
+    }
+
+    public static List<String> listAccountsWithoutResources(Map<String, Map<String, Map<String, Integer>>> accountRegionResourcesCounts) throws Exception {
+        Map<String, String> accountNames = getAccountNames();
+        List<String> accountsWithoutResources = new ArrayList<>();
+        for (Map.Entry<String, String> accountIdName : accountNames.entrySet()) {
+            if (accountRegionResourcesCounts.get(accountIdName.getValue()) == null) {
+                accountsWithoutResources.add(accountIdName.getValue());
+            }
+        }
+        return accountsWithoutResources;
     }
 }

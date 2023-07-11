@@ -126,6 +126,7 @@
     <form action="${ssoURL}" method="post" ${formVisible}>
         <div><textarea name="SAMLResponse">${samlResponse}</textarea>
         </div>
+        <div>RelayState(direct url):<textarea name="RelayState">${relayState!}</textarea>
         <div><input type="submit" value="Continue" /></div>
     </form>
     <div class="lds-roller">
