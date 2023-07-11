@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.demo.akapply;
 import cc.landingzone.dreamweb.common.*;
 import cc.landingzone.dreamweb.common.model.WebResult;
 import com.aliyun.ram20150501.models.CreateAccessKeyResponseBody;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,7 +76,9 @@ public class AkApplyController extends BaseController {
             logger.info("accessKeyId: " + accessKey.accessKeyId);
             logger.info("accessKeySecret: " + accessKey.accessKeySecret);
             logger.info("createAccessKeyTime: " + (System.currentTimeMillis() - attachPolicyToUserTime) + "ms");
-            result.setData(accessKey);
+            String secretName = AkApplyUtil.createSecretByExist(applicationName,environment,username,
+                    accessKey.accessKeyId, accessKey.accessKeySecret);
+            result.setData(secretName);
         } catch (Exception e) {
             logger.error(e.getMessage());
             result.setSuccess(false);
@@ -111,4 +116,20 @@ public class AkApplyController extends BaseController {
         }
         outputToJSON(response, result);
     }
+
+    @RequestMapping("/getSecretNameUseSample.do")
+    public void getSecretNameUseSample(HttpServletResponse response) {
+       WebResult result = new WebResult();
+       try {
+           String filePath = "src/main/resources/secretNameUseSample.md";
+           String useSample = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);
+           result.setData(useSample);
+       }catch (Exception e){
+           logger.error(e.getMessage());
+           result.setSuccess(false);
+           result.setErrorMsg(e.getMessage());
+       }
+       outputToJSON(response, result);
+    }
+
 }

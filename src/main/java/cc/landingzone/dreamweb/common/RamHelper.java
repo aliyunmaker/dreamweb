@@ -4,12 +4,18 @@ import com.aliyun.ram20150501.Client;
 import com.aliyun.ram20150501.models.*;
 import com.aliyun.teautil.models.RuntimeOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Author：珈贺
  * Description：
  */
 public class RamHelper {
 
+    /**
+     * policyType: System or Custom
+     */
     public static void attachPolicyToRole(String roleName, String policyName, String policyType) throws Exception {
         Client client = ClientHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.ram20150501.models.AttachPolicyToRoleRequest attachPolicyToRoleRequest = new com.aliyun.ram20150501.models.AttachPolicyToRoleRequest()
@@ -23,7 +29,7 @@ public class RamHelper {
     /**
      * create ram role, return roleName
      */
-    public static String CreateRamRole(String roleName, String assumeRolePolicyDocument) throws Exception {
+    public static String createRamRole(String roleName, String assumeRolePolicyDocument) throws Exception {
         Client client = ClientHelper.createRamClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         com.aliyun.ram20150501.models.CreateRoleRequest createRoleRequest = new com.aliyun.ram20150501.models.CreateRoleRequest()
@@ -36,9 +42,6 @@ public class RamHelper {
 
     /**
      * 为RAM用户创建访问密钥
-     *
-     * @param userName
-     * @return
      */
     public static CreateAccessKeyResponseBody.CreateAccessKeyResponseBodyAccessKey createAccessKey(String userName)
             throws Exception {
@@ -68,9 +71,6 @@ public class RamHelper {
 
     /**
      * 为指定用户添加权限
-     *
-     * @param userName
-     * @param policyName
      * @param policyType：System为系统策略，Custom为自定义策略
      */
     public static void attachPolicyToUser(String userName, String policyName, String policyType) throws Exception {
@@ -82,4 +82,19 @@ public class RamHelper {
         RuntimeOptions runtime = new RuntimeOptions();
         client.attachPolicyToUserWithOptions(attachPolicyToUserRequest, runtime);
     }
+
+    /**
+     * get all roles
+     */
+    public static List<String> listRoles() throws Exception {
+        Client client = ClientHelper.createRamClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        ListRolesRequest listRolesRequest = new ListRolesRequest();
+        RuntimeOptions runtime = new RuntimeOptions();
+        List<String> roleList = new ArrayList<>();
+        for (ListRolesResponseBody.ListRolesResponseBodyRolesRole listRolesResponseBodyRolesRole : client.listRolesWithOptions(listRolesRequest, runtime).getBody().getRoles().getRole()) {
+            roleList.add(listRolesResponseBodyRolesRole.getRoleName());
+        }
+        return roleList;
+    }
+
 }

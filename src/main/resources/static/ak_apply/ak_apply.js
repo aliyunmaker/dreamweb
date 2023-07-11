@@ -60,6 +60,8 @@ function akApplySubmit() {
     policyDocument: policyDocument
   };
 
+  var secretName;
+
   $.ajax({
     url: "../" + "akApply/akApplySubmit.do",
     type: "POST",
@@ -67,9 +69,9 @@ function akApplySubmit() {
     async: false,
     success: function (result) {
       if (result.success) {
-        document.getElementById("accessKeyIdShow").innerText = result.data.accessKeyId;
-        document.getElementById("accessKeySecretShow").innerText = result.data.accessKeySecret;
-        $('#myModal').modal('show');
+        secretName = result.data;
+        document.getElementById("secretName").innerText = secretName;
+
       } else {
         console.log("data.message: " + result.errorMsg);
         document.getElementById("failMessage").innerText = result.errorMsg;
@@ -77,6 +79,26 @@ function akApplySubmit() {
       }
     },
   });
+
+  $.ajax({
+    url: "../" + "akApply/getSecretNameUseSample.do",
+    type: "POST",
+    data: {},
+    async: false,
+    success: function (result) {
+      if (result.success) {
+        var secretNameUseSample = result.data;
+        document.getElementById('content').innerHTML = marked.parse(secretNameUseSample);
+      }else {
+        console.log("data.message: " + result.errorMsg);
+        document.getElementById("failMessage").innerText = result.errorMsg;
+        $('#modalFail').modal('show');
+      }
+    },
+  });
+
+  $('#modalSuccess').modal('show');
+
   return false;
 }
 
@@ -174,9 +196,11 @@ function getApplication(){
 
 async function copyToken() {
   try {
-    var accessKeyId = document.getElementById("accessKeyIdShow").innerText;
-    var accessKeySecret = document.getElementById("accessKeySecretShow").innerText;
-    var copyText = "AccessKey ID: " + accessKeyId + "\nAccessKey Secret: " + accessKeySecret;
+//    var accessKeyId = document.getElementById("accessKeyIdShow").innerText;
+//    var accessKeySecret = document.getElementById("accessKeySecretShow").innerText;
+//    var copyText = "AccessKey ID: " + accessKeyId + "\nAccessKey Secret: " + accessKeySecret;
+    var secretName = document.getElementById("secretName").innerText;
+    var copyText = secretName;
     // console.log(copyText);
     await navigator.clipboard.writeText(copyText);
     // document.getElementById("modelBody-" + roleId).append('\nContent copied to clipboard');

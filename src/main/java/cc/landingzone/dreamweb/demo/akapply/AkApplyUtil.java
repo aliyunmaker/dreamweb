@@ -8,12 +8,16 @@ import com.aliyun.teautil.models.RuntimeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class AkApplyUtil {
 
     public static Logger logger = LoggerFactory.getLogger(AkApplyUtil.class);
 
     public static void main(String[] args) {
-
+        String ramUserName = "test";
+        String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]}]";
+        System.out.println(filters);
 //        String ramArn = getRamArn("dreamweb",CommonConstants.Aliyun_UserId);
 //        String resourceType = "oss";
 ////        String resourceType = "log";
@@ -104,5 +108,14 @@ public class AkApplyUtil {
 
     }
 
+    public static String createSecretByExist(String applicationName,String environment,String ramUserName,
+                                      String accessKeyId,String accessKeySecret) throws Exception {
+        String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]}]";
+        List<String> listSecrets = KMSHelper.listSecrets(filters);
+        if (listSecrets.size() > 0) {
+            KMSHelper.deleteSecret(listSecrets.get(0));
+        }
+        return KMSHelper.createSecret(applicationName,environment,ramUserName,accessKeyId,accessKeySecret);
+    }
 
 }

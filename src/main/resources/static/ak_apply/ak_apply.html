@@ -10,7 +10,8 @@
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+    <!--md格式内容转换-->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!--codemirror:实现textarea效果-->
     <!--必须引入的-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css" rel="stylesheet"/>
@@ -161,9 +162,9 @@
 
 
     <!-- success modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade modal-lg" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">查看 Secret</h5>
@@ -172,10 +173,11 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>请保存或发送 AccessKey 至对应用户。当前窗口关闭后，无法再次查询 Secret。如果您遗失这个 AccessKey,
-                        可以创建新的来替代。</p>
-                    <p>AccessKey ID: <span id="accessKeyIdShow">init</span></p>
-                    <p>AccessKey Secret: <span id="accessKeySecretShow">init</span></p>
+<!--                    <p>请保存或发送 secretName 至对应用户。当前窗口关闭后，无法再次查询 secretName。如果您遗失这个 secretName,-->
+<!--                        可以创建新的来替代。</p>-->
+                    <p class="fw-bold">secretName:  <span id="secretName">init</span></p>
+                    <div id="content"></div>
+<!--                    <textarea class="form-control ms-2" id="secretUseSample"></textarea>-->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
