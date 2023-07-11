@@ -2,6 +2,7 @@ var aliyunUserId;
 var roles;
 var users;
 var cloudUsers;
+
 $(document).ready(function() {
     $.ajax({
         url: "../listLoginUsers.do",
@@ -76,7 +77,8 @@ function listLoginUsers() {
           </div>
           <div>
             <h3 class="fs-5">${user.name}</h3>
-            <p>account: ${user.account}<br /> user: ${user.id}</p>
+            <p>account: ${user.account}<br /> user: ${user.id}
+            ${user.url !== "" ? `<br /> url: ${user.url}` : ""}</p>
             <a target="_blank" href="../sso/login.do?sp=${user.provider}_user&userRoleId=${user.id}" class="btn btn-primary">
               <i class="iconfont icon-login" ></i> Console
             </a>

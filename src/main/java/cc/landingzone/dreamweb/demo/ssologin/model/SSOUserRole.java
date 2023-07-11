@@ -10,4 +10,5 @@ public class SSOUserRole {
     private String name;
     private String account;
     private String id;
+    private String url;
 }

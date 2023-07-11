@@ -1,6 +1,7 @@
 var accountRegionResourcesCounts;
 var resourceDirectoryId;
 var adminName;
+var accountsWithoutResources;
 var sortedServiceNames = ["ECS", "RDS", "SLB", "OSS", "SLS"];
 
 $(document).ready(function() {
@@ -18,6 +19,7 @@ $(document).ready(function() {
                 accountRegionResourcesCounts = result.data.accountRegionResourcesCounts;
                 resourceDirectoryId = result.data.resourceDirectoryId;
                 adminName = result.data.resourceCenterAdminName;
+                accountsWithoutResources = result.data.accountsWithoutResources;
                 console.log(result.data);
                 showResourceCenterPage(resourceDirectoryId);
             } else {
@@ -27,7 +29,7 @@ $(document).ready(function() {
     });
 });
 
-function showResourceCenterPage(accountId) {
+function showResourceCenterPage(accountName) {
     var page = $("#resourceCenterPage");
     page.empty();
     var skeleton = `
@@ -57,43 +59,55 @@ function showResourceCenterPage(accountId) {
     </div>`;
     page.append(skeleton);
     listAccounts();
-    createCards(accountId);
+    createCards(accountName);
 }
 
 function listAccounts() {
-    for (var accountId in accountRegionResourcesCounts) {
-        if (accountId === resourceDirectoryId || accountId === adminName) {
+    for (var accountName in accountRegionResourcesCounts) {
+        if (accountName === resourceDirectoryId || accountName === adminName) {
             continue;
         }
         var accoutItem = `
-        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true" id="account-${accountId}" onclick="createCards('${accountId}')">
-                <div class="d-flex w-100 align-items-center justify-content-between">
-                <strong class="mb-1">&nbsp;&nbsp;&nbsp;&nbsp;${accountId}</strong>
-                </div>
-            </a>`;
+        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true" id="account-${accountName}" onclick="createCards('${accountName}')">
+            <div class="d-flex w-100 align-items-center justify-content-between">
+            <strong class="mb-1">&nbsp;&nbsp;&nbsp;&nbsp;${accountName}</strong>
+            </div>
+        </a>`;
+        $("#accountContainer").append(accoutItem);
+    }
+    for (var accountName of accountsWithoutResources) {
+        if (accountName === resourceDirectoryId || accountName === adminName) {
+            continue;
+        }
+        var accoutItem = `
+        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true" id="account-${accountName}" onclick="createCards('${accountName}')">
+            <div class="d-flex w-100 align-items-center justify-content-between">
+            <strong class="mb-1 text-muted">&nbsp;&nbsp;&nbsp;&nbsp;${accountName}</strong>
+            </div>
+        </a>`;
         $("#accountContainer").append(accoutItem);
     }
 }
 
-function createCards(accountId) {
+function createCards(accountName) {
     var links = document.querySelectorAll("#accountContainer a");
     links.forEach(function (link) {
         link.classList.remove("active");
     });
 
     // Add active class to the clicked link
-    document.getElementById("account-" + accountId).classList.add("active");
+    document.getElementById("account-" + accountName).classList.add("active");
 
     $("#cardContainer").empty();
-    var regionResourcesCounts = accountRegionResourcesCounts[accountId];
+    var regionResourcesCounts = accountRegionResourcesCounts[accountName];
     for (var regionId in regionResourcesCounts) {
         var card = `
-        <div class="col align-items-start" id="card-${accountId}-${regionId}">
+        <div class="col align-items-start" id="card-${accountName}-${regionId}">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">${regionId}</h4>
                     <p class="card-text"></p>
-                    <div class="row row-cols-1 row-cols-lg-5" id="services-${accountId}-${regionId}"></div>
+                    <div class="row row-cols-1 row-cols-lg-5" id="services-${accountName}-${regionId}"></div>
                 </div>
             </div>
         </div>`;
@@ -104,7 +118,7 @@ function createCards(accountId) {
             <h5>${regionResourcesCounts[regionId][serviceName]}</h5>
             <p>${serviceName}</p>
             </div>`;
-            $("#services-" + accountId + "-" + regionId).append(service);
+            $("#services-" + accountName + "-" + regionId).append(service);
         };
     };
 }
