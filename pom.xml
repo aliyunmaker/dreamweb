@@ -288,7 +288,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>vpc20160428</artifactId>
-            <version>3.2.26</version>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>

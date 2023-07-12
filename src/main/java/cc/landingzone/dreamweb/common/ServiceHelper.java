@@ -9,6 +9,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyun.tag20180828.models.ListResourcesByTagRequest;
 import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
+import com.aliyun.vpc20160428.Client;
 import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesRequest;
 import com.aliyun.vpc20160428.models.DescribeVpcAttributeRequest;
 import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
@@ -85,6 +86,18 @@ public class ServiceHelper {
                 for (String resourceName : resourceNameList) {
                     resourceArn.add("acs:log:*:" +
                             accountId + ":project/" + resourceName);
+                }
+                break;
+            case "vpc":
+                for (String resourceName : resourceNameList) {
+                    resourceArn.add("acs:vpc:*:" +
+                            accountId + ":vpc/" + resourceName);
+                }
+                break;
+            case "vSwitch":
+                for (String resourceName : resourceNameList) {
+                    resourceArn.add("acs:vpc:*:" +
+                            accountId + ":vswitch/" + resourceName);
                 }
                 break;
             default:
@@ -252,5 +265,31 @@ public class ServiceHelper {
         return action;
     }
 
+    /**
+     * create vpc,return vpcId
+     */
+    public static String createVpc(String vpcName,String cidrBlock) throws Exception{
+        Client vpcClient = ClientHelper.createVpcClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.vpc20160428.models.CreateVpcRequest createVpcRequest = new com.aliyun.vpc20160428.models.CreateVpcRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setVpcName(vpcName)
+                .setCidrBlock(cidrBlock);
+        RuntimeOptions runtime = new RuntimeOptions();
+        return vpcClient.createVpcWithOptions(createVpcRequest, runtime).getBody().getVpcId();
+    }
 
+    /**
+     * create vSwitch,return vSwitchId
+     */
+    public static String createVSwitch(String vpcId,String vSwitchName,String cidrBlock) throws Exception {
+        Client vpcClient = ClientHelper.createVpcClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.vpc20160428.models.CreateVSwitchRequest createVSwitchRequest = new com.aliyun.vpc20160428.models.CreateVSwitchRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setZoneId("cn-hangzhou-b")
+                .setVpcId(vpcId)
+                .setVSwitchName(vSwitchName)
+                .setCidrBlock(cidrBlock);
+        RuntimeOptions runtime = new RuntimeOptions();
+        return vpcClient.createVSwitchWithOptions(createVSwitchRequest, runtime).getBody().getVSwitchId();
+    }
 }
