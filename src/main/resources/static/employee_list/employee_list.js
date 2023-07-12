@@ -1,69 +1,7 @@
 var table;
 $(document).ready(function () {
     $("#loading").removeClass("d-none");
-    // var data = [['1','用户名', '姓', '名', '显示名称', 'Email','externalId','type']]
-    var data = getData();
-
-    var titles = ['ID', '用户名/组名', '姓', '名', '显示名称', 'Email', 'externalId', 'type']
-    table = $('#userTable').DataTable({
-        data: data,
-        width: "100%",
-        autoWidth: false,
-        deferRender: true, // 延迟渲染
-        "pagingType": "full_numbers",
-        "bSort": true,
-        "language": {
-            "sProcessing": "处理中...",
-            "sLengthMenu": "显示 _MENU_ 项结果",
-            "sZeroRecords": "没有匹配结果",
-            "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-            "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
-            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
-            "sInfoPostFix": "",
-            "sSearch": "搜索:",
-            "sUrl": "",
-            "sEmptyTable": "表中数据为空",
-            "sLoadingRecords": "载入中...",
-            "sInfoThousands": ",",
-            "oPaginate": {
-                "sFirst": "首页",
-                "sPrevious": "上页",
-                "sNext": "下页",
-                "sLast": "末页"
-            },
-            "oAria": {
-                "sSortAscending": ": 以升序排列此列",
-                "sSortDescending": ": 以降序排列此列"
-            }
-        },
-        "columnDefs": [{
-            "searchable": false,
-            "orderable": true,
-            "targets": 0
-        }],
-        "order": [[7, 'asc']],
-        // true代表后台处理分页，false代表前台处理分页
-        "serverSide": false,
-        "lengthMenu": [5, 10, 20, 50],
-        initComplete: function () {
-            $("#loading").addClass("d-none");
-            $("#content").show();
-        }
-    });
-
-    //    // 初始化完成后显示具体内容
-    //      $("#loading").addClass("d-none");
-    //      $("#content").show();
-
-    // 为每一行添加序号
-    //      table.on('order.dt search.dt', function() {
-    //        table.column(0, {
-    //          search: 'applied',
-    //          order: 'applied'
-    //        }).nodes().each(function(cell, i) {
-    //          cell.innerHTML = i + 1;
-    //        });
-    //      }).draw();
+    getDataAndInitTable();
 
     $('#userTable tbody').on('click', 'tr', function () {
         if ($(this).hasClass('selected')) {
@@ -312,26 +250,27 @@ $(document).ready(function () {
 
     // 同步后重新拉取数据
     $('#btn_syncResult').click(function () {
-//       // 新的数据数组
-//       var newData = getData();
-//       // 清空表格数据
-//       table.clear();
-//       // 添加新的数据
-//       table.rows.add(newData);
-//       // 重新绘制表格
-//       table.draw();
+        //       // 新的数据数组
+        //       var newData = getData();
+        //       // 清空表格数据
+        //       table.clear();
+        //       // 添加新的数据
+        //       table.rows.add(newData);
+        //       // 重新绘制表格
+        //       table.draw();
     });
 
 });
 
 
 
-function getData() {
+function getDataAndInitTable() {
+    var data = [['1', '用户名', '姓', '名', '显示名称', 'Email', 'externalId', 'type']];
     var tableData = [];
-    $.ajax({
+    var request1 = $.ajax({
         url: "../" + "employeeList/getAllUser.do",
         type: "POST",
-        async: false,
+        //        async: false,
         data: null,
         success: function (result) {
             if (result.success) {
@@ -346,10 +285,10 @@ function getData() {
         },
     })
 
-    $.ajax({
+    var request2 = $.ajax({
         url: "../" + "employeeList/getAllGroup.do",
         type: "POST",
-        async: false,
+        //        async: false,
         data: null,
         success: function (result) {
             if (result.success) {
@@ -363,7 +302,67 @@ function getData() {
             }
         },
     })
-    return tableData;
+
+    // 使用 Promise.all() 等待两个请求都完成
+    Promise.all([request1, request2])
+        .then(function (responses) {
+            // 两个请求都完成了
+            // console.log('两个请求都完成了');
+            // console.log(tableData);
+
+            table = $('#userTable').DataTable({
+                data: tableData,
+                width: "100%",
+                autoWidth: false,
+                deferRender: true, // 延迟渲染
+                "pagingType": "full_numbers",
+                "bSort": true,
+                "language": {
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "显示 _MENU_ 项结果",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "搜索:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "末页"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": 以升序排列此列",
+                        "sSortDescending": ": 以降序排列此列"
+                    }
+                },
+                "columnDefs": [{
+                    "searchable": false,
+                    "orderable": true,
+                    "targets": 0
+                }],
+                "order": [[7, 'asc']],
+                // true代表后台处理分页，false代表前台处理分页
+                "serverSide": false,
+                "lengthMenu": [5, 10, 20, 50],
+                initComplete: function () {
+                    $("#loading").addClass("d-none");
+                    $("#content").show();
+                }
+            });
+        })
+        .catch(function (error) {
+            // 出了点问题
+            console.log('出了点问题');
+            console.log(error);
+        })
+
+    //    return tableData;
 }
 
 function sync() {
@@ -404,8 +403,3 @@ function sync() {
         }
     })
 }
-
-//$(window).on("load", function() {
-//  $("#loading").addClass("d-none");
-//  $("#content").show();
-//});
