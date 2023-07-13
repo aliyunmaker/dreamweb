@@ -9,7 +9,9 @@
 
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <script src="https://cdn.bootcss.com/datatables/1.10.16/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="employee_list.js"></script>
@@ -86,9 +88,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">新增</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div id="addModal" class="modal-body">
                         <div class="form-horizontal">
@@ -150,8 +150,8 @@
                     </div>
                     <div class="modal-footer">
                         <div class="center-block">
-                            <button id="cancelAdd" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <button id="addInfo" type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+                            <button id="cancelAdd" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button id="addInfo" type="button" class="btn btn-primary" data-bs-dismiss="modal">保存</button>
                         </div>
                     </div>
                 </div>
@@ -162,9 +162,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">修改</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div id="editModal" class="modal-body">
                         <div class="form-horizontal">
@@ -226,8 +224,8 @@
                     </div>
                     <div class="modal-footer">
                         <div class="center-block">
-                            <button id="cancelEdit" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <button id="saveEdit" type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+                            <button id="cancelEdit" type="button" class="btn btn-secondary"data-bs-dismiss="modal">取消</button>
+                            <button id="saveEdit" type="button" class="btn btn-primary"data-bs-dismiss="modal">保存</button>
                         </div>
                     </div>
                 </div>
@@ -239,16 +237,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">删除</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p>你确定要删除么</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button id="delete" type="button" class="btn btn-primary" data-dismiss="modal">删除</button>
+                        <button type="button" class="btn btn-secondary"data-bs-dismiss="modal">取消</button>
+                        <button id="delete" type="button" class="btn btn-primary"data-bs-dismiss="modal">删除</button>
                     </div>
                 </div>
             </div>
@@ -259,9 +255,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">同步</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p>你确定要同步么</p>
@@ -277,8 +271,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button id="sync" type="button" class="btn btn-primary" data-dismiss="modal">同步</button>
+                        <button type="button" class="btn btn-secondary"data-bs-dismiss="modal">取消</button>
+                        <button id="sync" type="button" class="btn btn-primary"data-bs-dismiss="modal">同步</button>
                     </div>
                 </div>
             </div>
@@ -290,15 +284,13 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">同步结果</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p id="syncResult">init</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="btn_syncResult" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                        <button id="btn_syncResult" type="button" class="btn btn-primary"data-bs-dismiss="modal">确定</button>
                     </div>
                 </div>
             </div>

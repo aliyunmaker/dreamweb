@@ -87,16 +87,16 @@ $(document).ready(function () {
 
     $("#btn_add").click(function () {
         console.log('add');
-        $("#add").modal();
+        $("#add").modal("show");
     });
 
     $('#btn_edit').click(function () {
         console.log('edit');
         if (table.rows('.selected').data().length) {
-            $("#editInfo").modal();
-            console.log("length: " + table.rows('.selected').data().length);
+            $("#editInfo").modal("show");
+//            console.log("length: " + table.rows('.selected').data().length);
             var rowData = table.rows('.selected').data()[0];
-            console.log("rowData:" + rowData);
+//            console.log("rowData:" + rowData);
 
             var inputs = $("#editInputText").find('input');
             for (var i = 0; i < inputs.length; i++) {
@@ -194,7 +194,7 @@ $(document).ready(function () {
 
     $('#btn_delete').click(function () {
         if (table.rows('.selected').data().length) {
-            $("#deleteModal").modal()
+            $("#deleteModal").modal("show")
         } else {
             alert('请选择项目');
         }
@@ -241,7 +241,7 @@ $(document).ready(function () {
 
     $('#btn_syc').click(function () {
         $("input[name='syncType'][value='false']").prop("checked", true);
-        $("#syncList").modal();
+        $("#syncList").modal("show");
     });
 
     $('#sync').click(function () {
@@ -307,9 +307,6 @@ function getDataAndInitTable() {
     Promise.all([request1, request2])
         .then(function (responses) {
             // 两个请求都完成了
-            // console.log('两个请求都完成了');
-            // console.log(tableData);
-
             table = $('#userTable').DataTable({
                 data: tableData,
                 width: "100%",
@@ -393,13 +390,13 @@ function sync() {
         data: params,
         success: function (result) {
             if (result.success) {
-                console.log(result.data);
+//                console.log(result.data);
                 document.getElementById("syncResult").innerText = result.data;
             } else {
                 document.getElementById("syncResult").innerText = result.errorMsg;
             }
             $("#syncList").modal('hide');
-            $("#syncResultModal").modal();
+            $("#syncResultModal").modal("show");
         }
     })
 }

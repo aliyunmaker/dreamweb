@@ -76,6 +76,7 @@ function akApplySubmit() {
       } else {
         console.log("data.message: " + result.errorMsg);
         document.getElementById("failMessage").innerText = result.errorMsg;
+        $("#creating").hide();
         $('#modalFail').modal('show');
       }
     },
