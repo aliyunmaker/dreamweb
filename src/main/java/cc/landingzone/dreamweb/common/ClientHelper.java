@@ -123,4 +123,12 @@ public class ClientHelper {
         config.endpoint = "kms.cn-hangzhou.aliyuncs.com";
         return new com.aliyun.kms20160120.Client(config);
     }
+
+    public static com.aliyun.cloudsso20210515.Client createCloudSSOClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "cloudsso.cn-shanghai.aliyuncs.com";
+        return new com.aliyun.cloudsso20210515.Client(config);
+    }
 }

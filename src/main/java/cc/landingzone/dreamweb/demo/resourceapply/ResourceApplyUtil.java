@@ -216,7 +216,7 @@ public class ResourceApplyUtil {
      * 判断vSwitch的标签是否为application和environmentName
      */
     public static boolean isVSwitchTagMatch(DescribeVSwitchAttributesResponseBody describeVSwitchAttributesResponseBody
-            , String applicationName, String environmentName) throws Exception {
+            , String applicationName, String environmentName) {
         if (describeVSwitchAttributesResponseBody.getTags() == null) {
             return false;
         }
@@ -296,8 +296,10 @@ public class ResourceApplyUtil {
             String vpcId = ServiceHelper.createVpc(vpcName, vpcCidrBlock);
             ResourceApplyUtil.attachTagToResource(applicationName,environmentName,"vpc",
                     Arrays.asList(vpcId));
+
             while (!(ServiceHelper.describeVpcAttribute(vpcId).getStatus()).equals(CommonConstants.STATUS_AVAILABLE)) {
                 Thread.sleep(100);
+                logger.info("wait for vpc available");
             }
             // create vSwitch
             List<String> vswIdList = new ArrayList<>();
@@ -308,6 +310,7 @@ public class ResourceApplyUtil {
                 String vswId = ServiceHelper.createVSwitch(vpcId, vswName, vswCidrBlock);
                 while (!ServiceHelper.describeVSwitchAttribute(vswId).getStatus().equals(CommonConstants.STATUS_AVAILABLE)){
                     Thread.sleep(100);
+                    logger.info("wait for vSwitch available");
                 }
                 vswIdList.add(vswId);
             }

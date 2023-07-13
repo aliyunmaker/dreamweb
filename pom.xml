@@ -331,6 +331,11 @@
             <artifactId>aliyun-java-sdk-core</artifactId>
             <version>4.5.17</version>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>cloudsso20210515</artifactId>
+            <version>1.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>

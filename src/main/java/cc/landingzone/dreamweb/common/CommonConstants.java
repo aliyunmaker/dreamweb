@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.common;
 
+import com.aliyun.cloudsso20210515.models.ListDirectoriesResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 public class CommonConstants {
@@ -56,7 +58,7 @@ public class CommonConstants {
     public static final String LOGOUT_SUCCESS_URL;
 
     public static final String SCIM_KEY;
-    public static final String SCIM_URL;
+    public static final String SCIM_URL = "https://cloudsso-scim-cn-shanghai.aliyun.com/scim/v2";
 
     // 是否线上环境
     public static final boolean ENV_ONLINE;
@@ -69,8 +71,7 @@ public class CommonConstants {
         Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         Aliyun_UserId = getCallerIdentity();
-        SCIM_KEY = properties.getProperty("dreamweb.scim_key");
-        SCIM_URL = properties.getProperty("dreamweb.scim_url");
+        SCIM_KEY = initScim();
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";
@@ -95,6 +96,9 @@ public class CommonConstants {
         return properties;
     }
 
+    /**
+     * Get the Aliyun account ID of the current user
+     */
     public static String getCallerIdentity(){
         try {
             com.aliyun.sts20150401.Client client = ClientHelper.createStsClient(Aliyun_AccessKeyId,Aliyun_AccessKeySecret);
@@ -105,5 +109,30 @@ public class CommonConstants {
             return null;
         }
      }
+
+     /**
+      * Initialize SCIM，return the SCIM key
+      */
+     public static String initScim(){
+        try {
+            List<ListDirectoriesResponseBody.ListDirectoriesResponseBodyDirectories> directoriesList =
+                    CloudSSOHelper.listDirectories();
+            String directoryId;
+            if (directoriesList != null && directoriesList.size() > 0) {
+                directoryId = directoriesList.get(0).getDirectoryId();
+            }else {
+                directoryId = CloudSSOHelper.createDirectory("dreamweb");
+            }
+            List<String> scimServerCredentials = CloudSSOHelper.listSCIMServerCredentials(directoryId);
+            for (String scimServerCredential : scimServerCredentials) {
+                CloudSSOHelper.deleteSCIMServerCredential(directoryId, scimServerCredential);
+            }
+            return CloudSSOHelper.createSCIMServerCredential(directoryId);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+     }
+
 
 }

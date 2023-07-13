@@ -184,6 +184,7 @@ public class EmployeeListController extends BaseController {
             String formString = request.getParameter("formString");
             List<SyncRequest> syncRequestList = JsonUtils.parseArray(formString, SyncRequest.class);
             boolean removeUnselected = Boolean.parseBoolean(request.getParameter("removeUnselected"));
+            assert syncRequestList != null;
             String resultData = LdapService.syncLdaptoScim(syncRequestList, removeUnselected);
             result.setData(resultData);
         } catch (Exception e) {
