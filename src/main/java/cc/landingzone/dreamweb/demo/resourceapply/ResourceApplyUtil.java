@@ -91,7 +91,7 @@ public class ResourceApplyUtil {
 //                .setSystemDisk(systemDisk)
 //                .setDataDisk(dataDisks)
                 // uuid: 标识唯一ECS
-                .setHostName(CommonConstants.DEFAULT_ECS_HOSTNAME + UUID.randomUUID())
+                .setHostName(CommonConstants.DEFAULT_ECS_HOSTNAME + UUIDUtils.generateUUID().substring(0,8))
                 .setInstanceName(applicationName + "-" + UUIDUtils.generateUUID().substring(0,8))
                 // 为HostName和InstanceName自动添加有序后缀
                 .setUniqueSuffix(true)
