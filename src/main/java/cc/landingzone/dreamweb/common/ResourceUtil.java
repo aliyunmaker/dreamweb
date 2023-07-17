@@ -239,8 +239,6 @@ public class ResourceUtil {
         } while (nextToken != null);
 
         Map<String, String> accountNames = getAccountNames();
-        // 如果没有任何资源的账号也需要返回，加上这一段代码
-
 
         for (SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources resource : resources) {
             String accountId = resource.getAccountId();

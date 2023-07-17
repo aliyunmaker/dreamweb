@@ -190,12 +190,13 @@ public class AliyunAPIUtils {
         AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest();
         assumeRoleRequest.setRoleArn(roleArn);
         assumeRoleRequest.setRoleSessionName(sessionName);
-        AssumeRoleResponse assumeRoleResponse = client.getAcsResponse(assumeRoleRequest);
-        assumeRoleResponse.getCredentials();
 
         if (!policy.isBlank()) {
             assumeRoleRequest.setPolicy(policy);
         }
+
+        AssumeRoleResponse assumeRoleResponse = client.getAcsResponse(assumeRoleRequest);
+        assumeRoleResponse.getCredentials();
 
         Map<String, String> paramsMap = new HashMap<>();
         paramsMap.put("Action", "GetSigninToken");

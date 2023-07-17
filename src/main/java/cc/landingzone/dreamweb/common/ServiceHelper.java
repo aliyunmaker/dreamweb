@@ -33,7 +33,7 @@ public class ServiceHelper {
         switch (resourceType) {
             case "oss":
                 for (String resourceName : resourceIdList) {
-                    resourceArn.add("acs:oss:*:" + accountId + ":bucket/" + resourceName);
+                    resourceArn.add("acs:oss:*:" + accountId + ":" + resourceName);
                 }
                 break;
             case "log":

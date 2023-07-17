@@ -57,11 +57,11 @@ public class ResourceController extends BaseController {
                     break;
             }
 
+            assert policy != null;
             String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
                     CommonConstants.Aliyun_AccessKeySecret,
                     CommonConstants.ADMIN_ROLE_ARN, username, policy, false);
 
-            assert consoleUrl != null;
             String redirectUrl = "https://signin.aliyun.com/federation?Action=Login&Destination="
                     + URLEncoder.encode(consoleUrl, StandardCharsets.UTF_8.displayName())
                     + "&LoginUrl=https%3a%2f%2faliyun.com&SigninToken="

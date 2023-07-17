@@ -84,7 +84,6 @@ $(document).ready(function() {
             if (result.success) {
                 appDetail = result.data;
                 listResourcesDetails(serviceName);
-                console.log(appDetail);
             } else {
                 alert(result.errorMsg);
             }

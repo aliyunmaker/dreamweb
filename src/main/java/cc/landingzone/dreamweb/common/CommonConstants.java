@@ -33,7 +33,7 @@ public class CommonConstants {
     public static final String RESOURCE_CENTER_ADMIN_NAME = "管理账号";
 
     // log center的默认查询语句
-    public static final String QUERY_STRING = "remote_addr:100.127.198.61";
+    public static final String QUERY_STRING = "remote_addr:100.127.197.134";
 
     // 用于免密登录的RAM角色ARN
     public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";
