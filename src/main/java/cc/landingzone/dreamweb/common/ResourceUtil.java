@@ -5,10 +5,12 @@ import cc.landingzone.dreamweb.demo.appcenter.model.Event;
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
 import com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesResponseBody;
 import com.aliyun.resourcemanager20200331.models.ListAccountsResponseBody;
+import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
 import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -315,5 +317,21 @@ public class ResourceUtil {
             }
         }
         return accountsWithoutResources;
+    }
+
+
+    public static String getSLSProjectNameByAppName(String appName) throws Exception {
+        com.aliyun.tag20180828.Client client = ClientHelper.createTagClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.tag20180828.models.ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new com.aliyun.tag20180828.models.ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
+                .setKey("application")
+                .setValue(appName);
+        com.aliyun.tag20180828.models.ListResourcesByTagRequest listResourcesByTagRequest = new com.aliyun.tag20180828.models.ListResourcesByTagRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setResourceType(ServiceEnum.SLS.getResourceType())
+                .setTagFilter(tagFilter);
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        List<ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources> projects = client.listResourcesByTagWithOptions(listResourcesByTagRequest, runtime).getBody().getResources();
+        Assert.isTrue(projects.size() == 1, "An application can only have one SLS project!");
+        return projects.get(0).getResourceId();
     }
 }

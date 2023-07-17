@@ -67,7 +67,7 @@
                 applist = result.data;
                 addSelectOptions(applist);
                 document.getElementById("logAppsSelect").value = appName;
-                var page = "../signSLS.do?projectName="+appName+"-dreamweb";
+                var page = "../signSLS.do?appName=" + appName;
                 iframe.setAttribute("src", page);
                 document.getElementById("access-log-btn").classList.add("active");
             } else {
@@ -83,7 +83,7 @@
       link.addEventListener("click", function (e) {
         e.preventDefault();
         var page = e.target.getAttribute("data-link");
-        page += "&projectName=" + $("#logAppsSelect").val() + "-dreamweb";
+        page += "&appName=" + $("#logAppsSelect").val();
         iframe.setAttribute("src", page);
 
         // Remove active class from all links
@@ -110,7 +110,7 @@
           link.classList.remove("active");
         });
       document.getElementById("access-log-btn").classList.add("active");
-      var page = "../signSLS.do?projectName="+$("#logAppsSelect").val()+"-dreamweb";
+      var page = "../signSLS.do?appName="+$("#logAppsSelect").val();
       iframe.setAttribute("src", page);
     }
 
