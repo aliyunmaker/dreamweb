@@ -38,7 +38,7 @@ public class ServiceHelper {
                 break;
             case "log":
                 for (String resourceName : resourceIdList) {
-                    resourceArn.add("acs:log:*:" + accountId + ":project/" + resourceName);
+                    resourceArn.add("acs:log:*:" + accountId + ":project/" + resourceName + "*");
                 }
                 break;
             case "ecs":
@@ -48,12 +48,12 @@ public class ServiceHelper {
                 break;
             case "rds":
                 for (String resourceName : resourceIdList) {
-                    resourceArn.add("acs:rds:*:" + accountId + ":instance/" + resourceName);
+                    resourceArn.add("acs:rds:*:" + accountId + ":dbinstance/" + resourceName);
                 }
                 break;
             case "slb":
                 for (String resourceName : resourceIdList) {
-                    resourceArn.add("acs:slb:*:" + accountId + ":instance/" + resourceName);
+                    resourceArn.add("acs:slb:*:" + accountId + ":loadbalancer/" + resourceName);
                 }
                 break;
             default:
@@ -248,8 +248,11 @@ public class ServiceHelper {
             case 3:
                 switch (resourceType) {
                     case "oss":
+                        action.add(resourceType + ":Get*");
+                        break;
                     case "log":
                         action.add(resourceType + ":Get*");
+                        action.add(resourceType + ":List*");
                         break;
                     case "ecs":
                     case "rds":

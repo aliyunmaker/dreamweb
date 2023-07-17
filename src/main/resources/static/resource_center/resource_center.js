@@ -80,9 +80,9 @@ function listAccounts() {
             continue;
         }
         var accoutItem = `
-        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true" id="account-${accountName}" onclick="createCards('${accountName}')">
+        <a href="#" class="list-group-item disabled list-group-item-action py-3 lh-tight" aria-current="true" id="account-${accountName}" onclick="createCards('${accountName}')">
             <div class="d-flex w-100 align-items-center justify-content-between">
-            <strong class="mb-1 text-muted">&nbsp;&nbsp;&nbsp;&nbsp;${accountName}</strong>
+            <strong class="mb-1">&nbsp;&nbsp;&nbsp;&nbsp;${accountName}</strong>
             </div>
         </a>`;
         $("#accountContainer").append(accoutItem);
