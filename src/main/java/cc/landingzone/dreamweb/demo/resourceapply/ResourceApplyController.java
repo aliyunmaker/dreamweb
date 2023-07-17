@@ -146,13 +146,13 @@ public class ResourceApplyController extends BaseController {
     public void getVSwitches(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String applicationName = request.getParameter("applicationName");
+//            String applicationName = request.getParameter("applicationName");
             String environment = request.getParameter("environmentName");
             String vpcId = request.getParameter("vpcId");
-            Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
+//            Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
             Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
             Assert.isTrue(StringUtils.isNotEmpty(vpcId), "vpcId can not be empty");
-            logger.info("applicationName: " + applicationName);
+//            logger.info("applicationName: " + applicationName);
             logger.info("environment: " + environment);
             logger.info("vpcId: " + vpcId);
             DescribeVpcAttributeResponseBody.DescribeVpcAttributeResponseBodyVSwitchIds vSwitchIds =
@@ -161,7 +161,7 @@ public class ResourceApplyController extends BaseController {
             for (String vSwitchId : vSwitchIds.getVSwitchId()) {
                 DescribeVSwitchAttributesResponseBody responseBody =
                         ServiceHelper.describeVSwitchAttribute(vSwitchId);
-                if(ResourceApplyUtil.isVSwitchTagMatch(responseBody, applicationName, environment)) {
+                if(ResourceApplyUtil.isVSwitchTagMatch(responseBody, environment)) {
                     vSwitches.add(responseBody.getVSwitchName() + " / " + vSwitchId);
                 }
             }
@@ -182,14 +182,14 @@ public class ResourceApplyController extends BaseController {
     public void getVpcList(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String applicationName = request.getParameter("applicationName");
+//            String applicationName = request.getParameter("applicationName");
             String environment = request.getParameter("environmentName");
-            Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
+//            Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
             Assert.isTrue(StringUtils.isNotEmpty(environment), "environment can not be empty");
-            logger.info("applicationName: " + applicationName);
+//            logger.info("applicationName: " + applicationName);
             logger.info("environment: " + environment);
             String resourceType = CommonConstants.VPC_RESOURCETYPE;
-            List<String> resourceIds = ServiceHelper.listResourcesByTag(applicationName, environment, resourceType);
+            List<String> resourceIds = ServiceHelper.listResourcesByTag(environment, resourceType);
             List<String> vpcList = new ArrayList<>();
             for (String resourceId : resourceIds) {
                 String vpcName = ServiceHelper.describeVpcAttribute(resourceId).getVpcName();

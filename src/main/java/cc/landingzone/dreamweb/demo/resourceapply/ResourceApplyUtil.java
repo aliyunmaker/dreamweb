@@ -27,9 +27,9 @@ public class ResourceApplyUtil {
     public static Logger logger = LoggerFactory.getLogger(ResourceApplyUtil.class);
 
     public static void main(String[] args) throws Exception {
-//        createVpcAndVSwitchByAppAndEnv("application1", "test",
-//                2,2,10);
-        System.out.println(ApplicationEnum.values()[0].name());
+        createVpcAndVSwitchByAppAndEnv("test",
+                1,1,10);
+//        System.out.println(ApplicationEnum.values()[0].name());
 //        System.out.println(getSecurityGroupIdByVpc("vpc-bp11fr9p1t7m93gebxj02", "application1", "product"));
 //        String vpcId = "vpc-bp1b50s9blogw7ra0zppz";
 //        DescribeVpcAttributeResponseBody.DescribeVpcAttributeResponseBodyVSwitchIds vSwitchIds =
@@ -173,6 +173,35 @@ public class ResourceApplyUtil {
         }
     }
 
+    public static void attachTagToResource(String environment, String resourceType,
+                                           List<String> resourceNameList) throws Exception {
+
+        Map<String, String> tags = new HashMap<>();
+        tags.put(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY, environment);
+        String tagStr = JSON.toJSONString(tags);
+        logger.info("tagStr:{}", tagStr);
+        com.aliyun.tag20180828.Client client = ClientHelper.createTagClient
+                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        List<String> resourceArn = ServiceHelper.getResourceArnInTag
+                (resourceType, resourceNameList, CommonConstants.Aliyun_UserId);
+        logger.info("resourceArn:{}", JSON.toJSONString(resourceArn));
+        TagResourcesRequest tagResourcesRequest = new TagResourcesRequest()
+                .setResourceARN(resourceArn)
+                .setTags(tagStr)
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
+        RuntimeOptions runtime = new RuntimeOptions();
+        List<TagResourcesResponseBody.TagResourcesResponseBodyFailedResourcesFailedResource> failedResource
+                = client.tagResourcesWithOptions(tagResourcesRequest, runtime).getBody().getFailedResources().getFailedResource();
+        logger.info("failedResource:{}", JSON.toJSONString(failedResource));
+        // 如果添加失败，继续重试
+        while (failedResource != null && failedResource.size() > 0) {
+            failedResource = client.tagResourcesWithOptions(tagResourcesRequest, runtime).getBody().getFailedResources().getFailedResource();
+            logger.info("failedResource:{}", JSON.toJSONString(failedResource));
+        }
+    }
+
+
+
 //    /**
 //     * 查询云服务器ECS提供的实例规格族列表
 //     *
@@ -232,6 +261,25 @@ public class ResourceApplyUtil {
     }
 
     /**
+     * 判断vSwitch的标签是否为environmentName
+     */
+    public static boolean isVSwitchTagMatch(DescribeVSwitchAttributesResponseBody describeVSwitchAttributesResponseBody,
+                                            String environmentName) {
+        if (describeVSwitchAttributesResponseBody.getTags() == null) {
+            return false;
+        }
+        List<DescribeVSwitchAttributesResponseBody.DescribeVSwitchAttributesResponseBodyTagsTag> tagList =
+                describeVSwitchAttributesResponseBody.getTags().getTag();
+        for (DescribeVSwitchAttributesResponseBody.DescribeVSwitchAttributesResponseBodyTagsTag describeVSwitchAttributesResponseBodyTagsTag : tagList) {
+            if (describeVSwitchAttributesResponseBodyTagsTag.getKey().equals(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY) &&
+                    describeVSwitchAttributesResponseBodyTagsTag.getValue().equals(environmentName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * get securityGroupId by vpcId,if not exist,create one
      */
     public static String getSecurityGroupIdByVpc(String vpcId,String applicationName,String environment) throws Exception {
@@ -275,10 +323,10 @@ public class ResourceApplyUtil {
 
     public static void initResourceApply() throws Exception {
         // ecs
-        createVpcAndVSwitchByAppAndEnv(ApplicationEnum.values()[0].name(), "product",
-                2,3,10);
-        createVpcAndVSwitchByAppAndEnv(ApplicationEnum.values()[0].name(), "test",
-                2,3,20);
+        createVpcAndVSwitchByAppAndEnv("product",
+                1,2,10);
+        createVpcAndVSwitchByAppAndEnv("test",
+                1,2,20);
     }
 
     /**
@@ -286,15 +334,15 @@ public class ResourceApplyUtil {
      * @param vpcCount: vpc count
      * @param vswCount: vSwitch count of each vpc
      */
-    public static void createVpcAndVSwitchByAppAndEnv(String applicationName,String environmentName,
+    public static void createVpcAndVSwitchByAppAndEnv(String environmentName,
                                                       int vpcCount,int vswCount,int start) throws Exception {
         for (int i = 0; i < vpcCount; i++) {
             // create vpc
-            String vpcName = applicationName + "-" + environmentName + "-" + i;
+            String vpcName = environmentName + "-" + i;
             String vpcCidrBlock = "10." + (start + i) + ".0.0/16";
             logger.info("create vpc: " + vpcName + " " + vpcCidrBlock);
             String vpcId = ServiceHelper.createVpc(vpcName, vpcCidrBlock);
-            ResourceApplyUtil.attachTagToResource(applicationName,environmentName,"vpc",
+            ResourceApplyUtil.attachTagToResource(environmentName,"vpc",
                     Arrays.asList(vpcId));
 
             while (!(ServiceHelper.describeVpcAttribute(vpcId).getStatus()).equals(CommonConstants.STATUS_AVAILABLE)) {
@@ -304,7 +352,7 @@ public class ResourceApplyUtil {
             // create vSwitch
             List<String> vswIdList = new ArrayList<>();
             for (int j = 0; j < vswCount; j++) {
-                String vswName = applicationName + "-" + environmentName + "-" + i + "-" + j;
+                String vswName = environmentName + "-" + i + "-" + j;
                 String vswCidrBlock = "10." + (start + i) + "." + j + ".0/24";
                 logger.info("create vSwitch: " + vswName + " " + vswCidrBlock);
                 String vswId = ServiceHelper.createVSwitch(vpcId, vswName, vswCidrBlock);
@@ -314,7 +362,7 @@ public class ResourceApplyUtil {
                 }
                 vswIdList.add(vswId);
             }
-            ResourceApplyUtil.attachTagToResource(applicationName,environmentName,"vSwitch",
+            ResourceApplyUtil.attachTagToResource(environmentName,"vSwitch",
                     vswIdList);
         }
     }

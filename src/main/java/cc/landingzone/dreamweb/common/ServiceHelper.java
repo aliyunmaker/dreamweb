@@ -150,7 +150,28 @@ public class ServiceHelper {
             }
         }
         return resourceIds;
+    }
 
+    public static List<String> listResourcesByTag(String environment, String resourceType) throws Exception {
+        com.aliyun.tag20180828.Client client = ClientHelper.createTagClient
+                (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter tagFilter = new ListResourcesByTagRequest.ListResourcesByTagRequestTagFilter()
+                .setValue(environment)
+                .setKey(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY);
+        ListResourcesByTagRequest listResourcesByTagRequest = new ListResourcesByTagRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setMaxResult(1000)
+                .setResourceType(resourceType)
+                .setIncludeAllTags(true)
+                .setTagFilter(tagFilter);
+        RuntimeOptions runtime = new RuntimeOptions();
+        List<String> resourceIds = new ArrayList<>();
+        List<ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources> resources = client.
+                listResourcesByTagWithOptions(listResourcesByTagRequest, runtime).getBody().getResources();
+        for (ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources resource : resources) {
+            resourceIds.add(resource.getResourceId());
+        }
+        return resourceIds;
     }
 
     /**
