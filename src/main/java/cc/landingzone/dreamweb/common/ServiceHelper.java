@@ -253,8 +253,14 @@ public class ServiceHelper {
                     case "log":
                         action.add(resourceType + ":Get*");
                         action.add(resourceType + ":List*");
+                        action.add(resourceType + ":Create*");
+                        action.add(resourceType + ":Update");
+                        action.add(resourceType + ":Delete*");
                         break;
                     case "ecs":
+                        action.add(resourceType + ":Describe*");
+                        action.add(resourceType + ":Create*");
+                        action.add(resourceType + ":Delete*");
                     case "rds":
                     case "slb":
                         action.add(resourceType + ":Describe*");
