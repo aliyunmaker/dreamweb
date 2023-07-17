@@ -71,11 +71,8 @@ public class CommonConstants {
         Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
         Aliyun_UserId = getCallerIdentity();
-        if (StringUtils.isNotEmpty(properties.getProperty("dreamweb.scim_key"))){
-            SCIM_KEY = properties.getProperty("dreamweb.scim_key");
-        }else{
-            SCIM_KEY = initScim();
-        }
+        SCIM_KEY = properties.getProperty("dreamweb.scim_key");
+
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";

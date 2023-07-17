@@ -27,8 +27,9 @@ public class ResourceApplyUtil {
     public static Logger logger = LoggerFactory.getLogger(ResourceApplyUtil.class);
 
     public static void main(String[] args) throws Exception {
-        createVpcAndVSwitchByAppAndEnv("test",
-                1,1,10);
+//        System.out.println(ApplicationEnum.names());
+//        createVpcAndVSwitchByAppAndEnv("test",
+//                1,1,10);
 //        System.out.println(ApplicationEnum.values()[0].name());
 //        System.out.println(getSecurityGroupIdByVpc("vpc-bp11fr9p1t7m93gebxj02", "application1", "product"));
 //        String vpcId = "vpc-bp1b50s9blogw7ra0zppz";
