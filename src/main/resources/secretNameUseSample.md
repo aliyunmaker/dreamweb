@@ -3,7 +3,7 @@
 2. 通过配置文件（secretsmanager.properties）构建客户端并测试使用
 
    a. 引入依赖
-    ```xml
+   ```xml
     <dependency>
         <groupId>com.aliyun</groupId>
         <artifactId>alibabacloud-secretsmanager-client</artifactId>
@@ -47,28 +47,23 @@
     public class CacheClientEnvironmentSample {
         public static void main(String[] args) {
             try {
-                SecretCacheClient kmsClient = SecretCacheClientBuilder.newClient();
-                String secretName = "acs/ram/user/tianyu";
-                SecretInfo secretInfo = kmsClient.getSecretInfo(secretName);
-                System.out.println(secretInfo);
-
-                // example: create oss bucket
-                JSONObject jsonObject = JSON.parseObject(secretInfo.getSecretValue());
-                String accessKeyId = jsonObject.getString("AccessKeyId");
-                String accessKeySecret = jsonObject.getString("AccessKeySecret");
-                AsyncClient ossClient = createOssClient(accessKeyId,accessKeySecret);
-                CreateBucketConfiguration createBucketConfiguration = CreateBucketConfiguration.builder()
-                        .storageClass("Standard")
-                        .dataRedundancyType("LRS")
-                        .build();
-                PutBucketRequest putBucketRequest = PutBucketRequest.builder()
-                        .bucket("bucketname-" + System.currentTimeMillis())
-                        .createBucketConfiguration(createBucketConfiguration)
-                        .build();
-                CompletableFuture<PutBucketResponse> response = ossClient.putBucket(putBucketRequest);
-                PutBucketResponse resp = response.get();
-                System.out.println(new Gson().toJson(resp));
-                ossClient.close();
+               SecretCacheClient kmsClient = SecretCacheClientBuilder.newClient();
+               String secretName = "acs/ram/user/application1-product";
+               SecretInfo secretInfo = kmsClient.getSecretInfo(secretName);
+               System.out.println(secretInfo);
+   
+               // example: get oss bucket info
+               JSONObject jsonObject = JSON.parseObject(secretInfo.getSecretValue());
+               String accessKeyId = jsonObject.getString("AccessKeyId");
+               String accessKeySecret = jsonObject.getString("AccessKeySecret");
+               AsyncClient ossClient = createOssClient(accessKeyId,accessKeySecret);
+               GetBucketInfoRequest getBucketInfoRequest = GetBucketInfoRequest.builder()
+                       .bucket("bucketjia1")
+                       .build();
+               CompletableFuture<GetBucketInfoResponse> response = ossClient.getBucketInfo(getBucketInfoRequest);
+               GetBucketInfoResponse resp = response.get();
+               System.out.println(new Gson().toJson(resp.getBody()));
+               ossClient.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }

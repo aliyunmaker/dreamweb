@@ -75,9 +75,13 @@ public class AkApplyController extends BaseController {
             assert accessKey != null;
             logger.info("accessKeyId: " + accessKey.accessKeyId);
             logger.info("accessKeySecret: " + accessKey.accessKeySecret);
-            logger.info("createAccessKeyTime: " + (System.currentTimeMillis() - attachPolicyToUserTime) + "ms");
+            long createAccessKeyTime = System.currentTimeMillis();
+            logger.info("createAccessKeyTime: " + (createAccessKeyTime - attachPolicyToUserTime) + "ms");
             String secretName = AkApplyUtil.createSecretByExist(applicationName,environment,username,
                     accessKey.accessKeyId, accessKey.accessKeySecret);
+            long createSecretTime = System.currentTimeMillis();
+            logger.info("createSecretTime: " + (createSecretTime - createAccessKeyTime) + "ms");
+            logger.info("secretName: " + secretName);
             result.setData(secretName);
         } catch (Exception e) {
             logger.error(e.getMessage());
