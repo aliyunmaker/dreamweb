@@ -35,6 +35,10 @@ public class MonitorController extends BaseController {
                 instanceId = "application1-monitor";
             }
 
+            // 目前只有一个，先写死
+            projectName = "dreamweb";
+            instanceId = "x7jqe094eo";
+
             if (StringUtils.isBlank(destination)) {
                destination = "https://sls4service.console.aliyun.com/lognext/app/monitor/" + projectName
                         + "/" + instanceId + "?resource=/fullmonitor/project/" + projectName +
