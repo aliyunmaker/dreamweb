@@ -35,11 +35,6 @@
             <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSMonitor()">
             </select>
           </li>
-          <!--          <li class="nav-item">-->
-          <!--            <a class="nav-link" href="#"-->
-          <!--               data-link="../signSLSDashboard.do?instanceId=dreamweb-monitor" id="dreamweb-monitor-btn">dreamweb-monitor</a>-->
-          <!--          </li>-->
-
         </ul>
       </div>
     </div>
@@ -49,67 +44,22 @@
   </div>
 </main>
 <script>
-    var appName;
+    var applictionList = [];
     var iframe = document.getElementById("iframe");
     page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
     iframe.setAttribute("src", page);
     $(document).ready(function() {
       getApplication();
-    //   var queryString = window.location.search;
-    //   var urlParams = new URLSearchParams(queryString);
-    //   appName = urlParams.get('appName');
-    //   appName = appName === null ? "application1" : appName;
-    //   $.ajax({
-    //     url: "../common/getApplication.do",
-    //     success: function(result){
-    //         if (result.success) {
-    //             applist = result.data;
-    //             addSelectOptions(applist);
-    //             document.getElementById("logAppsSelect").value = appName;
-    //             var page = "../signSLSMonitor.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
-    //             iframe.setAttribute("src", page);
-    //             // document.getElementById("dreamweb-monitor-btn").classList.add("active");
-    //             console.log("page:" + page);
-    //         } else {
-    //             alert(result.errorMsg);
-    //         }
-    //     }
-    //   });
-
-      // // appName = appName === null ? "application1" : appName;
-      // if (appName !== null) {
-      //   document.getElementById("logAppsSelect").value = appName;
-      //   var page = "../signSLSDashboard.do?projectName="+appName+"-dreamweb" + "&instanceId=" + appName + "-monitor";
-      //   iframe.setAttribute("src", page);
-      //   // document.getElementById("dreamweb-monitor-btn").classList.add("active");
-      //   console.log("page:" + page);
-      // }
-
     });
 
     var links = document.querySelectorAll(".navbar-nav a");
 
-    // links.forEach(function (link) {
-    //   link.addEventListener("click", function (e) {
-    //     e.preventDefault();
-    //     var page = e.target.getAttribute("data-link");
-    //     page += "&projectName=" + $("#logAppsSelect").val() + "-dreamweb";
-
-    //     iframe.setAttribute("src", page);
-    //     console.log("page:" + page);
-
-    //     // Remove active class from all links
-    //     links.forEach(function (link) {
-    //       link.classList.remove("active");
-    //     });
-
-    //     // Add active class to the clicked link
-    //     e.target.classList.add("active");
-    //   });
-    // });
-
     function signSLSMonitor() {
-      var page = "../signSLSMonitor.do?projectName="+$("#logAppsSelect").val()+"-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
+      if($("#logAppsSelect").val() != applictionList[applictionList.length-1]){
+        page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
+      }else{
+        var page = "../signSLSMonitor.do?projectName="+$("#logAppsSelect").val()+"-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
+      }
       iframe.setAttribute("src", page);
       console.log("page:" + page);
     }
@@ -131,12 +81,12 @@
         success: function (result) {
             if (result.success) {
                 var application = document.getElementById("logAppsSelect");
-                var data = result.data;
+                applictionList = result.data;
                 for (var i = application.length - 1; i >= 1; i--) {
                     application.remove(i);
                 }
-                for (var i = 0; i < data.length; i++) {
-                    application.options.add(new Option(data[i], data[i]));
+                for (var i = 0; i < applictionList.length; i++) {
+                    application.options.add(new Option(applictionList[i], applictionList[i]));
                 }
                 application.options[0].selected = true;
             } else {
