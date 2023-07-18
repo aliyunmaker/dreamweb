@@ -136,4 +136,28 @@ public class AkApplyController extends BaseController {
        outputToJSON(response, result);
     }
 
+    @RequestMapping("/checkSecretName.do")
+    public void checkSecretNameByApplication(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String applicationName = request.getParameter("applicationName");
+            Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
+            String environment = "product";
+            String ramUserName = applicationName + "-" + environment;
+            String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]}]";
+            List<String> listSecrets = KMSHelper.listSecrets(filters);
+            String secretName = "";
+            if (listSecrets.size() > 0) {
+                result.setData(listSecrets.get(0));
+            }
+            result.setData(secretName);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+
 }
