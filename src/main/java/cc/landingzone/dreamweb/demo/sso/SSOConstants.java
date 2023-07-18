@@ -61,7 +61,7 @@ public class SSOConstants {
 
         SSOUserRole awsRole = new SSOUserRole("aws", "管理员", "me@chengchao.name", "myrole", "");
         SSO_LOGIN_ROLE_IDS.add(awsRole);
-        AWS_SSO_LOGIN_ROLE_ID_ARN.put("myrole", "arn:aws:iam::626847370191:role/myrole,arn:aws:iam::626847370191:saml-provider/dreamweb");
+        AWS_SSO_LOGIN_ROLE_ID_ARN.put("myrole", "arn:aws:iam::6268473*****:role/myrole,arn:aws:iam::6268473*****:saml-provider/dreamweb");
 
         SSOUserRole tencentRole = new SSOUserRole("tencent", "管理员", "100000543428", "superadmin", "");
         SSO_LOGIN_ROLE_IDS.add(tencentRole);
@@ -70,7 +70,7 @@ public class SSOConstants {
         SSO_LOGIN_USER_IDS.add(aliyunUser);
         ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.put("test-user", "test-user@1426447221208365.onaliyun.com");
 
-        SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "kenmako555@gmail.com", "kenmako555@gmail.com", "");
+        SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "me@chengchao.name", "me@chengchao.name", "");
         SSO_LOGIN_USER_IDS.add(awsUser);
         SSOUserRole tencentUser = new SSOUserRole("tencent", "个人账号", "100000543428", "chengchao", "");
         SSO_LOGIN_USER_IDS.add(tencentUser);
@@ -180,8 +180,8 @@ public class SSOConstants {
     // aws user sso
 //    private static final String AWS_USER_IDENTIFIER = "[aws user sso] must be replaced identifier";
 //    private static final String AWS_USER_REPLY_URL = "[aws user sso] must be replaced replyUrl";// "https://us-east-2.signin.aws.amazon.com/platform/saml/acs/6b9f0caa-6290-41d0-b4de-bd190139324e";
-    private static final String AWS_USER_IDENTIFIER = "https://us-east-1.signin.aws.amazon.com/platform/saml/d-90679adb49";
-    private static final String AWS_USER_REPLY_URL = "https://us-east-1.signin.aws.amazon.com/platform/saml/acs/d4563f17-f40b-4e75-ab03-224b7162c54e";
+    private static final String AWS_USER_IDENTIFIER = "https://us-east-1.signin.aws.amazon.com/platform/saml/d-90679adc49";
+    private static final String AWS_USER_REPLY_URL = "https://us-east-1.signin.aws.amazon.com/platform/saml/acs/d4563f17-f40b-4e75-ab03-224b7263c54e";
 
     public static String getSSOSpUserId(SSOSpEnum ssoSp) {
         switch (ssoSp) {

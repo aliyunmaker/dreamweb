@@ -113,11 +113,11 @@ public class SSOController extends BaseController implements InitializingBean {
                 String uid = SSOConstants.getSSOSpUserId(ssoSp);
                 identifier = identifier.replace("{uid}", uid);
                 nameID = SSOConstants.ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.get(userRoleId);
-                // user现在只需要跳转云效，先写死之后再改
+                // user现在只需要跳转云效
                 relayState = SSOConstants.YUNXIAO_URL;
             } else if (SSOSpEnum.aws_user.equals(ssoSp) || SSOSpEnum.aliyun_user_cloudsso.equals(ssoSp)) {
                 nameID = userRoleId;
-            }  else {
+            } else {
                 attributes = new HashMap<String, List<String>>();
                 // 只有role sso 才需要这些参数
                 Set<String> roleSet = new HashSet<String>();
@@ -145,6 +145,8 @@ public class SSOController extends BaseController implements InitializingBean {
 //                        attributes.put(entry.getKey(), List.of(entry.getValue()));
 //                    }
 //                }
+            } else {
+
             }
 
             // ***************************************************************************

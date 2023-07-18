@@ -7,9 +7,9 @@ public enum ApplicationEnum {
     /**
      * Application 1
      */
-    application1("demo-app-1","Description of app1"),
-    application2("demo-app-2","Description of app2"),
-    application3("demo-app-3","Description of app3");
+    application1("application1","Description of app1"),
+    application2("application2","Description of app2"),
+    application3("application3","Description of app3");
 
     private String name;
     private String description;

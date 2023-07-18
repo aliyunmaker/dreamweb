@@ -36,7 +36,7 @@ public class CommonConstants {
     public static final String QUERY_STRING = "remote_addr:100.127.197.134";
 
     // 用于免密登录的RAM角色ARN
-    public static final String ADMIN_ROLE_ARN = "acs:ram::1013026405737419:role/dreamweb-admin";
+    public static final String ADMIN_ROLE_ARN = "acs:ram::1158528183198580:role/dreamcmp-admin";
 
     public static final String DEFAULT_IMAGE_ID = "ubuntu_18_04_64_20G_alibase_20190624.vhd";
 //    public static final String DEFAULT_SECURITY_GROUP_ID = "sg-bp103rdxtizwmfam0tfa";

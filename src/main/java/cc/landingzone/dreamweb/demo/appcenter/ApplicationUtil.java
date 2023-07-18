@@ -25,9 +25,9 @@ import static cc.landingzone.dreamweb.common.ClientHelper.createTagClient;
 public class ApplicationUtil {
     public static Application getApplicationInfo(ApplicationEnum applicationEnum) throws Exception {
         Application application = new Application();
-        application.setAppName(applicationEnum.name());
+        application.setAppName(applicationEnum.getName());
         application.setDescription(applicationEnum.getDescription());
-        application.setServicesCounts(listServicesCountsByApplication(applicationEnum.name()));
+        application.setServicesCounts(listServicesCountsByApplication(applicationEnum.getName()));
         return application;
     }
 
