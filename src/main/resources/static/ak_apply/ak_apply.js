@@ -6,14 +6,22 @@ $(document).ready(function() {
     var urlParams = new URLSearchParams(queryString);
     appName = urlParams.get('appName');
     console.log(appName);
-    
+
+    getApplication();
+//     for (var i = 0; i < application.options.length; i++) {
+//        if (application.options[i].value === appName) {
+//          selectElement.options[i].selected = true;
+//          break;
+//        }
+//     }
+
     // 单选按钮点击事件
     $('input[type=radio][name=environmentType]').change(function () {
-    listResourcesByAppEnvAndResType();
+        listResourcesByAppEnvAndResType();
     });
 
     $('input[type=radio][name=permissionTemplate]').change(function () {
-    generatePolicyDocument();
+        generatePolicyDocument();
     });
 
     //根据DOM元素的id构造出一个编辑器
@@ -32,7 +40,6 @@ $(document).ready(function() {
             //readOnly: true,      //只读
     });
 
-    getApplication();
 });
 
 
@@ -192,7 +199,11 @@ function getApplication(){
         for (var i = 0; i < data.length; i++) {
           application.options.add(new Option(data[i], data[i]));
         }
-        application.value = "";
+        if(appName != null && appName != ""){
+          application.value = appName;
+        }else{
+          application.value = "";
+        }
       } else {
         console.log("data.message: " + result.errorMsg);
         alert(result.errorMsg);
