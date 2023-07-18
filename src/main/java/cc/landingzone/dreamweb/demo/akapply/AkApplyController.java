@@ -146,9 +146,9 @@ public class AkApplyController extends BaseController {
             String ramUserName = applicationName + "-" + environment;
             String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]}]";
             List<String> listSecrets = KMSHelper.listSecrets(filters);
-            String secretName = "";
+            String secretName = null;
             if (listSecrets.size() > 0) {
-                result.setData(listSecrets.get(0));
+                secretName = listSecrets.get(0);
             }
             result.setData(secretName);
         } catch (Exception e) {
