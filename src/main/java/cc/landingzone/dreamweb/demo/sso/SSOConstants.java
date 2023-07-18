@@ -27,9 +27,6 @@ public class SSOConstants {
     // IDP_ENTITY_ID 唯一ID,代表IDP
     public static final String IDP_ENTITY_ID;
 
-    // 用于阿里云用户SSO的user id
-    public static final String ALIYUN_SSO_USER_ID = "1426447221208365";
-
     // SSO登录的用户和角色列表
     public static final List<SSOUserRole> SSO_LOGIN_ROLE_IDS = new ArrayList<>();
     public static final List<SSOUserRole> SSO_LOGIN_USER_IDS = new ArrayList<>();
@@ -55,9 +52,9 @@ public class SSOConstants {
     }
 
     public static void addSSOUsersRoles() {
-        SSOUserRole aliyunRole = new SSOUserRole("aliyun", "管理员", "kidccc@gmail.com", "dreamweb-test-role", "");
+        SSOUserRole aliyunRole = new SSOUserRole("aliyun", "管理员", "dream_cmp_1@test.aliyunid.com", "dreamcmp-test-role", "");
         SSO_LOGIN_ROLE_IDS.add(aliyunRole);
-        ALIYUN_SSO_LOGIN_ROLE_ID_ARN.put("dreamweb-test-role", "acs:ram::1426447221208365:role/dreamweb-test-role,acs:ram::1426447221208365:saml-provider/dreamweb.test");
+        ALIYUN_SSO_LOGIN_ROLE_ID_ARN.put("dreamcmp-test-role", "acs:ram::1011289648340657:role/dreamcmp-test-role,acs:ram::1011289648340657:saml-provider/dreamweb.test");
 
         SSOUserRole awsRole = new SSOUserRole("aws", "管理员", "me@chengchao.name", "myrole", "");
         SSO_LOGIN_ROLE_IDS.add(awsRole);
@@ -66,9 +63,9 @@ public class SSOConstants {
         SSOUserRole tencentRole = new SSOUserRole("tencent", "管理员", "100000543428", "superadmin", "");
         SSO_LOGIN_ROLE_IDS.add(tencentRole);
 
-        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "kidccc@gmail.com", "test-user", YUNXIAO_URL);
+        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "dream_cmp_1@test.aliyunid.com", "test-user", YUNXIAO_URL);
         SSO_LOGIN_USER_IDS.add(aliyunUser);
-        ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.put("test-user", "test-user@1426447221208365.onaliyun.com");
+        ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.put("test-user", "test-user@1011289648340657.onaliyun.com");
 
         SSOUserRole awsUser = new SSOUserRole("aws", "Identity Center-个人账号", "me@chengchao.name", "me@chengchao.name", "");
         SSO_LOGIN_USER_IDS.add(awsUser);
@@ -168,8 +165,8 @@ public class SSOConstants {
     private static final String ALIYUN_USER_REPLY_URL = "https://signin.aliyun.com/saml/SSO";
 
     // aliyun user cloud sso
-    private static final String ALIYUN_USER_CLOUDSSO_IDENTIFIER = "https://signin-cn-shanghai.alibabacloudsso.com/saml/sp/d-00ku3dzn9l01";
-    private static final String ALIYUN_USER_CLOUDSSO_REPLY_URL = "https://signin-cn-shanghai.alibabacloudsso.com/saml/acs/35f4bddf-2d3c-4347-b520-2cb7241e7e6d";
+    private static final String ALIYUN_USER_CLOUDSSO_IDENTIFIER = "https://signin-cn-shanghai.alibabacloudsso.com/saml/sp/d-00prip2g4v37";
+    private static final String ALIYUN_USER_CLOUDSSO_REPLY_URL = "https://signin-cn-shanghai.alibabacloudsso.com/saml/acs/17355dae-0e24-4d15-806a-cef4974e13aa";
 
     // aws role sso
     private static final String AWS_IDENTIFIER = "urn:amazon:webservices";
@@ -186,7 +183,7 @@ public class SSOConstants {
     public static String getSSOSpUserId(SSOSpEnum ssoSp) {
         switch (ssoSp) {
             case aliyun_user:
-                return SSOConstants.ALIYUN_SSO_USER_ID;
+                return CommonConstants.Aliyun_TestAccount_UserId;
             case aliyun:
             case aliyun_user_cloudsso:
             case aws:

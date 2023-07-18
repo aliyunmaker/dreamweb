@@ -290,6 +290,14 @@ public class ServiceHelper {
                     default:
                         break;
                 }
+                // CloudMonitorReadOnlyAccess
+                action.add("cms:Get*");
+                action.add("cms:List*");
+                action.add("cms:Query*");
+                action.add("cms:BatchQuery*");
+                action.add("cms:Describe*");
+                action.add("cms:Cursor");
+                action.add("cms:BatchGet");
             default:
                 break;
         }

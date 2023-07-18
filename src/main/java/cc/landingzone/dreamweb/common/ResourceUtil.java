@@ -193,7 +193,7 @@ public class ResourceUtil {
     }
 
     public static String getResourceDirectoryId() throws Exception {
-        com.aliyun.resourcemanager20200331.Client client = ClientHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.resourcemanager20200331.Client client = ClientHelper.createResourceManagerClient(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         return client.getResourceDirectoryWithOptions(runtime).getBody().getResourceDirectory().getResourceDirectoryId();
     }
@@ -206,7 +206,7 @@ public class ResourceUtil {
      */
     public static Map<String, String> getAccountNames() throws Exception {
         Map<String, String> accountNames = new HashMap<>();
-        com.aliyun.resourcemanager20200331.Client client = ClientHelper.createResourceManagerClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.resourcemanager20200331.Client client = ClientHelper.createResourceManagerClient(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         com.aliyun.resourcemanager20200331.models.ListAccountsRequest listAccountsRequest = new com.aliyun.resourcemanager20200331.models.ListAccountsRequest();
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         List<ListAccountsResponseBody.ListAccountsResponseBodyAccountsAccount> accounts =
@@ -225,7 +225,7 @@ public class ResourceUtil {
         String nextToken = null;
         List<SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources> resources = new ArrayList<>();
 
-        com.aliyun.resourcecenter20221201.Client client = ClientHelper.createResourceCenterClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.resourcecenter20221201.Client client = ClientHelper.createResourceCenterClient(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
 
         do {
             com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesRequest searchMultiAccountResourcesRequest = new com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesRequest()

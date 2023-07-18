@@ -19,7 +19,13 @@ public class CommonConstants {
 
     public static final String Aliyun_AccessKeySecret;
 
+    public static final String Aliyun_TestAccount_AccessKeyId;
+
+    public static final String Aliyun_TestAccount_AccessKeySecret;
+
     public static final String Aliyun_UserId;
+
+    public static final String Aliyun_TestAccount_UserId;
 
     public static final String Aliyun_REGION_HANGZHOU = "cn-hangzhou";
 
@@ -71,7 +77,10 @@ public class CommonConstants {
         ENV_ONLINE = Boolean.parseBoolean(properties.getProperty("dreamweb.env_online"));
         Aliyun_AccessKeyId = properties.getProperty("dreamweb.aliyun_accesskeyid");
         Aliyun_AccessKeySecret = properties.getProperty("dreamweb.aliyun_accesskeysecret");
-        Aliyun_UserId = getCallerIdentity();
+        Aliyun_TestAccount_AccessKeyId = properties.getProperty("dreamweb.aliyun_testaccount_accesskeyid");
+        Aliyun_TestAccount_AccessKeySecret = properties.getProperty("dreamweb.aliyun_testaccount_accesskeysecret");
+        Aliyun_UserId = getCallerIdentity(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        Aliyun_TestAccount_UserId = getCallerIdentity(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         SCIM_KEY = properties.getProperty("dreamweb.scim_key");
 
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
@@ -101,9 +110,9 @@ public class CommonConstants {
     /**
      * Get the Aliyun account ID of the current user
      */
-    public static String getCallerIdentity(){
+    public static String getCallerIdentity(String accessKeyId, String accessKeySecret){
         try {
-            com.aliyun.sts20150401.Client client = ClientHelper.createStsClient(Aliyun_AccessKeyId,Aliyun_AccessKeySecret);
+            com.aliyun.sts20150401.Client client = ClientHelper.createStsClient(accessKeyId, accessKeySecret);
             RuntimeOptions runtime = new RuntimeOptions();
             return client.getCallerIdentityWithOptions(runtime).getBody().getAccountId();
         }catch (Exception e){
