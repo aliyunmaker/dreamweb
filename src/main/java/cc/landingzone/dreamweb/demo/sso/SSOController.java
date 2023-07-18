@@ -145,8 +145,6 @@ public class SSOController extends BaseController implements InitializingBean {
 //                        attributes.put(entry.getKey(), List.of(entry.getValue()));
 //                    }
 //                }
-            } else {
-
             }
 
             // ***************************************************************************
