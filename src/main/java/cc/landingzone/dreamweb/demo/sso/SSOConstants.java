@@ -52,7 +52,7 @@ public class SSOConstants {
     }
 
     public static void addSSOUsersRoles() {
-        SSOUserRole aliyunRole = new SSOUserRole("aliyun", "管理员", "dream_cmp_1@test.aliyunid.com", "dreamcmp-test-role", "");
+        SSOUserRole aliyunRole = new SSOUserRole("aliyun", "管理员", "dream_cmp_1", "dreamcmp-test-role", "");
         SSO_LOGIN_ROLE_IDS.add(aliyunRole);
         ALIYUN_SSO_LOGIN_ROLE_ID_ARN.put("dreamcmp-test-role", "acs:ram::1011289648340657:role/dreamcmp-test-role,acs:ram::1011289648340657:saml-provider/dreamweb.test");
 
@@ -63,7 +63,7 @@ public class SSOConstants {
         SSOUserRole tencentRole = new SSOUserRole("tencent", "管理员", "100000543428", "superadmin", "");
         SSO_LOGIN_ROLE_IDS.add(tencentRole);
 
-        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "dream_cmp_1@test.aliyunid.com", "test-user", YUNXIAO_URL);
+        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "dream_cmp_1", "test-user", YUNXIAO_URL);
         SSO_LOGIN_USER_IDS.add(aliyunUser);
         ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.put("test-user", "test-user@1011289648340657.onaliyun.com");
 
@@ -72,7 +72,7 @@ public class SSOConstants {
         SSOUserRole tencentUser = new SSOUserRole("tencent", "个人账号", "100000543428", "chengchao", "");
         SSO_LOGIN_USER_IDS.add(tencentUser);
 
-        SSOUserRole ssoCloudUser = new SSOUserRole("aliyun", "CloudSSO-管理员", "20210603demo1", "tianyu", "");
+        SSOUserRole ssoCloudUser = new SSOUserRole("aliyun", "CloudSSO-管理员", "dream_cmp_1", "dreamcmp-admin", "");
         SSO_LOGIN_CLOUD_USER_IDS.add(ssoCloudUser);
     }
 

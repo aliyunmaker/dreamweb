@@ -60,7 +60,7 @@ function createCards(appName) {
                         </h4>
                         <div class="col-3 d-flex justify-content-end">
                         <a class="iconfont icon-dashboard text-black text-decoration-none" 
-                        data-bs-toggle="tooltip" data-bs-title="Monitor"
+                        data-bs-toggle="tooltip" data-bs-title="Monitor Center"
                         href="#" onclick=jumpToMonitor('${app.appName}')></a>
                         <span style="margin-left: 10px;"></span>
                         <a class="iconfont icon-sls text-black text-decoration-none" 
