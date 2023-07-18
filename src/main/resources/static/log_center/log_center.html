@@ -59,14 +59,18 @@
       var queryString = window.location.search;
       var urlParams = new URLSearchParams(queryString);
       appName = urlParams.get('appName');
-      appName = appName === null ? "application1" : appName;
       $.ajax({
         url: "../common/getApplication.do",
         success: function(result){
             if (result.success) {
                 applist = result.data;
                 addSelectOptions(applist);
-                document.getElementById("logAppsSelect").value = appName;
+                if (appName === null) {
+                  document.getElementById("logAppsSelect").options.selectedIndex = 0;
+                  appName = $("#logAppsSelect").val();
+                } else {
+                  document.getElementById("logAppsSelect").value = appName;
+                }
                 var page = "../signSLS.do?appName=" + appName;
                 iframe.setAttribute("src", page);
                 document.getElementById("access-log-btn").classList.add("active");

@@ -245,7 +245,7 @@ public class ResourceUtil {
         for (SearchMultiAccountResourcesResponseBody.SearchMultiAccountResourcesResponseBodyResources resource : resources) {
             String accountId = resource.getAccountId();
             String accountName;
-            if (accountId.equals(CommonConstants.Aliyun_UserId)) {
+            if (accountId.equals(CommonConstants.Aliyun_TestAccount_UserId)) {
                 accountName = CommonConstants.RESOURCE_CENTER_ADMIN_NAME;
             } else {
                 accountName = accountNames.get(accountId);
