@@ -2,6 +2,7 @@ var aliyunUserId;
 var roles;
 var users;
 var cloudUsers;
+var tokenText;
 
 $(document).ready(function() {
     $.ajax({
@@ -140,14 +141,16 @@ function showSTSToken(roleId, tokenContent) {
   <textarea class="form-control" id="SecurityTokenTextarea" rows="8" readonly>${tokenContent.Credentials.SecurityToken}</textarea>
   </div>
   `;
+  tokenText = "AccessKeyId: \n" + tokenContent.Credentials.AccessKeyId + "\n" +
+  "AccessKeySecret: \n" + tokenContent.Credentials.AccessKeySecret + "\n" +
+  "SecurityToken: \n" + tokenContent.Credentials.SecurityToken;
   modalBody.append(token);
   $("#STSTokenModal-" + roleId).modal('show');
 }
 
-async function copyToken(roleId) {
+async function copyToken() {
   try {
-    var str = document.getElementById("modelBody-" + roleId).innerText;
-    await navigator.clipboard.writeText(str);
+    await navigator.clipboard.writeText(tokenText);
     // document.getElementById("modelBody-" + roleId).append('\nContent copied to clipboard');
     // alert('Content copied to clipboard');
   } catch (err) {
