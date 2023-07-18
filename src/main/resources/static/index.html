@@ -60,7 +60,7 @@
         </li>
         <hr>
         <li>
-          <a href="#" class="nav-link text-white" data-link="ak_apply/ak_apply.html">
+          <a href="#" class="nav-link text-white" data-link="ak_apply/ak_apply.html" id="ak-apply-btn">
             <i class="iconfont icon-user"></i>&nbsp;&nbsp;AK Apply
           </a>
         </li>
@@ -144,6 +144,16 @@
 
         // Add active class to the clicked link
         document.getElementById('monitor-btn').classList.add("active");
+
+        iframe.setAttribute("src", event.data.url);
+      } else if (event.data.destination === "ak_apply") {
+        // Remove active class from all links
+        links.forEach(function (link) {
+          link.classList.remove("active");
+        });
+
+        // Add active class to the clicked link
+        document.getElementById('ak-apply-btn').classList.add("active");
 
         iframe.setAttribute("src", event.data.url);
       } else if (event.data.destination === "login") {

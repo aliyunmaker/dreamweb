@@ -1,5 +1,12 @@
 var editor;
+var appName;
 $(document).ready(function() {
+    // 获取从应用中心传过来的appName
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    appName = urlParams.get('appName');
+    console.log(appName);
+    
     // 单选按钮点击事件
     $('input[type=radio][name=environmentType]').change(function () {
     listResourcesByAppEnvAndResType();

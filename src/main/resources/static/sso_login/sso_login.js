@@ -49,7 +49,7 @@ function listLoginUsers() {
           $("#" + role.id + "-info").append(stsTokenBtn);
           var tokenModal = `
           <div class="modal fade" id="STSTokenModal-${role.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
                   <h1 class="modal-title fs-5" id="exampleModalLabel">STS Token</h1>
@@ -126,9 +126,20 @@ function showSTSToken(roleId, tokenContent) {
   // var token = "AccessKeyId: " + tokenContent.Credentials.AccessKeyId
   // + "\r\nAccessKeySecret: " + tokenContent.Credentials.AccessKeySecret
   // + "\r\nSecurityToken: " + tokenContent.Credentials.SecurityToken;
-  var token = `<b>AccessKeyId: </b>${tokenContent.Credentials.AccessKeyId}
-  \r\n<b>AccessKeySecret: </b>${tokenContent.Credentials.AccessKeySecret}
-  \r\n<b>SecurityToken: </b>${tokenContent.Credentials.SecurityToken}`;
+  modalBody.empty();
+  var token = `<div class="mb-3">
+  <label for="AccessKeyIdInput" class="form-label"><b>AccessKeyId</b></label>
+  <input class="form-control" id="AccessKeyIdInput" type="text" value="${tokenContent.Credentials.AccessKeyId}" aria-label="readonly input example" readonly>
+  </div>
+  <div class="mb-3">
+  <label for="AccessKeySecretInput" class="form-label"><b>AccessKeySecret</b></label>
+  <input class="form-control" id="AccessKeySecretInput" type="text" value="${tokenContent.Credentials.AccessKeySecret}" aria-label="readonly input example" readonly>
+  </div>
+  <div class="mb-3">
+  <label for="SecurityTokenTextarea" class="form-label"><b>SecurityToken</b></label>
+  <textarea class="form-control" id="SecurityTokenTextarea" rows="8" readonly>${tokenContent.Credentials.SecurityToken}</textarea>
+  </div>
+  `;
   modalBody.append(token);
   $("#STSTokenModal-" + roleId).modal('show');
 }

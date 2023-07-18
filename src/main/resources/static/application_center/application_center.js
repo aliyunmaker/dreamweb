@@ -43,6 +43,27 @@ function showAppCenterPage() {
     <div class="row g-4 py-3 row-cols-1 row-cols-lg-3" id="cardContainer">
     </div>`;
     page.append(skeleton);
+    var akModal = `
+    <div class="modal fade modal-lg" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">查看 Secret</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="fw-bold text-primary">secretName:  <span id="secretName">init</span></p>
+                    <div id="content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="copyToken()">Copy token</button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    page.append(akModal);
     createCards();
 }
 
@@ -59,6 +80,10 @@ function createCards(appName) {
                             <a href="#" class="text-black text-decoration-none" onclick="getAppDetail('${app.appName}', 'all')">${app.appName}</a>
                         </h4>
                         <div class="col-3 d-flex justify-content-end">
+                        <a class="iconfont icon-user text-black text-decoration-none" 
+                        data-bs-toggle="tooltip" data-bs-title="AK Apply"
+                        href="#" onclick=clickAK('${app.appName}')></a>
+                        <span style="margin-left: 10px;"></span>
                         <a class="iconfont icon-dashboard text-black text-decoration-none" 
                         data-bs-toggle="tooltip" data-bs-title="Monitor Center"
                         href="#" onclick=jumpToMonitor('${app.appName}')></a>
@@ -118,11 +143,64 @@ function jumpToMonitor(appName) {
     window.parent.postMessage(message, "*");
 }
 
-{/* <div class="dropdown-left float-end">
-    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
-    data-bs-toggle="dropdown" aria-expanded="false"></a>
-    <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="#" onclick=jumpToMonitor('${app.appName}')>Monitor</a></li>
-        <li><a class="dropdown-item" href="#" onclick=jumpToLogCenter('${app.appName}')>Log Center</a></li>
-    </ul>
-</div> */}
+// 跳转到AKApply
+function jumpToAKApply(appName) {
+    var message = {};
+    message.destination = "ak_apply";
+    message.url = "ak_apply/ak_apply.html?appName=" + appName;
+    window.parent.postMessage(message, "*");
+}
+
+// 点击AK申请icon
+function clickAK(appName) {
+    var params = {
+        applicationName: appName,
+    };
+
+    $.ajax({
+        url: "../" + "akApply/checkSecretName.do",
+        type: "POST",
+        data: params,
+        success: function (result) {
+            if (result.success) {
+                if (result.data == null || result.data == "") {
+                    // 跳转
+                    jumpToAKApply(appName);
+                } else {
+                    secretName = result.data;
+                    document.getElementById("secretName").innerText = secretName;
+                    $.ajax({
+                        url: "../" + "akApply/getSecretNameUseSample.do",
+                        type: "POST",
+                        data: {},
+                        success: function (result) {
+                            if (result.success) {
+                                var secretNameUseSample = result.data;
+                                document.getElementById('content').innerHTML = marked.parse(secretNameUseSample);
+                                $('#modalSuccess').modal('show');
+                            } else {
+                                console.log("data.message: " + result.errorMsg);
+                                alert(result.errorMsg);
+                            }
+                        },
+                    });
+                }
+
+            } else {
+                console.log("data.message: " + result.errorMsg);
+                alert(result.errorMsg);
+            }
+        },
+    });
+}
+
+async function copyToken() {
+    try {
+        var secretName = document.getElementById("secretName").innerText;
+        var copyText = secretName;
+        await navigator.clipboard.writeText(copyText);
+        alert('Content copied to clipboard');
+    } catch (err) {
+        alert('Failed to copy: ', err);
+    }
+}
