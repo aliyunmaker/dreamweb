@@ -117,12 +117,18 @@ public class LdapService {
             scimGroupDeleteCount.set(scimGroupServerMap.size());
         }
 
+//        String result = String.format(
+//            "[syncLdaptoScim][%s]:\nldapTotal[%d],scimError[%d],\nuser[ldap:%d,scim:%d]\n[add:%d,update:%d,delete:%d,nochange:%d],\ngroup[ldap:%d,scim:%d]\n[add:%d,update:%d,delete:%d,nochange:%d]",
+//            TaskTraceId.get(), list.size(), scimErrorCount.get(), ldapUserCount, scimUserCount, scimUserAddCount.get(),
+//            scimUserUpdateCount.get(), scimUserDeleteCount.get(), scimUserNoChangeCount.get(), ldapGroupCount,
+//            scimGroupCount, scimGroupAddCount.get(), scimGroupUpdateCount.get(), scimGroupDeleteCount.get(),
+//            scimGroupNoChangeCount.get());
+
+        // 修改为只显示user
         String result = String.format(
-            "[syncLdaptoScim][%s]:\nldapTotal[%d],scimError[%d],\nuser[ldap:%d,scim:%d]\n[add:%d,update:%d,delete:%d,nochange:%d],\ngroup[ldap:%d,scim:%d]\n[add:%d,update:%d,delete:%d,nochange:%d]",
-            TaskTraceId.get(), list.size(), scimErrorCount.get(), ldapUserCount, scimUserCount, scimUserAddCount.get(),
-            scimUserUpdateCount.get(), scimUserDeleteCount.get(), scimUserNoChangeCount.get(), ldapGroupCount,
-            scimGroupCount, scimGroupAddCount.get(), scimGroupUpdateCount.get(), scimGroupDeleteCount.get(),
-            scimGroupNoChangeCount.get());
+                "[syncLdaptoScim][%s]:\nldapTotal[%d],scimError[%d],\nuser[ldap:%d,scim:%d]\n[add:%d,update:%d,delete:%d,nochange:%d]",
+                TaskTraceId.get(), list.size(), scimErrorCount.get(), ldapUserCount, scimUserCount, scimUserAddCount.get(),
+                scimUserUpdateCount.get(), scimUserDeleteCount.get(), scimUserNoChangeCount.get());
 
         // String result = "[" + TaskTraceId.get() + "][syncLdaptoScim] total[" +
         // list.size()

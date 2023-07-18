@@ -27,6 +27,7 @@ public class ResourceApplyUtil {
     public static Logger logger = LoggerFactory.getLogger(ResourceApplyUtil.class);
 
     public static void main(String[] args) throws Exception {
+        initResourceApply();
 //        System.out.println(ApplicationEnum.names());
 //        createVpcAndVSwitchByAppAndEnv("test",
 //                1,1,10);
@@ -324,8 +325,8 @@ public class ResourceApplyUtil {
 
     public static void initResourceApply() throws Exception {
         // ecs
-        createVpcAndVSwitchByAppAndEnv("product",
-                1,2,10);
+//        createVpcAndVSwitchByAppAndEnv("product",
+//                1,2,10);
         createVpcAndVSwitchByAppAndEnv("test",
                 1,2,20);
     }
@@ -339,7 +340,7 @@ public class ResourceApplyUtil {
                                                       int vpcCount,int vswCount,int start) throws Exception {
         for (int i = 0; i < vpcCount; i++) {
             // create vpc
-            String vpcName = environmentName + "-" + i;
+            String vpcName = environmentName + "-" +UUIDUtils.generateUUID().substring(0,7) + i;
             String vpcCidrBlock = "10." + (start + i) + ".0.0/16";
             logger.info("create vpc: " + vpcName + " " + vpcCidrBlock);
             String vpcId = ServiceHelper.createVpc(vpcName, vpcCidrBlock);
@@ -353,7 +354,7 @@ public class ResourceApplyUtil {
             // create vSwitch
             List<String> vswIdList = new ArrayList<>();
             for (int j = 0; j < vswCount; j++) {
-                String vswName = environmentName + "-" + i + "-" + j;
+                String vswName = environmentName + "-" + UUIDUtils.generateUUID().substring(0,6) + i + j;
                 String vswCidrBlock = "10." + (start + i) + "." + j + ".0/24";
                 logger.info("create vSwitch: " + vswName + " " + vswCidrBlock);
                 String vswId = ServiceHelper.createVSwitch(vpcId, vswName, vswCidrBlock);
