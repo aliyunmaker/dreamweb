@@ -55,25 +55,31 @@
 
 <body>
 <main>
-    <nav class="navbar navbar-expand bg-body-secondary">
+    <nav class="navbar bg-body-secondary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="iconfont icon-key" style="font-size: 1.3rem;"></i>
                 AK Apply</a>
-<!--            <div class="collapse navbar-collapse">-->
-<!--                <ul class="navbar-nav me-auto">-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link disabled">Project: [springrun]</a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" onclick="getDocumentByModule()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+                 style="--bs-offcanvas-width: 40%;">
+<!--                <div class="offcanvas-header ms-1 mt-2">-->
+<!--                    <h3 class="offcanvas-title">文档说明</h3>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>-->
+<!--                </div>-->
+                <div class="offcanvas-body ms-1">
+<!--                    <h3 class="offcanvas-title ">文档说明</h3>-->
+                    <label for="documentContent"></label>
+                    <div id="documentContent"  style="height: 95%"></div>
+<!--                    <textarea id="documentContent" class="form-control"></textarea>-->
+                </div>
+            </div>
         </div>
     </nav>
+
+
+
 </main>
 
 <div class="px-5 py-5">

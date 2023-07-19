@@ -10,6 +10,8 @@
     <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/popper_v1.15.0.min.js"></script>
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+    <!--md格式内容转换-->
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/marked.min.js"></script>
     <!--codemirror: textarea样式-->
     <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/codemirror/codemirror_5.58.3_min.css" rel="stylesheet" />
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/codemirror/codemirror_5.58.3_min.js"></script>
@@ -55,23 +57,25 @@
 
 <body>
 <main>
-    <nav class="navbar navbar-expand bg-body-secondary">
+    <nav class="navbar bg-body-secondary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="iconfont icon-resource" style="font-size: 1.3rem;"></i>
                 Resource Apply</a>
-            <!--            <div class="collapse navbar-collapse">-->
-            <!--                <ul class="navbar-nav me-auto">-->
-            <!--                    <li class="nav-item">-->
-            <!--                        <a class="nav-link disabled">Project: [springrun]</a>-->
-            <!--                    </li>-->
-            <!--                    <li class="nav-item">-->
-            <!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控A</a>-->
-            <!--                    </li>-->
-            <!--                    <li class="nav-item">-->
-            <!--                        <a class="nav-link" href="#" data-link="../dreamcmp/signInSLSDashboard.htm">查看监控B</a>-->
-            <!--                    </li>-->
-            <!--                </ul>-->
-            <!--            </div>-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" onclick="getDocumentByModule()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+                 style="--bs-offcanvas-width: 60%;">
+                <div class="offcanvas-header">
+                    <h3 class="offcanvas-title">文档说明</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <label for="documentContent"></label>
+                    <div id="documentContent"  style="height: 95%; overflow-y: scroll;"></div>
+                    <!--                    <textarea id="documentContent" class="form-control"></textarea>-->
+                </div>
+            </div>
         </div>
     </nav>
 </main>

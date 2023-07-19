@@ -21,7 +21,7 @@ public class DemoControllerAspect {
 
     public Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Before(value = "execution(* cc.landingzone.dreamweb.demo..*Controller.*(..)) and args(request, response) )")
+    @Before(value = "execution(* cc.landingzone.dreamweb..*Controller.*(..)) and args(request, response) )")
     public void beforeAdvice(JoinPoint joinPoint, HttpServletRequest request, HttpServletResponse response) {
         logger.info("===method: " + joinPoint.getSignature().getName());
         logger.info("===params: " + JsonUtils.toJsonString(request.getParameterMap()));

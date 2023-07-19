@@ -228,3 +228,46 @@ async function copyToken() {
     alert('Failed to copy: ', err);
   }
 }
+
+function getDocumentByModule(){
+  var params = {
+    module: "akapply"
+  }
+  $.ajax({
+    url: "../" + "common/getDocumentByModule.do",
+    type: "POST",
+    data: params,
+    success: function (result) {
+      if (result.success) {
+        var documentContent = result.data;
+        // document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
+
+      const renderer = new marked.Renderer();
+      renderer.heading = function (text, level) {
+        // 根据标题级别设置不同的样式和间距
+        let style = '';
+        let margin = '';
+        switch (level) {
+          case 4:
+//            style = 'color: #777; font-size: 16px;';
+            margin = 'margin-top: 25px;';
+            break;
+          // 可以根据需要添加其他级别的样式
+          default:
+            style = '';
+            margin = '';
+            break;
+        }
+        return `<h${level} style="${style}${margin}">${text}</h${level}>`;
+      };
+
+      document.getElementById('documentContent').innerHTML = marked.parse(documentContent,{ renderer });
+
+
+      } else {
+        console.log("data.message: " + result.errorMsg);
+        alert(result.errorMsg);
+      }
+    }
+  })
+}
