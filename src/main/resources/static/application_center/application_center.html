@@ -44,6 +44,22 @@
   <nav class="navbar navbar-expand bg-body-secondary">
     <div class="container-fluid">
       <a class="navbar-brand" onclick=showAppCenterPage()><i class="iconfont icon-ecs" style="font-size: 1.3rem;"></i> Application Center</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" onclick="getDocumentByModule()">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+          style="--bs-offcanvas-width: 50%;">
+  <!--                <div class="offcanvas-header ms-1 mt-2">-->
+  <!--                    <h3 class="offcanvas-title">文档说明</h3>-->
+  <!--                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>-->
+  <!--                </div>-->
+          <div class="offcanvas-body ms-1">
+  <!--                    <h3 class="offcanvas-title ">文档说明</h3>-->
+              <label for="documentContent"></label>
+              <div id="documentContent"  style="height: 95%"></div>
+  <!--                    <textarea id="documentContent" class="form-control"></textarea>-->
+          </div>
+      </div>
     </div>
   </nav>
   <div class="px-5 py-3" id="appCenterPage">
