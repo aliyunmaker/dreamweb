@@ -191,11 +191,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-<!--                    <p>请保存或发送 secretName 至对应用户。当前窗口关闭后，无法再次查询 secretName。如果您遗失这个 secretName,-->
-<!--                        可以创建新的来替代。</p>-->
-                    <p class="fw-bold text-primary">secretName:  <span id="secretName">init</span></p>
-                    <div id="content"></div>
-<!--                    <textarea class="form-control ms-2" id="secretUseSample"></textarea>-->
+                    <div class="mb-3">
+                        <label for="secretName" class="form-label"><b>secretName</b></label>
+                        <div id="secretName" class="form-control"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label"><b>使用教程（java）</b></label>
+                        <div id="content" class="form-control"></div>
+                    </div>
+
+<!--                    <p class="fw-bold text-primary">secretName:  <span id="secretName">init</span></p>-->
+<!--                    <div id="content"></div>-->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

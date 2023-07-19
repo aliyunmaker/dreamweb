@@ -3,17 +3,21 @@ package cc.landingzone.dreamweb.demo.akapply;
 import cc.landingzone.dreamweb.common.*;
 import cc.landingzone.dreamweb.common.model.WebResult;
 import com.aliyun.ram20150501.models.CreateAccessKeyResponseBody;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,9 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/akApply")
 public class AkApplyController extends BaseController {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @PostMapping(
             path = "/generatePolicyDocument.do",
@@ -122,11 +129,14 @@ public class AkApplyController extends BaseController {
     }
 
     @RequestMapping("/getSecretNameUseSample.do")
-    public void getSecretNameUseSample(HttpServletResponse response) {
+    public void getSecretNameUseSample(HttpServletRequest request, HttpServletResponse response) {
        WebResult result = new WebResult();
        try {
-           String filePath = "src/main/resources/secretNameUseSample.md";
-           String useSample = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);
+           String filePath = "classpath:secretNameUseSample.md";
+           Resource resource = applicationContext.getResource(filePath);
+           Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
+           logger.info("filePath: " + filePath);
+           String useSample = FileCopyUtils.copyToString(reader);
            result.setData(useSample);
        }catch (Exception e){
            logger.error(e.getMessage());

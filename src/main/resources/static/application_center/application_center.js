@@ -53,8 +53,14 @@ function showAppCenterPage() {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="fw-bold text-primary">secretName:  <span id="secretName">init</span></p>
-                    <div id="content"></div>
+                    <div class="mb-3">
+                        <label for="secretName" class="form-label"><b>secretName</b></label>
+                        <div id="secretName" class="form-control"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label"><b>使用教程（java）</b></label>
+                        <div id="content" class="form-control"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

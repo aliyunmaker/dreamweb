@@ -1,18 +1,25 @@
 package cc.landingzone.dreamweb.common;
 
 import cc.landingzone.dreamweb.common.model.WebResult;
-import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
 @Controller
 @RequestMapping("/common")
 public class CommonController extends BaseController{
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequestMapping("/getApplication.do")
     public void getApplication(HttpServletRequest request, HttpServletResponse response) {
@@ -26,9 +33,11 @@ public class CommonController extends BaseController{
         WebResult result = new WebResult();
         try {
             String module = request.getParameter("module");
-            String filePath = "src/main/resources/document/" + module + ".md";
+            String filePath = "classpath:document/" + module + ".md";
+            Resource resource = applicationContext.getResource(filePath);
+            Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
             logger.info("filePath: " + filePath);
-            String document = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);
+            String document = FileCopyUtils.copyToString(reader);
             result.setData(document);
         }catch (Exception e){
             logger.error(e.getMessage());

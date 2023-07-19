@@ -46,9 +46,16 @@
 <script>
     var applictionList = [];
     var iframe = document.getElementById("iframe");
+    var appName;
+
     page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
     iframe.setAttribute("src", page);
     $(document).ready(function() {
+      // 获取从应用中心传过来的appName
+      var queryString = window.location.search;
+      var urlParams = new URLSearchParams(queryString);
+      appName = urlParams.get('appName');
+      console.log("appName:" + appName);
       getApplication();
     });
 
@@ -88,7 +95,14 @@
                 for (var i = 0; i < applictionList.length; i++) {
                     application.options.add(new Option(applictionList[i], applictionList[i]));
                 }
-                application.options[0].selected = true;
+				if(appName != null || appName != undefined){
+					application.value = appName;
+				}else{
+					application.value = applictionList[0];
+				}
+				signSLSMonitor();
+
+                // application.options[0].selected = true;
             } else {
                 console.log("data.message: " + result.errorMsg);
                 alert(result.errorMsg);
