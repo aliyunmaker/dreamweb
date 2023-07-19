@@ -80,7 +80,7 @@ function createCards(appName) {
                             <a href="#" class="text-black text-decoration-none" onclick="getAppDetail('${app.appName}', 'all')">${app.appName}</a>
                         </h4>
                         <div class="col-3 d-flex justify-content-end">
-                        <a class="iconfont icon-user text-black text-decoration-none" 
+                        <a class="iconfont icon-key text-black text-decoration-none" 
                         data-bs-toggle="tooltip" data-bs-title="AK Apply"
                         href="#" onclick=clickAK('${app.appName}')></a>
                         <span style="margin-left: 10px;"></span>

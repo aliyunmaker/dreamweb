@@ -79,7 +79,7 @@ function listLoginUsers() {
           <div>
             <h3 class="fs-5">${user.name}</h3>
             <p>account: ${user.account}<br /> user: ${user.id}
-            ${user.url !== "" ? `<br /> url: ${user.url}` : ""}</p>
+            ${user.url !== "" ? `<br /> orgnization: ${user.url.split(" ")[0]}<br /> url: ${user.url.split(" ")[1]}` : ""}</p>
             <a target="_blank" href="../sso/login.do?sp=${user.provider}_user&userRoleId=${user.id}" class="btn btn-primary">
               <i class="iconfont icon-login" ></i> Console
             </a>

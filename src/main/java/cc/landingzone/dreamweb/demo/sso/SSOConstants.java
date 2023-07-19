@@ -39,6 +39,8 @@ public class SSOConstants {
 
     // 云效控制台url
     public static final String YUNXIAO_URL = "https://devops.console.aliyun.com";
+    // 云效orgnization
+    public static final String YUNXIAO_ORGNIZATION = "dreamcmp";
 
     static {
         Properties properties = CommonConstants.loadProperties();
@@ -63,7 +65,7 @@ public class SSOConstants {
         SSOUserRole tencentRole = new SSOUserRole("tencent", "管理员", "100000543428", "superadmin", "");
         SSO_LOGIN_ROLE_IDS.add(tencentRole);
 
-        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "dream_cmp_1", "test-user", YUNXIAO_URL);
+        SSOUserRole aliyunUser = new SSOUserRole("aliyun", "云效账号", "dream_cmp_1", "test-user", YUNXIAO_ORGNIZATION + " " + YUNXIAO_URL);
         SSO_LOGIN_USER_IDS.add(aliyunUser);
         ALIYUN_SSO_LOGIN_USER_PRINCIPAL_NAME.put("test-user", "test-user@1011289648340657.onaliyun.com");
 
