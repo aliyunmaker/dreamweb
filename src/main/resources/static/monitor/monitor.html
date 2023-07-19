@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_4wqwnf6ufkl.css" />
+  <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/markdown_rendering.css" rel="stylesheet">
+  <!--md格式内容转换-->
+  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/marked.min.js"></script>
   <style>
     .iframe-container {
       width: 100%;
@@ -19,6 +22,10 @@
     .active {
       background-color: #8899f0;
     }
+
+    #offcanvasNavbar .offcanvas-body {
+        padding-top: 0;
+    }
   </style>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
   <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
@@ -26,7 +33,7 @@
 
 <body>
 <main>
-  <nav class="navbar navbar-expand bg-body-secondary">
+  <nav class="navbar bg-body-secondary">
     <div class="container-fluid">
       <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Monitor</a>
       <div class="collapse navbar-collapse">
@@ -37,8 +44,25 @@
           </li>
         </ul>
       </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" onclick="getDocumentByModule()">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+           style="--bs-offcanvas-width: 60%;">
+        <div class="offcanvas-header">
+          <h3 class="offcanvas-title">参考说明</h3>
+          <button type="button" class="btn-close " data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+          <label for="documentContent"></label>
+          <div id="documentContent"  style="height: 95%"></div>
+          <!--                    <textarea id="documentContent" class="form-control"></textarea>-->
+        </div>
+      </div>
     </div>
   </nav>
+
   <div class="iframe-container">
     <iframe id="iframe" src="../loading_spinner.html" width="100%" height="100%"></iframe>
   </div>
@@ -110,6 +134,26 @@
         },
     })
   }
+
+  function getDocumentByModule(){
+  var params = {
+    module: "monitorcenter"
+  }
+  $.ajax({
+    url: "../" + "common/getDocumentByModule.do",
+    type: "POST",
+    data: params,
+    success: function (result) {
+      if (result.success) {
+        var documentContent = result.data;
+         document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
+      } else {
+        console.log("data.message: " + result.errorMsg);
+        alert(result.errorMsg);
+      }
+    }
+  })
+}
 
   </script>
 </body>
