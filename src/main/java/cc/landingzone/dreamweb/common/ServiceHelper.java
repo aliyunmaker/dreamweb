@@ -33,7 +33,7 @@ public class ServiceHelper {
         switch (resourceType) {
             case "oss":
                 for (String resourceName : resourceIdList) {
-                    resourceArn.add("acs:oss:*:" + accountId + ":" + resourceName);
+                    resourceArn.add("acs:oss:*:" + accountId + ":" + resourceName + "*");
                 }
                 break;
             case "log":
@@ -245,6 +245,28 @@ public class ServiceHelper {
 
             statementList.add(statement2);
         }
+
+        // OSS控制台跳转需要额外的权限
+        if ("oss".equals(resourceType) && actionCode == 3) {
+            Statement statement2 = new Statement();
+            List<String> action2 = new ArrayList<>();
+            // CloudMonitorReadOnlyAccess
+            action2.add("cms:Get*");
+            action2.add("cms:List*");
+            action2.add("cms:Query*");
+            action2.add("cms:BatchQuery*");
+            action2.add("cms:Describe*");
+            action2.add("cms:Cursor");
+            action2.add("cms:BatchGet");
+            statement2.setAction(action2);
+
+            List<String> resourceArn2 = new ArrayList<>();
+            resourceArn2.add("*");
+            statement2.setResource(resourceArn2);
+
+            statementList.add(statement2);
+        }
+
         policyDocument.setStatement(statementList);
         return JSON.toJSONString(policyDocument, SerializerFeature.PrettyFormat);
     }
@@ -256,7 +278,8 @@ public class ServiceHelper {
      * @param actionCode:   1(readOnly)、2(fullAccess)、3(password-free login console)
      * @return
      */
-    public static List<String> getAction(String resourceType, int actionCode) {
+    public static List<String>
+    getAction(String resourceType, int actionCode) {
         List<String> action = new ArrayList<>();
         switch (actionCode) {
             case 1:
@@ -270,6 +293,7 @@ public class ServiceHelper {
                 switch (resourceType) {
                     case "oss":
                         action.add(resourceType + ":Get*");
+                        action.add(resourceType + ":List*");
                         break;
                     case "log":
                         action.add(resourceType + ":Get*");
@@ -290,14 +314,6 @@ public class ServiceHelper {
                     default:
                         break;
                 }
-                // CloudMonitorReadOnlyAccess
-                action.add("cms:Get*");
-                action.add("cms:List*");
-                action.add("cms:Query*");
-                action.add("cms:BatchQuery*");
-                action.add("cms:Describe*");
-                action.add("cms:Cursor");
-                action.add("cms:BatchGet");
             default:
                 break;
         }

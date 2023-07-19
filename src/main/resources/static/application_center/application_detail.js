@@ -10,6 +10,7 @@ $(document).ready(function() {
     var urlParams = new URLSearchParams(queryString);
     appName = urlParams.get('appName');
     serviceName = urlParams.get('serviceName');
+
     var appDetailPage = `
     <div class="row pb-2 d-flex">
         <nav aria-label="breadcrumb">
@@ -23,6 +24,7 @@ $(document).ready(function() {
         </div>
     </div>`;
     $("#appCenterPage").append(appDetailPage);
+
     $.ajax({
         url: "../apps/listApps.do",
         success: function(result){
@@ -78,6 +80,7 @@ $(document).ready(function() {
             }
         }
     });
+    
     $.ajax({
         url: "../apps/getAppDetail.do?appName="+appName,
         success: function(result){
@@ -100,6 +103,7 @@ function listResourcesDetails(queryServiceName) {
     $("#appDetailBody tbody").empty();
     
     for (var serviceName of sortedServiceNames) {
+        editor[serviceName] = {};
         if (queryServiceName === "all" || serviceName === queryServiceName) {
             appDetail[serviceName].forEach(function(resource) {
                 var row = `
@@ -109,7 +113,9 @@ function listResourcesDetails(queryServiceName) {
                     <td>${resource.environmentType}</td>
                     <td>${resource.regionId}</td>
                     <td>
-                        <a href=# class="text-decoration-none" onclick="getSessionPolicy('${serviceName}', '${resource.resourceId}')">查看Session Policy</a>
+                        <a class="iconfont icon-sls text-black text-decoration-none" 
+                        data-bs-toggle="tooltip" data-bs-title="查看session policy" href="#" 
+                        onclick="getSessionPolicy('${serviceName}', '${resource.resourceId}')"></a>
                         <div class="vr"></div>
                         <a target="_blank" class="text-decoration-none" href="../resources/signInConsole.do?serviceName=${serviceName}&regionId=${resource.regionId}&resourceId=${resource.resourceId}">Console</a>
                         ${resource.operations["operationName"] !== "" ? `<div class="vr"></div>` : ""}
@@ -120,19 +126,19 @@ function listResourcesDetails(queryServiceName) {
                 $("#appDetailBody tbody").append(row);
 
                 var policyModal = `
-                <div class="modal fade" id="sessionPolicyModal-${resource.resourceId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="sessionPolicyModal-${serviceName}-${resource.resourceId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">Session Policy</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body" id="modelBody-${resource.resourceId}" style="word-wrap: break-word;">
-                            <textarea class="form-control ms-2" id="policyDocument-${resource.resourceId}" rows="10"></textarea>
+                        <div class="modal-body" id="modelBody-${serviceName}-${resource.resourceId}" style="word-wrap: break-word;">
+                            <textarea class="form-control ms-2" id="policyDocument-${serviceName}-${resource.resourceId}" rows="10"></textarea>
                         </div>
                         <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="copyPolicy('${resource.resourceId}')">Copy policy</button>
+                        <button type="button" class="btn btn-primary" onclick="copyPolicy('${serviceName}', '${resource.resourceId}')">Copy policy</button>
                         </div>
                     </div>
                     </div>
@@ -140,7 +146,7 @@ function listResourcesDetails(queryServiceName) {
                 $("#appDetailBody").append(policyModal);
 
                 //根据DOM元素的id构造出一个编辑器
-                editor[resource.resourceId] = CodeMirror.fromTextArea(document.getElementById("policyDocument-"+resource.resourceId), {
+                editor[serviceName][resource.resourceId] = CodeMirror.fromTextArea(document.getElementById("policyDocument-"+serviceName+"-"+resource.resourceId), {
                     mode:"application/json",
                     lineNumbers: false,  //显示行号
                     theme: "default",   //设置主题
@@ -158,6 +164,7 @@ function listResourcesDetails(queryServiceName) {
             })
         }
     }
+    $(function() { $("[data-bs-toggle='tooltip']").tooltip();});
 }
 
 // 资源详情
@@ -175,7 +182,7 @@ function getSessionPolicy(serviceName, resourceId) {
             if (result.success) {
                 var sessionPolicy = result.data;
                 console.log(sessionPolicy);
-                showSessionPolicy(resourceId, sessionPolicy);
+                showSessionPolicy(serviceName, resourceId, sessionPolicy);
             } else {
                 alert(result.errorMsg);
             }
@@ -184,17 +191,17 @@ function getSessionPolicy(serviceName, resourceId) {
 }
 
 // 展示policy内容
-function showSessionPolicy(resourceId, sessionPolicy) {
-    $("#sessionPolicyModal-" + resourceId).modal('show');
-    // editor[resourceId].setSize(null, 350);
-    editor[resourceId].setValue(sessionPolicy);
+function showSessionPolicy(serviceName, resourceId, sessionPolicy) {
+    $("#sessionPolicyModal-" + serviceName + "-" + resourceId).modal('show');
+    // editor[serviceName][resourceId].setSize(null, 350);
+    editor[serviceName][resourceId].setValue(sessionPolicy);
 }
 
 // 复制policy
-async function copyPolicy(resourceId) {
+async function copyPolicy(serviceName, resourceId) {
     try {
       // var str = document.getElementById("modelBody-" + resourceId).innerText;
-      var str = editor[resourceId].getValue();
+      var str = editor[serviceName][resourceId].getValue();
       await navigator.clipboard.writeText(str);
       // document.getElementById("modelBody-" + roleId).append('\nContent copied to clipboard');
       // alert('Content copied to clipboard');
