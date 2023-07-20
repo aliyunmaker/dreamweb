@@ -23,6 +23,10 @@
       background-color: #8899f0;
     }
 
+    #offcanvas-btn { 
+      position: fixed; bottom: 20px; right: 20px; 
+    }
+
     #offcanvasNavbar .offcanvas-body {
         padding-top: 0;
     }
@@ -34,7 +38,7 @@
 
 <body>
   <main>
-    <nav class="navbar bg-body-secondary">
+    <nav class="navbar navbar-expand bg-body-secondary">
       <div class="container-fluid">
         <a class="navbar-brand" href="#"><i class="iconfont icon-sls" style="font-size: 1.3rem;"></i> Log Center</a>
         <div class="collapse navbar-collapse">
@@ -53,22 +57,21 @@
             </li>
           </ul>
         </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" onclick="getDocumentByModule()">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
-            style="--bs-offcanvas-width: 60%;">
-          <div class="offcanvas-header">
-              <h3 class="offcanvas-title">参考说明</h3>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body">
-              <label for="documentContent"></label>
-              <div id="documentContent"  style="height: 95%"></div>
-          </div>
-        </div>
       </div>
     </nav>
+    <button id="offcanvas-btn" class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" 
+    aria-controls="offcanvasNavbar" onclick="getDocumentByModule()">Reference</button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+        style="--bs-offcanvas-width: 60%;">
+      <div class="offcanvas-header">
+          <h3 class="offcanvas-title">参考说明</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+          <label for="documentContent"></label>
+          <div id="documentContent"  style="height: 95%"></div>
+      </div>
+    </div>
     <div class="iframe-container">
       <iframe id="iframe" src="../loading_spinner.html" width="100%" height="100%"></iframe>
     </div>
