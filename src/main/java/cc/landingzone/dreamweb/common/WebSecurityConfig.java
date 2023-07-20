@@ -22,10 +22,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // http.anonymous();
         http
             .authorizeRequests()
-            .antMatchers("/", "/system/getStartInfo.do").permitAll()
-            .antMatchers("/welcome/*", "/user/getUserInfo.do", "/sso/*",
-                "/index.html", "/system/getIndexLogoPage.do")
-            .hasAnyRole("GUEST", "ADMIN")
+//            .antMatchers("/", "/system/getStartInfo.do").permitAll()
+//            .antMatchers("/welcome/*", "/user/getUserInfo.do", "/sso/*",
+//                "/index.html", "/system/getIndexLogoPage.do")
+//            .hasAnyRole("GUEST", "ADMIN")
             .antMatchers("/**").hasRole("ADMIN")
             .anyRequest().authenticated()
             .and()

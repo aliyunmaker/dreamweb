@@ -27,11 +27,11 @@
     <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script>
         // login.html如果在iframe里面，发消息给外层页面，把外层页面设置成login.html
-        if (self !== top) {
-            var message = {};
-            message.destination = "login";
-            window.parent.postMessage(message, "*");
-        }
+        // if (self !== top) {
+        //     var message = {};
+        //     message.destination = "login";
+        //     window.parent.postMessage(message, "*");
+        // }
     </script>
 </head>
 
