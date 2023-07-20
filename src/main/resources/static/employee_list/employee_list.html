@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_4wqwnf6ufkl.css"/>
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_4wqwnf6ufkl.css" />
     <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/markdown_rendering.css" rel="stylesheet">
     <!--md格式内容转换-->
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/marked.min.js"></script>
@@ -13,28 +13,29 @@
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/popper_v1.15.0.min.js"></script>
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/dataTables_v1.10.16.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/dataTables_v1.10.16.min.css">
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/dataTables_v1.10.16.js"></script>
     <script type="text/javascript" src="employee_list.js"></script>
 
     <style>
-    .iframe-container {
-      width: 100%;
-      height: 100vh;
-    }
+		.iframe-container {
+			width: 100%;
+			height: 100vh;
+		}
 
-    .nav-link:hover {
-      background-color: #a5b6c6;
-    }
+		.nav-link:hover {
+			background-color: #a5b6c6;
+		}
 
-    .active {
-      background-color: #8899f0;
-    }
+		.active {
+			background-color: #8899f0;
+		}
 
-    #offcanvasNavbar .offcanvas-body {
-        padding-top: 0;
-    }
-    </style>
+		#offcanvasNavbar .offcanvas-body {
+			padding-top: 0;
+		}
+	</style>
 </head>
 
 <body>
@@ -43,19 +44,22 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="iconfont icon-user" style="font-size: 1.3rem;"></i>
                 Employee List</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" onclick="getDocumentByModule()">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation"
+                    onclick="getDocumentByModule()">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
-                 style="--bs-offcanvas-width: 60%;">
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                 aria-labelledby="offcanvasRightLabel" style="--bs-offcanvas-width: 60%;">
                 <div class="offcanvas-header">
                     <h3 class="offcanvas-title">参考说明</h3>
-                    <button type="button" class="btn-close " data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button type="button" class="btn-close " data-bs-dismiss="offcanvas"
+                            aria-label="Close"></button>
                 </div>
 
                 <div class="offcanvas-body">
                     <label for="documentContent"></label>
-                    <div id="documentContent"  style="height: 95%"></div>
+                    <div id="documentContent" style="height: 95%"></div>
                     <!--                    <textarea id="documentContent" class="form-control"></textarea>-->
                 </div>
             </div>
@@ -91,118 +95,95 @@
             <!--                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>同步-->
             <!--            </button>-->
         </div>
-        <div class="modal fade" id="add" role="dialog">
+        <div class="modal fade" id="add" tabindex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">新增</h5>
+                        <h1 class="modal-title fs-5">新增</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div id="addModal" class="modal-body">
-                        <div class="form-horizontal">
-                            <div id = "inputText" >
-                                <div class="form-group">
+                        <form>
+                            <div id="inputText">
+                                <div class="mb-3">
                                     <label for="userName" class="col-sm-3 control-label">用户名/组名:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="userName" type="text">
-                                    </div>
+                                    <input class="form-control" id="userName" type="text">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="familyName" class="col-sm-2 control-label">姓:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="familyName" type="text" placeholder="">
-                                    </div>
+                                    <input class="form-control" id="familyName" type="text" placeholder="">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="givenName" class="col-sm-2 control-label">名:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="givenName" type="text" placeholder="">
-                                    </div>
+                                    <input class="form-control" id="givenName" type="text" placeholder="">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="displayName" class="col-sm-2 control-label">显示名称:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="displayName" type="text" placeholder="">
-                                    </div>
+                                    <input class="form-control" id="displayName" type="text" placeholder="">
                                 </div>
-                                <div class="form-group">
-                                    <label for="email" class="col-sm-2 control-label" >Email:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="email" type="text" placeholder="唯一">
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="email" class="col-sm-2 control-label">Email:*</label>
+                                    <input class="form-control" id="email" type="text" placeholder="唯一">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="externalId" class="col-sm-2 control-label">externalId:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="externalId" type="text" placeholder="唯一">
-                                    </div>
+                                    <input class="form-control" id="externalId" type="text" placeholder="唯一">
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <div class="center-block">
-                            <button id="cancelAdd" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                            <button id="addInfo" type="button" class="btn btn-primary" data-bs-dismiss="modal">保存</button>
-                        </div>
+                        <button id="cancelAdd" type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">取消</button>
+                        <button id="addInfo" type="button" class="btn btn-primary"
+                                data-bs-dismiss="modal">保存</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="editInfo" role="dialog">
+        <div class="modal fade" id="editInfo" tabindex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">修改</h5>
-                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">修改</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div id="editModal" class="modal-body">
-                        <div class="form-horizontal">
-                            <div id = "editInputText">
-                                <div class="form-group">
+                        <form>
+                            <div id="editInputText">
+                                <div class="mb-3">
                                     <label for="editUserName" class="col-sm-3 control-label">用户名/组名:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="editUserName" type="text">
-                                    </div>
+                                    <input class="form-control" id="editUserName" type="text">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="editFamilyName" class="col-sm-2 control-label">姓:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="editFamilyName" type="text" placeholder="">
-                                    </div>
+                                    <input class="form-control" id="editFamilyName" type="text" placeholder="">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="editGivenName" class="col-sm-2 control-label">名:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="editGivenName" type="text" placeholder="">
-                                    </div>
+                                    <input class="form-control" id="editGivenName" type="text" placeholder="">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="editDisplayName" class="col-sm-2 control-label">显示名称:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="editDisplayName" type="text" placeholder="">
-                                    </div>
+                                    <input class="form-control" id="editDisplayName" type="text" placeholder="">
                                 </div>
-                                <div class="form-group">
-                                    <label for="editEmail" class="col-sm-2 control-label" >Email:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="editEmail" type="text" placeholder="唯一">
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="editEmail" class="col-sm-2 control-label">Email:*</label>
+                                    <input class="form-control" id="editEmail" type="text" placeholder="唯一">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label for="editExternalId" class="col-sm-2 control-label">externalId:*</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" id="editExternalId" type="text" placeholder="唯一">
-                                    </div>
+                                    <input class="form-control" id="editExternalId" type="text" placeholder="唯一">
                                 </div>
                             </div>
-                        </div>
+                        </form>
+
                     </div>
                     <div class="modal-footer">
-                        <div class="center-block">
-                            <button id="cancelEdit" type="button" class="btn btn-secondary"data-bs-dismiss="modal">取消</button>
-                            <button id="saveEdit" type="button" class="btn btn-primary"data-bs-dismiss="modal">保存</button>
-                        </div>
+                        <button id="cancelEdit" type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">取消</button>
+                        <button id="saveEdit" type="button" class="btn btn-primary"
+                                data-bs-dismiss="modal">保存</button>
                     </div>
                 </div>
             </div>
@@ -213,14 +194,15 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">删除</h5>
-                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p>你确定要删除么</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"data-bs-dismiss="modal">取消</button>
-                        <button id="delete" type="button" class="btn btn-primary"data-bs-dismiss="modal">删除</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button id="delete" type="button" class="btn btn-primary"
+                                data-bs-dismiss="modal">删除</button>
                     </div>
                 </div>
             </div>
@@ -231,7 +213,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">同步</h5>
-                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p>你确定要同步么</p>
@@ -247,8 +229,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"data-bs-dismiss="modal">取消</button>
-                        <button id="sync" type="button" class="btn btn-primary"data-bs-dismiss="modal">同步</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button id="sync" type="button" class="btn btn-primary" data-bs-dismiss="modal">同步</button>
                     </div>
                 </div>
             </div>
@@ -260,13 +242,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">同步结果</h5>
-                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p id="syncResult">init</p>
                     </div>
                     <div class="modal-footer">
-                        <button id="btn_syncResult" type="button" class="btn btn-primary"data-bs-dismiss="modal">确定</button>
+                        <button id="btn_syncResult" type="button" class="btn btn-primary"
+                                data-bs-dismiss="modal">确定</button>
                     </div>
                 </div>
             </div>
