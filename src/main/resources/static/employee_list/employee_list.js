@@ -22,11 +22,11 @@ $(document).ready(function () {
         console.log('addInfo');
         var userName = $("#userName").val();
         var externalId = $("#externalId").val();
-        var familyName = $("#familyName").val();
-        var givenName = $("#givenName").val();
-        var displayName = $("#displayName").val();
+        // var familyName = $("#familyName").val();
+        // var givenName = $("#givenName").val();
+        // var displayName = $("#displayName").val();
         var email = $("#email").val();
-        table.row.add(["id", userName, familyName, givenName, displayName, email, externalId]).draw();
+        table.row.add(["id", userName, email, externalId]).draw();
 
         $("#inputText").find('input').val('');
     })
@@ -56,14 +56,14 @@ $(document).ready(function () {
         console.log('saveEdit');
         var rowData = table.rows('.selected').data()[0];
         var id = rowData[0];
-        var typeName = $("input[name='editTypeName']:checked").val();
+        // var typeName = $("input[name='editTypeName']:checked").val();
         var userName = $("#editUserName").val();
         var externalId = $("#editExternalId").val();
-        var familyName = $("#editFamilyName").val();
-        var givenName = $("#editGivenName").val();
-        var displayName = $("#editDisplayName").val();
+        // var familyName = $("#editFamilyName").val();
+        // var givenName = $("#editGivenName").val();
+        // var displayName = $("#editDisplayName").val();
         var email = $("#editEmail").val();
-        var newRowData = [].concat(id, userName, familyName, givenName, displayName, email, externalId);
+        var newRowData = [].concat(id, userName, email, externalId);
         table.row('.selected').data(newRowData).draw();
         $("#editInputText").find('input').val('');
     })
@@ -113,7 +113,7 @@ $(document).ready(function () {
 
 
 function getDataAndInitTable() {
-    // var data = [['1', '用户名', '姓', '名', '显示名称', 'Email', 'externalId']];
+    // var data = [['1', '用户名', 'Email', 'externalId']];
     var tableData = [];
     $.ajax({
         url: "../" + "employeeList/getAllUser.do",
@@ -123,7 +123,7 @@ function getDataAndInitTable() {
             if (result.success) {
                 data = result.data;
                 for (var i = 0; i < data.length; i++) {
-                    tableData.push([data[i].id, data[i].userName, data[i].familyName, data[i].givenName, data[i].displayName, data[i].email, data[i].externalId]);
+                    tableData.push([data[i].id, data[i].userName, data[i].email, data[i].externalId]);
                 }
                 table = $('#userTable').DataTable({
                     data: tableData,
@@ -185,11 +185,11 @@ function sync() {
         dataList.push({
             "id": data[i][0],
             "userName": data[i][1],
-            "familyName": data[i][2],
-            "givenName": data[i][3],
-            "displayName": data[i][4],
-            "email": data[i][5],
-            "externalId": data[i][6],
+            "familyName": "",
+            "givenName": "",
+            "displayName": data[i][1],
+            "email": data[i][2],
+            "externalId": data[i][3],
             "typeName": "user"
         });
     }
