@@ -1,4 +1,3 @@
-使用教程（java）
 1. 创建应用接入点，并为AAP绑定Client Key：https://help.aliyun.com/document_detail/295842.html?spm=a2c4g.190269.0.0.545837d6TVI6Xv#section-y8g-d85-c3g
 2. 通过配置文件（secretsmanager.properties）构建客户端并测试使用
 

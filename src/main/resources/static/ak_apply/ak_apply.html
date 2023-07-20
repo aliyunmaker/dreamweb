@@ -7,10 +7,8 @@
     <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
     <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/markdown_rendering.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_4wqwnf6ufkl.css"/>
-<!--    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>-->
     <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/popper_v1.15.0.min.js"></script>
-<!--    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
 
     <!--md格式内容转换-->
@@ -191,11 +189,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-<!--                    <p>请保存或发送 secretName 至对应用户。当前窗口关闭后，无法再次查询 secretName。如果您遗失这个 secretName,-->
-<!--                        可以创建新的来替代。</p>-->
-                    <p class="fw-bold text-primary">secretName:  <span id="secretName">init</span></p>
-                    <div id="content"></div>
-<!--                    <textarea class="form-control ms-2" id="secretUseSample"></textarea>-->
+                    <div class="mb-3">
+                        <label for="secretName" class="form-label"><b>secretName</b></label>
+                        <div id="secretName" class="form-control"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label"><b>使用教程（java）</b></label>
+                        <div id="content" class="form-control"></div>
+                    </div>
+
+<!--                    <p class="fw-bold text-primary">secretName:  <span id="secretName">init</span></p>-->
+<!--                    <div id="content"></div>-->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

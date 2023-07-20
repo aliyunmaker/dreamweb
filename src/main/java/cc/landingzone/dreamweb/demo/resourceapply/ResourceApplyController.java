@@ -6,17 +6,21 @@ import cc.landingzone.dreamweb.common.ServiceHelper;
 import cc.landingzone.dreamweb.common.model.WebResult;
 import com.aliyun.vpc20160428.models.DescribeVSwitchAttributesResponseBody;
 import com.aliyun.vpc20160428.models.DescribeVpcAttributeResponseBody;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +28,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/resourceSupply")
 public class ResourceApplyController extends BaseController {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @PostMapping(
             path = "/getTemplateByResourceType.do",
@@ -36,10 +43,12 @@ public class ResourceApplyController extends BaseController {
             String fileType = request.getParameter("fileType");
             logger.info("resourceType: " + resourceType);
             logger.info("fileType: " + fileType);
-            String filePath = "src/main/resources/resource_apply_template/" +
-                    fileType + "/" + resourceType + "/" + resourceType + ".txt";
+            String filePath = "classpath:" +
+                    "resource_apply_template/" + fileType + "/" + resourceType + "/" + resourceType + ".txt";
             logger.info("filePath: " + filePath);
-            String template = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);
+            Resource resource = applicationContext.getResource(filePath);
+            Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
+            String template = FileCopyUtils.copyToString(reader);
             logger.info("template: " + template);
             result.setData(template);
         } catch (Exception e) {
