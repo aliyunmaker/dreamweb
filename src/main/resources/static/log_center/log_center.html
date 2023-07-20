@@ -45,6 +45,18 @@
             </li>
           </ul>
         </div>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+            style="--bs-offcanvas-width: 60%;">
+          <div class="offcanvas-header">
+              <h3 class="offcanvas-title">参考说明</h3>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+
+          <div class="offcanvas-body">
+              <label for="documentContent"></label>
+              <div id="documentContent"  style="height: 95%"></div>
+          </div>
+      </div>
       </div>
     </nav>
     <div class="iframe-container">
@@ -130,6 +142,25 @@
     //   alert(queryString);
     // }
 
+    function getDocumentByModule(){
+      var params = {
+        module: "logcenter"
+      }
+      $.ajax({
+        url: "../" + "common/getDocumentByModule.do",
+        type: "POST",
+        data: params,
+        success: function (result) {
+          if (result.success) {
+            var documentContent = result.data;
+            document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
+          } else {
+            console.log("data.message: " + result.errorMsg);
+            alert(result.errorMsg);
+          }
+        }
+      })
+    }
 
   </script>
 </body>
