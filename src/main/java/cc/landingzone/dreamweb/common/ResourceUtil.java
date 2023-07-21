@@ -73,7 +73,8 @@ public class ResourceUtil {
                  }
             }
             resource.setServiceName(serviceName);
-            resource.setResourceId(resourceId + " | " + resourceName);
+            resource.setResourceId(resourceId);
+            resource.setResourceName(resourceName);
             resource.setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
             resource.setEnvironmentType(environmentType);
             resources.add(resource);
@@ -172,8 +173,7 @@ public class ResourceUtil {
                     String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
                             CommonConstants.Aliyun_AccessKeySecret,
                             CommonConstants.ADMIN_ROLE_ARN, username, "", false);
-                    String terminalUrl = "https://ecs-workbench.aliyun.com/?instanceType=" + resource.getServiceName().toLowerCase() + "&regionId=" + resource.getRegionId() + "&instanceId="
-                            + resource.getResourceId().split(" | ")[0]; // 这里因为ecs需要显示name，格式：id | name，要把id分离出来放进url
+                    String terminalUrl = "https://ecs-workbench.aliyun.com/?instanceType=" + resource.getServiceName().toLowerCase() + "&regionId=" + resource.getRegionId() + "&instanceId=" + resource.getResourceId();
                     operations.put("operationName", "Terminal");
 
                     String redirectUrl = "https://signin.aliyun.com/federation?Action=Login&Destination="

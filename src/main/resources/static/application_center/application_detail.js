@@ -106,13 +106,10 @@ function listResourcesDetails(queryServiceName) {
         editor[serviceName] = {};
         if (queryServiceName === "all" || serviceName === queryServiceName) {
             appDetail[serviceName].forEach(function(resource) {
-                var resourceIdName = resource.resourceId;
-                if (serviceName === "ECS") {
-                    resource.resourceId = resource.resourceId.split(" | ")[0];
-                }
                 var row = `
                 <tr>
-                    <td><a href=# class="text-decoration-none" onclick="getResourceDetail('${serviceName}', '${resource.resourceId}')">${resourceIdName}</a></td>
+                    <td><a href=# class="text-decoration-none" onclick="getResourceDetail('${serviceName}', '${resource.resourceId}')">
+                    ${serviceName === "ECS"? resource.resourceId + " | " + resource.resourceName : resource.resourceId}</a></td>
                     <td>${resource.serviceName}</td>
                     <td>${resource.environmentType}</td>
                     <td>${resource.regionId}</td>
