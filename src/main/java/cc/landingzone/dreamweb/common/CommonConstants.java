@@ -60,6 +60,8 @@ public class CommonConstants {
 
     public static final String VPC_RESOURCETYPE = "ALIYUN::VPC::VPC";
 
+    public static final String SLS_PROJECT_NAME = "dreamweb";
+
     public static final String STATUS_AVAILABLE = "Available";
 
     public static final String LOGOUT_SUCCESS_URL;
