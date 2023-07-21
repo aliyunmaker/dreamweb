@@ -98,14 +98,26 @@ $(document).ready(function () {
 
     // 同步后重新拉取数据
     $('#btn_syncResult').click(function () {
-        //       // 新的数据数组
-        //       var newData = getData();
-        //       // 清空表格数据
-        //       table.clear();
-        //       // 添加新的数据
-        //       table.rows.add(newData);
-        //       // 重新绘制表格
-        //       table.draw();
+        var tableData = [];
+        $.ajax({
+            url: "../" + "employeeList/getAllUser.do",
+            type: "POST",
+            data: null,
+            success: function (result) {
+                if (result.success) {
+                    data = result.data;
+                    for (var i = 0; i < data.length; i++) {
+                        tableData.push([data[i].id, data[i].userName, data[i].email, data[i].externalId]);
+                    }
+                    table.clear();
+                    table.rows.add(tableData);
+                    table.draw();
+                } else {
+                    console.log("result.errorMsg: " + result.errorMsg);
+                    alert(result.errorMsg);
+                }
+            },
+        })
     });
 
 });
@@ -185,8 +197,8 @@ function sync() {
         dataList.push({
             "id": data[i][0],
             "userName": data[i][1],
-            "familyName": "",
-            "givenName": "",
+            "familyName": "familyName",
+            "givenName": "givenName",
             "displayName": data[i][1],
             "email": data[i][2],
             "externalId": data[i][3],
