@@ -371,4 +371,22 @@ public class ResourceUtil {
             return CommonConstants.SLS_PROJECT_NAME;
         }
     }
+
+
+    public static String deleteInstance(String serviceName, String resourceId) throws Exception {
+        String requestId = null;
+        switch (serviceName) {
+            case "ECS":
+                com.aliyun.ecs20140526.Client client = ClientHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+                com.aliyun.ecs20140526.models.DeleteInstanceRequest deleteInstanceRequest = new com.aliyun.ecs20140526.models.DeleteInstanceRequest()
+                        .setInstanceId(resourceId)
+                        .setForce(true);
+                com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+                requestId = client.deleteInstanceWithOptions(deleteInstanceRequest, runtime).getBody().getRequestId();
+            // 之后可能还要加别的资源类型
+            default:
+                break;
+        }
+        return requestId;
+    }
 }

@@ -123,4 +123,22 @@ public class ResourceController extends BaseController {
         }
         outputToJSON(response, result);
     }
+
+    @RequestMapping("/deleteInstance.do")
+    public void deleteInstance(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String serviceName = request.getParameter("serviceName");
+            String resourceId = request.getParameter("resourceId");
+
+            String requestId = ResourceUtil.deleteInstance(serviceName, resourceId);
+
+            result.setData(requestId);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
 }

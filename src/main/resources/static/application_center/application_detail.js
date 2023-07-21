@@ -117,6 +117,11 @@ function listResourcesDetails(queryServiceName) {
                         <a class="iconfont icon-sls text-black text-decoration-none" 
                         data-bs-toggle="tooltip" data-bs-title="查看session policy" href="#" 
                         onclick="getSessionPolicy('${serviceName}', '${resource.resourceId}')"></a>
+                        ${serviceName === "ECS" ? `
+                        <div class="vr"></div>
+                        <a class="iconfont icon-delete text-black text-decoration-none" 
+                        data-bs-toggle="tooltip" data-bs-title="删除实例" href="#" 
+                        onclick="openDeleteInstanceModal('${serviceName}', '${resource.resourceId}')"></a>` : ""}
                         <div class="vr"></div>
                         <a target="_blank" class="text-decoration-none" href="../resources/signInConsole.do?serviceName=${serviceName}&regionId=${resource.regionId}&resourceId=${resource.resourceId}">Console</a>
                         ${resource.operations["operationName"] !== "" ? `<div class="vr"></div>` : ""}
@@ -146,6 +151,26 @@ function listResourcesDetails(queryServiceName) {
                 </div>`;
                 $("#appDetailBody").append(policyModal);
 
+                var deleteInstanceModal = `
+                <div class="modal fade" tabindex="-1" id="deleteInstanceModal-${serviceName}-${resource.resourceId}">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">删除实例</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>请再次确认是否要删除该实例？</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" onclick="deleteInstance('${serviceName}', '${resource.resourceId}')">Confirm</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                $("#appDetailBody").append(deleteInstanceModal);
+
                 //根据DOM元素的id构造出一个编辑器
                 editor[serviceName][resource.resourceId] = CodeMirror.fromTextArea(document.getElementById("policyDocument-"+serviceName+"-"+resource.resourceId), {
                     mode:"application/json",
@@ -166,6 +191,25 @@ function listResourcesDetails(queryServiceName) {
         }
     }
     $(function() { $("[data-bs-toggle='tooltip']").tooltip();});
+
+    var deleteSucceedModal = `
+    <div class="modal fade" tabindex="-1" id="deleteSucceedModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">删除成功</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>`;
+    $("#appDetailBody").append(deleteSucceedModal);
 }
 
 // 资源详情
@@ -217,4 +261,26 @@ function showAppCenterPage() {
     var page = "application_center/application_center.html";
     var iframe = parent.document.getElementById("iframe");
     iframe.setAttribute("src", page);
+}
+
+// 确认是否删除ECS实例
+function openDeleteInstanceModal(serviceName, resourceId) {
+    $("#deleteInstanceModal-"+serviceName+"-"+resourceId).modal('show');
+}
+
+// 删除ECS实例
+function deleteInstance(serviceName, resourceId) {
+    $("#deleteInstanceModal-"+serviceName+"-"+resourceId).modal('hide');
+    $.ajax({
+        url: "../resources/deleteInstance.do?serviceName="+serviceName+"&resourceId="+resourceId,
+        success: function(result){
+            if (result.success) {
+                var requestId = result.data;
+                $("#deleteSucceedModal .modal-body").html(`<p>删除成功，requerstId: ${requestId}</p>`);
+                $("#deleteSucceedModal").modal('show');
+            } else {
+                alert(result.errorMsg);
+            }
+        }
+    });
 }
