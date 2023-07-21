@@ -201,6 +201,7 @@ function getApplication(){
         }
         if(appName != null && appName != ""){
           application.value = appName;
+          listResourcesByAppEnvAndResType();
         }else{
           application.value = "";
         }

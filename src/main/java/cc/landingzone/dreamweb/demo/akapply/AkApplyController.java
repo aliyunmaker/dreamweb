@@ -154,7 +154,8 @@ public class AkApplyController extends BaseController {
             Assert.isTrue(StringUtils.isNotEmpty(applicationName), "applicationName can not be empty");
             String environment = "product";
             String ramUserName = applicationName + "-" + environment;
-            String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]}]";
+            String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]},"
+                    + "{\"Key\":\"DKMSInstanceId\", \"Values\":[\"" + CommonConstants.DKMSInstanceId + "\"]}]";
             List<String> listSecrets = KMSHelper.listSecrets(filters);
             String secretName = null;
             if (listSecrets.size() > 0) {

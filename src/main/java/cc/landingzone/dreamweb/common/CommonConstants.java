@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb.common;
 
+import cc.landingzone.dreamweb.demo.akapply.KMSHelper;
 import com.aliyun.cloudsso20210515.models.ListDirectoriesResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.apache.commons.lang3.StringUtils;
@@ -73,10 +74,15 @@ public class CommonConstants {
 
     public static final String LOGIN_PASSWORD;
 
+    public static String  DKMSInstanceId;
+
+    public static String  EncryptionKeyId;
+
     // 是否线上环境
     public static final boolean ENV_ONLINE;
 
     public static final String CONFIG_PATH = System.getProperty("user.dir") + "/config/";
+
 
     static {
         Properties properties = loadProperties();
@@ -90,6 +96,8 @@ public class CommonConstants {
         SCIM_KEY = properties.getProperty("dreamweb.scim_key");
         LOGIN_USERNAME = properties.getProperty("dreamweb.login_username");
         LOGIN_PASSWORD = properties.getProperty("dreamweb.login_password");
+        DKMSInstanceId = properties.getProperty("dreamweb.dkms_instance_id");
+        EncryptionKeyId = getEncryptionKeyId(DKMSInstanceId);
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";
@@ -152,5 +160,20 @@ public class CommonConstants {
         }
      }
 
+     public static String getEncryptionKeyId(String DKMSInstanceId){
+         try {
+             List<String> listKeys = KMSHelper.listKeys(DKMSInstanceId);
+             if (listKeys.size() > 0) {
+                 return listKeys.get(0);
+             } else {
+                 String tags = "[{\"TagKey\":\"CreatedBy\", \"TagValue\":\"dreamweb\"}]";
+                 logger.info("Create a new key");
+                 return KMSHelper.createKey(DKMSInstanceId, tags);
+             }
+         }catch (Exception e){
+             logger.error(e.getMessage(), e);
+             return null;
+         }
+     }
 
 }
