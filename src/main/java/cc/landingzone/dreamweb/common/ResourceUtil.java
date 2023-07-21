@@ -3,6 +3,7 @@ package cc.landingzone.dreamweb.common;
 import cc.landingzone.dreamweb.common.utils.AliyunAPIUtils;
 import cc.landingzone.dreamweb.demo.appcenter.model.Event;
 import cc.landingzone.dreamweb.demo.appcenter.model.Resource;
+import com.aliyun.ecs20140526.models.DescribeInstancesResponseBody;
 import com.aliyun.resourcecenter20221201.models.SearchMultiAccountResourcesResponseBody;
 import com.aliyun.resourcemanager20200331.models.ListAccountsResponseBody;
 import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
@@ -50,6 +51,35 @@ public class ResourceUtil {
     public static List<Resource> listResourcesByApplication(String appName) throws Exception {
         List<Resource> resources = new ArrayList<>();
 
+        // ECS需要显示name，所以额外调用一次ECS自己的API
+        com.aliyun.ecs20140526.Client client = ClientHelper.createEcsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.ecs20140526.models.DescribeInstancesRequest.DescribeInstancesRequestTag tag0 = new com.aliyun.ecs20140526.models.DescribeInstancesRequest.DescribeInstancesRequestTag()
+                .setKey(CommonConstants.APPLICATION_TAG_KEY)
+                .setValue(appName);
+        com.aliyun.ecs20140526.models.DescribeInstancesRequest describeInstancesRequest = new com.aliyun.ecs20140526.models.DescribeInstancesRequest()
+                .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setTag(Collections.singletonList(tag0));
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        List<DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstance> instances = client.describeInstancesWithOptions(describeInstancesRequest, runtime).getBody().getInstances().getInstance();
+        for (DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstance instance: instances) {
+            Resource resource = new Resource();
+            String serviceName = "ECS";
+            String resourceId = instance.getInstanceId();
+            String resourceName = instance.getInstanceName();
+            String environmentType = "";
+            List<DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstanceTagsTag> tags = instance.getTags().getTag();
+            for (DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstanceTagsTag tag: tags) {
+                 if (tag.getTagKey().equals(CommonConstants.ENVIRONMENT_TYPE_TAG_KEY)) {
+                     environmentType = tag.getTagValue();
+                 }
+            }
+            resource.setServiceName(serviceName);
+            resource.setResourceId(resourceId + " | " + resourceName);
+            resource.setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU);
+            resource.setEnvironmentType(environmentType);
+            resources.add(resource);
+        }
+
         List<ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources> resourcesResponse = getResourcesByTag(CommonConstants.APPLICATION_TAG_KEY, appName);
 
         for (ListTagResourcesResponseBody.ListTagResourcesResponseBodyTagResources resourceResponse : resourcesResponse) {
@@ -58,6 +88,9 @@ public class ResourceUtil {
             String serviceName = splitArn[2].toUpperCase();
             if ("LOG".equals(serviceName)) {
                 serviceName = "SLS";
+            }
+            if ("ECS".equals(serviceName)) {
+                continue;
             }
             String regionId = splitArn[3];
             String resourceType = splitArn[5].split("/")[0];
