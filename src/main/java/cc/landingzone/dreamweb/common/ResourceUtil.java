@@ -167,11 +167,11 @@ public class ResourceUtil {
                     operations.put("operationName", "");
                     operations.put("operationUrl", "");
                 } else if ("ECS".equals(serviceName)) {
-                    String policy = ServiceHelper.generatePolicyDocument(serviceName.toLowerCase(), Collections.singletonList(resource.getResourceId()), 3, CommonConstants.Aliyun_UserId);
+//                    String policy = ServiceHelper.generatePolicyDocument(serviceName.toLowerCase(), Collections.singletonList(resource.getResourceId()), 3, CommonConstants.Aliyun_UserId);
                     String username = SecurityContextHolder.getContext().getAuthentication().getName();
                     String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
                             CommonConstants.Aliyun_AccessKeySecret,
-                            CommonConstants.ADMIN_ROLE_ARN, username, policy, false);
+                            CommonConstants.ADMIN_ROLE_ARN, username, "", false);
                     String terminalUrl = "https://ecs-workbench.aliyun.com/?instanceType=" + resource.getServiceName().toLowerCase() + "&regionId=" + resource.getRegionId() + "&instanceId=" + resource.getResourceId().split(" | ")[0];
                     operations.put("operationName", "Terminal");
 
