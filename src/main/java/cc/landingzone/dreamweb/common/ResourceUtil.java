@@ -11,7 +11,6 @@ import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -364,7 +363,11 @@ public class ResourceUtil {
                 .setTagFilter(tagFilter);
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         List<ListResourcesByTagResponseBody.ListResourcesByTagResponseBodyResources> projects = client.listResourcesByTagWithOptions(listResourcesByTagRequest, runtime).getBody().getResources();
-        Assert.isTrue(projects.size() == 1, "An application can only have one SLS project!");
-        return projects.get(0).getResourceId();
+        if (projects.size() == 1) {
+            return projects.get(0).getResourceId();
+        } else {
+            // 如果有多个projects，选择特定名字的project，保证演示时project有内容
+            return CommonConstants.SLS_PROJECT_NAME;
+        }
     }
 }
