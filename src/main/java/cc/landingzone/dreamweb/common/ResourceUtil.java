@@ -172,7 +172,7 @@ public class ResourceUtil {
                     String signToken = AliyunAPIUtils.getSigninToken(CommonConstants.Aliyun_AccessKeyId,
                             CommonConstants.Aliyun_AccessKeySecret,
                             CommonConstants.ADMIN_ROLE_ARN, username, policy, false);
-                    String terminalUrl = "https://ecs-workbench.aliyun.com/?instanceType=" + resource.getServiceName().toLowerCase() + "&regionId=" + resource.getRegionId() + "&instanceId=" + resource.getResourceId();
+                    String terminalUrl = "https://ecs-workbench.aliyun.com/?instanceType=" + resource.getServiceName().toLowerCase() + "&regionId=" + resource.getRegionId() + "&instanceId=" + resource.getResourceId().split(" | ")[0];
                     operations.put("operationName", "Terminal");
 
                     String redirectUrl = "https://signin.aliyun.com/federation?Action=Login&Destination="
