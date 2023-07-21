@@ -169,6 +169,9 @@ function listResourcesDetails(queryServiceName) {
 
 // 资源详情
 function getResourceDetail(serviceName, resourceId) {
+    if (serviceName === "ECS") {
+        resourceId = resourceId.split(" | ")[0];
+    }
     var page = "application_center/resource_detail.html?appName=" + appName + "&serviceName=" + serviceName + "&resourceId=" + resourceId;
     var iframe = parent.document.getElementById("iframe");
     iframe.setAttribute("src", page);
