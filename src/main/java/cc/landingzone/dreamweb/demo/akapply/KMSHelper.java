@@ -87,7 +87,9 @@ public class KMSHelper {
 //                .setDescription("dreamweb")
                 .setTags(JsonUtils.toJsonString(tags))
                 .setSecretType("RAMCredentials")
-                .setExtendedConfig(extendedConfig);
+                .setExtendedConfig(extendedConfig)
+                .setDKMSInstanceId(CommonConstants.DKMSInstanceId)
+                .setEncryptionKeyId(CommonConstants.EncryptionKeyId);
         RuntimeOptions runtime = new RuntimeOptions();
         return client.createSecretWithOptions(createSecretRequest, runtime).getBody().getSecretName();
     }
@@ -125,6 +127,34 @@ public class KMSHelper {
         }
         return secretNames;
     }
+
+    /**
+     * list main keys, return keyIds
+     */
+    public static List<String> listKeys(String dKMSInstanceId) throws Exception {
+        String filters = "[{\"Key\":\"KeyState\", \"Values\":[\"Enabled\"]}, {\"Key\":\"KeySpec\", \"Values\":[\"Aliyun_AES_256\"]}, " +
+                "{\"Key\":\"DKMSInstanceId\", \"Values\":[\"" + dKMSInstanceId + "\"]}]";
+        com.aliyun.kms20160120.Client client = ClientHelper.createKmsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.kms20160120.models.ListKeysRequest listKeysRequest = new com.aliyun.kms20160120.models.ListKeysRequest()
+                .setFilters(filters);
+        RuntimeOptions runtime = new RuntimeOptions();
+        List<String> keyIds = new ArrayList<>();
+        client.listKeysWithOptions(listKeysRequest, runtime).getBody().getKeys().getKey().forEach(key -> keyIds.add(key.getKeyId()));
+        return keyIds;
+    }
+
+    public static String createKey(String dKMSInstanceId,String tags) throws Exception{
+        com.aliyun.kms20160120.Client client = ClientHelper.createKmsClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.kms20160120.models.CreateKeyRequest createKeyRequest = new com.aliyun.kms20160120.models.CreateKeyRequest()
+                .setDescription("dreamweb")
+                .setKeySpec("Aliyun_AES_256")
+                .setDKMSInstanceId(dKMSInstanceId)
+                .setTags(tags);
+        RuntimeOptions runtime = new RuntimeOptions();
+        return client.createKeyWithOptions(createKeyRequest, runtime).getBody().getKeyMetadata().getKeyId();
+    }
+
+
 
     public static void initKMS() throws Exception {
         List<String> roleList = RamHelper.listRoles();
@@ -174,5 +204,8 @@ public class KMSHelper {
         // attach policy to role
         RamHelper.attachPolicyToRole(roleName,policyName,"Custom");
     }
+
+
+
 
 }

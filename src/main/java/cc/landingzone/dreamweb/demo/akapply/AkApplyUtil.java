@@ -110,7 +110,8 @@ public class AkApplyUtil {
 
     public static String createSecretByExist(String applicationName,String environment,String ramUserName,
                                       String accessKeyId,String accessKeySecret) throws Exception {
-        String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]}]";
+        String filters = "[{\"Key\":\"SecretName\", \"Values\":[\"" + ramUserName + "\"]},"
+                + "{\"Key\":\"DKMSInstanceId\", \"Values\":[\"" + CommonConstants.DKMSInstanceId + "\"]}]";
         List<String> listSecrets = KMSHelper.listSecrets(filters);
         if (listSecrets.size() > 0) {
             KMSHelper.deleteSecret(listSecrets.get(0));
