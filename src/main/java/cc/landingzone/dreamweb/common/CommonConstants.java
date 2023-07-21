@@ -69,6 +69,10 @@ public class CommonConstants {
     public static final String SCIM_KEY;
     public static final String SCIM_URL = "https://cloudsso-scim-cn-shanghai.aliyun.com/scim/v2";
 
+    public static final String LOGIN_USERNAME;
+
+    public static final String LOGIN_PASSWORD;
+
     // 是否线上环境
     public static final boolean ENV_ONLINE;
 
@@ -84,7 +88,8 @@ public class CommonConstants {
         Aliyun_UserId = getCallerIdentity(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         Aliyun_TestAccount_UserId = getCallerIdentity(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         SCIM_KEY = properties.getProperty("dreamweb.scim_key");
-
+        LOGIN_USERNAME = properties.getProperty("dreamweb.login_username");
+        LOGIN_PASSWORD = properties.getProperty("dreamweb.login_password");
         String logoutSuccessUrl = properties.getProperty("dreamweb.logout_success_url");
         if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
             LOGOUT_SUCCESS_URL = "/login?logout";
