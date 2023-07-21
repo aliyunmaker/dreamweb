@@ -3,9 +3,9 @@ provider "alicloud" {
 }
 
 resource "alicloud_oss_bucket" "create_new_bucket" {
-  bucket = "bucket-name"
+  bucket = "dreamweb-2"
   tags   = {
-        application = "application1"
+        application = "demo-app-1"
         environmentType = "product"
     }
 }

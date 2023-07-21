@@ -1,18 +1,18 @@
 package cc.landingzone.dreamweb;
 
-import cc.landingzone.dreamweb.common.CommonConstants;
-import com.aliyun.tea.*;
+import com.aliyun.tea.TeaConverter;
+import com.aliyun.tea.TeaPair;
 
 public class LogCcapi {
     public static void main(String[] args_) throws Exception {
         String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
         String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
 
-        com.aliyun.cloudcontrol20220830.Client client = createClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.cloudcontrol20220830.Client client = createClient(accessKeyId, accessKeySecret);
         String requestPath = "/api/v1/providers/Aliyun/products/SLS/resources/Project";
         java.util.Map<String, String> body = TeaConverter.buildMap(
-            new TeaPair("Description", "cctest"),
-            new TeaPair("ProjectName", "cctest-project")
+                new TeaPair("Description", "dreamweb-222"),
+                new TeaPair("ProjectName", "dreamweb-222")
         );
         com.aliyun.cloudcontrol20220830.models.CreateResourceRequest createResourceRequest = new com.aliyun.cloudcontrol20220830.models.CreateResourceRequest()
                 .setRegionId("cn-hangzhou")

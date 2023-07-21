@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb;
 
+import cc.landingzone.dreamweb.common.ClientHelper;
 import com.alibaba.fastjson.JSON;
 import com.aliyun.ecs20140526.models.RunInstancesRequest;
 import com.aliyun.ecs20140526.models.RunInstancesResponse;
@@ -9,25 +10,25 @@ import java.util.*;
 
 public class Ecs {
     public static void main(String[] args) throws Exception {
-        String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");
         String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
         String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
+        String accountId = getCallerIdentity(accessKeyId, accessKeySecret);
         com.aliyun.ecs20140526.Client client = createEcsClient(accessKeyId, accessKeySecret);
         RuntimeOptions runtime = new RuntimeOptions();
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .setRegionId("cn-hangzhou")
-                .setAmount(2)
+                .setAmount(1)
                 .setInstanceType("ecs.n2.small")
                 .setImageId("ubuntu_18_04_64_20G_alibase_20190624.vhd")
-                .setSecurityGroupId("sg-bp103rdxtizwmfam0tfa")
-                .setVSwitchId("vsw-bp1tipegxihb0brq0qy61")
-                .setInstanceName("instance_name_test");
+                .setSecurityGroupId("sg-bp15hf3akh740dy8gjdk")
+                .setVSwitchId("vsw-bp13emwb6rzhuosh1jq1t")
+                .setInstanceName("instance_demo_1");
         RunInstancesResponse runInstancesResponse = client.runInstancesWithOptions(runInstancesRequest, runtime);
         List<String> instanceIdSet = runInstancesResponse.getBody().getInstanceIdSets().getInstanceIdSet();
         // 添加标签
         com.aliyun.tag20180828.Client tagClient = createTagClient(accessKeyId, accessKeySecret);
         Map<String, String> tags = new HashMap<>();
-        tags.put("application", "application1");
+        tags.put("application", "demo-app-1");
         tags.put("environmentType", "product");
         String tagStr = JSON.toJSONString(tags);
         List<String> resourceArn = new ArrayList<>();
@@ -55,5 +56,11 @@ public class Ecs {
                 .setAccessKeySecret(accessKeySecret);
         config.endpoint = "tag.aliyuncs.com";
         return new com.aliyun.tag20180828.Client(config);
+    }
+
+    public static String getCallerIdentity(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.sts20150401.Client client = ClientHelper.createStsClient(accessKeyId, accessKeySecret);
+        RuntimeOptions runtime = new RuntimeOptions();
+        return client.getCallerIdentityWithOptions(runtime).getBody().getAccountId();
     }
 }

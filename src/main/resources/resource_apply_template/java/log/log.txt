@@ -1,5 +1,6 @@
 package cc.landingzone.dreamweb;
 
+import cc.landingzone.dreamweb.common.ClientHelper;
 import com.alibaba.fastjson.JSON;
 import com.aliyun.sls20201230.Client;
 import com.aliyun.sls20201230.models.CreateProjectRequest;
@@ -10,12 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class sls {
+public class Sls {
     public static void main(String[] args) throws Exception {
-        String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");
         String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
         String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
-        String projectName = "dreamwebtest";
+        String accountId = getCallerIdentity(accessKeyId, accessKeySecret);
+        String projectName = "dreamweb-22";
         // 创建logProject
         Client client = createSlsClient(accessKeyId,accessKeySecret);
         RuntimeOptions runtime = new RuntimeOptions();
@@ -27,7 +28,7 @@ public class sls {
         // 添加标签
         com.aliyun.tag20180828.Client tagClient = createTagClient(accessKeyId, accessKeySecret);
         Map<String, String> tags = new HashMap<>();
-        tags.put("application", "application1");
+        tags.put("application", "demo-app-1");
         tags.put("environmentType", "product");
         String tagStr = JSON.toJSONString(tags);
         List<String> resourceArn = new ArrayList<>();
@@ -54,4 +55,11 @@ public class sls {
         config.endpoint = "tag.aliyuncs.com";
         return new com.aliyun.tag20180828.Client(config);
     }
+
+    public static String getCallerIdentity(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.sts20150401.Client client = ClientHelper.createStsClient(accessKeyId, accessKeySecret);
+        RuntimeOptions runtime = new RuntimeOptions();
+        return client.getCallerIdentityWithOptions(runtime).getBody().getAccountId();
+    }
+
 }

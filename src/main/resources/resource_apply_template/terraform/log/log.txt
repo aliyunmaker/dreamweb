@@ -3,9 +3,9 @@ provider "alicloud" {
 }
 
 resource "alicloud_log_project" "create_new_project" {
-  name = "project-name"
+  name = "dreamweb-2"
   tags   = {
-        application = "application1"
+        application = "demo-app-1"
         environmentType = "product"
     }
 }

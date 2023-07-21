@@ -6,15 +6,15 @@ import com.aliyun.tea.TeaPair;
 public class EcsCcapi {
 
     public static void main(String[] args_) throws Exception {
-        String accountId = System.getenv("ALIBABA_CLOUD_ACCOUNT_ID");
         String accessKeyId = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID");
+        String accessKeySecret = System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET");
         com.aliyun.cloudcontrol20220830.Client client = createClient(accessKeyId, accessKeySecret);
         String requestPath = "/api/v1/providers/Aliyun/products/ECS/resources/Instance";
         java.util.Map<String, Object> body = TeaConverter.buildMap(
                 new TeaPair("InstanceType", "ecs.n2.small"),
-                new TeaPair("SecurityGroupId", "sg-bp103rdxtizwmfam0tfa"),
+                new TeaPair("SecurityGroupId", "sg-bp15hf3akh740dy8gjdk"),
                 new TeaPair("VpcAttributes", TeaConverter.buildMap(
-                        new TeaPair("VSwitchId", "vsw-bp1tipegxihb0brq0qy61")
+                        new TeaPair("VSwitchId", "vsw-bp13emwb6rzhuosh1jq1t")
                 )),
                 new TeaPair("InstanceName", "instance_name_test"),
                 new TeaPair("ImageId", "ubuntu_18_04_64_20G_alibase_20190624.vhd"),
@@ -22,7 +22,7 @@ public class EcsCcapi {
                 new TeaPair("Tags", java.util.Arrays.asList(
                         TeaConverter.buildMap(
                                 new TeaPair("TagKey", "application"),
-                                new TeaPair("TagValue", "application1")
+                                new TeaPair("TagValue", "demo-app-1")
                         ),
                         TeaConverter.buildMap(
                                 new TeaPair("TagKey", "environmentType"),

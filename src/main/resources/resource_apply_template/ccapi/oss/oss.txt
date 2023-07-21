@@ -10,7 +10,7 @@ public class OssCcapi {
         com.aliyun.cloudcontrol20220830.Client client = createClient(accessKeyId, accessKeySecret);
         String requestPath = "/api/v1/providers/Aliyun/products/OSS/resources/Bucket";
         java.util.Map<String, String> body = TeaConverter.buildMap(
-                new TeaPair("BucketName", "dreamweb-oss-test")
+                new TeaPair("BucketName", "dreamweb-222")
         );
         com.aliyun.cloudcontrol20220830.models.CreateResourceRequest createResourceRequest = new com.aliyun.cloudcontrol20220830.models.CreateResourceRequest()
                 .setBody(body)

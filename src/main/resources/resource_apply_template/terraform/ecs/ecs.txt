@@ -3,14 +3,14 @@ provider "alicloud" {
 }
 
 resource "alicloud_instance" "instance" {
-  vswitch_id          = "vsw-bp1tipegxihb0brq0qy61"
+  vswitch_id          = "vsw-bp13emwb6rzhuosh1jq1t"
   instance_type       = "ecs.n2.small"
-  instance_name       = "instance_name_test"
+  instance_name       = "instance_demo_1"
   count               = var.number_of_instances
   image_id           = "ubuntu_18_04_64_20G_alibase_20190624.vhd"
-  security_groups     = ["sg-bp103rdxtizwmfam0tfa"]
+  security_groups     = ["sg-bp15hf3akh740dy8gjdk"]
   tags = {
-        application = "application1"
+        application = "demo-app-1"
         environmentType = "product"
     }
 }
@@ -19,4 +19,3 @@ variable "number_of_instances" {
   type = number
   default = 1
 }
-
