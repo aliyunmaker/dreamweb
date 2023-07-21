@@ -106,9 +106,13 @@ function listResourcesDetails(queryServiceName) {
         editor[serviceName] = {};
         if (queryServiceName === "all" || serviceName === queryServiceName) {
             appDetail[serviceName].forEach(function(resource) {
+                var resourceIdName = resource.resourceId;
+                if (serviceName === "ECS") {
+                    resource.resourceId = resource.resourceId.split(" | ")[0];
+                }
                 var row = `
                 <tr>
-                    <td><a href=# class="text-decoration-none" onclick="getResourceDetail('${serviceName}', '${resource.resourceId}')">${resource.resourceId}</a></td>
+                    <td><a href=# class="text-decoration-none" onclick="getResourceDetail('${serviceName}', '${resource.resourceId}')">${resourceIdName}</a></td>
                     <td>${resource.serviceName}</td>
                     <td>${resource.environmentType}</td>
                     <td>${resource.regionId}</td>
@@ -169,9 +173,6 @@ function listResourcesDetails(queryServiceName) {
 
 // 资源详情
 function getResourceDetail(serviceName, resourceId) {
-    if (serviceName === "ECS") {
-        resourceId = resourceId.split(" | ")[0];
-    }
     var page = "application_center/resource_detail.html?appName=" + appName + "&serviceName=" + serviceName + "&resourceId=" + resourceId;
     var iframe = parent.document.getElementById("iframe");
     iframe.setAttribute("src", page);
