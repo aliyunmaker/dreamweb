@@ -2,7 +2,9 @@
 
 本项目是云管 CMP 系统的 Demo，用来演示 CMP 系统和阿里云的集成，包含：SSO、资源供给、日志与监控等功能。
 
-> <span style="color: #C80000">特别注意：该项目只是演示 Demo（Code Sample），不建议您直接在线上环境使用。 </span>
+```diff
+- 特别注意：该项目只是演示 Demo（Code Sample），不建议您直接在线上环境使用。
+```
 
 ## 环境准备
 
