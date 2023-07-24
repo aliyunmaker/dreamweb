@@ -131,4 +131,13 @@ public class ClientHelper {
         config.endpoint = "cloudsso.cn-shanghai.aliyuncs.com";
         return new com.aliyun.cloudsso20210515.Client(config);
     }
+
+    public static com.aliyun.governance20210120.Client createGovernanceClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "governance.cn-hangzhou.aliyuncs.com";
+        return new com.aliyun.governance20210120.Client(config);
+    }
+
 }

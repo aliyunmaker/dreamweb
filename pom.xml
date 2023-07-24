@@ -336,6 +336,11 @@
             <artifactId>cloudsso20210515</artifactId>
             <version>1.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>governance20210120</artifactId>
+            <version>0.0.4</version>
+        </dependency>
     </dependencies>
 
     <build>

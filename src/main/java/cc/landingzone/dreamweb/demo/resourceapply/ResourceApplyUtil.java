@@ -62,7 +62,7 @@ public class ResourceApplyUtil {
 //        System.out.println(describeInstanceTypeFamilies(regionId, generation));
     }
 
-    public static void createEcsInstance(String regionId, String vpcId, String vSwitchId, String instanceType, int amount,
+    public static List<String> createEcsInstance(String regionId, String vpcId, String vSwitchId, String instanceType, int amount,
                                          String applicationName, String environmentName) throws Exception {
         com.aliyun.ecs20140526.Client client = ClientHelper.createEcsClient
                 (CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
@@ -77,6 +77,10 @@ public class ResourceApplyUtil {
 //        dataDisk.setSize(Integer.valueOf(CommonConstants.DEFAULT_ECS_DATA_DISK_SIZE));
 //        dataDisk.setCategory(CommonConstants.DEFAULT_ECS_DATA_DISK_CATEGORY);
 //        dataDisks.add(dataDisk);
+        String instanceName = applicationName + "-" + UUIDUtils.generateUUID().substring(0,8);
+        if (amount > 1){
+            instanceName += "-";
+        }
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .setRegionId(regionId)
@@ -94,7 +98,7 @@ public class ResourceApplyUtil {
 //                .setDataDisk(dataDisks)
                 // uuid: 标识唯一ECS
                 .setHostName(CommonConstants.DEFAULT_ECS_HOSTNAME + UUIDUtils.generateUUID().substring(0,8))
-                .setInstanceName(applicationName + "-" + UUIDUtils.generateUUID().substring(0,8))
+                .setInstanceName(instanceName)
                 // 为HostName和InstanceName自动添加有序后缀
                 .setUniqueSuffix(true)
                 .setPassword(CommonConstants.DEFAULT_ECS_PASSWORD)
@@ -103,9 +107,18 @@ public class ResourceApplyUtil {
 
         RunInstancesResponse runInstancesResponse = client.runInstancesWithOptions(runInstancesRequest, runtime);
         List<String> instanceIdSet = runInstancesResponse.getBody().getInstanceIdSets().getInstanceIdSet();
+        List<String> instanceDisplayList = new ArrayList<>();
+        for (String instanceId : instanceIdSet) {
+            String instanceDisplay = instanceId + " | " + instanceName;
+            if (amount > 1){
+                instanceDisplay += "-" + "00" + (instanceIdSet.indexOf(instanceId) + 1);
+            }
+            instanceDisplayList.add(instanceDisplay);
+        }
         logger.info("instanceIdSet:{}", JSON.toJSONString(instanceIdSet));
         attachTagToResource(applicationName, environmentName, ServiceEnum.ECS.getResourceName(),
                 instanceIdSet);
+        return instanceDisplayList;
     }
 
     public static void createOssBucket(String bucketName, String applicationName, String environmentName) throws Exception {
