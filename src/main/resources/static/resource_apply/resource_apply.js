@@ -249,7 +249,21 @@ function createEcsInstance() {
         success: function (result) {
             $("#creating").hide();
             if (result.success) {
+                var instanceDisplayList = result.data;
+                console.log("instanceDisplay: " + instanceDisplay);
+                console.log("instanceDisplayList.length: " + instanceDisplayList.length);
+                var displayDiv = document.getElementById("successDisplay");
+                
+                for(var i = 0; i < instanceDisplayList.length; i++) {
+
+                    var instanceDisplay = "instance" + (i+1) + "\xa0\xa0"  + "ID/name:" + "\xa0\xa0" + instanceDisplayList[i];
+                    var p = document.createElement("p");
+                    p.textContent = instanceDisplay;
+                    p.className = 'fs-5';
+                    displayDiv.appendChild(p);
+                }
                 $("#createSuccess").show();
+
             } else {
                 $("#createFail").show();
                 $("#createFailMessage").show();
@@ -353,26 +367,6 @@ function getDocumentByModule(){
       if (result.success) {
         var documentContent = result.data;
         document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
-      } else {
-        console.log("data.message: " + result.errorMsg);
-        alert(result.errorMsg);
-      }
-    }
-  })
-}
-
-function getDocumentByModule(){
-  var params = {
-    module: "resourceapply"
-  }
-  $.ajax({
-    url: "../" + "common/getDocumentByModule.do",
-    type: "POST",
-    data: params,
-    success: function (result) {
-      if (result.success) {
-        var documentContent = result.data;
-         document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
       } else {
         console.log("data.message: " + result.errorMsg);
         alert(result.errorMsg);
