@@ -69,7 +69,7 @@ $(document).ready(function() {
             `;
             $("#appDetailBody").append(table);
             $("#appDetailBody tbody").append(
-                `<div class="position-absolute top-50 start-50 translate-middle">
+            `<div class="position-absolute top-50 start-50 translate-middle">
                 <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
                 <span class="visually-hidden">Loading...</span>
                 </div>
@@ -198,13 +198,13 @@ function listResourcesDetails(queryServiceName) {
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">删除成功</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick=location.reload();></button>
             </div>
             <div class="modal-body">
                 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick=location.reload();>Close</button>
             </div>
             </div>
         </div>
@@ -283,4 +283,25 @@ function deleteInstance(serviceName, resourceId) {
             }
         }
     });
+}
+
+// 获得参考说明内容
+function getDocumentByModule(){
+    var params = {
+      module: "myapplication"
+    }
+    $.ajax({
+      url: "../" + "common/getDocumentByModule.do",
+      type: "POST",
+      data: params,
+      success: function (result) {
+        if (result.success) {
+          var documentContent = result.data;
+           document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
+        } else {
+          console.log("data.message: " + result.errorMsg);
+          alert(result.errorMsg);
+        }
+      }
+    })
 }
