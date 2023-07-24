@@ -57,6 +57,7 @@ public class ResourceUtil {
                 .setValue(appName);
         com.aliyun.ecs20140526.models.DescribeInstancesRequest describeInstancesRequest = new com.aliyun.ecs20140526.models.DescribeInstancesRequest()
                 .setRegionId(CommonConstants.Aliyun_REGION_HANGZHOU)
+                .setPageSize(100)
                 .setTag(Collections.singletonList(tag0));
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         List<DescribeInstancesResponseBody.DescribeInstancesResponseBodyInstancesInstance> instances = client.describeInstancesWithOptions(describeInstancesRequest, runtime).getBody().getInstances().getInstance();
