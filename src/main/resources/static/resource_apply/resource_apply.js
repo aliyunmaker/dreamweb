@@ -255,8 +255,10 @@ function createEcsInstance() {
                 var displayDiv = document.getElementById("successDisplay");
                 
                 for(var i = 0; i < instanceDisplayList.length; i++) {
-
-                    var instanceDisplay = "instance" + (i+1) + "\xa0\xa0"  + "ID/name:" + "\xa0\xa0" + instanceDisplayList[i];
+                    var instanceId = instanceDisplayList[i].split("|")[0].trim();
+                    var instanceName = instanceDisplayList[i].split("|")[1].trim();
+                    var instanceDisplay = (i+1) + "\xa0:\xa0" + "instance id" + "[" + instanceId
+                     + "]\xa0,\xa0" + "instance name" + "[" + instanceName + "]";
                     var p = document.createElement("p");
                     p.textContent = instanceDisplay;
                     p.className = 'fs-5';
