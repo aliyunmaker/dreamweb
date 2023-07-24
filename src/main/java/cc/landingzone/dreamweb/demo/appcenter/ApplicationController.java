@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Controller
 @RequestMapping("/apps")
@@ -23,11 +26,30 @@ public class ApplicationController extends BaseController {
     public void listApps(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
+            ApplicationEnum[] applicationEnums = ApplicationEnum.values();
             List<Application> applications = new ArrayList<>();
-            for (ApplicationEnum applicationEnum: ApplicationEnum.values()) {
-                Application application = ApplicationUtil.getApplicationInfo(applicationEnum);
+
+            /* parallelize tasks */
+            int numThreads = Runtime.getRuntime().availableProcessors();
+            ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+
+            List<Future<Application>> futures = new ArrayList<>();
+
+            // 提交并行任务
+            for (ApplicationEnum applicationEnum : applicationEnums) {
+                Future<Application> future = executor.submit(() -> ApplicationUtil.getApplicationInfo(applicationEnum));
+                futures.add(future);
+            }
+
+            // 获取并行任务的结果
+            for (Future<Application> future : futures) {
+                Application application = future.get();
                 applications.add(application);
             }
+
+            // 关闭线程池
+            executor.shutdown();
+
             result.setTotal(applications.size());
             result.setData(applications);
         } catch (Exception e) {

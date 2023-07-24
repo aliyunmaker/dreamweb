@@ -211,6 +211,7 @@ async function copyToken() {
     }
 }
 
+// 获得参考说明内容
 function getDocumentByModule(){
     var params = {
       module: "myapplication"
@@ -229,4 +230,4 @@ function getDocumentByModule(){
         }
       }
     })
-  }
+}

@@ -118,3 +118,24 @@ function getAppDetail(appName, serviceName) {
   var iframe = parent.document.getElementById("iframe");
   iframe.setAttribute("src", page);
 }
+
+// 获得参考说明内容
+function getDocumentByModule(){
+  var params = {
+    module: "myapplication"
+  }
+  $.ajax({
+    url: "../" + "common/getDocumentByModule.do",
+    type: "POST",
+    data: params,
+    success: function (result) {
+      if (result.success) {
+        var documentContent = result.data;
+         document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
+      } else {
+        console.log("data.message: " + result.errorMsg);
+        alert(result.errorMsg);
+      }
+    }
+  })
+}

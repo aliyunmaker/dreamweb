@@ -7,6 +7,7 @@
   <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_3mbo7af8316.css" />
   <link rel="stylesheet" href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap-icons_v1.3.0.css">
+  <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/markdown_rendering.css" rel="stylesheet">
   <style>
     .iframe-container {
       width: 100%;
@@ -25,12 +26,17 @@
       vertical-align: middle;
     }
 
-    /* .CodeMirror {
-      border: 1px solid #eee;
-      height: auto;
-    } */
+    #offcanvas-btn { 
+      position: fixed; bottom: 20px; right: 20px; 
+    }
+
+    #offcanvasNavbar .offcanvas-body {
+        padding-top: 0;
+    }
 
   </style>
+  <!--md格式内容转换-->
+  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/marked.min.js"></script>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/popper_v1.15.0.min.js"></script>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
   <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
@@ -64,7 +70,23 @@
             </ul>
           </div>
         </div>
-      </nav>
+    </nav>
+    <button id="offcanvas-btn" class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" 
+    aria-controls="offcanvasNavbar" onclick="getDocumentByModule()">
+    Reference
+    </button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+        style="--bs-offcanvas-width: 40%;">
+      <div class="offcanvas-header">
+          <h3 class="offcanvas-title">参考说明</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+  
+      <div class="offcanvas-body">
+          <label for="documentContent"></label>
+          <div id="documentContent"  style="height: 95%"></div>
+      </div>
+    </div>
   <div class="px-5 py-3" id="appCenterPage">
   </div>
 </main>
