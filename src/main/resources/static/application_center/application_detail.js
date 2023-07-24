@@ -114,7 +114,7 @@ function listResourcesDetails(queryServiceName) {
                     <td>${resource.environmentType}</td>
                     <td>${resource.regionId}</td>
                     <td>
-                        <a class="iconfont icon-sls text-black text-decoration-none" 
+                        <a class="iconfont icon-policy text-black text-decoration-none"
                         data-bs-toggle="tooltip" data-bs-title="查看session policy" href="#" 
                         onclick="getSessionPolicy('${serviceName}', '${resource.resourceId}')"></a>
                         ${serviceName === "ECS" ? `

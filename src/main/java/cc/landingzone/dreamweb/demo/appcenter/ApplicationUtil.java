@@ -23,6 +23,12 @@ import static cc.landingzone.dreamweb.common.ClientHelper.createTagClient;
  */
 @Component
 public class ApplicationUtil {
+    /**
+     * Get information of a specific application, including app name, app description and counts of
+     * @param applicationEnum
+     * @return
+     * @throws Exception
+     */
     public static Application getApplicationInfo(ApplicationEnum applicationEnum) throws Exception {
         Application application = new Application();
         application.setAppName(applicationEnum.getName());
