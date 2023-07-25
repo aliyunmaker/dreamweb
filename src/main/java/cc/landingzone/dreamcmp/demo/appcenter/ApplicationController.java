@@ -31,7 +31,7 @@ public class ApplicationController extends BaseController {
             List<Application> applications = new ArrayList<>();
 
             /* parallelize tasks */
-            int numThreads = Runtime.getRuntime().availableProcessors();
+            int numThreads = ApplicationEnum.values().length;
             ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 
             List<Future<Application>> futures = new ArrayList<>();
