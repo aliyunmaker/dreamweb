@@ -7,6 +7,7 @@
     <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_a3dy92ad72b.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css">
+    <link rel="stylesheet" href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap-icons_v1.3.0.css">
     <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/popper_v1.15.0.min.js"></script>
     <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
@@ -184,6 +185,41 @@
         <h2 class="pb-2 border-bottom fs-1 mt-3"></h2>
         <button type="submit" class="btn btn-primary mt-3">开始创建</button>
     </form>
+
+
+    <div class="row mt-4" id="creating" style="display: none;">
+        <div class="spinner-border ms-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="text-nowrap" style="width: 10rem;">
+            <span class="fs-5">创建中...</span>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="createSuccess" style="display: none;">
+        <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: rgb(4, 152, 70); width: 2.5rem;"></i>
+        <div class="text-nowrap mt-2" style="width: 10rem;">
+            <span class="fs-5">创建成功</span>
+        </div>
+        <div id="successDisplay" class="mt-3">
+            <p class="fs-5" id = "successMessage"></p>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="createFail" style="display: none;">
+        <i class="bi bi-x-circle-fill" style="font-size: 2rem; color: rgb(187, 18, 15); width: 2.5rem;"></i>
+        <div class="text-nowrap mt-2" style="width: 10rem;">
+            <span class="fs-5">创建失败</span>
+        </div>
+        <div id="failDisplay" class="mt-3">
+            <p class="fs-6" id = "failMessage"></p>
+        </div>
+    </div>
+
+    <div class="row mt-4 ms-2" id="createFailMessage" style="display: none;">
+        <label for="createFailMessageContent"></label>
+        <textarea id="createFailMessageContent" class="form-control"></textarea>
+    </div>
 </div>
 
 

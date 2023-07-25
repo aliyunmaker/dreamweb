@@ -130,6 +130,10 @@ function getAccountNameSuffix() {
 }
 
 function createCloudAccount(){
+  $("#createFail").hide();
+  $("#createFailMessage").hide();
+  $("#createSuccess").hide();
+  $("#creating").show();
   var accountNamePrefix = document.getElementById("accountName").value;
   var displayName = document.getElementById("memberName").value;
   var payerAccountUid = $("input[name='paymentMethod']:checked").val();
@@ -152,14 +156,17 @@ function createCloudAccount(){
     type: "POST",
     data: params,
     success: function (result) {
-        console.log("result: " + result);
+      $("#creating").hide();
       if (result.success) {
         var accountUid = result.data;
         console.log("accountUid: " + accountUid);
-        alert("创建成功");
+        document.getElementById("successMessage").textContent = "accountUid" + "\xa0:\xa0" + accountUid;
+        $("#createSuccess").show();
       } else {
         console.log("data.message: " + result.errorMsg);
-        alert(result.errorMsg);
+        $("#createFail").show();
+        document.getElementById("failMessage").textContent = result.errorMsg;
+//        alert(result.errorMsg);
       }
     }
   })
