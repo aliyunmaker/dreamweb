@@ -1,4 +1,4 @@
-var rules;
+var ruleDetail;
 
 $(document).ready(function() {
     $("#ruleDetailPage").append(
@@ -13,8 +13,8 @@ $(document).ready(function() {
         success: function(result){
             if (result.success) {
                 console.log(result.data);
-                rule = result.data;
-                showRuleDetailPage(rule);
+                ruleDetail = result.data;
+                showRuleDetailPage(ruleDetail);
             } else {
                 alert(result.errorMsg);
             }
@@ -22,7 +22,7 @@ $(document).ready(function() {
     });
 });
 
-function showRuleDetailPage(rule) {
+function showRuleDetailPage(ruleDetail) {
     var page = $("#ruleDetailPage");
     page.empty();
     var skeleton = `
@@ -40,6 +40,13 @@ function showRuleDetailPage(rule) {
     page.append(skeleton);
     listAccounts();
     createCards(accountName);
+}
+
+// 返回daily inspection page
+function showDailyInspectionPage() {
+    var page = "daily_inspection/daily_inspection.html";
+    var iframe = parent.document.getElementById("iframe");
+    iframe.setAttribute("src", page);
 }
 
 function getDocumentByModule(){

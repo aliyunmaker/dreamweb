@@ -30,8 +30,8 @@ function showDailyInspectionPage(rules) {
     <div class="row pb-2 d-flex">
         <h5 class="pb-3 fs-2">Config Rules</h5>
         <div class="col">
-            <button type="button" class="btn btn-success mr-2" onclick="activateRules()">Activate Rules</button>
-            <button type="button" class="btn btn-danger" onclick="deactivateRules()">Deactivate Rules</button>
+            <button type="button" class="btn btn-primary mr-2" onclick="activateRules()">Activate Rules</button>
+            <button type="button" class="btn btn-secondary" onclick="deactivateRules()">Deactivate Rules</button>
         </div>
         <div class="row pb-2 mt-2" id="dailyInspectionBody">
         </div>
@@ -65,7 +65,7 @@ function listRules(rules) {
                 `<span class="badge text-bg-danger">NON-COMPLIANT(${rule.compliance.count})</span>`}</td>
             <td>${rule.state === "ACTIVE" ?
                 `<p class="text-dark">ACTIVE</p>` :
-                `<p class="text-secondary">INACTIVE</p>`}</td>
+                `<p class="text-secondary">${rule.state.toUpperCase()}</p>`}</td>
         </tr>`;
         $("#dailyInspectionBody tbody").append(row);
     }
@@ -113,9 +113,8 @@ function activateRules() {
         ruleIds: ruleIds
     }
     $.ajax({
-        url: "../" + "inspection/activateRules.do",
+        url: "../inspection/activateRules.do",
         data: params,
-        type: "POST",
         success: function (result) {
           if (result.success) {
             $("#activateModal").modal('show');
@@ -132,9 +131,8 @@ function deactivateRules() {
         ruleIds: ruleIds
     }
     $.ajax({
-        url: "../" + "inspection/deactivateRules.do",
+        url: "../inspection/deactivateRules.do",
         data: params,
-        type: "POST",
         success: function (result) {
           if (result.success) {
             $("#deactivateModal").modal('show');
@@ -144,6 +142,12 @@ function deactivateRules() {
           }
         }
     })
+}
+
+function getRuleDetail(ruleId) {
+    var page = "daily_inspection/rule_detail.html?ruleId=" + ruleId;
+    var iframe = parent.document.getElementById("iframe");
+    iframe.setAttribute("src", page);
 }
 
 function getDocumentByModule(){

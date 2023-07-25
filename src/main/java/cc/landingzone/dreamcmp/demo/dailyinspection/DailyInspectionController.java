@@ -56,6 +56,7 @@ public class DailyInspectionController extends BaseController {
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }
+        outputToJSON(response, result);
     }
 
     @RequestMapping("/deactivateRules.do")
@@ -70,5 +71,6 @@ public class DailyInspectionController extends BaseController {
             result.setSuccess(false);
             result.setErrorMsg(e.getMessage());
         }
+        outputToJSON(response, result);
     }
 }

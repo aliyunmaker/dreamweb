@@ -36,13 +36,12 @@ public class DailyInspectionUtil {
     }
 
     public static String activateRules(String ruleIds) throws Exception {
-//        com.aliyun.config20200907.Client client = ClientHelper.createConfigClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-//        com.aliyun.config20200907.models.ActiveConfigRulesRequest activeConfigRulesRequest = new com.aliyun.config20200907.models.ActiveConfigRulesRequest()
-//                .setConfigRuleIds(ruleIds);
-//        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-//
-//        return client.activeConfigRulesWithOptions(activeConfigRulesRequest, runtime).getBody().getRequestId();
-        return null;
+        com.aliyun.config20200907.Client client = ClientHelper.createConfigClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.config20200907.models.ActiveConfigRulesRequest activeConfigRulesRequest = new com.aliyun.config20200907.models.ActiveConfigRulesRequest()
+                .setConfigRuleIds(ruleIds);
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+
+        return client.activeConfigRulesWithOptions(activeConfigRulesRequest, runtime).getBody().getRequestId();
     }
 
     public static String deactivateRules(String ruleIds) throws Exception {
@@ -55,6 +54,7 @@ public class DailyInspectionUtil {
     }
 
     public static JSONObject getRule() {
-        return new JSONObject();
+        JSONObject ruleDetail = new JSONObject();
+        return ruleDetail;
     }
 }
