@@ -66,15 +66,15 @@ $(document).ready(function() {
                     <tbody>
                     </tbody>
                 </table>
-            `;
-            $("#appDetailBody").append(table);
-            $("#appDetailBody tbody").append(
-            `<div class="position-absolute top-50 start-50 translate-middle">
-                <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>`
-            );
+                `;
+                $("#appDetailBody").append(table);
+                $("#appDetailBody tbody").append(
+                `<div class="position-absolute top-50 start-50 translate-middle">
+                    <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>`
+                );
             } else {
                 alert(result.errorMsg);
             }
@@ -238,7 +238,7 @@ function getSessionPolicy(serviceName, resourceId) {
 // 展示policy内容
 function showSessionPolicy(serviceName, resourceId, sessionPolicy) {
     $("#sessionPolicyModal-" + serviceName + "-" + resourceId).modal('show');
-    // editor[serviceName][resourceId].setSize(null, 350);
+    editor[serviceName][resourceId].setSize(null, 400);
     editor[serviceName][resourceId].setValue(sessionPolicy);
 }
 
