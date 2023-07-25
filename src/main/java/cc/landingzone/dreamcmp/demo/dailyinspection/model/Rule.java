@@ -8,8 +8,8 @@ import lombok.Data;
  */
 @Data
 public class Rule {
-    private String name;
     private String id;
+    private String name;
     private JSONObject compliance;
     private String state;
 }

@@ -1,6 +1,12 @@
+var ruleId;
 var ruleDetail;
+var riskLevelWords = ["High", "Mid", "Low"];
 
 $(document).ready(function() {
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    ruleId = urlParams.get('ruleId');
+
     $("#ruleDetailPage").append(
     `<div class="position-absolute top-50 start-50 translate-middle">
         <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
@@ -8,8 +14,14 @@ $(document).ready(function() {
         </div>
     </div>`
     );
+
+    var params = {
+        ruleId: ruleId
+      }
+    
     $.ajax({
-        url: "../inspection/getRuleDetail.do",
+        url: "../inspection/getRuleDetail.do?",
+        data: params,
         success: function(result){
             if (result.success) {
                 console.log(result.data);
@@ -30,16 +42,83 @@ function showRuleDetailPage(ruleDetail) {
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#" onclick="showDailyInspectionPage()">Daily Inspection</a></li>
-                <li class="breadcrumb-item" aria-current="page">Rule detail</li>
+                <li class="breadcrumb-item" aria-current="page">${ruleId}</li>
             </ol>
         </nav>
-        <h5 class="pb-3 fs-2">Resources - ${appName}</h5>
-        <div class="row pb-2" id="appDetailBody">
+        <h5 class="pb-3 fs-2">${ruleDetail.basicAttrs.name}</h5>
+        <div class="row pb-2" id="ruleDetailBody">
         </div>
     </div>`;
     page.append(skeleton);
-    listAccounts();
-    createCards(accountName);
+    
+    var content = `
+    <h4 class="pb-2 fs-4">Basic Information</h4>
+      <div class="row pb-2">
+        <p class="col-2 fw-semibold">
+          Rule ID
+        </p>
+        <p class="col-4">
+          ${ruleDetail.basicAttrs.id}
+        </p>
+        <p class="col-2 fw-semibold">
+          Rule Name
+        </p>
+        <p class="col-4">
+          ${ruleDetail.basicAttrs.name}
+        </p>
+        <p class="col-2 fw-semibold">
+          Create Time
+        </p>
+        <p class="col-4">
+          ${ruleDetail.basicAttrs.createTime}
+        </p>
+        <p class="col-2 fw-semibold">
+          Risk Level
+        </p>
+        <p class="col-4">
+          ${riskLevelWords[parseInt(ruleDetail.basicAttrs.riskLevel) - 1]}
+        </p>
+        <p class="col-2 fw-semibold">
+          Description
+        </p>
+        <p class="col-4">
+          ${ruleDetail.basicAttrs.description}
+        </p>
+      </div>
+      <h4 class="pb-2 fs-4">Inspection Result</h4>
+      <table class="table" id=inspection-result-table>
+        <thead>
+        <tr>
+            <th scope="col">Resource ID/Name</th>
+            <th scope="col">Resource Type</th>
+            <th scope="col">Compliance</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>`;
+      $("#ruleDetailBody").append(content);
+
+    ruleDetail.inspectionResult.forEach(function(resource) {
+        var row = `
+        <tr>
+            <td>
+              <div><a target="_blank" class="text-decoration-none" href="../inspection/signInResourceInfo.do?resourceId=${resource.id}&resourceType=${resource.resourceType}&regionId=${resource.regionId}">${resource.id}</a></div>
+              <div>${resource.name}</div>
+            </td>
+            <td>${resource.resourceType}</td>
+            <td>${resource.compliance === "COMPLIANT" ? 
+            `<span class="badge text-bg-success">${resource.compliance}</span>` : 
+            resource.compliance === "NON_COMPLIANT" ? 
+            `<span class="badge text-bg-danger">${resource.compliance}</span>` : 
+            `<span class="badge text-bg-secondary">${resource.compliance}</span>`}</td>
+        </tr>`;
+    $("#inspection-result-table tbody").append(row);
+    });
+}
+
+function jumpToResourceInfo(resourceId, resourceType, regionId) {
+
 }
 
 // 返回daily inspection page

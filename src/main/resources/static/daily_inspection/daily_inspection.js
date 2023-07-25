@@ -61,8 +61,8 @@ function listRules(rules) {
         <tr>
             <td><a href=# class="text-decoration-none" onclick="getRuleDetail('${rule.id}')">${rule.name}</a></td>
             <td>${rule.compliance.complianceType === "COMPLIANT" ? 
-                `<span class="badge text-bg-success">COMPLIANT(${rule.compliance.count})</span>` : 
-                `<span class="badge text-bg-danger">NON-COMPLIANT(${rule.compliance.count})</span>`}</td>
+                `<span class="badge text-bg-success">${rule.compliance.complianceType}(${rule.compliance.count})</span>` : 
+                `<span class="badge text-bg-danger">${rule.compliance.complianceType}(${rule.compliance.count})</span>`}</td>
             <td>${rule.state === "ACTIVE" ?
                 `<p class="text-dark">ACTIVE</p>` :
                 `<p class="text-secondary">${rule.state.toUpperCase()}</p>`}</td>
