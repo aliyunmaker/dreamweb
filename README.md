@@ -49,10 +49,11 @@ dreamweb.env_online=false
 # company account
 dreamweb.aliyun_accesskeyid=
 dreamweb.aliyun_accesskeysecret=
-dreamweb.aliyun_userid=
-dreamweb.aliyun_sso_userid=
-dreamweb.aws_userid=
 dreamweb.idp_entityid=
 dreamweb.logout_success_url=<your_logout_success_url>
+dreamcmp.scim_key=
+dreamcmp.login_username= 
+dreamcmp.login_password= 
+dreamcmp.dkms_instance_id= 
 ```
 
