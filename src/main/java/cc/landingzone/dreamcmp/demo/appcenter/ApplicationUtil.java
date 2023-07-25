@@ -1,23 +1,21 @@
 package cc.landingzone.dreamcmp.demo.appcenter;
 
-import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
-import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
-
 import cc.landingzone.dreamcmp.common.ApplicationEnum;
 import cc.landingzone.dreamcmp.common.CommonConstants;
 import cc.landingzone.dreamcmp.common.ResourceUtil;
 import cc.landingzone.dreamcmp.common.ServiceEnum;
 import cc.landingzone.dreamcmp.demo.appcenter.model.Application;
 import cc.landingzone.dreamcmp.demo.appcenter.model.Service;
-
+import com.aliyun.tag20180828.models.ListResourcesByTagResponseBody;
+import com.aliyun.tag20180828.models.ListTagResourcesResponseBody;
 import org.springframework.stereotype.Component;
-
-import static cc.landingzone.dreamcmp.common.ClientHelper.createTagClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static cc.landingzone.dreamcmp.common.ClientHelper.createTagClient;
 
 /**
  * Utils for application center
