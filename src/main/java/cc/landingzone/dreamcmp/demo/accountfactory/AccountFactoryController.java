@@ -7,6 +7,7 @@ import com.aliyun.governance20210120.models.ListAccountFactoryBaselinesResponseB
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -100,6 +101,10 @@ public class AccountFactoryController extends BaseController {
                 payerAccountUid = Long.valueOf(request.getParameter("payerAccountUid"));
             }
             String baselineId = request.getParameter("baselineId");
+            Assert.notNull(accountNamePrefix, "accountNamePrefix can not be null");
+            Assert.notNull(displayName, "displayName can not be null");
+            Assert.notNull(folderId, "folderId can not be null");
+            Assert.notNull(baselineId, "baselineId can not be null");
             Long accountId = GovernanceHelper.enrollAccount(accountNamePrefix, displayName, folderId, payerAccountUid, baselineId);
             result.setData(accountId);
         }catch (Exception e){
