@@ -342,6 +342,11 @@
 			<artifactId>governance20210120</artifactId>
 			<version>0.0.4</version>
 		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>resourcedirectorymaster20220419</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 		<!-- aliyun sdk end -->
 	</dependencies>
 

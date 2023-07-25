@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_a3dy92ad72b.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css">
+    <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/popper_v1.15.0.min.js"></script>
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+
+    <script type="text/javascript" src="account_factory.js"></script>
+
+    <style>
+        .iframe-container {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .nav-link:hover {
+            background-color: #a5b6c6;
+        }
+
+        .active {
+            background-color: #8899f0;
+        }
+
+        .card.selected {
+            border-color: blue;
+            box-shadow: 0 0 5px blue;
+        }
+
+        #offcanvas-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        #offcanvasNavbar .offcanvas-body {
+            padding-top: 0;
+        }
+
+        .custom-button {
+          padding: 2px;
+          border: 1px solid #ced4da; /* 使用类似输入框组件的边框颜色 */
+          border-radius: 0.25rem; /* 使用类似输入框组件的边框圆角 */
+          background-color: transparent !important; /* 取消点击加号图标时的背景特效 */
+        }
+
+        .custom-button:focus {
+          outline: none; /* 取消按钮获得焦点时的虚线框 */
+          box-shadow: none; /* 取消按钮获得焦点时的阴影效果 */
+        }
+    </style>
+
+
+</head>
+
+<body>
+<main>
+    <nav class="navbar navbar-expand bg-body-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="iconfont icon-account-plus" style="font-size: 1.3rem;"></i>
+                Create Cloud Account</a>
+        </div>
+    </nav>
+
+    <button id="offcanvas-btn" class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" onclick="getDocumentByModule()">
+        Reference
+    </button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+         style="--bs-offcanvas-width: 40%;">
+        <div class="offcanvas-header">
+            <h3 class="offcanvas-title">参考说明</h3>
+            <button type="button" class="btn-close " data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+            <label for="documentContent"></label>
+            <div id="documentContent" style="height: 95%"></div>
+            <!--                    <textarea id="documentContent" class="form-control"></textarea>-->
+        </div>
+    </div>
+</main>
+
+<div class="px-5 py-5">
+    <form id="resource_supply" onsubmit="return createCloudAccount()" role="form">
+        <div class="row mb-3">
+            <h5>基础信息</h5>
+        </div>
+        <div class="form-group row mt-4">
+            <label for="accountName" class="col-sm-2 col-form-label">账号名称：</label>
+            <div class="col-sm-10">
+                <div class="d-flex align-items-center">
+                    <input class="form-control" id="accountName" placeholder="请输入账号名称">
+                    <span id="accountNameSuffix" style="font-family: inherit; font-size: inherit; margin-left: 10px;white-space: nowrap;"></span>
+                </div>
+                <div class="form-text">成员账号的唯一标识</div>
+            </div>
+        </div>
+        <div class="form-group row mt-4">
+            <label for="memberName" class="col-sm-2 col-form-label">成员名称：</label>
+            <div class="col-sm-10">
+                <input class="form-control" id="memberName" placeholder="请输入成员名称">
+                <div class="form-text">在资源目录中显示名称，可随时修改</div>
+            </div>
+        </div>
+        <div class="form-group row mt-4">
+            <label for="folderId" class="col-sm-2 col-form-label">账号所属资源夹：</label>
+            <div class="col-sm-10">
+<!--                <select id="dropdown" class="form-select">-->
+<!--                    <option selected disabled value="">请选择所属资源夹</option>-->
+<!--                </select>-->
+<!--                <div id="treeview" style="display: none;"></div>-->
+
+                <div class="accordion accordion-flush" id="folderId">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed custom-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+                                    aria-expanded="false" aria-controls="flush-collapseOne">
+                                <div class="form-text fs-6" id="folderName">请选择所属资源夹</div>
+                            </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body">
+                                <div id="treeview"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<!--                <div class="dropdown">-->
+<!--                    <button class="btn btn-default dropdown-toggle" type="button" id="selectButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">-->
+<!--                        <span id="selectedOption">请选择所属资源</span>-->
+<!--                        <span class="caret"></span>-->
+<!--                    </button>-->
+<!--                    <ul class="dropdown-menu" aria-labelledby="selectButton">-->
+<!--                            <div id="treeView"></div>-->
+<!--                    </ul>-->
+<!--                </div>-->
+            </div>
+        </div>
+
+        <div class="form-group row mt-4">
+            <label for="paymentMethod1" class="col-sm-2 col-form-label">结算账号：</label>
+            <div class="col-sm-10">
+                <input type="radio" class="form-check-input" id="paymentMethod1" name="paymentMethod" value="" checked>
+                <label class="form-check-label" for="paymentMethod1" id="paymentMethod1Desc">使用管理账号为新成员付款</label>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="paymentMethod2" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input type="radio" class="form-check-input" id="paymentMethod2" name="paymentMethod" value="myself">
+                <label class="form-check-label" for="paymentMethod2">新成员自主付款</label>
+            </div>
+        </div>
+
+        <div class="mt-4" id = "baselinesPage">
+<!--            <div class="form-group row">-->
+<!--                <label for="baseline1" class="col-sm-2 col-form-label">基线选择：</label>-->
+<!--                <div class="col-sm-10">-->
+<!--                    <input type="radio" class="form-check-input" id="baseline1" name="baseline" value="" checked>-->
+<!--                    <label class="form-check-label" for="baseline1">基础基线</label>-->
+<!--                    <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"-->
+<!--                       style="text-decoration: none;" onclick="getTemplateByResourceType('terraform')">查看模板</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="form-group row">-->
+<!--                <label for="baseline2" class="col-sm-2 col-form-label"></label>-->
+<!--                <div class="col-sm-10">-->
+<!--                    <input type="radio" class="form-check-input" id="baseline2" name="baseline" value="myself">-->
+<!--                    <label class="form-check-label" for="baseline2">网络基线</label>-->
+<!--                    <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"-->
+<!--                       style="text-decoration: none;" onclick="getTemplateByResourceType('terraform')">查看模板</a>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+
+        <h2 class="pb-2 border-bottom fs-1 mt-3"></h2>
+        <button type="submit" class="btn btn-primary mt-3">开始创建</button>
+    </form>
+</div>
+
+
+
+
+
+</body>
+
+</html>
