@@ -1,4 +1,6 @@
 var folderId;
+var masterAccountName;
+var masterAccountId;
 $(document).ready(function () {
   getAccountNameSuffix();
   getFileTree();
@@ -7,7 +9,7 @@ $(document).ready(function () {
 
 });
 
-function getBaselines(){
+function getBaselines() {
   $.ajax({
     url: "../" + "accountFactory/getBaselines.do",
     type: "POST",
@@ -15,27 +17,27 @@ function getBaselines(){
     success: function (result) {
       if (result.success) {
         var baselines = result.data;
-        for(var i=0; i<baselines.length; i++){
+        for (var i = 0; i < baselines.length; i++) {
           baselineName = baselines[i].split("/")[0];
           baselineId = baselines[i].split("/")[1];
-          if(i == 0){
+          if (i == 0) {
             $("#baselinesPage").append(
               `<div class="form-group row">
               <label for="baseline1" class="col-sm-2 col-form-label">基线选择：</label>
               <div class="col-sm-10">
-                  <input type="radio" class="form-check-input" id="baseline${i+1}" name="baseline" value="${baselineId}" checked>
-                  <label class="form-check-label" for="baseline${i+1}">${baselineName}</label>
+                  <input type="radio" class="form-check-input" id="baseline${i + 1}" name="baseline" value="${baselineId}" checked>
+                  <label class="form-check-label" for="baseline${i + 1}">${baselineName}</label>
                   <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
                      style="text-decoration: none;" onclick="getBaselineDetails('${baselineId}')">查看模板</a>
               </div>
           </div>`);
-          }else{
+          } else {
             $("#baselinesPage").append(
               `<div class="form-group row">
               <label for="baseline1" class="col-sm-2 col-form-label"></label>
               <div class="col-sm-10">
-                  <input type="radio" class="form-check-input" id="baseline${i+1}" name="baseline" value="${baselineId}">
-                  <label class="form-check-label" for="baseline${i+1}">${baselineName}</label>
+                  <input type="radio" class="form-check-input" id="baseline${i + 1}" name="baseline" value="${baselineId}">
+                  <label class="form-check-label" for="baseline${i + 1}">${baselineName}</label>
                   <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
                      style="text-decoration: none;" onclick="getBaselineDetails('${baselineId}')">查看模板</a>
               </div>
@@ -45,7 +47,7 @@ function getBaselines(){
 
         }
 
-      }else{
+      } else {
         console.log("data.message: " + result.errorMsg);
         alert(result.errorMsg);
       }
@@ -60,8 +62,8 @@ function getMasterAccount() {
     data: {},
     success: function (result) {
       if (result.success) {
-        var masterAccountName = result.data.split("/")[0];
-        var masterAccountId = result.data.split("/")[1];
+        masterAccountName = result.data.split("/")[0];
+        masterAccountId = result.data.split("/")[1];
         var text = document.getElementById("paymentMethod1Desc").textContent;
         document.getElementById("paymentMethod1Desc").textContent = text + " (" + masterAccountName + ")";
         document.getElementById("paymentMethod1").value = masterAccountId;
@@ -129,7 +131,7 @@ function getAccountNameSuffix() {
   })
 }
 
-function createCloudAccount(){
+function createCloudAccount() {
   $("#createFail").hide();
   $("#createFailMessage").hide();
   $("#createSuccess").hide();
@@ -166,7 +168,7 @@ function createCloudAccount(){
         console.log("data.message: " + result.errorMsg);
         $("#createFail").show();
         document.getElementById("failMessage").textContent = result.errorMsg;
-//        alert(result.errorMsg);
+        //        alert(result.errorMsg);
       }
     }
   })
@@ -174,7 +176,7 @@ function createCloudAccount(){
   return false;
 }
 
-function getBaselineDetails(baselineId){
+function getBaselineDetails(baselineId) {
   var params = {
     baselineId: baselineId
   }
@@ -187,30 +189,55 @@ function getBaselineDetails(baselineId){
         var baselineDetails = result.data;
         console.log(baselineDetails);
         document.getElementById('baselineTitle').innerHTML = baselineDetails.name;
-        if (baselineDetails.name === "网络基线") {
+        var baselineItems = baselineDetails.baselineItems;
+        if (baselineDetails.name == "基础基线") {
+          showbaselineDetailPage(baselineItems);
+        } else if (baselineDetails.name == "网络基线") {
           showNetworkBaselineDetail(baselineDetails);
         } else {
-        var baselineItems = baselineDetails.baselineItems;
-        for(var i=0; i < baselineItems.length; i++){
-          var config = baselineItems[i].config;
-          var itemName = baselineItems[i].itemName;
-          console.log("config: " + config);
-            console.log("itemName: " + itemName);
-          if(itemName == "ACS-BP_ACCOUNT_FACTORY_ACCOUNT_CONTACT"){
-            console.log("config: " + config);
-            console.log("itemName: " + itemName);
-            $("baselineDetailPage").append(``);
-          }
-
+          console.log("baselineDetails.name: " + baselineDetails.name);
+          alert("暂不支持该基线");
         }
-      }
-
       } else {
         console.log("data.message: " + result.errorMsg);
         alert(result.errorMsg);
       }
     }
   })
+}
+
+function showbaselineDetailPage(baselineItems) {
+  for (var i = 0; i < baselineItems.length; i++) {
+    var config = baselineItems[i].config;
+    var itemName = baselineItems[i].itemName;
+    //    console.log("config: " + config);
+    //    console.log("itemName: " + itemName);
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_ACCOUNT_CONTACT") {
+      console.log("config: " + config);
+      console.log("itemName: " + itemName);
+      showAccountContact(config);
+    }
+
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_ACCOUNT_NOTIFICATION") {
+      console.log("config: " + config);
+      console.log("itemName: " + itemName);
+      showAccountNotification(config);
+    }
+
+
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_PRESET_TAG"){
+      console.log("config: " + config);
+      console.log("itemName: " + itemName);
+      showPresetTag(config);
+    }
+
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_RAM_ROLE"){
+      console.log("config: " + config);
+      console.log("itemName: " + itemName);
+      showRamRole(config);
+    }
+  }
+
 }
 
 function showNetworkBaselineDetail(baselineDeatils) {
@@ -435,12 +462,193 @@ function showNetworkBaselineDetail(baselineDeatils) {
             }
           }
         }
-        
+
       }
     }
   }
 }
 
+function showAccountContact(config) {
+  var title = "账号联系人"
+  var col1 = "姓名";
+  var col2 = "邮箱";
+  var col3 = "手机";
+  var col4 = "职位";
+  var htmlContent = `<div class="card mb-3" style="width: 100%;">
+        <div class="card-body">
+            <h5 class="card-title mb-3">${title}</h5>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">${col1}</th>
+                        <th scope="col">${col2}</th>
+                        <th scope="col">${col3}</th>
+                        <th scope="col">${col4}</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+  var contacts = config.Contacts;
+  for (var j = 0; j < contacts.length; j++) {
+    var email = contacts[j].Email;
+    var position = contacts[j].Position;
+    var mobile = contacts[j].Mobile;
+    var name = contacts[j].Name;
+    htmlContent += `<tr>
+          <th scope="row">${name}</th>
+          <td>${email}</td>
+          <td>${mobile}</td>
+          <td>${position}</td>
+      </tr>`;
+  }
+  htmlContent += `</tbody>
+        </table>
+    </div>
+</div>`;
+  $("#baselineDetailPage").append(htmlContent);
+}
+
+function showAccountNotification(config) {
+  var title = "消息通知"
+  var col1 = "通知类型";
+  var col2 = "联系方式";
+  var col3 = "联系人";
+  var htmlContent = `<div class="card mb-3" style="width: 100%;">
+        <div class="card-body">
+            <h5 class="card-title mb-3">${title}</h5>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">${col1}</th>
+                        <th scope="col">${col2}</th>
+                        <th scope="col">${col3}</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+  var notifications = config.Notifications;
+  for (var j = 0; j < notifications.length; j++) {
+    var groupKey = notifications[j].GroupKey;
+    var notificationType = "";
+    if (groupKey == "account_msg") {
+      notificationType = "账户资金相关信息";
+    } else if (groupKey == "security_msg") {
+      notificationType = "安全消息";
+    } else if (groupKey == "gztz") {
+      notificationType = "故障消息";
+    }
+    var contacts = notifications[j].Contacts;
+    var contact = "";
+    for (var k = 0; k < contacts.length; k++) {
+      contact += contacts[k].Name + " ";
+    }
+    var contactMethod = "";
+    if (notifications[j].EmailStatus == "1") {
+      contactMethod += "邮箱，";
+    }
+    if (notifications[j].PmsgStatus == "1") {
+      contactMethod += "站内信，";
+    }
+    if (notifications[j].SmsStatus == "1") {
+      contactMethod += "短信，";
+    }
+    contactMethod = contactMethod.substring(0, contactMethod.length - 1);
+
+    htmlContent += `<tr>
+          <th scope="row">${notificationType}</th>
+          <td>${contactMethod}</td>
+          <td>${contact}</td>
+      </tr>`;
+  }
+  htmlContent += `</tbody>
+        </table>
+    </div>
+</div>`;
+  $("#baselineDetailPage").append(htmlContent);
+}
+
+
+function showPresetTag(config) {
+  var title = "预置标签";
+  var col1 = "标签键";
+  var col2 = "标签值";
+  var htmlContent = `<div class="card mb-3" style="width: 100%;">
+        <div class="card-body">
+            <h5 class="card-title mb-3">${title}</h5>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">${col1}</th>
+                        <th scope="col">${col2}</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+  var presetTags = config.PresetTags;
+  for (var j = 0; j < presetTags.length; j++) {
+    var key = presetTags[j].Key;
+    var values = presetTags[j].Values;
+    var valuesDisplay = "";
+    for (var k = 0; k < values.length; k++) {
+      valuesDisplay += values[k] + ",";
+    }
+    valuesDisplay = valuesDisplay.substring(0, valuesDisplay.length - 1);
+
+    htmlContent += `<tr>
+          <th scope="row">${key}</th>
+          <td>${valuesDisplay}</td>
+      </tr>`;
+  }
+  htmlContent += `</tbody>
+        </table>
+    </div>
+</div>`;
+  $("#baselineDetailPage").append(htmlContent);
+}
+
+function showRamRole(config){
+  var title = "RAM角色";
+  var col1 = "角色名称";
+  var col2 = "角色授权";
+  var col3 = "授信实体";
+  var col4 = "最大会话时间";
+  var htmlContent = `<div class="card mb-3" style="width: 100%;">
+        <div class="card-body">
+            <h5 class="card-title mb-3">${title}</h5>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">${col1}</th>
+                        <th scope="col">${col2}</th>
+                        <th scope="col">${col3}</th>
+                        <th scope="col">${col4}</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+  console.log(config);
+  var enableRoles = config.EnableRoles;
+  console.log("enableRoles: " + enableRoles);
+  for (var j = 0; j < enableRoles.length; j++) {
+    var name = enableRoles[j].Name;
+    var durationSeconds = enableRoles[j].DurationSeconds;
+    var systemPolicies = enableRoles[j].SystemPolicies;
+    var systemPoliciesDisplay = "";
+    for (var k = 0; k < systemPolicies.length; k++) {
+      systemPoliciesDisplay += systemPolicies[k] + ",";
+    }
+    systemPoliciesDisplay = systemPoliciesDisplay.substring(0, systemPoliciesDisplay.length - 1);
+    var trustedEntity = "当前企业管理账号（" + masterAccountId + ")";
+
+    htmlContent += `<tr>
+          <th scope="row">${name}</th>
+          <td>${systemPoliciesDisplay}</td>
+          <td>${trustedEntity}</td>
+          <td>${durationSeconds}</td>
+      </tr>`;
+  }
+  htmlContent += `</tbody>
+        </table>
+    </div>
+</div>`;
+  $("#baselineDetailPage").append(htmlContent);
+}
 
 function getDocumentByModule() {
   var params = {
