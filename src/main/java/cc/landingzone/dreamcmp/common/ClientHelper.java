@@ -140,6 +140,14 @@ public class ClientHelper {
         return new com.aliyun.governance20210120.Client(config);
     }
 
+    public static com.aliyun.resourcedirectorymaster20220419.Client createRDClient(String accessKeyId, String accessKeySecret) throws Exception {
+        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
+                .setAccessKeyId(accessKeyId)
+                .setAccessKeySecret(accessKeySecret);
+        config.endpoint = "resourcedirectory.aliyuncs.com";
+        return new com.aliyun.resourcedirectorymaster20220419.Client(config);
+    }
+
     public static com.aliyun.config20200907.Client createConfigClient(String accessKeyId, String accessKeySecret) throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
                 .setAccessKeyId(accessKeyId)
@@ -147,4 +155,7 @@ public class ClientHelper {
         config.endpoint = "config.cn-shanghai.aliyuncs.com";
         return new com.aliyun.config20200907.Client(config);
     }
+
+
+
 }
