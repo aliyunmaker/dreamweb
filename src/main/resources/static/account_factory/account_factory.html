@@ -88,7 +88,14 @@
     </div>
 </main>
 
-<div class="px-5 py-5">
+<div id="loading" class="d-flex justify-content-center align-items-center vh-100">
+    <!-- 使用 Bootstrap 的加载图标类 -->
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div class="px-5 py-5" id="content" style="display: none;">
     <form id="resource_supply" onsubmit="return createCloudAccount()" role="form">
         <div class="row mb-3">
             <h5>基础信息</h5>
