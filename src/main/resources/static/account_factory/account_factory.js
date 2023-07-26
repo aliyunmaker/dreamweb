@@ -222,9 +222,9 @@ function showNetworkBaselineDetail(baselineDeatils) {
     for (var configs in baselineItem.config) {
       for (var config of baselineItem.config[configs]) {
         var content = `
-        <div class="card">
-          <div class="card-body" id="card-body-${config.Name}">
-            <h5 class="card-title">${baselineItem.itemName}</h5>
+        <div class="card mb-4" id="card-${config.Name}">
+          <div class="card-body">
+            <h4 class="card-title mb-4">${baselineItem.itemName}</h4>
           </div>
         </div>`;
         $(".offcanvas-body").append(content);
@@ -256,14 +256,14 @@ function showNetworkBaselineDetail(baselineDeatils) {
                 ${config.Description}
               </p>
             </div>
-            <div>
-            <h6 class="pb-2 fs-4">VSwitches</h6>
-            <table class="table" id=vswitches-table>
+            <div id="vswitches">
+            <h5 class="card-subtitle mb-2">VSwitches</h5>
+            <table class="table" id="vswitches-table">
               <thead>
               <tr>
                   <th scope="col">Name</th>
-                  <th scope="col">ZoneId</th>
-                  <th scope="col">CidrBlock</th>
+                  <th scope="col">Zone Id</th>
+                  <th scope="col">Cidr Block</th>
               </tr>
               </thead>
               <tbody>
@@ -273,25 +273,167 @@ function showNetworkBaselineDetail(baselineDeatils) {
             <div id="acls">
             </div>
             `;
-          $("#card-body-"+config.Name).append(cardBodyContent);
-          var acl = `
-          <h6 class="pb-2 fs-4">ACL</h6>
+          $("#card-"+config.Name+" .card-body").append(cardBodyContent);
+          
+          for (var vswitch of config.VSwitches) {
+            var row = `
+            <tr>
+              <td>${vswitch.Name}</td>
+              <td>${vswitch.ZoneId}</td>
+              <td>${vswitch.CidrBlock}</td>
+            </tr>`;
+            $("#vswitches-table tbody").append(row);
+          }
+
+          for (var networkAcl of config.NetworkAcls) {
+            var acl = `
+            <h5 class="card-subtitle mb-2">ACL</h5>
+            <div class="row pb-2">
+              <p class="col-2 fw-semibold">
+                Name
+              </p>
+              <p class="col-4">
+                ${networkAcl.Name}
+              </p>
+              <p class="col-2 fw-semibold">
+                Description
+              </p>
+              <p class="col-4">
+                ${networkAcl.Description}
+              </p>
+            </div>
+            <h5 class="card-subtitle mb-2">Ingress ACL Entries</h5>
+            <table class="table" id="ingress-acl-entries-table">
+              <thead>
+              <tr>
+                  <th scope="col">Order of effect</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Protocol</th>
+                  <th scope="col">Cidr IP</th>
+                  <th scope="col">Port</th>
+                  <th scope="col">Policy</th>
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            <h5 class="card-subtitle mb-2">Egress ACL Entries</h5>
+            <table class="table" id="egress-acl-entries-table">
+              <thead>
+              <tr>
+                  <th scope="col">Order of effect</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Protocol</th>
+                  <th scope="col">Cidr IP</th>
+                  <th scope="col">Port</th>
+                  <th scope="col">Policy</th>
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>`;
+            $("#card-"+config.Name+" #acls").append(acl);
+
+            for (var i in networkAcl.IngressAclEntries) {
+              var row = `
+              <tr>
+                <td>${parseInt(i)+1}</td>
+                <td>${networkAcl.IngressAclEntries[i].Name}</td>
+                <td>${networkAcl.IngressAclEntries[i].Protocol}</td>
+                <td>${networkAcl.IngressAclEntries[i].CidrIp}</td>
+                <td>${networkAcl.IngressAclEntries[i].Port}</td>
+                <td>${networkAcl.IngressAclEntries[i].Policy}</td>
+              </tr>`;
+              $("#ingress-acl-entries-table tbody").append(row);
+            }
+            for (var i in networkAcl.EgressAclEntries) {
+              var row = `
+              <tr>
+                <td>${parseInt(i)+1}</td>
+                <td>${networkAcl.EgressAclEntries[i].Name}</td>
+                <td>${networkAcl.EgressAclEntries[i].Protocol}</td>
+                <td>${networkAcl.EgressAclEntries[i].CidrIp}</td>
+                <td>${networkAcl.EgressAclEntries[i].Port}</td>
+                <td>${networkAcl.EgressAclEntries[i].Policy}</td>
+              </tr>`;
+              $("#egress-acl-entries-table tbody").append(row);
+            }
+          }
+        } else if (configs === "SecurityGroups") {
+          var cardBodyContent = `
           <div class="row pb-2">
-            <p class="col-2 fw-semibold">
-              Name
-            </p>
-            <p class="col-4">
-              ${config.RegionId}
-            </p>
             <p class="col-2 fw-semibold">
               Name
             </p>
             <p class="col-4">
               ${config.Name}
             </p>
+            <p class="col-2 fw-semibold">
+              Security Group Type
+            </p>
+            <p class="col-4">
+              ${config.Type}
+            </p>
+            <p class="col-2 fw-semibold">
+              VPC
+            </p>
+            <p class="col-4">
+              ${config.Vpc.Name}
+            </p>
+          </div>
+          <div id="ingress">
+            <h5 class="card-subtitle mb-2">Ingress</h5>
+            <table class="table" id="ingress-table">
+              <thead>
+              <tr>
+                  <th scope="col">Policy</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">IP Protocol</th>
+                  <th scope="col">PortRanges</th>
+                  <th scope="col">Cidr IPs</th>
+                  <th scope="col">Description</th>
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div id="egress">
+            <h5 class="card-subtitle mb-2">Egress</h5>
+            <table class="table" id="egress-table">
+              <thead>
+              <tr>
+                  <th scope="col">Policy</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">IP Protocol</th>
+                  <th scope="col">Port Ranges</th>
+                  <th scope="col">Cidr IPs</th>
+                  <th scope="col">Description</th>
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
           </div>`;
-        } else if (config === "SecurityGroups") {
-          s
+
+          $("#card-"+config.Name+" .card-body").append(cardBodyContent);
+
+          for (var rule of config.Rules) {
+            var row = `
+            <tr>
+              <td>${rule.Policy}</td>
+              <td>${rule.Priority}</td>
+              <td>${rule.IpProtocol}</td>
+              <td>${rule.PortRanges}</td>
+              <td>${rule.CidrIps}</td>
+              <td>${rule.Description}</td>
+            </tr>`;
+            if (rule.Type === "ingress") {
+              $("#ingress-table tbody").append(row);
+            } else if (rule.Type === "egress") {
+              $("#egress-table tbody").append(row);
+            }
+          }
         }
         
       }
