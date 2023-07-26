@@ -302,7 +302,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
                 ${networkAcl.Description}
               </p>
             </div>
-            <h5 class="card-subtitle mb-2">Ingress ACL Entries</h5>
+            <h6 class="card-subtitle mb-2">Ingress ACL Entries</h6>
             <table class="table" id="ingress-acl-entries-table">
               <thead>
               <tr>
@@ -317,7 +317,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
               <tbody>
               </tbody>
             </table>
-            <h5 class="card-subtitle mb-2">Egress ACL Entries</h5>
+            <h6 class="card-subtitle mb-2">Egress ACL Entries</h6>
             <table class="table" id="egress-acl-entries-table">
               <thead>
               <tr>
