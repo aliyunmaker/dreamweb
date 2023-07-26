@@ -44,16 +44,19 @@
             padding-top: 0;
         }
 
-        .custom-button {
-          padding: 2px;
-          border: 1px solid #ced4da; /* 使用类似输入框组件的边框颜色 */
-          border-radius: 0.25rem; /* 使用类似输入框组件的边框圆角 */
-          background-color: transparent !important; /* 取消点击加号图标时的背景特效 */
+        .accordion-button {
+          /* 保留下拉按钮的样式 */
         }
 
-        .custom-button:focus {
-          outline: none; /* 取消按钮获得焦点时的虚线框 */
-          box-shadow: none; /* 取消按钮获得焦点时的阴影效果 */
+
+        button.form-control.accordion-button {
+          /* 添加新的 class "accordion-button"，并修改背景、大小和边框样式 */
+          background-color: #fff;
+          border: 1px solid #ced4da;
+          border-radius: 0.25rem;
+          padding: 0.375rem 0.75rem;
+          font-size: 1rem;
+          line-height: 1.5;
         }
     </style>
 
@@ -128,7 +131,7 @@
                 <div class="accordion accordion-flush" id="folderId">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="form-control" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+                            <button class="accordion-button form-control" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
                                     aria-expanded="false" aria-controls="flush-collapseOne">
                                 <div class="form-text fs-6 text-start" id="folderName">请选择所属资源夹</div>
                             </button>
