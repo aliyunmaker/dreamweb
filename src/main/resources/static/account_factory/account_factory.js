@@ -1,6 +1,38 @@
 var folderId;
 var masterAccountName;
 var masterAccountId;
+var cloudProudct = {
+  "CEN_TR": "云企业网CEN-转发路由服务",
+  "PVTZ": "云解析 PrivateZone",
+  "CDN": "内容分发网络CDN",
+  "DCDN": "全站加速",
+  "PRIVATE_LINK": "私网连接 PrivateLink",
+  "KMS": "密钥管理服务KMS",
+  "NAT": "NAT网关",
+  "OSS": "对象存储OSS",
+  "NAS": "文件存储NAS",
+  "OTS": "表格存储Tablestore",
+  "LOG": "日志服务",
+  "PROMETHEUS": "Prometheus监控服务",
+  "SLB_ACCESS_LOG": "SLB-访问日志",
+  "SLB_HEALTH_LOG_STORAGE": "SLB-健康检测日志存储",
+  "SLB_HEALTH_DIAGNOSE": "SLB-健康检查探测",
+  "TAG_CREATEDBY": "创建者标签",
+  "SERVICE_CATALOG": "服务目录",
+  "DBS": "数据库备份DBS",
+  "DMS": "数据管理",
+  "DTS": "数据传输",
+  "ARMS": "应用实时监控服务",
+  "CMS_NAAM": "云监控-网络分析与监控",
+  "MNS": "消息服务MNS",
+  "FC": "函数计算",
+  "API_GATEWAY": "API网关",
+  "CMS": "云监控-基础云监控",
+  "CONFIG": "配置审计",
+  "SAS": "云安全中心（态势感知）",
+  "CDT": "云数据传输-VPC Peering-按流量计费（非跨境）",
+  "ACK_PRO": "容器服务Kubernetes版",
+}
 $(document).ready(function () {
   getAccountNameSuffix();
   getFileTree();
@@ -13,6 +45,7 @@ function getBaselines() {
   $.ajax({
     url: "../" + "accountFactory/getBaselines.do",
     type: "POST",
+    async: false,
     data: {},
     success: function (result) {
       if (result.success) {
@@ -59,6 +92,7 @@ function getMasterAccount() {
   $.ajax({
     url: "../" + "accountFactory/getMasterAccount.do",
     type: "POST",
+    async: false,
     data: {},
     success: function (result) {
       if (result.success) {
@@ -118,6 +152,7 @@ function getAccountNameSuffix() {
   $.ajax({
     url: "../" + "accountFactory/getAccountNameSuffix.do",
     type: "POST",
+    async: false,
     data: {},
     success: function (result) {
       if (result.success) {
@@ -224,14 +259,25 @@ function showbaselineDetailPage(baselineItems) {
       showAccountNotification(config);
     }
 
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_SUBSCRIBE_SERVICES") {
+      console.log("config: " + config);
+      console.log("itemName: " + itemName);
+      showSubscribeServices(config);
+    }
 
-    if (itemName == "ACS-BP_ACCOUNT_FACTORY_PRESET_TAG"){
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_RAM_USER_PASSWORD_POLICY") {
+      console.log("config: " + config);
+      console.log("itemName: " + itemName);
+      showRamUserPasswordPolicy(config);
+    }
+
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_PRESET_TAG") {
       console.log("config: " + config);
       console.log("itemName: " + itemName);
       showPresetTag(config);
     }
 
-    if (itemName == "ACS-BP_ACCOUNT_FACTORY_RAM_ROLE"){
+    if (itemName == "ACS-BP_ACCOUNT_FACTORY_RAM_ROLE") {
       console.log("config: " + config);
       console.log("itemName: " + itemName);
       showRamRole(config);
@@ -300,8 +346,8 @@ function showNetworkBaselineDetail(baselineDeatils) {
             <div id="acls">
             </div>
             `;
-          $("#card-"+config.Name+" .card-body").append(cardBodyContent);
-          
+          $("#card-" + config.Name + " .card-body").append(cardBodyContent);
+
           for (var vswitch of config.VSwitches) {
             var row = `
             <tr>
@@ -359,12 +405,12 @@ function showNetworkBaselineDetail(baselineDeatils) {
               <tbody>
               </tbody>
             </table>`;
-            $("#card-"+config.Name+" #acls").append(acl);
+            $("#card-" + config.Name + " #acls").append(acl);
 
             for (var i in networkAcl.IngressAclEntries) {
               var row = `
               <tr>
-                <td>${parseInt(i)+1}</td>
+                <td>${parseInt(i) + 1}</td>
                 <td>${networkAcl.IngressAclEntries[i].Name}</td>
                 <td>${networkAcl.IngressAclEntries[i].Protocol}</td>
                 <td>${networkAcl.IngressAclEntries[i].CidrIp}</td>
@@ -376,7 +422,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
             for (var i in networkAcl.EgressAclEntries) {
               var row = `
               <tr>
-                <td>${parseInt(i)+1}</td>
+                <td>${parseInt(i) + 1}</td>
                 <td>${networkAcl.EgressAclEntries[i].Name}</td>
                 <td>${networkAcl.EgressAclEntries[i].Protocol}</td>
                 <td>${networkAcl.EgressAclEntries[i].CidrIp}</td>
@@ -443,7 +489,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
             </table>
           </div>`;
 
-          $("#card-"+config.Name+" .card-body").append(cardBodyContent);
+          $("#card-" + config.Name + " .card-body").append(cardBodyContent);
 
           for (var rule of config.Rules) {
             var row = `
@@ -494,7 +540,7 @@ function showAccountContact(config) {
     var mobile = contacts[j].Mobile;
     var name = contacts[j].Name;
     htmlContent += `<tr>
-          <th scope="row">${name}</th>
+          <td>${name}</th>
           <td>${email}</td>
           <td>${mobile}</td>
           <td>${position}</td>
@@ -507,8 +553,105 @@ function showAccountContact(config) {
   $("#baselineDetailPage").append(htmlContent);
 }
 
+function showSubscribeServices(config) {
+  var title = "开通云产品";
+  var lable1 = "开通列表"
+  var enabledServices = config.EnabledServices;
+  var enabledServicesDisplay = "";
+  for (var i = 0; i < enabledServices.length; i++) {
+    enabledServicesDisplay += cloudProudct[enabledServices[i]] + "，";
+  }
+  enabledServicesDisplay = enabledServicesDisplay.substring(0, enabledServicesDisplay.length - 1);
+  var htmlContent = ` <div class="card mb-3" style="width: 100%;">
+  <div class="card-body">
+      <h5 class="card-title mb-3">${title}</h5>
+      <div class="row">
+          <label class="col-sm-2" style="font-weight: bold;">${lable1}</label>
+          <div class="col-sm-10">
+              <p>${enabledServicesDisplay}</p>
+          </div>
+      </div>
+  </div>
+</div>`;
+  $("#baselineDetailPage").append(htmlContent);
+}
+
+function showRamUserPasswordPolicy(config) {
+  var title = "RAM密码策略";
+  var label1 = "密码长度";
+  var label2 = "密码中必须包含元素";
+  var label3 = "密码有效期";
+  var label4 = "密码过期后不可登录";
+  var label5 = "历史密码检查策略";
+  var label6 = "密码重试约束";
+  var value1 = config.MinimumPasswordLength + " ~ 32";
+  var value2 = "";
+  if (config.RequireLowercaseCharacters == true) {
+    value2 += "小写字母，";
+  }
+  if (config.RequireUppercaseCharacters == true) {
+    value2 += "大写字母，";
+  }
+  if (config.RequireSymbols == true) {
+    value2 += "符号，";
+  }
+  if (config.RequireNumbers == true) {
+    value2 += "数字，";
+  }
+  value2 = value2.substring(0, value2.length - 1);
+  var value3 = config.MaxPasswordAge + " 天 ";
+  var value4 = "";
+  if (config.HardExpiry == true) {
+    value4 = "是";
+  } else {
+    value4 = "否";
+  }
+  var value5 = "禁止使用前" + config.PasswordReusePrevention + "次密码";
+  var value6 = "一小时内使用错误密码最大尝试" + config.MaxLoginAttempts + "次登录";
+
+  var htmlContent = ` <div class="card mb-3" style="width: 100%;">
+  <div class="card-body">
+      <h5 class="card-title mb-3">${title}</h5>
+      <div class="row mb-1">
+          <label class="col-sm-2" style="font-weight: bold;">${label1}</label>
+          <div class="col-sm-4">
+              <p>${value1}</p>
+          </div>
+          <label class="col-sm-2" style="font-weight: bold;">${label2}</label>
+          <div class="col-sm-4">
+              <p>${value2}</p>
+          </div>
+      </div>
+      <div class="row mb-1">
+          <label class="col-sm-2" style="font-weight: bold;">${label3}</label>
+          <div class="col-sm-4">
+              <p>${value3}</p>
+          </div>
+          <label class="col-sm-2" style="font-weight: bold;">${label4}</label>
+          <div class="col-sm-4">
+              <p>${value4}</p>
+          </div>
+      </div>
+      <div class="row mb-1">
+          <label class="col-sm-2" style="font-weight: bold;">${label5}</label>
+          <div class="col-sm-4">
+              <p>${value5}</p>
+          </div>
+          <label class="col-sm-2" style="font-weight: bold;">${label6}</label>
+          <div class="col-sm-4">
+              <p>${value6}</p>
+          </div>
+      </div>
+  </div>
+</div>`;
+  $("#baselineDetailPage").append(htmlContent);
+
+}
+
+
+
 function showAccountNotification(config) {
-  var title = "消息通知"
+  var title = "消息通知";
   var col1 = "通知类型";
   var col2 = "联系方式";
   var col3 = "联系人";
@@ -553,7 +696,7 @@ function showAccountNotification(config) {
     contactMethod = contactMethod.substring(0, contactMethod.length - 1);
 
     htmlContent += `<tr>
-          <th scope="row">${notificationType}</th>
+          <td>${notificationType}</th>
           <td>${contactMethod}</td>
           <td>${contact}</td>
       </tr>`;
@@ -592,7 +735,7 @@ function showPresetTag(config) {
     valuesDisplay = valuesDisplay.substring(0, valuesDisplay.length - 1);
 
     htmlContent += `<tr>
-          <th scope="row">${key}</th>
+          <td>${key}</th>
           <td>${valuesDisplay}</td>
       </tr>`;
   }
@@ -603,7 +746,7 @@ function showPresetTag(config) {
   $("#baselineDetailPage").append(htmlContent);
 }
 
-function showRamRole(config){
+function showRamRole(config) {
   var title = "RAM角色";
   var col1 = "角色名称";
   var col2 = "角色授权";
@@ -622,8 +765,9 @@ function showRamRole(config){
                     </tr>
                 </thead>
                 <tbody>`;
+  console.log("RamRoleConfig: ");
   console.log(config);
-  var enableRoles = config.EnableRoles;
+  var enableRoles = config.EnabledRoles;
   console.log("enableRoles: " + enableRoles);
   for (var j = 0; j < enableRoles.length; j++) {
     var name = enableRoles[j].Name;
@@ -637,7 +781,7 @@ function showRamRole(config){
     var trustedEntity = "当前企业管理账号（" + masterAccountId + ")";
 
     htmlContent += `<tr>
-          <th scope="row">${name}</th>
+          <td>${name}</th>
           <td>${systemPoliciesDisplay}</td>
           <td>${trustedEntity}</td>
           <td>${durationSeconds}</td>
