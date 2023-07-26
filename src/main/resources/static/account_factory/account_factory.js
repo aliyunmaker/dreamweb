@@ -184,8 +184,24 @@ function getBaselineDetails(baselineId){
     data: params,
     success: function (result) {
       if (result.success) {
-        var baselineDeatils = result.data;
-        console.log(baselineDeatils);
+        var baselineDetails = result.data;
+        console.log(baselineDetails);
+        document.getElementById('baselineTitle').innerHTML = baselineDetails.name;
+        var baselineItems = baselineDetails.baselineItems;
+        for(var i=0; i < baselineItems.length; i++){
+          var config = baselineItems[i].config;
+          var itemName = baselineItems[i].itemName;
+          console.log("config: " + config);
+            console.log("itemName: " + itemName);
+          if(itemName == "ACS-BP_ACCOUNT_FACTORY_ACCOUNT_CONTACT"){
+            console.log("config: " + config);
+            console.log("itemName: " + itemName);
+            $("baselineDetailPage").append(``);
+          }
+
+        }
+
+
       } else {
         console.log("data.message: " + result.errorMsg);
         alert(result.errorMsg);
