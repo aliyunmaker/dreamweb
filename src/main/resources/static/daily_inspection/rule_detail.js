@@ -86,6 +86,17 @@ function showRuleDetailPage(ruleDetail) {
         </p>
       </div>
       <h4 class="pb-2 fs-4">Inspection Result</h4>
+      <div class="row d-flex">
+        <div class="col-4">
+        <select class="form-select" aria-label="Compliance select" id="complianceSelect" onchange="filterInspectionResultByCompliance()">
+          <option value="ALL">Compliance status: All</option>
+          <option value="COMPLIANT">Compliance status: Compliant</option>
+          <option value="NON_COMPLIANT" selected>Compliance status: Non-compliant</option>
+          <option value="NOT_APPLICABLE">Compliance status: Not applicable</option>
+          <option value="INSUFFICIENT_DATA">Compliance status: Insufficient data</option>
+        </select>
+        </div>
+      </div>
       <table class="table" id=inspection-result-table>
         <thead>
         <tr>
@@ -98,27 +109,31 @@ function showRuleDetailPage(ruleDetail) {
         </tbody>
       </table>`;
       $("#ruleDetailBody").append(content);
-
-    ruleDetail.inspectionResult.forEach(function(resource) {
-        var row = `
-        <tr>
-            <td>
-              <div><a target="_blank" class="text-decoration-none" href="../inspection/signInResourceInfo.do?resourceId=${resource.id}&resourceType=${resource.resourceType}&regionId=${resource.regionId}">${resource.id}</a></div>
-              <div>${resource.name}</div>
-            </td>
-            <td>${resource.resourceType}</td>
-            <td>${resource.compliance === "COMPLIANT" ? 
-            `<span class="badge text-bg-success">${resource.compliance}</span>` : 
-            resource.compliance === "NON_COMPLIANT" ? 
-            `<span class="badge text-bg-danger">${resource.compliance}</span>` : 
-            `<span class="badge text-bg-secondary">${resource.compliance}</span>`}</td>
-        </tr>`;
-    $("#inspection-result-table tbody").append(row);
-    });
+      filterInspectionResultByCompliance();
 }
 
-function jumpToResourceInfo(resourceId, resourceType, regionId) {
-
+// 选择特定合规类型的资源
+function filterInspectionResultByCompliance() {
+  var compliance = $("#complianceSelect").val();
+  $("#inspection-result-table tbody").empty();
+  ruleDetail.inspectionResult.forEach(function(resource) {
+    if (compliance === "ALL" || resource.compliance === compliance) {
+      var row = `
+      <tr>
+          <td>
+            <div><a target="_blank" class="text-decoration-none" href="../inspection/signInResourceInfo.do?resourceId=${resource.id}&resourceType=${resource.resourceType}&regionId=${resource.regionId}">${resource.id}</a></div>
+            <div>${resource.name}</div>
+          </td>
+          <td>${resource.resourceType}</td>
+          <td>${resource.compliance === "COMPLIANT" ? 
+          `<span class="badge text-bg-success">${resource.compliance}</span>` : 
+          resource.compliance === "NON_COMPLIANT" ? 
+          `<span class="badge text-bg-danger">${resource.compliance}</span>` : 
+          `<span class="badge text-bg-secondary">${resource.compliance}</span>`}</td>
+      </tr>`;
+      $("#inspection-result-table tbody").append(row);
+    }
+  });
 }
 
 // 返回daily inspection page
