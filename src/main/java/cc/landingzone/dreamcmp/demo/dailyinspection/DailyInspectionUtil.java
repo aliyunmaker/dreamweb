@@ -116,11 +116,13 @@ public class DailyInspectionUtil {
     public static void main(String[] args) throws Exception {
         com.aliyun.governance20210120.Client client = ClientHelper.createGovernanceClient(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         com.aliyun.governance20210120.models.GetAccountFactoryBaselineRequest getAccountFactoryBaselineRequest = new com.aliyun.governance20210120.models.GetAccountFactoryBaselineRequest()
-                .setBaselineId("afb-bp1agq09r7ed41qy7qbc");
+                .setBaselineId("afb-bp1lqeelpgxbcaw1m3yk");
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-        GetAccountFactoryBaselineResponseBody.GetAccountFactoryBaselineResponseBodyBaselineItems item =
-                client.getAccountFactoryBaselineWithOptions(getAccountFactoryBaselineRequest, runtime).getBody().getBaselineItems().get(0);
-        JSONObject object = JSONObject.parseObject(item.getConfig());
-        object.get("Contacts");
+        List<GetAccountFactoryBaselineResponseBody.GetAccountFactoryBaselineResponseBodyBaselineItems> items =
+                client.getAccountFactoryBaselineWithOptions(getAccountFactoryBaselineRequest, runtime).getBody().getBaselineItems();
+        for (GetAccountFactoryBaselineResponseBody.GetAccountFactoryBaselineResponseBodyBaselineItems item: items) {
+            JSONObject object = JSONObject.parseObject(item.getConfig());
+        }
+//        JSONObject object = JSONObject.parseObject(item.getConfig());
     }
 }

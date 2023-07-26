@@ -185,9 +185,7 @@ function getBaselineDetails(baselineId){
     success: function (result) {
       if (result.success) {
         var baselineDeatils = result.data;
-
-
-
+        console.log(baselineDeatils);
       } else {
         console.log("data.message: " + result.errorMsg);
         alert(result.errorMsg);

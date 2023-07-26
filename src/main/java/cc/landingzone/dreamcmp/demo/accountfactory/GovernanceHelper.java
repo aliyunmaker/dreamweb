@@ -2,12 +2,14 @@ package cc.landingzone.dreamcmp.demo.accountfactory;
 
 import cc.landingzone.dreamcmp.common.ClientHelper;
 import cc.landingzone.dreamcmp.common.CommonConstants;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.governance20210120.Client;
 import com.aliyun.governance20210120.models.GetAccountFactoryBaselineResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,13 +27,30 @@ public class GovernanceHelper {
         return client.listAccountFactoryBaselinesWithOptions(listAccountFactoryBaselinesRequest, runtime).getBody().getBaselines();
     }
 
-    public static GetAccountFactoryBaselineResponseBody getAccountFactoryBaseline(String baselineId) throws Exception{
+    public static JSONObject getAccountFactoryBaseline(String baselineId) throws Exception{
+        JSONObject baselineDetail = new JSONObject();
+
         Client client = ClientHelper.createGovernanceClient(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         com.aliyun.governance20210120.models.GetAccountFactoryBaselineRequest getAccountFactoryBaselineRequest = new
                 com.aliyun.governance20210120.models.GetAccountFactoryBaselineRequest()
                 .setBaselineId(baselineId);
         RuntimeOptions runtime = new RuntimeOptions();
-        return client.getAccountFactoryBaselineWithOptions(getAccountFactoryBaselineRequest, runtime).getBody();
+        GetAccountFactoryBaselineResponseBody body = client.getAccountFactoryBaselineWithOptions(getAccountFactoryBaselineRequest, runtime).getBody();
+
+        baselineDetail.put("id", body.getBaselineId());
+        baselineDetail.put("name", body.getBaselineName());
+
+        List<JSONObject> baselineItems = new ArrayList<>();
+        for (GetAccountFactoryBaselineResponseBody.GetAccountFactoryBaselineResponseBodyBaselineItems item: body.getBaselineItems()) {
+            JSONObject baselineItem = new JSONObject();
+            baselineItem.put("itemName", item.getName());
+            JSONObject config = JSONObject.parseObject(item.getConfig());
+            baselineItem.put("config", config);
+
+            baselineItems.add(baselineItem);
+        }
+        baselineDetail.put("baselineItems", baselineItems);
+        return baselineDetail;
     }
 
     public static Long enrollAccount(String accountNamePrefix, String displayName, String folderId,
