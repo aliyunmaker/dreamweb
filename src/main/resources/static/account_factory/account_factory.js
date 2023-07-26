@@ -194,6 +194,27 @@ function getBaselineDetails(baselineId){
   })
 }
 
+function showNetworkBaselineDetail(baselineDeatils) {
+  $("#baselineTitle").empty();
+  $("#baselineTitle").append(baselineDeatils.name+" / "+baselineDeatils.id);
+
+  $(".offcanvas-body").empty();
+  for (var baselineItem of baselineDeatils.baselineItems) {
+    for (var config in baselineItem.config) {
+      var content = `
+      <div class="card">
+        <div class="card-body" id="card-body-${config.Name}">
+          <h5 class="card-title">${baselineItem.itemName}</h5>
+        </div>
+      </div>`;
+      $(".offcanvas-body").append(content);
+      var cardBodyContent = `
+      `;
+      $("#card-body-"+config.Name).append(cardBodyContent);
+    }
+  }
+}
+
 
 function getDocumentByModule() {
   var params = {
