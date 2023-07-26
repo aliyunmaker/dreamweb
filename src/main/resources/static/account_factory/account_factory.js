@@ -187,6 +187,9 @@ function getBaselineDetails(baselineId){
         var baselineDetails = result.data;
         console.log(baselineDetails);
         document.getElementById('baselineTitle').innerHTML = baselineDetails.name;
+        if (baselineDetails.name === "网络基线") {
+          showNetworkBaselineDetail(baselineDetails);
+        } else {
         var baselineItems = baselineDetails.baselineItems;
         for(var i=0; i < baselineItems.length; i++){
           var config = baselineItems[i].config;
@@ -200,7 +203,7 @@ function getBaselineDetails(baselineId){
           }
 
         }
-
+      }
 
       } else {
         console.log("data.message: " + result.errorMsg);
@@ -211,22 +214,87 @@ function getBaselineDetails(baselineId){
 }
 
 function showNetworkBaselineDetail(baselineDeatils) {
-  $("#baselineTitle").empty();
-  $("#baselineTitle").append(baselineDeatils.name+" / "+baselineDeatils.id);
+  // $("#baselineTitle").empty();
+  // $("#baselineTitle").append(baselineDeatils.name+" / "+baselineDeatils.id);
 
   $(".offcanvas-body").empty();
   for (var baselineItem of baselineDeatils.baselineItems) {
-    for (var config in baselineItem.config) {
-      var content = `
-      <div class="card">
-        <div class="card-body" id="card-body-${config.Name}">
-          <h5 class="card-title">${baselineItem.itemName}</h5>
-        </div>
-      </div>`;
-      $(".offcanvas-body").append(content);
-      var cardBodyContent = `
-      `;
-      $("#card-body-"+config.Name).append(cardBodyContent);
+    for (var configs in baselineItem.config) {
+      for (var config of baselineItem.config[configs]) {
+        var content = `
+        <div class="card">
+          <div class="card-body" id="card-body-${config.Name}">
+            <h5 class="card-title">${baselineItem.itemName}</h5>
+          </div>
+        </div>`;
+        $(".offcanvas-body").append(content);
+        if (configs === "Vpcs") {
+          var cardBodyContent = `
+            <div class="row pb-2">
+              <p class="col-2 fw-semibold">
+                Region
+              </p>
+              <p class="col-4">
+                ${config.RegionId}
+              </p>
+              <p class="col-2 fw-semibold">
+                Name
+              </p>
+              <p class="col-4">
+                ${config.Name}
+              </p>
+              <p class="col-2 fw-semibold">
+                Cidr Block
+              </p>
+              <p class="col-4">
+                ${config.CidrBlock}
+              </p>
+              <p class="col-2 fw-semibold">
+                Description
+              </p>
+              <p class="col-4">
+                ${config.Description}
+              </p>
+            </div>
+            <div>
+            <h6 class="pb-2 fs-4">VSwitches</h6>
+            <table class="table" id=vswitches-table>
+              <thead>
+              <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">ZoneId</th>
+                  <th scope="col">CidrBlock</th>
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            </div>
+            <div id="acls">
+            </div>
+            `;
+          $("#card-body-"+config.Name).append(cardBodyContent);
+          var acl = `
+          <h6 class="pb-2 fs-4">ACL</h6>
+          <div class="row pb-2">
+            <p class="col-2 fw-semibold">
+              Name
+            </p>
+            <p class="col-4">
+              ${config.RegionId}
+            </p>
+            <p class="col-2 fw-semibold">
+              Name
+            </p>
+            <p class="col-4">
+              ${config.Name}
+            </p>
+          </div>`;
+        } else if (config === "SecurityGroups") {
+          s
+        }
+        
+      }
     }
   }
 }
