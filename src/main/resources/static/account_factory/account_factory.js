@@ -174,7 +174,7 @@ function createCloudAccount(){
   return false;
 }
 
-function getBaselineDeatils(baselineId){
+function getBaselineDetails(baselineId){
   var params = {
     baselineId: baselineId
   }

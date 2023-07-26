@@ -116,7 +116,7 @@ public class AccountFactoryController extends BaseController {
     }
 
     @RequestMapping("/getBaselineDetails.do")
-    public void getBaselineDeatils(HttpServletRequest request, HttpServletResponse response){
+    public void getBaselineDetails(HttpServletRequest request, HttpServletResponse response){
         WebResult result = new WebResult();
         try {
             String baselineId = request.getParameter("baselineId");
