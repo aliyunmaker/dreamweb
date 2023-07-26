@@ -53,7 +53,7 @@ function showResourceCenterPage(accountName) {
             </a>
             </div>
         </div>
-        <div class="col-9 row g-4 py-3 row-cols-1 row-cols-lg-2" id="cardContainer">
+        <div class="col-9 row g-4 py-3 row-cols-1 row-cols-lg-2 align-self-start" id="cardContainer">
         </div>
     </div>
     </div>`;
