@@ -26,7 +26,7 @@ function getBaselines(){
                   <input type="radio" class="form-check-input" id="baseline${i+1}" name="baseline" value="${baselineId}" checked>
                   <label class="form-check-label" for="baseline${i+1}">${baselineName}</label>
                   <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
-                     style="text-decoration: none;" onclick="getTemplateByResourceType('terraform')">查看模板</a>
+                     style="text-decoration: none;" onclick="getBaselineDetails('${baselineId}')">查看模板</a>
               </div>
           </div>`);
           }else{
@@ -37,7 +37,7 @@ function getBaselines(){
                   <input type="radio" class="form-check-input" id="baseline${i+1}" name="baseline" value="${baselineId}">
                   <label class="form-check-label" for="baseline${i+1}">${baselineName}</label>
                   <a href="#offcanvasRight" role="button" data-bs-toggle="offcanvas" aria-controls="offcanvasRight"
-                     style="text-decoration: none;" onclick="getTemplateByResourceType('terraform')">查看模板</a>
+                     style="text-decoration: none;" onclick="getBaselineDetails('${baselineId}')">查看模板</a>
               </div>
           </div>`);
           }
@@ -172,6 +172,28 @@ function createCloudAccount(){
   })
 
   return false;
+}
+
+function getBaselineDeatils(baselineId){
+  var params = {
+    baselineId: baselineId
+  }
+  $.ajax({
+    url: "../" + "accountFactory/getBaselineDetails.do",
+    type: "POST",
+    data: params,
+    success: function (result) {
+      if (result.success) {
+        var baselineDeatils = result.data;
+
+
+
+      } else {
+        console.log("data.message: " + result.errorMsg);
+        alert(result.errorMsg);
+      }
+    }
+  })
 }
 
 

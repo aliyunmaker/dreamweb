@@ -115,4 +115,18 @@ public class AccountFactoryController extends BaseController {
         outputToJSON(response, result);
     }
 
+    @RequestMapping("/getBaselineDetails.do")
+    public void getBaselineDeatils(HttpServletRequest request, HttpServletResponse response){
+        WebResult result = new WebResult();
+        try {
+            String baselineId = request.getParameter("baselineId");
+            Assert.notNull(baselineId, "baselineId can not be null");
+            result.setData(GovernanceHelper.getAccountFactoryBaseline(baselineId));
+        }catch (Exception e){
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
 }
