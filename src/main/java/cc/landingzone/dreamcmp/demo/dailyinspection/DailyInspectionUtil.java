@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.config20200907.models.GetConfigRuleResponseBody;
 import com.aliyun.config20200907.models.ListConfigRuleEvaluationResultsResponseBody;
 import com.aliyun.config20200907.models.ListConfigRulesResponseBody;
-import com.aliyun.governance20210120.models.GetAccountFactoryBaselineResponseBody;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,18 +110,5 @@ public class DailyInspectionUtil {
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
         return client.listConfigRuleEvaluationResultsWithOptions(listConfigRuleEvaluationResultsRequest, runtime).getBody().getEvaluationResults().getEvaluationResultList();
-    }
-
-    public static void main(String[] args) throws Exception {
-        com.aliyun.governance20210120.Client client = ClientHelper.createGovernanceClient(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
-        com.aliyun.governance20210120.models.GetAccountFactoryBaselineRequest getAccountFactoryBaselineRequest = new com.aliyun.governance20210120.models.GetAccountFactoryBaselineRequest()
-                .setBaselineId("afb-bp1lqeelpgxbcaw1m3yk");
-        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-        List<GetAccountFactoryBaselineResponseBody.GetAccountFactoryBaselineResponseBodyBaselineItems> items =
-                client.getAccountFactoryBaselineWithOptions(getAccountFactoryBaselineRequest, runtime).getBody().getBaselineItems();
-        for (GetAccountFactoryBaselineResponseBody.GetAccountFactoryBaselineResponseBodyBaselineItems item: items) {
-            JSONObject object = JSONObject.parseObject(item.getConfig());
-        }
-//        JSONObject object = JSONObject.parseObject(item.getConfig());
     }
 }
