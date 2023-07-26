@@ -212,6 +212,7 @@ function createCloudAccount() {
 }
 
 function getBaselineDetails(baselineId) {
+  $(".offcanvas-body").empty();
   var params = {
     baselineId: baselineId
   }
@@ -225,9 +226,9 @@ function getBaselineDetails(baselineId) {
         console.log(baselineDetails);
         document.getElementById('baselineTitle').innerHTML = baselineDetails.name;
         var baselineItems = baselineDetails.baselineItems;
-        if (baselineDetails.name == "基础基线") {
+        if (baselineDetails.name === "基础基线") {
           showbaselineDetailPage(baselineItems);
-        } else if (baselineDetails.name == "网络基线") {
+        } else if (baselineDetails.name === "网络基线") {
           showNetworkBaselineDetail(baselineDetails);
         } else {
           console.log("baselineDetails.name: " + baselineDetails.name);
@@ -297,7 +298,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
         var content = `
         <div class="card mb-4" id="card-${config.Name}">
           <div class="card-body">
-            <h4 class="card-title mb-4">${baselineItem.itemName}</h4>
+            <h4 class="card-title mb-4">${baselineItem.itemName === "ACS-BP_ACCOUNT_FACTORY_VPC"? "VPC": "Security Group"}</h4>
           </div>
         </div>`;
         $(".offcanvas-body").append(content);
@@ -332,7 +333,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
             <div id="vswitches">
             <h5 class="card-subtitle mb-2">VSwitches</h5>
             <table class="table" id="vswitches-table">
-              <thead>
+              <thead class="table-light">
               <tr>
                   <th scope="col">Name</th>
                   <th scope="col">Zone Id</th>
@@ -377,7 +378,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
             </div>
             <h6 class="card-subtitle mb-2">Ingress ACL Entries</h6>
             <table class="table" id="ingress-acl-entries-table">
-              <thead>
+              <thead class="table-light">
               <tr>
                   <th scope="col">Order of effect</th>
                   <th scope="col">Name</th>
@@ -392,7 +393,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
             </table>
             <h6 class="card-subtitle mb-2">Egress ACL Entries</h6>
             <table class="table" id="egress-acl-entries-table">
-              <thead>
+              <thead class="table-light">
               <tr>
                   <th scope="col">Order of effect</th>
                   <th scope="col">Name</th>
@@ -457,7 +458,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
           <div id="ingress">
             <h5 class="card-subtitle mb-2">Ingress</h5>
             <table class="table" id="ingress-table">
-              <thead>
+              <thead class="table-light">
               <tr>
                   <th scope="col">Policy</th>
                   <th scope="col">Priority</th>
@@ -474,7 +475,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
           <div id="egress">
             <h5 class="card-subtitle mb-2">Egress</h5>
             <table class="table" id="egress-table">
-              <thead>
+              <thead class="table-light">
               <tr>
                   <th scope="col">Policy</th>
                   <th scope="col">Priority</th>
