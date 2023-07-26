@@ -224,7 +224,7 @@ function showNetworkBaselineDetail(baselineDeatils) {
         var content = `
         <div class="card mb-4" id="card-${config.Name}">
           <div class="card-body">
-            <h4 class="card-title mb-4">${baselineItem.itemName}</h4>
+            <h4 class="card-title mb-4">${baselineItem.itemName === "ACS-BP_ACCOUNT_FACTORY_VPC"? "VPC": "Security Group"}</h4>
           </div>
         </div>`;
         $(".offcanvas-body").append(content);
