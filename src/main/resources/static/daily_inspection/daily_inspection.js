@@ -28,7 +28,7 @@ function showDailyInspectionPage(rules) {
     page.empty();
     var skeleton = `
     <div class="row pb-2 d-flex">
-        <h5 class="pb-3 fs-2">Config Rules</h5>
+        <h5 class="pb-3 fs-3">Config Rules</h5>
         <div class="col">
             <button type="button" class="btn btn-primary mr-2" onclick="activateRules()">Activate Rules</button>
             <button type="button" class="btn btn-secondary" onclick="deactivateRules()">Deactivate Rules</button>
@@ -43,8 +43,8 @@ function showDailyInspectionPage(rules) {
 
 function listRules(rules) {
     var table = `
-    <table class="table">
-        <thead>
+    <table class="table mt-2">
+        <thead class="table-light">
         <tr>
             <th scope="col">Rule Name</th>
             <th scope="col">Compliance</th>

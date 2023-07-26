@@ -45,7 +45,7 @@ function showRuleDetailPage(ruleDetail) {
                 <li class="breadcrumb-item" aria-current="page">${ruleId}</li>
             </ol>
         </nav>
-        <h5 class="pb-3 fs-2">${ruleDetail.basicAttrs.name}</h5>
+        <h5 class="pb-3 fs-3">${ruleDetail.basicAttrs.name}</h5>
         <div class="row pb-2" id="ruleDetailBody">
         </div>
     </div>`;
@@ -97,8 +97,8 @@ function showRuleDetailPage(ruleDetail) {
         </select>
         </div>
       </div>
-      <table class="table" id=inspection-result-table>
-        <thead>
+      <table class="table mt-2" id=inspection-result-table>
+        <thead class="table-light">
         <tr>
             <th scope="col">Resource ID/Name</th>
             <th scope="col">Resource Type</th>
