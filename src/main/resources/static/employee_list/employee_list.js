@@ -176,6 +176,7 @@ function getDataAndInitTable() {
                     "order": [[1, 'asc']],
                     // true代表后台处理分页，false代表前台处理分页
                     "serverSide": false,
+                    "pageLength": 10,
                     "lengthMenu": [5, 10, 20, 50],
                     initComplete: function () {
                         $("#loading").addClass("d-none");
