@@ -59,11 +59,9 @@ function listRules(rules) {
     $("#dailyInspectionBody").append(table);
 
     for (var rule of rules) {
-        rule.mainstay = rule.name.split(",")[1];
-        rule.name = rule.name.split(",")[0];
         ruleIds += rule.id + ","; // 拼接作为activate和deactivate的参数
     }
-    
+
     for (var mainstay of sortedMainstays) {
         for (var rule of rules) {
             if (rule.mainstay === mainstay) {
