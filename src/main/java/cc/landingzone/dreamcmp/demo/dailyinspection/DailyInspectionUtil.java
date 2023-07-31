@@ -65,7 +65,8 @@ public class DailyInspectionUtil {
         GetConfigRuleResponseBody.GetConfigRuleResponseBodyConfigRule rule = getBasicAttrsByRuleId(ruleId);
         HashMap<String, String> basicAttrs = new HashMap<>();
         basicAttrs.put("id", rule.getConfigRuleId());
-        basicAttrs.put("name", rule.getConfigRuleName());
+        basicAttrs.put("name", rule.getConfigRuleName().split(",")[0]);
+        basicAttrs.put("mainstay", rule.getConfigRuleName().split(",")[1]);
         basicAttrs.put("createTime", new Date(rule.getCreateTimestamp()).toString());
         basicAttrs.put("riskLevel", rule.getRiskLevel().toString());
         basicAttrs.put("description", rule.getDescription());

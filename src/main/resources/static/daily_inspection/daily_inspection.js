@@ -1,5 +1,6 @@
 var rules;
 var ruleIds = "";
+var sortedMainstays = ["安全合规", "稳定性", "成本优化"];
 
 $(document).ready(function() {
     $("#dailyInspectionPage").append(
@@ -56,20 +57,30 @@ function listRules(rules) {
         </tbody>
     </table>`;
     $("#dailyInspectionBody").append(table);
+
     for (var rule of rules) {
+        rule.mainstay = rule.name.split(",")[1];
+        rule.name = rule.name.split(",")[0];
         ruleIds += rule.id + ","; // 拼接作为activate和deactivate的参数
-        var row = `
-        <tr>
-            <td>${rule.name.split(",")[0]}</td>
-            <td><a href=# class="text-decoration-none" onclick="getRuleDetail('${rule.id}')">${rule.name.split(",")[1]}</a></td>
-            <td>${rule.compliance.complianceType === "COMPLIANT" ? 
-                `<span class="badge text-bg-success">${rule.compliance.complianceType}(${rule.compliance.count})</span>` : 
-                `<span class="badge text-bg-danger">${rule.compliance.complianceType}(${rule.compliance.count})</span>`}</td>
-            <td>${rule.state === "ACTIVE" ?
-                `<p class="text-dark">ACTIVE</p>` :
-                `<p class="text-secondary">${rule.state.toUpperCase()}</p>`}</td>
-        </tr>`;
-        $("#dailyInspectionBody tbody").append(row);
+    }
+    
+    for (var mainstay of sortedMainstays) {
+        for (var rule of rules) {
+            if (rule.mainstay === mainstay) {
+                var row = `
+                <tr>
+                    <td>${rule.mainstay}</td>
+                    <td><a href=# class="text-decoration-none" onclick="getRuleDetail('${rule.id}')">${rule.name}</a></td>
+                    <td>${rule.compliance.complianceType === "COMPLIANT" ? 
+                        `<span class="badge text-bg-success">${rule.compliance.complianceType}(${rule.compliance.count})</span>` : 
+                        `<span class="badge text-bg-danger">${rule.compliance.complianceType}(${rule.compliance.count})</span>`}</td>
+                    <td>${rule.state === "ACTIVE" ?
+                        `<p class="text-dark">ACTIVE</p>` :
+                        `<p class="text-secondary">${rule.state.toUpperCase()}</p>`}</td>
+                </tr>`;
+                $("#dailyInspectionBody tbody").append(row);
+            }
+        }
     }
     ruleIds = ruleIds.substring(0, ruleIds.length-1);
     console.log(ruleIds);

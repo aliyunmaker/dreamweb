@@ -67,6 +67,12 @@ function showRuleDetailPage(ruleDetail) {
           ${ruleDetail.basicAttrs.name}
         </p>
         <p class="col-2 fw-semibold">
+          Mainstay
+        </p>
+        <p class="col-4">
+          ${ruleDetail.basicAttrs.mainstay}
+        </p>
+        <p class="col-2 fw-semibold">
           Create Time
         </p>
         <p class="col-4">
