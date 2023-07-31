@@ -46,6 +46,7 @@ function listRules(rules) {
     <table class="table mt-2">
         <thead class="table-light">
         <tr>
+            <th scope="col">Mainstay</th>
             <th scope="col">Rule Name</th>
             <th scope="col">Compliance</th>
             <th scope="col">State</th>
@@ -59,7 +60,8 @@ function listRules(rules) {
         ruleIds += rule.id + ","; // 拼接作为activate和deactivate的参数
         var row = `
         <tr>
-            <td><a href=# class="text-decoration-none" onclick="getRuleDetail('${rule.id}')">${rule.name}</a></td>
+            <td>${rule.name.split(",")[0]}</td>
+            <td><a href=# class="text-decoration-none" onclick="getRuleDetail('${rule.id}')">${rule.name.split(",")[1]}</a></td>
             <td>${rule.compliance.complianceType === "COMPLIANT" ? 
                 `<span class="badge text-bg-success">${rule.compliance.complianceType}(${rule.compliance.count})</span>` : 
                 `<span class="badge text-bg-danger">${rule.compliance.complianceType}(${rule.compliance.count})</span>`}</td>
