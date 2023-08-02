@@ -2,8 +2,12 @@ package cc.landingzone.dreamcmp.demo.costanalysis;
 
 import cc.landingzone.dreamcmp.common.*;
 import com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillResponseBody;
+import kotlin.Pair;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Utils for Cost Analysis
@@ -26,48 +30,64 @@ public class CostAnalysisUtil {
             throw new IllegalArgumentException("Do not support this tag key!");
         }
 
+        /* parallelize tasks */
+        int numThreads = tagValues.size();
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+
+        List<Future<Pair<String, Float>>> futures = new ArrayList<>();
+
         for (String tagValue: tagValues) {
-            Float totalAmount = 0.0f;
-            com.aliyun.bssopenapi20171214.Client client = ClientHelper.createBSSClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
-            com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest.DescribeSplitItemBillRequestTagFilter tagFilter0 = new com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest.DescribeSplitItemBillRequestTagFilter()
-                    .setTagKey(tagKey)
-                    .setTagValues(Collections.singletonList(tagValue));
-            com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+            Future<Pair<String, Float>> future = executor.submit(() -> getTotalAmountByTagValue(billingCycle, tagKey, tagValue, productCode));
+            futures.add(future);
+        }
 
-            List<DescribeSplitItemBillResponseBody.DescribeSplitItemBillResponseBodyDataItems> items;
+        for (Future<Pair<String, Float>> future: futures) {
+            Pair<String, Float> tagValueTotalAmount = future.get();
+            totalAmounts.put(tagValueTotalAmount.getFirst(), tagValueTotalAmount.getSecond());
+        }
 
-            if ("all".equals(productCode)) {
-                items = new ArrayList<>();
-                for (ServiceEnum serviceEnum : ServiceEnum.values()) {
-                    String serviceName = serviceEnum.name().toLowerCase();
-                    com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest describeSplitItemBillRequest = new com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest()
-                            .setBillingCycle(billingCycle)
-                            .setTagFilter(Collections.singletonList(tagFilter0))
-                            .setMaxResults(300)
-                            .setProductCode(serviceName);
-                    List<DescribeSplitItemBillResponseBody.DescribeSplitItemBillResponseBodyDataItems> serviceItems = client.describeSplitItemBillWithOptions(describeSplitItemBillRequest, runtime).getBody().getData().getItems();
-                    if (serviceItems != null) {
-                        items.addAll(serviceItems);
-                    }
-                }
-            } else {
+        return totalAmounts;
+    }
+
+    public static Pair<String, Float> getTotalAmountByTagValue(String billingCycle, String tagKey, String tagValue, String productCode) throws Exception {
+        Float totalAmount = 0.0f;
+        com.aliyun.bssopenapi20171214.Client client = ClientHelper.createBSSClient(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest.DescribeSplitItemBillRequestTagFilter tagFilter0 = new com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest.DescribeSplitItemBillRequestTagFilter()
+                .setTagKey(tagKey)
+                .setTagValues(Collections.singletonList(tagValue));
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+
+        List<DescribeSplitItemBillResponseBody.DescribeSplitItemBillResponseBodyDataItems> items;
+
+        if ("all".equals(productCode)) {
+            items = new ArrayList<>();
+            for (ServiceEnum serviceEnum : ServiceEnum.values()) {
+                String serviceName = serviceEnum.name().toLowerCase();
                 com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest describeSplitItemBillRequest = new com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest()
                         .setBillingCycle(billingCycle)
                         .setTagFilter(Collections.singletonList(tagFilter0))
                         .setMaxResults(300)
-                        .setProductCode(productCode);
-                items = client.describeSplitItemBillWithOptions(describeSplitItemBillRequest, runtime).getBody().getData().getItems();
+                        .setProductCode(serviceName);
+                List<DescribeSplitItemBillResponseBody.DescribeSplitItemBillResponseBodyDataItems> serviceItems = client.describeSplitItemBillWithOptions(describeSplitItemBillRequest, runtime).getBody().getData().getItems();
+                if (serviceItems != null) {
+                    items.addAll(serviceItems);
+                }
             }
-
-
-            for (DescribeSplitItemBillResponseBody.DescribeSplitItemBillResponseBodyDataItems item : items) {
-                totalAmount += item.getPretaxAmount();
-            }
-
-            totalAmounts.put(tagValue, totalAmount);
+        } else {
+            com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest describeSplitItemBillRequest = new com.aliyun.bssopenapi20171214.models.DescribeSplitItemBillRequest()
+                    .setBillingCycle(billingCycle)
+                    .setTagFilter(Collections.singletonList(tagFilter0))
+                    .setMaxResults(300)
+                    .setProductCode(productCode);
+            items = client.describeSplitItemBillWithOptions(describeSplitItemBillRequest, runtime).getBody().getData().getItems();
         }
 
-        return totalAmounts;
+
+        for (DescribeSplitItemBillResponseBody.DescribeSplitItemBillResponseBodyDataItems item : items) {
+            totalAmount += item.getPretaxAmount();
+        }
+
+        return new Pair<>(tagValue, totalAmount);
     }
 
     public static Map<String, Map<String, Float>> getPeriodTotalAmounts(String billingCycleStart, String billingCycleEnd, String tagKey, String productCode) throws Exception {
@@ -87,14 +107,14 @@ public class CostAnalysisUtil {
             throw new IllegalArgumentException("Do not support this tag key!");
         }
 
-        String curBillingCycle = billingCycleStart;
+        String curBillingCycle = billingCycleEnd;
         Map<String, Float> totalAmount = getTotalAmount(curBillingCycle, tagKey, productCode);
         for (Map.Entry<String, Float> amount: totalAmount.entrySet()) {
             Map<String, Float> cycleAmount = periodTotalAmounts.get(amount.getKey());
             cycleAmount.put(curBillingCycle, amount.getValue());
             periodTotalAmounts.put(amount.getKey(), cycleAmount);
         }
-        while (!curBillingCycle.equals(billingCycleEnd)) {
+        while (!curBillingCycle.equals(billingCycleStart)) {
             int curYear = Integer.parseInt(curBillingCycle.split("-")[0]);
             int curMonth = Integer.parseInt(curBillingCycle.split("-")[1]);
             if (curMonth - 1 > 0) {

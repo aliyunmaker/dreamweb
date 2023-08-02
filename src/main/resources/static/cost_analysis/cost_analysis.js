@@ -44,42 +44,52 @@ function showCostAnalysisPage() {
     var skeleton = `
     <div class="row g-4 py-3 row-cols-2 row-cols-lg-2" id="chartsContainer">
         <div id="appCostBarchartContainer" class="col align-self-start">
-        <div class="row">
+        <h4 class="pb-2 fs-4">应用成本</h4>
+        <div class="container d-flex align-items-start">
             <select class="form-select" aria-label="Default select example" id="appCostBarchartCycleFilter" onchange="getApplicationCostBarchart()">
             </select>
-            <select class="form-select" aria-label="Default select example" id="appCostBarchartServiceFilter" onchange="getApplicationCostBarchart()">
+            <select class="form-select mr-2" aria-label="Default select example" id="appCostBarchartServiceFilter" onchange="getApplicationCostBarchart()">
             </select>
         </div>
-        <div class="row" id="appCostBarchart"></div>
+        <div id="appCostBarchart"></div>
         </div>
         <div id="depCostBarchartContainer" class="col align-self-start">
         <div class="row">
+            <h4 class="pb-2 fs-4">部门成本</h4>
+            <div class="container d-flex align-items-start">
             <select class="form-select mr-2" aria-label="Default select example" id="depCostBarchartCycleFilter" onchange="getDepartmentCostBarchart()">
             </select>
             <select class="form-select" aria-label="Default select example" id="depCostBarchartServiceFilter" onchange="getDepartmentCostBarchart()">
             </select>
+            </div>
         </div>
         <div class="row" id="depCostBarchart"></div>
         </div>
         <div id="appCostLinechartContainer" class="col align-self-start">
         <div class="col">
+            <h4 class="pb-2 fs-4">应用成本历史趋势</h4>
+            <div class="container d-flex align-items-start">
             <select class="form-select mr-2" aria-label="Default select example" id="appCostLinechartCycleFilterStart" onchange="getApplicationCostLinechart()">
             </select>
             <select class="form-select mr-2" aria-label="Default select example" id="appCostLinechartCycleFilterEnd" onchange="getApplicationCostLinechart()">
             </select>
             <select class="form-select" aria-label="Default select example" id="appCostLinechartServiceFilter" onchange="getApplicationCostLinechart()">
             </select>
+            </div>
         </div>
         <div class="row" id="appCostLinechart"></div>
         </div>
         <div id="depCostLinechartContainer" class="col align-self-start">
         <div class="col">
+            <h4 class="pb-2 fs-4">部门成本历史趋势</h4>
+            <div class="container d-flex align-items-start">
             <select class="form-select mr-2" aria-label="Default select example" id="depCostLinechartCycleFilterStart" onchange="getDepartmentCostLinechart()">
             </select>
             <select class="form-select mr-2" aria-label="Default select example" id="depCostLinechartCycleFilterEnd" onchange="getDepartmentCostLinechart()">
             </select>
             <select class="form-select" aria-label="Default select example" id="depCostLinechartServiceFilter" onchange="getDepartmentCostLinechart()">
             </select>
+            </div>
         </div>
         <div class="row" id="depCostLinechart"></div>
         </div>
@@ -98,11 +108,11 @@ function showCostAnalysisPage() {
         }
         $("#appCostBarchartCycleFilter").append(`<option value=${billingCycle}>${billingCycle}</option>`);
         $("#depCostBarchartCycleFilter").append(`<option value=${billingCycle}>${billingCycle}</option>`);
-        $("#appCostLinechartCycleFilterStart").append(`<option value=${billingCycle}>${billingCycle}</option>`);
-        $("#depCostLinechartCycleFilterStart").append(`<option value=${billingCycle}>${billingCycle}</option>`);
+        $("#appCostLinechartCycleFilterEnd").append(`<option value=${billingCycle}>${billingCycle}</option>`);
+        $("#depCostLinechartCycleFilterEnd").append(`<option value=${billingCycle}>${billingCycle}</option>`);
         if (i !== 1) { // 保证至少有两个月的值
-            $("#appCostLinechartCycleFilterEnd").append(`<option value=${billingCycle}>${billingCycle}</option>`);
-            $("#depCostLinechartCycleFilterEnd").append(`<option value=${billingCycle}>${billingCycle}</option>`);
+            $("#appCostLinechartCycleFilterStart").append(`<option value=${billingCycle}>${billingCycle}</option>`);
+            $("#depCostLinechartCycleFilterStart").append(`<option value=${billingCycle}>${billingCycle}</option>`);
         }
     }
 
@@ -125,7 +135,16 @@ function showCostAnalysisPage() {
     getDepartmentCostLinechart();
 }
 
-function getApplicationCostBarchart() {
+function getApplicationCostBarchart() { 
+    $("#appCostBarchart").empty();
+    $("#appCostBarchart").append(
+    `<div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>`
+    );
+    
     var billingCycle = $("#appCostBarchartCycleFilter").val();
     var serviceName = $("#appCostBarchartServiceFilter").val();
     
@@ -134,6 +153,7 @@ function getApplicationCostBarchart() {
         productCode: serviceName,
         tagKey: "application"
     };
+    
     $.ajax({
     url: "../" + "costAnalysis/describeBillBarchart.do",
     type: "POST",
@@ -156,9 +176,9 @@ function showApplicationCostBarchart(appsCosts) {
         plotBorderWidth: null,
         plotShadow: false
     };
-    var title = {
-       text: $("#appCostBarchartCycleFilter option:selected").text()+ $("#appCostBarchartServiceFilter option:selected").text() + '的应用成本扇形图'   
-    };      
+    // var title = {
+    //    text: $("#appCostBarchartCycleFilter option:selected").text()+ $("#appCostBarchartServiceFilter option:selected").text() + '的应用成本扇形图'   
+    // };      
     var tooltip = {
        pointFormat: '{series.name}: <b>{point.y:.2f}元</b>'
     };
@@ -187,14 +207,24 @@ function showApplicationCostBarchart(appsCosts) {
        
     var json = {};   
     json.chart = chart; 
-    json.title = title;     
+    json.title = "";
     json.tooltip = tooltip;  
     json.series = series;
     json.plotOptions = plotOptions;
+    $("#appCostBarchart").empty();
     $('#appCostBarchart').highcharts(json);  
 }
 
 function getDepartmentCostBarchart() {
+    $("#depCostBarchart").empty();
+    $("#depCostBarchart").append(
+    `<div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>`
+    );
+
     var billingCycle = $("#depCostBarchartCycleFilter").val();
     var serviceName = $("#depCostBarchartServiceFilter").val();
 
@@ -225,9 +255,9 @@ function showDepartmentCostBarchart(depsCosts) {
         plotBorderWidth: null,
         plotShadow: false
     };
-    var title = {
-       text: $("#depCostBarchartCycleFilter option:selected").text()+ $("#depCostBarchartServiceFilter option:selected").text() + '的部门成本扇形图'   
-    };      
+    // var title = {
+    //    text: $("#depCostBarchartCycleFilter option:selected").text()+ $("#depCostBarchartServiceFilter option:selected").text() + '的部门成本扇形图'   
+    // };      
     var tooltip = {
        pointFormat: '{series.name}: <b>{point.y:.2f}元</b>'
     };
@@ -256,14 +286,24 @@ function showDepartmentCostBarchart(depsCosts) {
        
     var json = {};   
     json.chart = chart; 
-    json.title = title;     
+    json.title = ""; 
     json.tooltip = tooltip;  
     json.series = series;
     json.plotOptions = plotOptions;
+    $('#depCostBarchart').empty();
     $('#depCostBarchart').highcharts(json);  
 }
 
 function getApplicationCostLinechart() {
+    $("#appCostLinechart").empty();
+    $("#appCostLinechart").append(
+    `<div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>`
+    );
+
     var billingCycleStart = $("#appCostLinechartCycleFilterStart").val();
     var billingCycleEnd = $("#appCostLinechartCycleFilterEnd").val();
     var serviceName = $("#appCostLinechartServiceFilter").val();
@@ -291,11 +331,11 @@ function getApplicationCostLinechart() {
 }
 
 function showApplicationCostLinechart(appsCosts) {
-    var title = {
-        text: $("#appCostLinechartCycleFilterStart option:selected").text() + '-' + 
-        $("#appCostLinechartCycleFilterEnd option:selected").text() + $("#appCostLinechartServiceFilter option:selected").text() + 
-        '应用成本的月度历史折线图'   
-     };
+    // var title = {
+    //     text: $("#appCostLinechartCycleFilterStart option:selected").text() + '至' + 
+    //     $("#appCostLinechartCycleFilterEnd option:selected").text() + $("#appCostLinechartServiceFilter option:selected").text() + 
+    //     ' \n 应用成本的月度历史折线图'   
+    //  };
      var categories = [];
      for (var billingCycle in appsCosts[Object.keys(appsCosts)[0]]) {
         categories.push(billingCycle);
@@ -340,17 +380,27 @@ function showApplicationCostLinechart(appsCosts) {
   
      var json = {};
   
-     json.title = title;
+     json.title = "";
      json.xAxis = xAxis;
      json.yAxis = yAxis;
      json.tooltip = tooltip;
      json.legend = legend;
      json.series = series;
   
+     $("#appCostLinechart").empty();
      $('#appCostLinechart').highcharts(json);
 }
 
 function getDepartmentCostLinechart() {
+    $("#depCostLinechart").empty();
+    $("#depCostLinechart").append(
+    `<div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>`
+    );
+    
     var billingCycleStart = $("#depCostLinechartCycleFilterStart").val();
     var billingCycleEnd = $("#depCostLinechartCycleFilterEnd").val();
     var serviceName = $("#depCostLinechartServiceFilter").val();
@@ -379,11 +429,11 @@ function getDepartmentCostLinechart() {
 }
 
 function showDepartmentCostLinechart(depsCosts) {
-    var title = {
-        text: $("#depCostLinechartCycleFilterStart option:selected").text() + '-' + 
-        $("#depCostLinechartCycleFilterEnd option:selected").text() + $("#depCostLinechartServiceFilter option:selected").text() + 
-        '部门成本的月度历史折线图'   
-     };
+    // var title = {
+    //     text: $("#depCostLinechartCycleFilterStart option:selected").text() + '至' + 
+    //     $("#depCostLinechartCycleFilterEnd option:selected").text() + $("#depCostLinechartServiceFilter option:selected").text() + 
+    //     ' \n 部门成本的月度历史折线图'   
+    //  };
      var categories = [];
      for (var billingCycle in depsCosts[Object.keys(depsCosts)[0]]) {
         categories.push(billingCycle);
@@ -428,13 +478,14 @@ function showDepartmentCostLinechart(depsCosts) {
   
      var json = {};
   
-     json.title = title;
+     json.title = "";
      json.xAxis = xAxis;
      json.yAxis = yAxis;
      json.tooltip = tooltip;
      json.legend = legend;
      json.series = series;
   
+     $('#depCostLinechart').empty();
      $('#depCostLinechart').highcharts(json);
 }
 
