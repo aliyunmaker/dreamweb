@@ -29,6 +29,13 @@ public class CommonController extends BaseController{
         outputToJSON(response, result);
     }
 
+    @RequestMapping("/listServices.do")
+    public void listServices(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        result.setData(ServiceEnum.values());
+        outputToJSON(response, result);
+    }
+
     @RequestMapping("/getDocumentByModule.do")
     public void getDocumentByModule(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
