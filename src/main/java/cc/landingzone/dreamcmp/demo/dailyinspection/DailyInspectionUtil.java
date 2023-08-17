@@ -27,12 +27,12 @@ public class DailyInspectionUtil {
 
         for (ListConfigRulesResponseBody.ListConfigRulesResponseBodyConfigRulesConfigRuleList configRule: configRules) {
             Rule rule = new Rule();
-            // name和mainstay是用","分隔开的
+            // name和pillar是用","分隔开的
             String[] configRuleName = configRule.getConfigRuleName().split(",");
             rule.setId(configRule.getConfigRuleId());
             // 去掉前缀dreamcmp
             rule.setName(configRuleName[0].split("-")[1]);
-            rule.setMainstay(configRuleName[1]);
+            rule.setPillar(configRuleName[1]);
             JSONObject compliance = new JSONObject();
             compliance.put("complianceType", configRule.getCompliance().getComplianceType());
             compliance.put("count", configRule.getCompliance().getCount());
@@ -68,14 +68,14 @@ public class DailyInspectionUtil {
         /* basic attrs of the rule */
         GetConfigRuleResponseBody.GetConfigRuleResponseBodyConfigRule rule = getBasicAttrsByRuleId(ruleId);
 
-        // name和mainstay是用","分隔开的
+        // name和pillar是用","分隔开的
         String[] configRuleName = rule.getConfigRuleName().split(",");
 
         HashMap<String, String> basicAttrs = new HashMap<>();
         basicAttrs.put("id", rule.getConfigRuleId());
         // 去掉前缀dreamcmp
         basicAttrs.put("name", configRuleName[0].split("-")[1]);
-        basicAttrs.put("mainstay", configRuleName[1]);
+        basicAttrs.put("pillar", configRuleName[1]);
         basicAttrs.put("createTime", new Date(rule.getCreateTimestamp()).toString());
         basicAttrs.put("riskLevel", rule.getRiskLevel().toString());
         basicAttrs.put("description", rule.getDescription());

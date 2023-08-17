@@ -1,6 +1,6 @@
 var rules;
 var ruleIds = "";
-var sortedMainstays = ["安全合规", "稳定性", "成本优化"];
+var sortedPillars = ["安全合规", "稳定性", "成本优化"];
 
 $(document).ready(function() {
     $("#dailyInspectionPage").append(
@@ -47,7 +47,7 @@ function listRules(rules) {
     <table class="table mt-2">
         <thead class="table-light">
         <tr>
-            <th scope="col">Mainstay</th>
+            <th scope="col">Pillar</th>
             <th scope="col">Rule Name</th>
             <th scope="col">Compliance</th>
             <th scope="col">State</th>
@@ -62,12 +62,12 @@ function listRules(rules) {
         ruleIds += rule.id + ","; // 拼接作为activate和deactivate的参数
     }
 
-    for (var mainstay of sortedMainstays) {
+    for (var pillar of sortedPillars) {
         for (var rule of rules) {
-            if (rule.mainstay === mainstay) {
+            if (rule.pillar === pillar) {
                 var row = `
                 <tr>
-                    <td>${rule.mainstay}</td>
+                    <td>${rule.pillar}</td>
                     <td><a href=# class="text-decoration-none" onclick="getRuleDetail('${rule.id}')">${rule.name}</a></td>
                     <td>${rule.compliance.complianceType === "COMPLIANT" ? 
                         `<span class="badge text-bg-success">${rule.compliance.complianceType}(${rule.compliance.count})</span>` : 

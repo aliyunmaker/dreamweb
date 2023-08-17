@@ -10,7 +10,7 @@ import lombok.Data;
 public class Rule {
     private String id;
     private String name;
-    private String mainstay;
+    private String pillar;
     private JSONObject compliance;
     private String state;
 }

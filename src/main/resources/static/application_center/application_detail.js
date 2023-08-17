@@ -1,5 +1,5 @@
 var appName;
-var serviceName;
+var passedServiceName;
 var appInfo;
 var appDetail;
 var sortedServiceNames = ["ECS", "RDS", "SLB", "OSS", "SLS"];
@@ -9,7 +9,7 @@ $(document).ready(function() {
     var queryString = window.location.search;
     var urlParams = new URLSearchParams(queryString);
     appName = urlParams.get('appName');
-    serviceName = urlParams.get('serviceName');
+    passedServiceName = urlParams.get('serviceName');
 
     var appDetailPage = `
     <div class="row pb-2 d-flex">
@@ -90,7 +90,7 @@ $(document).ready(function() {
         success: function(result){
             if (result.success) {
                 appDetail = result.data;
-                listResourcesDetails(serviceName);
+                listResourcesDetails(passedServiceName);
             } else {
                 alert(result.errorMsg);
             }
@@ -233,7 +233,6 @@ function getSessionPolicy(serviceName, resourceId) {
         success: function(result){
             if (result.success) {
                 var sessionPolicy = result.data;
-                console.log(sessionPolicy);
                 showSessionPolicy(serviceName, resourceId, sessionPolicy);
             } else {
                 alert(result.errorMsg);

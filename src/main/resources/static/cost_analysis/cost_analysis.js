@@ -240,6 +240,7 @@ function getDepartmentCostBarchart() {
     success: function (result) {
         if (result.success) {
             var depsCosts = result.data;
+            console.log(depsCosts);
             showDepartmentCostBarchart(depsCosts);
         } else {
             console.log("data.message: " + result.errorMsg);
