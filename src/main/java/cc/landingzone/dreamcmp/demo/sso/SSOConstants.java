@@ -11,7 +11,7 @@ import java.util.*;
 
 public class SSOConstants {
     // 是否自动提交表单,默认为false,方便调试
-    public static final boolean SSO_FORM_AUTO_SUBMIT = false;
+    public static final boolean SSO_FORM_AUTO_SUBMIT = true;
 
     public static final String PUBLIC_KEY_PATH = "/ssocert/saml.crt";
     public static final String PRIVATE_KEY_PATH = "/ssocert/saml.pkcs8";
