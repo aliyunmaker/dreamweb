@@ -93,7 +93,7 @@ public class CostAnalysisUtil {
     public static Map<String, Map<String, Float>> getPeriodTotalAmounts(String billingCycleStart, String billingCycleEnd, String tagKey, String productCode) throws Exception {
         /* 外层Map的key是应用/部门，内层Map的key是时间 */
         Map<String, Map<String, Float>> periodTotalAmounts = new HashMap<>();
-        List<String> billingCycles = new ArrayList<>();
+//        List<String> billingCycles = new ArrayList<>();
 
         if ("application".equals(tagKey)) {
             for (ApplicationEnum applicationEnum : ApplicationEnum.values()) {
