@@ -55,5 +55,21 @@ dreamcmp.scim_key=
 dreamcmp.login_username= 
 dreamcmp.login_password= 
 dreamcmp.dkms_instance_id= 
+
+
+# product account
+dreamcmp.aliyun_accesskeyid=
+dreamcmp.aliyun_accesskeysecret=
+# test account
+dreamcmp.aliyun_testaccount_accesskeyid=
+dreamcmp.aliyun_testaccount_accesskeysecret=
+
+dreamcmp.scim_key=
+dreamcmp.idp_entityid=
+
+dreamcmp.login_user={"admin":"admin","guest":"guest"}
+
+# kms instance id
+dreamcmp.dkms_instance_id=
 ```
 

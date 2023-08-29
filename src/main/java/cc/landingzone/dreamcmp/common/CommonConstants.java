@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +72,6 @@ public class CommonConstants {
 
     public static final String STATUS_AVAILABLE = "Available";
 
-    public static final String LOGOUT_SUCCESS_URL;
-
     public static final String SCIM_KEY;
     public static final String SCIM_URL = "https://cloudsso-scim-cn-shanghai.aliyun.com/scim/v2";
 
@@ -105,12 +102,6 @@ public class CommonConstants {
         LOGIN_USER_MAP = JsonUtils.parseObject(loginUserString, new TypeReference<Map<String, String>>() {});
         DKMSInstanceId = properties.getProperty("dreamcmp.dkms_instance_id");
         EncryptionKeyId = getEncryptionKeyId(DKMSInstanceId);
-        String logoutSuccessUrl = properties.getProperty("dreamcmp.logout_success_url");
-        if (StringUtils.isBlank(logoutSuccessUrl) || "<your_logout_success_url>".equals(logoutSuccessUrl)) {
-            LOGOUT_SUCCESS_URL = "/login?logout";
-        } else {
-            LOGOUT_SUCCESS_URL = logoutSuccessUrl;
-        }
     }
 
 
