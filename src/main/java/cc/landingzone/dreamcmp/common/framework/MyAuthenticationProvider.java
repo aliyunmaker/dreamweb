@@ -25,7 +25,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         String role_admin = "ROLE_ADMIN";
         // String role = "ROLE_GUEST";
 
-        if (CommonConstants.LOGIN_USERNAME.equals(username) && CommonConstants.LOGIN_PASSWORD.equals(password)) {
+        if (CommonConstants.LOGIN_USER_MAP.containsKey(username) && CommonConstants.LOGIN_USER_MAP.get(username).equals(password)) {
             List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
             grantedAuths.add(new SimpleGrantedAuthority(role_admin));
             return new UsernamePasswordAuthenticationToken(username, password, grantedAuths);

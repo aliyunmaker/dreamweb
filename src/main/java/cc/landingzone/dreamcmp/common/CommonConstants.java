@@ -1,18 +1,21 @@
 package cc.landingzone.dreamcmp.common;
 
-import com.aliyun.cloudsso20210515.models.ListDirectoriesResponseBody;
-import com.aliyun.teautil.models.RuntimeOptions;
-
-import cc.landingzone.dreamcmp.demo.akapply.KMSHelper;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Properties;
+import com.alibaba.fastjson.TypeReference;
+import com.aliyun.cloudsso20210515.models.ListDirectoriesResponseBody;
+import com.aliyun.teautil.models.RuntimeOptions;
+
+import cc.landingzone.dreamcmp.common.utils.JsonUtils;
+import cc.landingzone.dreamcmp.demo.akapply.KMSHelper;
 
 public class CommonConstants {
 
@@ -75,9 +78,8 @@ public class CommonConstants {
     public static final String SCIM_KEY;
     public static final String SCIM_URL = "https://cloudsso-scim-cn-shanghai.aliyun.com/scim/v2";
 
-    public static final String LOGIN_USERNAME;
-
-    public static final String LOGIN_PASSWORD;
+    //example: {"admin":"admin","charles":"test"}
+    public static final Map<String,String> LOGIN_USER_MAP;
 
     public static String  DKMSInstanceId;
 
@@ -99,8 +101,8 @@ public class CommonConstants {
         Aliyun_UserId = getCallerIdentity(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         Aliyun_TestAccount_UserId = getCallerIdentity(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         SCIM_KEY = properties.getProperty("dreamcmp.scim_key");
-        LOGIN_USERNAME = properties.getProperty("dreamcmp.login_username");
-        LOGIN_PASSWORD = properties.getProperty("dreamcmp.login_password");
+        String loginUserString = properties.getProperty("dreamcmp.login_user");
+        LOGIN_USER_MAP = JsonUtils.parseObject(loginUserString, new TypeReference<Map<String, String>>() {});
         DKMSInstanceId = properties.getProperty("dreamcmp.dkms_instance_id");
         EncryptionKeyId = getEncryptionKeyId(DKMSInstanceId);
         String logoutSuccessUrl = properties.getProperty("dreamcmp.logout_success_url");
@@ -125,6 +127,15 @@ public class CommonConstants {
             logger.error(e.getMessage(), e);
         }
         return properties;
+    }
+    
+    
+    public static void main(String[] args) {
+        String Aliyun_UserId = getCallerIdentity(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
+        String Aliyun_TestAccount_UserId = getCallerIdentity(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
+        System.out.println(Aliyun_UserId);
+        System.out.println(Aliyun_TestAccount_UserId);
+       
     }
 
     /**

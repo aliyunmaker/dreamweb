@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class JsonUtils {
 
@@ -69,6 +70,13 @@ public class JsonUtils {
             throw new RuntimeException("");
         }
     }
+    
+    public static void main(String[] args) {
+        String s = "{\"team\":\"dev1\",\"product\":\"app1\"}";
+        Map<String, String> map = parseObject(s, new TypeReference<Map<String, String>>() {});
+        System.out.println(map.get("team"));
+    }
+    
 
     public static String toJsonString(Object object) {
         return toJsonString(object, fastjson_serializeConfig_noYear, fastJsonFeatures);
