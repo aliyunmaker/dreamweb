@@ -19,6 +19,11 @@ import cc.landingzone.dreamcmp.demo.akapply.KMSHelper;
 public class CommonConstants {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonConstants.class);
+    
+    
+    public static final String Aliyun_Test_AccessKeyId = "LTAI5t6UJV1BTu2HcXz67ZWn";
+
+    public static final String Aliyun_Test_AccessKeySecret = "iLYT7aps05nW5wVn2uPLX31Xb8yuEq";
 
     public static final String Aliyun_AccessKeyId;
 
