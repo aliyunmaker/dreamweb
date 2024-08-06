@@ -1,5 +1,6 @@
 package cc.landingzone.dreamcmp.common.utils;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 
+import cc.landingzone.dreamcmp.common.CommonConstants;
+
 /**
  * 构建aliyun API 的client
  *
@@ -38,6 +41,8 @@ public class AliyunAPIUtils {
         "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"ecs:*\",\"Resource\":\"*\",\"Effect\":\"Allow\"},{\"Action\":[\"vpc:DescribeVpcs\",\"vpc:DescribeVSwitches\"],\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
     public static final String Policy_SLS_FULL =
         "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"log:*\",\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
+    public static final String Policy_OSS_FULL =
+        "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"oss:*\",\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
     public static final String Policy_ADMIN_FULL =
         "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"*\",\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
 
@@ -180,6 +185,30 @@ public class AliyunAPIUtils {
         String result = HttpClientUtils.postUrlAndStringBody("https://signin.aliyun.com/federation", paramsMap);
         String signinToken = JsonUtils.getValueFormJsonString(result, "SigninToken", String.class);
         return signinToken;
+    }
+    
+    
+    public static Map<String, String> getSTSToken(String accessKeyID, String accessKeySecret, String roleArn,
+        String policy, Long durationSeconds) throws Exception {
+        Map<String, String> result = new HashMap<>();
+        IAcsClient client = AliyunAPIUtils.buildClient_Hangzhou(accessKeyID, accessKeySecret);
+        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest();
+        assumeRoleRequest.setRoleArn(roleArn);
+        assumeRoleRequest.setRoleSessionName("sessionname_charles");
+        assumeRoleRequest.setPolicy(policy);
+        assumeRoleRequest.setDurationSeconds(durationSeconds);
+        AssumeRoleResponse assumeRoleResponse = client.getAcsResponse(assumeRoleRequest);
+        assumeRoleResponse.getCredentials();
+        result.put("AccessKeyId", assumeRoleResponse.getCredentials().getAccessKeyId());
+        result.put("AccessKeySecret", assumeRoleResponse.getCredentials().getAccessKeySecret());
+        result.put("SecurityToken", assumeRoleResponse.getCredentials().getSecurityToken());
+        result.put("Expiration", assumeRoleResponse.getCredentials().getExpiration());
+        return result;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        Object o = getSTSToken(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret, "acs:ram::1158528183198580:role/dreamweb-oss", Policy_OSS_FULL, Duration.ofHours(1).getSeconds());
+        System.out.println(JsonUtils.toJsonString(o));
     }
 
 }

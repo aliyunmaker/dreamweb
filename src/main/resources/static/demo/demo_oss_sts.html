@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>OSS Test</title>
+    <link href="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap.min.4_3_1.css" rel="stylesheet">
+    <style>
+        .section {
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            background-color: #dee2e6;
+            border: 1px solid #adb5bd;
+        }
+
+        #alertBox {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1050;
+            font-size: 3rem;
+            font-weight: bold;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .styled-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .styled-table,
+        .styled-table th,
+        .styled-table td {
+            border: 1px solid black;
+            /* Increase border width and make it black */
+            word-wrap: break-word;
+            /* Force word wrap */
+            word-break: break-all;
+            /* Force word break */
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 2px;
+            text-align: left;
+        }
+
+        .key-column {
+            width: 200px;
+            /* Set a fixed width for the key column */
+        }
+
+        .styled-table td {
+            white-space: normal;
+            /* Ensure text wraps in the value column */
+        }
+    </style>
+    <script type="text/javascript"
+        src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+    <script src="https://gosspublic.alicdn.com/aliyun-oss-sdk-6.18.1.min.js"></script>
+    <script>
+        async function initOSSClient() {
+            try {
+                // Fetch the data from the backend
+                const response = await fetch('../ossdemo/getSTSToken.do');
+                // Check if the fetch was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                // Parse the response data
+                const result = await response.json();
+                const data = result.data;
+                // Initialize the OSS client with the fetched data
+                let client = new OSS({
+                    region: data.region,
+                    accessKeyId: data.AccessKeyId,
+                    accessKeySecret: data.AccessKeySecret,
+                    stsToken: data.SecurityToken,
+                    bucket: data.bucket
+                });
+                console.log('OSS client initialized:', client);
+                return client;
+            } catch (error) {
+                console.error('Failed to initialize OSS client:', error);
+            }
+        }
+
+        async function showSTSTokenTable() {
+            // Fetch the data from the backend
+            const response = await fetch('../ossdemo/getSTSToken.do');
+            // Check if the fetch was successful
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            // Parse the response data
+            const result = await response.json();
+            const data = result.data;
+            updateTableWithJson("tokenDataJsonTable", result.data);
+        }
+
+        async function list(dir) {
+            try {
+                let client = await initOSSClient();
+                let result = await client.list({
+                    prefix: dir
+                });
+                console.log(result);
+                let fileList = $("#fileList");
+                fileList.empty(); // Clear previous list items
+                result.objects.forEach(function (item) {
+                    fileList.append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>${item.name}</span>
+                            <span>${item.lastModified}</span>
+                        </li>
+                    `);
+                });
+
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        async function putObject(data, path) {
+            try {
+                let client = await initOSSClient();
+                const options = {};
+                const result = await client.put(path, data, options);
+                showAlert('File uploaded successfully', 'success');
+                console.log(result);
+            } catch (error) {
+                showAlert('Failed to upload file', 'danger');
+                console.error('Failed to upload file:', error);
+            }
+        }
+
+        async function showPresignedUrlTable() {
+            // Fetch the data from the backend
+            const response = await fetch('../ossdemo/generatePresignedUrl.do');
+            // Check if the fetch was successful
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            const result = await response.json();
+            updateTableWithJson("presignedUrlTable", result.data);
+        }
+
+        function updateTableWithJson(tableId, json) {
+            const table = document.getElementById(tableId);
+            const tbody = table.querySelector('tbody');
+
+            // Clear existing rows
+            tbody.innerHTML = '';
+
+            // Populate table with JSON data
+            for (const key in json) {
+                if (json.hasOwnProperty(key)) {
+                    const row = document.createElement('tr');
+                    const cellKey = document.createElement('td');
+                    const cellValue = document.createElement('td');
+
+                    cellKey.textContent = key;
+                    cellValue.textContent = json[key];
+
+                    row.appendChild(cellKey);
+                    row.appendChild(cellValue);
+                    tbody.appendChild(row);
+                }
+            }
+
+            // Show the table
+            table.style.display = 'table';
+        }
+
+        async function uploadPresignedUrl() {
+            try {
+                // Fetch the data from the backend
+                const response = await fetch('../ossdemo/generatePresignedUrl.do');
+                // Check if the fetch was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const result = await response.json();
+                const presignedUrl = result.data.url;
+
+                const upload = document.getElementById("uploadPresignedUrlFile");
+                const file = upload.files[0];
+                if (!file) {
+                    showAlert('Failed to get file', 'danger');
+                    return;
+                }
+                console.log(presignedUrl);
+
+                fetch(presignedUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=UTF-8' // 根据需要设置Content-Type
+                    },
+                    body: file // 直接发送文件
+                }).then(response => {
+                    if (response.ok) {
+                        showAlert('File uploaded successfully', 'success');
+                        console.log('File uploaded successfully');
+                    } else {
+                        showAlert('Failed to upload file', 'danger');
+                        console.error('File upload failed');
+                    }
+                }).catch(error => {
+                    showAlert('Failed to upload file', 'danger');
+                    console.error('File upload failed', error);
+                });
+
+
+            } catch (error) {
+                console.error('Failed to generatePresignedUrl:', error);
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} mt-3`;
+            alertBox.style.display = 'block';
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+        }
+
+        async function showPostSignatureJsonTable() {
+            // Fetch the data from the backend
+            const response = await fetch('../ossdemo/generatePostSignature.do');
+            // Check if the fetch was successful
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            const result = await response.json();
+            updateTableWithJson("postSignatureJsonTable", result.data);
+        }
+
+
+
+        async function uploadPostSignature() {
+            try {
+                // Fetch the data from the backend
+                const response = await fetch('../ossdemo/generatePostSignature.do');
+                // Check if the fetch was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const result = await response.json();
+
+                const upload = document.getElementById("uploadPostSignatureFile");
+                const file = upload.files[0];
+                if (!file) {
+                    showAlert('Failed to get file', 'danger');
+                    return;
+                }
+
+                const formData = new FormData();
+                // 指定成功上传时，服务端返回状态码200，默认返回204
+                formData.append("success_action_status", "200");
+                formData.append('policy', result.data.policy);
+                formData.append('signature', result.data.signature);
+                formData.append('OSSAccessKeyId', result.data.OSSAccessKeyId);
+                formData.append('key', result.data.dir + file.name);
+                formData.append('file', file);
+
+
+                fetch("https://dreamweb.oss-cn-hangzhou.aliyuncs.com", {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        showAlert('File uploaded successfully', 'success');
+                        console.log('File uploaded successfully');
+                    } else {
+                        showAlert('Failed to upload file', 'danger');
+                        console.error('File upload failed');
+                    }
+                }).catch(error => {
+                    showAlert('Failed to upload file', 'danger');
+                    console.error('File upload failed', error);
+                });
+            } catch (error) {
+                console.error('Failed to generatePresignedUrl:', error);
+            }
+        }
+
+        $(document).ready(function () {
+            $("#listFilesBtn").click(function () {
+                list("download/");
+            });
+            $("#uploadBtn").click(function () {
+                const upload = document.getElementById("uploadFile");
+                const data = upload.files[0];
+                if (!data) {
+                    showAlert('Failed to get file', 'danger');
+                }
+                putObject(data, "download/" + data.name);
+            });
+            $("#getTokenBtn").click(function () {
+                showSTSTokenTable();
+            });
+            $("#showPresignedUrlTableBtn").click(function () {
+                showPresignedUrlTable();
+            });
+            $("#uploadPresignedUrlBtn").click(function () {
+                uploadPresignedUrl();
+            });
+            $("#showPostSignatureJsonTableBtn").click(function () {
+                showPostSignatureJsonTable();
+            });
+            $("#uploadPostSignatureBtn").click(function () {
+                uploadPostSignature();
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div id="alertBox" class="alert alert-success mt-3" role="alert" style="display:none;">
+            File uploaded successfully
+        </div>
+
+        <!-- Section 1 -->
+        <div class="section">
+            <h3 class="text-left">① OSS STS Example</h3>
+            <hr>
+            <div class="col-md-12">
+                <table id="tokenDataJsonTable" class="styled-table mb-3" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th class="key-column">Key</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button id="getTokenBtn" class="btn btn-primary mb-3">Show Token</button>
+                <button id="listFilesBtn" class="btn btn-primary mb-3">List Files</button>
+                <div class="mb-3">
+                    <ul id="fileList" class="list-group"></ul>
+                </div>
+                <input id="uploadFile" type="file" class="form-control-file mb-3" />
+                <button id="uploadBtn" class="btn btn-primary">Upload</button>
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section">
+            <h3 class="text-left">② OSS PresignedUrl Example</h3>
+            <hr>
+            <div class="col-md-12">
+                <table id="presignedUrlTable" class="styled-table mb-3" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th class="key-column">Key</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button id="showPresignedUrlTableBtn" class="btn btn-primary mb-3">Show PresignedUrl</button>
+                <input id="uploadPresignedUrlFile" type="file" class="form-control-file mb-3" />
+                <button id="uploadPresignedUrlBtn" class="btn btn-primary">Upload</button>
+            </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="section">
+            <h3 class="text-left">③ OSS PostSignature Example</h3>
+            <hr>
+            <div class="col-md-12">
+                <table id="postSignatureJsonTable" class="styled-table mb-3" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th class="key-column">Key</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button id="showPostSignatureJsonTableBtn" class="btn btn-primary mb-3">Show PostSignature</button>
+                <input id="uploadPostSignatureFile" type="file" class="form-control-file mb-3" />
+                <button id="uploadPostSignatureBtn" class="btn btn-primary">Upload</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
