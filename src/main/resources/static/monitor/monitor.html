@@ -23,64 +23,79 @@
       background-color: #8899f0;
     }
 
-    #offcanvas-btn { 
-      position: fixed; bottom: 20px; right: 20px; 
+    #offcanvas-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
     }
 
     #offcanvasNavbar .offcanvas-body {
-        padding-top: 0;
+      padding-top: 0;
     }
+
+    .nav-item {
+      margin-right: 10px;
+    }
+  
   </style>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
   <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
 </head>
 
 <body>
-<main>
-  <nav class="navbar navbar-expand bg-body-secondary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Monitor</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <select class="form-select form-select-sm" aria-label="Default select example" id="logAppsSelect" onchange="signSLSMonitor()">
-            </select>
-          </li>
-        </ul>
+  <main>
+    <nav class="navbar navbar-expand bg-body-secondary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Monitor</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <button id="simulate-failure-btn" class="btn btn-sm btn-success" onclick="simulateFaliure()">模拟/恢复故障</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-sm btn-light" onclick="changeMonitorType('dashboard')">Grafana大盘</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-sm btn-light" onclick="changeMonitorType('tracing')">Tracing链路追踪</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-sm btn-light" onclick="changeMonitorType('sls')">SLS日志</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <button id="offcanvas-btn" class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" onclick="getDocumentByModule()">
+      Reference
+    </button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
+      style="--bs-offcanvas-width: 40%;">
+      <div class="offcanvas-header">
+        <h3 class="offcanvas-title">参考说明</h3>
+        <button type="button" class="btn-close " data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+
+      <div class="offcanvas-body">
+        <label for="documentContent"></label>
+        <div id="documentContent" style="height: 95%"></div>
+        <!--                    <textarea id="documentContent" class="form-control"></textarea>-->
       </div>
     </div>
-  </nav>
 
-  <button id="offcanvas-btn" class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" 
-  aria-controls="offcanvasNavbar" onclick="getDocumentByModule()">
-  Reference
-  </button>
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasRightLabel"
-       style="--bs-offcanvas-width: 40%;">
-    <div class="offcanvas-header">
-      <h3 class="offcanvas-title">参考说明</h3>
-      <button type="button" class="btn-close " data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="iframe-container">
+      <iframe id="iframe" src="../loading_spinner.html" width="100%" height="100%"></iframe>
     </div>
-
-    <div class="offcanvas-body">
-      <label for="documentContent"></label>
-      <div id="documentContent"  style="height: 95%"></div>
-      <!--                    <textarea id="documentContent" class="form-control"></textarea>-->
-    </div>
-  </div>
-  
-  <div class="iframe-container">
-    <iframe id="iframe" src="../loading_spinner.html" width="100%" height="100%"></iframe>
-  </div>
-</main>
-<script>
+  </main>
+  <script>
     var applictionList = [];
     var iframe = document.getElementById("iframe");
     var appName;
 
-    page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
-    iframe.setAttribute("src", page);
-    $(document).ready(function() {
+    changeMonitorType('dashboard');
+    // page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
+    $(document).ready(function () {
       // 获取从应用中心传过来的appName
       var queryString = window.location.search;
       var urlParams = new URLSearchParams(queryString);
@@ -91,75 +106,100 @@
 
     var links = document.querySelectorAll(".navbar-nav a");
 
-    function signSLSMonitor() {
-      if($("#logAppsSelect").val() != applictionList[applictionList.length-1]){
-        page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
-      }else{
-        var page = "../signSLSMonitor.do?projectName="+$("#logAppsSelect").val()+"-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
+    function changeMonitorType(monitorType) {
+      if (monitorType == "dashboard") {
+        // var page = "../getGrafanaDashboard.do?projectName=" + $("#logAppsSelect").val() + "-dreamweb" + "&instanceId=" + $("#logAppsSelect").val() + "-monitor";
+        iframe.setAttribute("src", "../loading_spinner.html");
+        var page = "../getGrafanaDashboard.do";
+      } else if (monitorType == "tracing") {
+        iframe.setAttribute("src", "../loading_spinner.html");
+        var page = "../getTracing.do";
+      } else if (monitorType == "sls") {
+        iframe.setAttribute("src", "../loading_spinner.html");
+        var page = "../getSLSLogstore.do?projectName=dreamone-business-system&logStore=order-system-business-log&queryString=" + "level:ERROR";
       }
       iframe.setAttribute("src", page);
       console.log("page:" + page);
     }
 
-    function addSelectOptions(applist) {
-      applist.forEach(function(app) {
-        var option = `
-        <option value="${app}">${app}</option>
-        `;
-        $("#logAppsSelect").append(option);
-      })
-    }
+    // function addSelectOptions(applist) {
+    //   applist.forEach(function (app) {
+    //     var option = `
+    //     <option value="${app}">${app}</option>
+    //     `;
+    //     $("#logAppsSelect").append(option);
+    //   })
+    // }
 
     function getApplication() {
-    $.ajax({
+      $.ajax({
         url: "../" + "common/getApplication.do",
         type: "POST",
         data: {},
         success: function (result) {
-            if (result.success) {
-                var application = document.getElementById("logAppsSelect");
-                applictionList = result.data;
-                for (var i = application.length - 1; i >= 1; i--) {
-                    application.remove(i);
-                }
-                for (var i = 0; i < applictionList.length; i++) {
-                    application.options.add(new Option(applictionList[i], applictionList[i]));
-                }
-				if(appName != null || appName != undefined){
-					application.value = appName;
-				}else{
-					application.value = applictionList[0];
-				}
-				signSLSMonitor();
-
-                // application.options[0].selected = true;
-            } else {
-                console.log("data.message: " + result.errorMsg);
-                alert(result.errorMsg);
+          if (result.success) {
+            var application = document.getElementById("logAppsSelect");
+            applictionList = result.data;
+            for (var i = application.length - 1; i >= 1; i--) {
+              application.remove(i);
             }
-        },
-    })
-  }
+            for (var i = 0; i < applictionList.length; i++) {
+              application.options.add(new Option(applictionList[i], applictionList[i]));
+            }
+            if (appName != null || appName != undefined) {
+              application.value = appName;
+            } else {
+              application.value = applictionList[0];
+            }
+            signSLSMonitor();
 
-  function getDocumentByModule(){
-  var params = {
-    module: "monitorcenter"
-  }
-  $.ajax({
-    url: "../" + "common/getDocumentByModule.do",
-    type: "POST",
-    data: params,
-    success: function (result) {
-      if (result.success) {
-        var documentContent = result.data;
-         document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
-      } else {
-        console.log("data.message: " + result.errorMsg);
-        alert(result.errorMsg);
-      }
+            // application.options[0].selected = true;
+          } else {
+            console.log("data.message: " + result.errorMsg);
+            alert(result.errorMsg);
+          }
+        },
+      })
     }
-  })
-}
+
+    function getDocumentByModule() {
+      var params = {
+        module: "monitorcenter"
+      }
+      $.ajax({
+        url: "../" + "common/getDocumentByModule.do",
+        type: "POST",
+        data: params,
+        success: function (result) {
+          if (result.success) {
+            var documentContent = result.data;
+            document.getElementById('documentContent').innerHTML = marked.parse(documentContent);
+          } else {
+            console.log("data.message: " + result.errorMsg);
+            alert(result.errorMsg);
+          }
+        }
+      })
+    }
+
+    function simulateFaliure() {
+      var params = {}
+      $.ajax({
+        url: "../" + "simulateFailure.do",
+        type: "POST",
+        data: params,
+        success: function (result) {
+          if (result.success) {
+            alert("模拟/恢复故障成功");
+            // 转换按钮样式和文字
+            $("#simulate-failure-btn").toggleClass("btn-danger btn-success");
+          } else {
+            console.log("data.message: " + result.errorMsg);
+            alert(result.errorMsg);
+          }
+        }
+      })
+    }
 
   </script>
 </body>
