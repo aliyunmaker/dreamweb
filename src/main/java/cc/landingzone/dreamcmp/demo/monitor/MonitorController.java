@@ -1,16 +1,18 @@
 package cc.landingzone.dreamcmp.demo.monitor;
 
+import cc.landingzone.dreamcmp.common.BaseController;
+import cc.landingzone.dreamcmp.common.CommonConstants;
+import cc.landingzone.dreamcmp.common.model.WebResult;
+import cc.landingzone.dreamcmp.common.utils.AliyunAPIUtils;
+import cc.landingzone.dreamcmp.common.utils.HttpClientUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import cc.landingzone.dreamcmp.common.BaseController;
-import cc.landingzone.dreamcmp.common.CommonConstants;
-import cc.landingzone.dreamcmp.common.model.WebResult;
-import cc.landingzone.dreamcmp.common.utils.AliyunAPIUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,16 +25,22 @@ public class MonitorController extends BaseController {
     @Value("${dreamcmp.aliyun_grafana_api_key}")
     private String GRAFANA_API_KEY;
 
-    @RequestMapping("/getFailureStatus.do")
-    public void getFailureStatus(HttpServletRequest request, HttpServletResponse response) {
-        // TODO 调FC -> 调系统接口 获取故障状态
+    @Value("${dreamcmp.aliyun_monitoring_simulation_fc_address}")
+    private String SIMULATE_ERROR_FC_ADDRESS;
+
+    @RequestMapping("/getSimulateErrorStatus.do")
+    public void getSimulateErrorStatus(HttpServletRequest request, HttpServletResponse response) {
+        // 调FC -> 调系统接口 获取故障状态
+        WebResult result = sendHttpRequest(SIMULATE_ERROR_FC_ADDRESS + "/getSimulateErrorStatus");
+        System.out.println(JSON.toJSONString(result));
+        outputToJSON(response, result);
     }
 
-    @RequestMapping("/simulateFailure.do")
-    public void simulateFailure(HttpServletRequest request, HttpServletResponse response) {
-        WebResult result = new WebResult();
-        // TODO 调FC -> 调系统接口 模拟/恢复系统故障
-        result.setSuccess(true);
+    @RequestMapping("/simulateError.do")
+    public void simulateError(HttpServletRequest request, HttpServletResponse response) {
+        // 调FC -> 调系统接口 模拟故障/恢复正常
+        WebResult result = sendHttpRequest(SIMULATE_ERROR_FC_ADDRESS + "/simulateError");
+        System.out.println(JSON.toJSONString(result));
         outputToJSON(response, result);
     }
 
@@ -56,8 +64,8 @@ public class MonitorController extends BaseController {
     public void getTracing(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            // String destination = "https://tracing-analysis.console.aliyun.com/?hideTopbar=true&hideSidebar=true#/appList/cn-hangzhou"; // 旧版
-            String destination = "https://trace4service.console.aliyun.com/#/tracing/cn-hangzhou?appId=benwhzyqus%4080e77f717b662da&tab=appTopu&source=XTRACE&xtraceType=trace&from=now%2Fd&to=now%2Fd&refresh=10s";
+            String destination = "https://trace4service.console.aliyun.com/?hideTopbar=true&hideSidebar=true#/cn-hangzhou/tracing-explorer?source=XTRACE&from=now-15m&to=now&refresh=10s&slsFilters=(serviceName%20%3A%20%22dreamone-customer-system%22%20or%20serviceName%20%3A%20%22dreamone-order-system%22%20or%20serviceName%20%3A%20%22dreamone-item-system%22%20)&filters=serviceName%20IN%20(%22dreamone-customer-system%22%20%2C%20%22dreamone-order-system%22%20%2C%20%22dreamone-item-system%22)";
+//            String destination = "https://trace4service.console.aliyun.com/#/tracing/cn-hangzhou?appId=benwhzyqus%4080e77f717b662da&tab=appTopu&source=XTRACE&xtraceType=trace&from=now%2Fd&to=now%2Fd&refresh=10s";
             String redirectUrl = getRedirectUrl(destination);
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
@@ -103,6 +111,20 @@ public class MonitorController extends BaseController {
             CommonConstants.Aliyun_AccessKeySecret,
             CommonConstants.ADMIN_ROLE_ARN, username, "", true);
         return signToken;
+    }
+
+    private WebResult sendHttpRequest(String url) {
+        WebResult result = new WebResult();
+        try {
+            JSONObject response = JSON.parseObject(HttpClientUtils.getDataAsStringFromUrl(url));
+            result.setSuccess(response.getBoolean("success"));
+            result.setData(response.get("data"));
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        return result;
     }
 
 }

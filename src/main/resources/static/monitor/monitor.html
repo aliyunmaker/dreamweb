@@ -36,7 +36,6 @@
     .nav-item {
       margin-right: 10px;
     }
-  
   </style>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
   <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
@@ -50,7 +49,8 @@
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <button id="simulate-failure-btn" class="btn btn-sm btn-success" onclick="simulateFaliure()">模拟/恢复故障</button>
+              <button id="simulate-failure-btn" class="btn btn-sm"
+                onclick="simulateError()">故障按钮</button>
             </li>
             <li class="nav-item">
               <button class="btn btn-sm btn-light" onclick="changeMonitorType('dashboard')">Grafana大盘</button>
@@ -92,7 +92,9 @@
     var applictionList = [];
     var iframe = document.getElementById("iframe");
     var appName;
+    var error;
 
+    getSimulateErrorStatus();
     changeMonitorType('dashboard');
     // page = "https://demo.grafana.aliyuncs.com/d/iN7tThXVk/home?orgId=1";
     $(document).ready(function () {
@@ -101,7 +103,6 @@
       var urlParams = new URLSearchParams(queryString);
       appName = urlParams.get('appName');
       console.log("appName:" + appName);
-      getApplication();
     });
 
     var links = document.querySelectorAll(".navbar-nav a");
@@ -116,48 +117,20 @@
         var page = "../getTracing.do";
       } else if (monitorType == "sls") {
         iframe.setAttribute("src", "../loading_spinner.html");
-        var page = "../getSLSLogstore.do?projectName=dreamone-business-system&logStore=order-system-business-log&queryString=" + "level:ERROR";
+        var page = "../getSLSLogstore.do?projectName=dreamone-business-system&logStore=dreamone-customer-system&queryString=level:ERROR";
       }
       iframe.setAttribute("src", page);
       console.log("page:" + page);
     }
 
-    // function addSelectOptions(applist) {
-    //   applist.forEach(function (app) {
-    //     var option = `
-    //     <option value="${app}">${app}</option>
-    //     `;
-    //     $("#logAppsSelect").append(option);
-    //   })
-    // }
-
-    function getApplication() {
+    function getSimulateErrorStatus() {
       $.ajax({
-        url: "../" + "common/getApplication.do",
+        url: "../getSimulateErrorStatus.do",
         type: "POST",
         data: {},
         success: function (result) {
-          if (result.success) {
-            var application = document.getElementById("logAppsSelect");
-            applictionList = result.data;
-            for (var i = application.length - 1; i >= 1; i--) {
-              application.remove(i);
-            }
-            for (var i = 0; i < applictionList.length; i++) {
-              application.options.add(new Option(applictionList[i], applictionList[i]));
-            }
-            if (appName != null || appName != undefined) {
-              application.value = appName;
-            } else {
-              application.value = applictionList[0];
-            }
-            signSLSMonitor();
-
-            // application.options[0].selected = true;
-          } else {
-            console.log("data.message: " + result.errorMsg);
-            alert(result.errorMsg);
-          }
+          error = result.data;
+          updateButton();
         },
       })
     }
@@ -182,23 +155,40 @@
       })
     }
 
-    function simulateFaliure() {
+    function simulateError() {
       var params = {}
       $.ajax({
-        url: "../" + "simulateFailure.do",
+        url: "../" + "simulateError.do",
         type: "POST",
         data: params,
         success: function (result) {
           if (result.success) {
-            alert("模拟/恢复故障成功");
-            // 转换按钮样式和文字
-            $("#simulate-failure-btn").toggleClass("btn-danger btn-success");
+            if (error) {
+              alert("系统恢复正常！");
+            } else {
+              alert("模拟故障成功！");
+            }
+            getSimulateErrorStatus();
           } else {
             console.log("data.message: " + result.errorMsg);
             alert(result.errorMsg);
           }
         }
       })
+    }
+
+    function updateButton() {
+      const button = document.getElementById('simulate-failure-btn');
+
+      if (error) {
+        button.classList.remove('btn-success');
+        button.classList.add('btn-danger');
+        button.textContent = '恢复正常';
+      } else {
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-success');
+        button.textContent = '模拟故障';
+      }
     }
 
   </script>
