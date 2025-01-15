@@ -185,7 +185,7 @@
 		<dependency>
 			<groupId>com.aliyun.oss</groupId>
 			<artifactId>aliyun-sdk-oss</artifactId>
-			<version>3.8.0</version>
+			<version>3.17.4</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>httpclient</artifactId>
@@ -201,7 +201,7 @@
 		<dependency>
 			<groupId>com.aliyun.openservices</groupId>
 			<artifactId>aliyun-log</artifactId>
-			<version>0.6.33</version>
+			<version>0.6.111</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
@@ -254,7 +254,7 @@
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>sls20201230</artifactId>
-			<version>2.0.1</version>
+			<version>5.6.0</version>
 		</dependency>
 
 		<dependency>
@@ -352,6 +352,11 @@
 			<artifactId>bssopenapi20171214</artifactId>
 			<version>1.8.6</version>
 		</dependency>
+		<dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>credentials-java</artifactId>
+            <version>0.3.12</version>
+        </dependency>
 		<!-- aliyun sdk end -->
 	</dependencies>
 
