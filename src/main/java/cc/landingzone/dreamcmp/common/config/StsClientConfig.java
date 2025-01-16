@@ -1,5 +1,6 @@
 package cc.landingzone.dreamcmp.common.config;
 
+import cc.landingzone.dreamcmp.common.EndpointEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +23,7 @@ public class StsClientConfig {
     com.aliyun.sts20150401.Client stsClientEcsRole() throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
             .setCredential(credentialClient)
-            // 以华东1（杭州）为例
-            .setEndpoint("sts.cn-hangzhou.aliyuncs.com");
+            .setEndpoint(EndpointEnum.STS.getEndpoint());
         return new com.aliyun.sts20150401.Client(config);
     }
 
@@ -33,7 +33,7 @@ public class StsClientConfig {
             .setAccessKeyId(CommonConstants.Aliyun_TestAccount_AccessKeyId)
             .setAccessKeySecret(CommonConstants.Aliyun_TestAccount_AccessKeySecret)
             .setSecurityToken(CommonConstants.Aliyun_TestAccount_SecurityToken)
-            .setEndpoint("sts.cn-hangzhou.aliyuncs.com");
+            .setEndpoint(EndpointEnum.STS.getEndpoint());
         return new com.aliyun.sts20150401.Client(config);
     }
 }

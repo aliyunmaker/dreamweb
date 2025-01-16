@@ -1,9 +1,13 @@
 package cc.landingzone.dreamcmp.common.config;
 
 import cc.landingzone.dreamcmp.common.CommonConstants;
+import cc.landingzone.dreamcmp.demo.workshop.service.StsService;
 import com.aliyun.oss.common.auth.Credentials;
 import com.aliyun.oss.common.auth.CredentialsProvider;
 import com.aliyun.oss.common.comm.SignVersion;
+import com.aliyun.sts20150401.models.AssumeRoleRequest;
+import com.aliyun.sts20150401.models.AssumeRoleResponse;
+import com.aliyun.sts20150401.models.AssumeRoleResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,18 +30,32 @@ public class OssClientConfig {
     @Value("${dreamcmp.workshop.oss_region}")
     private String ossRegion;
 
-    @Autowired(required = false)
-    private com.aliyun.credentials.Client credentialClient;
+    @Value("${dreamcmp.workshop.assume_role_arn}")
+    private String ossAccountRoleArn;
+
+    @Autowired
+    private StsService stsService;
 
     @Bean
     OSS ossClient() {
         String endpoint = String.format("https://oss-%s.aliyuncs.com", ossRegion);
-        return new OSSClientBuilder().build(
-            endpoint,
-            CommonConstants.Aliyun_TestAccount_AccessKeyId,
-            CommonConstants.Aliyun_TestAccount_AccessKeySecret,
-            CommonConstants.Aliyun_TestAccount_SecurityToken
-        );
+
+        // 特殊场景（资源在crystal），需要跨账号扮演到crystal账号里
+        AssumeRoleResponse crystalRole;
+        try {
+            crystalRole = stsService.assumeRole(new AssumeRoleRequest() {{
+                setRoleArn(ossAccountRoleArn);
+                setRoleSessionName("dreamcmp");
+            }});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        AssumeRoleResponseBody.AssumeRoleResponseBodyCredentials credentials = crystalRole.getBody().getCredentials();
+        String ak = credentials.getAccessKeyId();
+        String sk = credentials.getAccessKeySecret();
+        String token = credentials.getSecurityToken();
+        // 仅本地测试使用
+        return new OSSClientBuilder().build(endpoint, ak, sk, token);
     }
 
     @Bean
@@ -61,11 +79,21 @@ public class OssClientConfig {
 
                 @Override
                 public Credentials getCredentials() {
-                    // 保证线程安全，从 CredentialModel 中获取 ak/sk/security token
-                    CredentialModel credentialModel = credentialClient.getCredential();
-                    String ak = credentialModel.getAccessKeyId();
-                    String sk = credentialModel.getAccessKeySecret();
-                    String token = credentialModel.getSecurityToken();
+                    // 特殊场景（资源在crystal），需要跨账号扮演到crystal账号里
+                    AssumeRoleResponse crystalRole;
+                    try {
+                        crystalRole = stsService.assumeRole(new AssumeRoleRequest() {{
+                            setRoleArn(ossAccountRoleArn);
+                            setRoleSessionName("dreamcmp");
+                        }});
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    AssumeRoleResponseBody.AssumeRoleResponseBodyCredentials credentials = crystalRole.getBody().getCredentials();
+                    String ak = credentials.getAccessKeyId();
+                    String sk = credentials.getAccessKeySecret();
+                    String token = credentials.getSecurityToken();
+
                     return new DefaultCredentials(ak, sk, token);
                 }
             }).build();

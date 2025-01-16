@@ -7,7 +7,7 @@
   <link rel="shortcut icon" href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/favicon.ico"
         type="image/x-icon" />
   <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_80v0o9e1duv.css" />
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_iycuh2wm5k.css" />
   <style>
     main {
       overflow: hidden;
@@ -42,17 +42,22 @@
     <ul class="nav nav-pills flex-column mb-auto chengchaobar">
       <li>
           <span class="nav-link text-white" style="cursor: default; font-weight: bold;">
-            De-AK Demo
+            无AK
           </span>
       </li>
       <li>
-        <a href="#" class="nav-link text-white" data-link="./demo_ecs_role.html" style="padding-left: 2rem;">
+        <a href="#" class="nav-link text-white active" data-link="./demo_ecs_role.html" style="padding-left: 2rem;">
           <i class="iconfont icon-ecs"></i>&nbsp;&nbsp;ECS Instance Role
         </a>
       </li>
       <li>
         <a href="#" class="nav-link text-white" data-link="./demo_oss_sts.html" style="padding-left: 2rem;">
-          <i class="iconfont icon-oss"></i>&nbsp;&nbsp;Demo-OSS
+          <i class="iconfont icon-oss"></i>&nbsp;&nbsp;OSS直传
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white" data-link="./demo_token_vending.html" style="padding-left: 2rem;">
+          <i class="iconfont icon-tvm"></i>&nbsp;&nbsp;Token Vending
         </a>
       </li>
       <hr>
@@ -89,15 +94,17 @@
     link.addEventListener("click", function (e) {
       e.preventDefault();
       var page = e.target.getAttribute("data-link");
-      iframe.setAttribute("src", page);
-
-      // Remove active class from all links
+      
+      // Remove active class from all links first
       links.forEach(function (link) {
         link.classList.remove("active");
       });
 
-      // Add active class to the clicked link
+      // Add active class to the clicked link immediately
       e.target.classList.add("active");
+
+      // Set iframe src after updating menu state
+      iframe.setAttribute("src", page);
     });
   });
 

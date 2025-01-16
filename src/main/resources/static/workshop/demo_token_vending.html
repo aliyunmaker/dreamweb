@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Vending Machine</title>
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        .container {
+            margin-top: 30px;
+        }
+        .token-table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .token-table table {
+            margin-bottom: 0;
+        }
+        .token-table th {
+            border-top: none;
+            font-weight: 600;
+            color: #666;
+        }
+        .token-table td {
+            word-break: break-all;
+            white-space: normal;
+            max-width: 0;
+            width: 100%;
+        }
+        .token-table tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+        .token-table td {
+            cursor: pointer;
+        }
+        .token-table td.selected {
+            background-color: #e9ecef;
+        }
+        .token-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .token-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link:hover {
+            border: none;
+            color: #0d6efd;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border: none;
+            border-bottom: 2px solid #0d6efd;
+            background-color: transparent;
+        }
+        .tab-content {
+            padding: 20px 0;
+        }
+        .token-table td.loading {
+            position: relative;
+            color: transparent;
+        }
+        .token-table td.loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #0d6efd;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .path-links span {
+            cursor: pointer;
+            color: #0d6efd;
+        }
+        .path-links span:hover {
+            text-decoration: underline;
+        }
+        .path-links span.current {
+            color: #666;
+            cursor: default;
+        }
+        .path-links span.current:hover {
+            text-decoration: none;
+        }
+        .path-separator {
+            margin: 0 5px;
+            color: #666;
+        }
+        .folder-row {
+            cursor: pointer;
+        }
+        .folder-row:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* QR Code Container Styles */
+        .qrcode-container {
+            position: relative;
+            width: 256px;
+            height: 256px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .qrcode-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+
+        .qrcode-container:hover .qrcode-overlay {
+            display: flex;
+        }
+
+        .qrcode-refresh-icon {
+            color: white;
+            font-size: 2rem;
+        }
+
+        .qrcode-refresh-text {
+            color: white;
+            font-size: 1rem;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* Button click animation styles */
+        .btn-click-effect {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+            transition: transform 0.1s;
+        }
+
+        .btn-click-effect:active {
+            transform: scale(0.95);
+        }
+
+        .btn-click-effect::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .3s, opacity .5s;
+        }
+
+        .btn-click-effect:active::after {
+            transform: scale(0, 0);
+            opacity: .3;
+            transition: 0s;
+        }
+
+        #qrcode {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #qrcode img {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Token Vending Machine</h1>
+        <div class="mt-4">
+            <!-- Token信息表格 -->
+            <div class="token-table mb-4">
+                <div class="token-header">
+                    <h2>Token Information</h2>
+                    <button id="fetchButton" class="btn btn-primary" onclick="refreshToken()">
+                        获取
+                    </button>
+                </div>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th style="width: 200px">AccessKeyId</th>
+                            <td id="accessKeyId">-</td>
+                        </tr>
+                        <tr>
+                            <th>AccessKeySecret</th>
+                            <td id="accessKeySecret">-</td>
+                        </tr>
+                        <tr>
+                            <th>SecurityToken</th>
+                            <td id="securityToken">-</td>
+                        </tr>
+                        <tr>
+                            <th>Expiration</th>
+                            <td id="expiration">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tab导航 -->
+            <ul class="nav nav-tabs" id="serviceTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="oss-tab" data-bs-toggle="tab" 
+                            data-bs-target="#oss-content" type="button" role="tab">OSS</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sls-tab" data-bs-toggle="tab" 
+                            data-bs-target="#sls-content" type="button" role="tab">SLS</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="mobile-tab" data-bs-toggle="tab" 
+                            data-bs-target="#mobile-content" type="button" role="tab">客户端</button>
+                </li>
+            </ul>
+
+            <!-- Tab内容 -->
+            <div class="tab-content mt-3" id="serviceTabsContent">
+                <div class="tab-pane fade show active" id="oss-content" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">OSS Demo</h5>
+                            <div class="d-flex align-items-center mb-3">
+                                <input type="text" class="form-control" id="ossPrefix" placeholder="输入前缀进行过滤" hidden>
+                                <div id="pathNavigation" class="d-flex align-items-center w-100 justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <div class="current-path d-flex align-items-center me-3">
+                                            <i class="bi bi-folder2-open text-warning me-2"></i>
+                                            <span id="currentPath" class="path-links"></span>
+                                        </div>
+                                        <label class="btn btn-outline-primary btn-sm mb-0">
+                                            <i class="bi bi-file-earmark-plus"></i> 选择文件
+                                            <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="listObjects()">
+                                        查询
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="objectList">
+                                    <thead>
+                                        <tr>
+                                            <th>名称</th>
+                                            <th>大小</th>
+                                            <th>最后修改时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="sls-content" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Web Tracking</h5>
+                            </div>
+                            <div class="mt-3">
+                                <div class="btn-group mb-3" role="group">
+                                    <button type="button" class="btn btn-primary me-2 btn-click-effect" onclick="sendUserAction('click', 'button1')">
+                                        Button 1
+                                    </button>
+                                    <button type="button" class="btn btn-success me-2 btn-click-effect" onclick="sendUserAction('click', 'button2')">
+                                        Button 2
+                                    </button>
+                                    <button type="button" class="btn btn-warning btn-click-effect" onclick="sendUserAction('click', 'button3')">
+                                        Button 3
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-3" style="height: 600px;">
+                                <iframe id="slsFrame" style="width: 100%; height: 100%; border: none;"></iframe>
+                                <div id="slsLoading" class="text-center" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="mobile-content" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-4">扫码体验</h5>
+                            <h6 class="text-muted mb-4">二维码有效期为5分钟，请尽快使用</h6>
+                            <div class="qrcode-container" onclick="generateQRCode()">
+                                <div id="qrcode" class="mb-4"></div>
+                                <div class="qrcode-overlay">
+                                    <div>
+                                        <i class="bi bi-arrow-clockwise qrcode-refresh-icon"></i>
+                                        <div class="qrcode-refresh-text">点击刷新</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://gosspublic.alicdn.com/aliyun-oss-sdk-6.18.1.min.js"></script>
+    <script src="https://g.alicdn.com/sls/sls-js-sdk/0.3.5/web-track-browser.js"></script>
+    <script src="https://g.alicdn.com/sls/sls-js-sdk/0.3.5/web-sts-plugin.js"></script>
+    <script>
+        let currentToken = null;
+        let fetchTokenAuthCode = null;
+        let ossClient = null;
+        let selectedFile = null;
+        const ossBucket = 'dreamweb-workshop';
+        const ossRegion = 'oss-cn-hangzhou';
+
+        const sls_opts = {
+            host: 'cn-hangzhou.log.aliyuncs.com', 
+            project: 'dreamweb',
+            logstore: 'workshop-demo',
+            time: 3,   // 发送日志的时间间隔，默认是10秒
+            count: 10, // 发送日志的数量大小，默认是10条
+            topic: 'topic', // 自定义日志主题
+            source: 'dreamcmp', // 自定义日志来源
+            tags: {
+                tags: 'dreamcmp',
+            },
+        };
+        const tracker = new window.SLS_Tracker(sls_opts);
+        
+
+        async function initTracker() {
+            const sts_opts = {
+                accessKeyId: "",
+                accessKeySecret: "",
+                securityToken: "",
+
+                refreshSTSToken: () => new Promise(async (resolve, reject) => {
+                    await refreshToken('sls', false);
+                    if (currentToken) {
+                        sts_opts.accessKeyId = currentToken.accessKeyId;
+                        sts_opts.accessKeySecret = currentToken.accessKeySecret;
+                        sts_opts.securityToken = currentToken.securityToken;
+                    } else {
+                        reject('Tracker refresh sts token failed.');
+                    }
+                }), 
+            }
+            const stsPlugin = window['web-sts-plugin'](sts_opts);
+            tracker.useStsPlugin(stsPlugin);
+
+            // 要触发一下 不知道为什么
+            tracker.send({
+                action: 'init',
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            });
+        }
+
+        async function initOSSClient() {
+            if (!currentToken) {
+                throw new Error('Token not available. Please fetch token first.');
+            }
+
+            try {
+                ossClient = new OSS({
+                    region: ossRegion,
+                    accessKeyId: currentToken.accessKeyId,
+                    accessKeySecret: currentToken.accessKeySecret,
+                    stsToken: currentToken.securityToken,
+                    bucket: ossBucket
+                });
+                return ossClient;
+            } catch (error) {
+                console.error('Failed to initialize OSS client:', error);
+                throw error;
+            }
+        }
+
+        async function refreshToken(usage, updateTable = true) {
+            const generateNewAuthCode = async () => {
+                const response = await fetch('/workshop/ak/generateAuthCode.do', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                return result.data;
+            };
+
+            // Set loading state
+            if(updateTable) {
+                const button = document.getElementById('fetchButton');
+                button.disabled = true;
+                document.querySelectorAll('.token-table td:not(th)').forEach(cell => {
+                    cell.classList.add('loading');
+                });
+            }
+
+            try {
+                // if authcode is null, generate new authcode
+                if (!fetchTokenAuthCode) {
+                    fetchTokenAuthCode = await generateNewAuthCode();
+                }
+                if(!usage) {
+                    let tab = document.querySelector('.nav-tabs .nav-link.active').id;
+                    usage = tab === 'sls-tab' ? 'sls' : 'oss';
+                }
+                const fetchToken = async () => {
+                    const response = await fetch(`/workshop/ak/getStsToken.do?Usage=${usage}&code=${fetchTokenAuthCode}`, {
+                        method: 'POST'
+                    });
+                    return response.json();
+                };
+
+                let data = await fetchToken();
+                if (!data.success && data.errorMsg === 'Unauthorized!') {
+                    // If unauthorized, generate new auth code and retry
+                    fetchTokenAuthCode = await generateNewAuthCode();
+                    data = await fetchToken();
+                }
+
+                if (data.success && data.data) {
+                    // 更新当前token
+                    currentToken = data.data;
+                    
+                    // 更新显示
+                    if(updateTable) {
+                        document.getElementById('accessKeyId').textContent = currentToken.accessKeyId || '-';
+                        document.getElementById('accessKeySecret').textContent = currentToken.accessKeySecret || '-';
+                        document.getElementById('securityToken').textContent = currentToken.securityToken || '-';
+                        document.getElementById('expiration').textContent = currentToken.expiration || '-';
+                    }
+
+                    if (usage === 'oss') {
+                        await initOSSClient();
+                    }
+                } else {
+                    // 如果获取token失败，清除token信息
+                    clearTokenInfo();
+                    throw new Error(data.errorMsg || '获取Token失败');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                clearTokenInfo();
+                alert(error.message || '获取Token失败');
+            } finally {
+                // Reset loading state and button state
+                document.querySelectorAll('.token-table td:not(th)').forEach(cell => {
+                    cell.classList.remove('loading');
+                });
+                button.disabled = false;
+            }
+        }
+
+        function clearTokenInfo() {
+            currentToken = null;
+            ossClient = null;
+            ['accessKeyId', 'accessKeySecret', 'securityToken', 'expiration'].forEach(id => {
+                document.getElementById(id).textContent = '-';
+            });
+        }
+
+        // 显示错误信息在表格中
+        function showErrorInTable(message) {
+            const tbody = document.querySelector('#objectList tbody');
+            tbody.innerHTML = ''; // 清空现有内容
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="4" class="text-danger text-center"><i class="bi bi-exclamation-circle"></i> ${message}</td>`;
+            tbody.appendChild(row);
+        }
+
+        // 添加OSS相关函数
+        async function listObjects() {
+            if (!ossClient) {
+                showErrorInTable('请先获取Token！');
+                return;
+            }
+
+            const prefix = document.getElementById('ossPrefix').value || '';
+            updatePathNavigation(prefix);
+
+            try {
+                const result = await ossClient.list({
+                    'max-keys': 100,  // 限制返回的文件数量
+                    'prefix': prefix,
+                    'delimiter': '/'   // 使用分隔符来模拟文件夹结构
+                });
+
+                const tbody = document.querySelector('#objectList tbody');
+                tbody.innerHTML = ''; // 清空现有内容
+
+                // 处理文件夹（CommonPrefixes）
+                if (result.prefixes) {
+                    result.prefixes.forEach(folder => {
+                        const folderName = prefix ? folder.slice(prefix.length) : folder;
+                        const displayName = folderName.replace(/\/$/, '');
+                        
+                        if (displayName) {
+                            const row = document.createElement('tr');
+                            row.className = 'folder-row';
+                            row.onclick = () => navigateTo(folder);
+                            row.innerHTML = `
+                                <td><i class="bi bi-folder-fill text-warning"></i> ${displayName}</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    });
+                }
+
+                // 处理文件
+                if (result.objects) {
+                    result.objects.forEach(object => {
+                        // 跳过作为前缀的对象
+                        if (object.name === prefix) return;
+                        
+                        const fileName = prefix ? object.name.slice(prefix.length) : object.name;
+                        // 跳过空文件名和以/结尾的文件（文件夹）
+                        if (!fileName || fileName.endsWith('/')) return;
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><i class="bi bi-file-earmark text-primary"></i> ${fileName}</td>
+                            <td>${formatFileSize(object.size)}</td>
+                            <td>${new Date(object.lastModified).toLocaleString()}</td>
+                            <td>
+                                <a class="text-primary" style="cursor: pointer;" onclick="event.stopPropagation(); downloadFile('${object.name}')">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                if (tbody.children.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="4" class="text-center">No objects found</td>';
+                    tbody.appendChild(row);
+                }
+            } catch (error) {
+                console.error('Failed to list objects:', error);
+                showErrorInTable(error.message || '获取文件列表失败');
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 更新路径导航
+        function updatePathNavigation(path) {
+            const pathElement = document.getElementById('currentPath');
+            if (!path) {
+                pathElement.innerHTML = '<span class="current">root</span>';
+                return;
+            }
+
+            const parts = path.split('/').filter(p => p);
+            let html = '<span onclick="navigateTo(\'\')">root</span>';
+            let currentPath = '';
+
+            parts.forEach((part, index) => {
+                currentPath += part + '/';
+                if (index === parts.length - 1) {
+                    html += '<span class="path-separator">/</span><span class="current">' + part + '</span>';
+                } else {
+                    html += '<span class="path-separator">/</span><span onclick="navigateTo(\'' + currentPath + '\')">' + part + '</span>';
+                }
+            });
+
+            pathElement.innerHTML = html;
+        }
+
+        // 导航到指定路径
+        function navigateTo(path) {
+            document.getElementById('ossPrefix').value = path;
+            listObjects();
+        }
+
+        // 下载文件
+        async function downloadFile(key) {
+            if (!ossClient) {
+                alert('请先获取Token！');
+                return;
+            }
+
+            try {
+                const result = await ossClient.signatureUrl(key, {
+                    response: {
+                        'content-disposition': `attachment; filename=${encodeURIComponent(key.split('/').pop())}`
+                    }
+                });
+                
+                // 创建一个临时的a标签来触发下载
+                const link = document.createElement('a');
+                link.href = result;
+                link.download = key.split('/').pop();
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('下载文件失败:', error);
+                alert('下载文件失败: ' + error.message);
+            }
+        }
+
+        // 页面加载完成后初始化路径导航
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePathNavigation('');
+
+            // init tracker
+            initTracker();
+        });
+
+        // 处理文件选择
+        function handleFileSelect(event) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                updateTableWithSelectedFile();
+            }
+        }
+
+        // 更新表格显示选中的文件
+        function updateTableWithSelectedFile() {
+            const tbody = document.querySelector('#objectList tbody');
+            // 移除之前的待上传行
+            const existingPendingRow = tbody.querySelector('.pending-upload');
+            if (existingPendingRow) {
+                tbody.removeChild(existingPendingRow);
+            }
+
+            const row = document.createElement('tr');
+            row.className = 'pending-upload';
+            row.style.backgroundColor = '#f8f9fa';
+            
+            const prefix = document.getElementById('ossPrefix').value || '';
+            const fullPath = prefix + selectedFile.name;
+            
+            row.innerHTML = `
+                <td style="color: #6c757d"><i class="bi bi-file-earmark text-secondary"></i> ${selectedFile.name}</td>
+                <td style="color: #6c757d">${formatFileSize(selectedFile.size)}</td>
+                <td style="color: #6c757d">${new Date().toLocaleString()}</td>
+                <td>
+                    <a class="text-primary" style="cursor: pointer;" onclick="uploadFile('${fullPath}')">
+                        <i class="bi bi-upload"></i>
+                    </a>
+                </td>
+            `;
+            
+            // 插入到表格的第一行
+            if (tbody.firstChild) {
+                tbody.insertBefore(row, tbody.firstChild);
+            } else {
+                tbody.appendChild(row);
+            }
+        }
+
+        // 上传文件
+        async function uploadFile(key) {
+            if (!ossClient) {
+                alert('请先获取Token！');
+                return;
+            }
+
+            if (!selectedFile) {
+                alert('请先选择文件！');
+                return;
+            }
+
+            try {
+                const result = await ossClient.put(key, selectedFile);
+                if (result.res.status === 200) {
+                    alert('文件上传成功！');
+                    selectedFile = null;
+                    document.getElementById('fileInput').value = '';
+                    // 刷新文件列表
+                    listObjects();
+                }
+            } catch (error) {
+                console.error('上传文件失败:', error);
+                alert('上传文件失败: ' + error.message);
+            }
+        }
+
+        // 监听标签页切换
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面加载时加载SLS控制台
+            loadSlsConsole();
+
+            const mobileTab = document.getElementById('mobile-tab');
+            mobileTab.addEventListener('shown.bs.tab', function (e) {
+                generateQRCode();
+            });
+        });
+
+        // 生成二维码
+        async function generateQRCode() {
+            try {
+                // 获取授权码
+                const response = await fetch('/workshop/ak/generateAuthCode.do', {
+                    method: 'POST',
+                    credentials: 'same-origin' // Include cookies in the request
+                });
+                const data = await response.json();
+                
+                if (!data.success) {
+                    console.error('获取授权码失败');
+                    return;
+                }
+                
+                // 构建移动端URL，包含授权码
+                const baseUrl = window.location.origin;
+                const mobileUrl = `${baseUrl}/workshop/demo_token_vending_mobile.html?code=${encodeURIComponent(data.data)}`;
+                
+                // 清除旧的二维码
+                const qrcodeDiv = document.getElementById('qrcode');
+                qrcodeDiv.innerHTML = '';
+                
+                // 生成新的二维码
+                new QRCode(qrcodeDiv, {
+                    text: mobileUrl,
+                    width: 256,
+                    height: 256,
+                    colorDark: '#4e73df',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                // 显示错误信息
+                const qrcodeDiv = document.getElementById('qrcode');
+                qrcodeDiv.innerHTML = '';
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger mt-3';
+                errorDiv.textContent = '生成二维码失败，请重试';
+                qrcodeDiv.appendChild(errorDiv);
+            }
+        }
+
+        // 添加SLS相关的JavaScript函数
+        function loadSlsConsole() {
+            const frame = document.getElementById('slsFrame');
+            const loading = document.getElementById('slsLoading');
+            
+            // 显示加载状态
+            loading.style.display = 'block';
+            frame.style.display = 'none';
+
+            fetch('/workshop/ak/getSlsUrl.do', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(data.data);
+                    frame.src = data.data;
+                    frame.style.display = 'block';
+                } else {
+                    console.error('加载SLS控制台失败: ' + data.errorMsg);
+                }
+            })
+            .catch(error => {
+                console.error('加载SLS控制台失败: ' + error.message);
+            })
+            .finally(() => {
+                loading.style.display = 'none';
+            });
+        }
+
+        // 添加发送日志的函数
+        function sendUserAction(action, buttonId) {
+            if (tracker) {
+                const logData = {
+                    action: action,
+                    buttonId: buttonId,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                };
+                
+                tracker.send(logData);
+                console.log('Sent log data:', logData);
+            }
+        }
+    </script>
+</body>
+</html> 

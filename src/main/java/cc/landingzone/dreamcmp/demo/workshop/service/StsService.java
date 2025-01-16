@@ -1,6 +1,8 @@
 package cc.landingzone.dreamcmp.demo.workshop.service;
 
 import com.aliyun.sts20150401.Client;
+import com.aliyun.sts20150401.models.AssumeRoleRequest;
+import com.aliyun.sts20150401.models.AssumeRoleResponse;
 import com.aliyun.sts20150401.models.GetCallerIdentityResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +22,16 @@ public class StsService {
     @Autowired(required = false)
     private Client stsClientEcsRole;
 
+    private Client getClient() {
+        // 如果是本地环境 使用 AK/SK 测试
+        return stsClientEcsRole == null ? stsClient : stsClientEcsRole;
+    }
+
     public GetCallerIdentityResponse getCallerIdentity() throws Exception {
-        GetCallerIdentityResponse res;
+        return getClient().getCallerIdentity();
+    }
 
-        if (stsClientEcsRole == null) {
-            // 如果是本地环境 使用 AK/SK 测试
-            res = stsClient.getCallerIdentity();
-        } else {
-            res = stsClientEcsRole.getCallerIdentity();
-        }
-
-        return res;
+    public AssumeRoleResponse assumeRole(AssumeRoleRequest request) throws Exception {
+        return getClient().assumeRole(request);
     }
 }

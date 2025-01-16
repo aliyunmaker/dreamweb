@@ -48,6 +48,8 @@ public class AliyunAPIUtils {
         "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"oss:*\",\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
     public static final String Policy_ADMIN_FULL =
         "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"*\",\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
+    public static final String Policy_DENY =
+        "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"*\",\"Resource\":\"*\",\"Effect\":\"Deny\"}]}";
 
     /**
      * 通用api call
