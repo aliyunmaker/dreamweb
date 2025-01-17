@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECS Instance Metadata Service</title>
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/java.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .container {
+            margin-top: 30px;
+        }
+        .form-control {
+            height: 38px;
+        }
+        .btn {
+            height: 38px;
+            padding: 6px 12px;
+            line-height: 1.5;
+            min-width: 80px;
+        }
+        pre {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        /* Tab样式美化 */
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link:hover {
+            border: none;
+            color: #0d6efd;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border: none;
+            border-bottom: 2px solid #0d6efd;
+            background-color: transparent;
+        }
+        .tab-content {
+            padding: 20px 0;
+        }
+        /* 悬浮按钮样式 */
+        #offcanvas-btn { 
+            position: fixed; bottom: 20px; right: 20px; 
+        }
+
+        #offcanvasNavbar .offcanvas-body {
+            padding-top: 0;
+        }
+        /* 侧边抽屉样式 */
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            right: -600px;
+            width: 600px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1050;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .side-drawer.show {
+            right: 0;
+        }
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .current-path {
+            font-size: 1.1em;
+            color: #666;
+            flex-grow: 1;
+        }
+        .current-path i {
+            margin-right: 8px;
+        }
+        .folder-row {
+            cursor: pointer;
+        }
+        .folder-row:hover {
+            background-color: #f8f9fa;
+        }
+        /* 添加markdown内容的样式 */
+        .markdown-content {
+            line-height: 1.6;
+            color: #333;
+        }
+        .markdown-content pre {
+            background-color: #1e1e1e;
+            padding: 16px;
+            border-radius: 6px;
+            overflow: auto;
+        }
+        .markdown-content code {
+            background-color: #f6f8fa;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 85%;
+            color: #333;
+        }
+        .markdown-content pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 100%;
+            color: #e6e6e6;
+        }
+        .markdown-content h1 {
+            font-size: 1.6em;
+        }
+        .markdown-content h2 {
+            font-size: 1.4em;
+        }
+        .markdown-content h3 {
+            font-size: 1.2em;
+        }
+        .markdown-content h4 {
+            font-size: 1.1em;
+        }
+        .markdown-content h5 {
+            font-size: 1em;
+        }
+        .markdown-content h6 {
+            font-size: 0.9em;
+        }
+        /* 添加路径导航相关样式 */
+        .path-links span {
+            cursor: pointer;
+            color: #0d6efd;
+        }
+        .path-links span:hover {
+            text-decoration: underline;
+        }
+        .path-links span.current {
+            color: #666;
+            cursor: default;
+        }
+        .path-links span.current:hover {
+            text-decoration: none;
+        }
+        .path-separator {
+            margin: 0 5px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">ECS Instance Role</h1>
+        <h3>Metadata Server</h3>
+        <div class="mt-4">
+            <div class="d-flex mb-3">
+                <input type="text" class="form-control" id="metadataUrl" 
+                       value="http://100.100.100.200/latest/meta-data/ram/security-credentials/"
+                       onkeypress="if(event.keyCode === 13) { fetchMetadata(); }">
+                <button class="btn btn-primary ms-2" type="button" onclick="fetchMetadata()">确定</button>
+            </div>
+            <pre id="resultArea"></pre>
+            <hr class="mt-4">
+            <h3>Usages</h3>
+            <!-- Tab导航 -->
+            <ul class="nav nav-tabs" id="serviceTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="api-tab" data-bs-toggle="tab" 
+                            data-bs-target="#api-content" type="button" role="tab">API</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="oss-tab" data-bs-toggle="tab" 
+                            data-bs-target="#oss-content" type="button" role="tab">OSS</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sls-tab" data-bs-toggle="tab" 
+                            data-bs-target="#sls-content" type="button" role="tab">SLS</button>
+                </li>
+            </ul>
+            <!-- Tab内容 -->
+            <div class="tab-content mt-3" id="serviceTabsContent">
+                <div class="tab-pane fade show active" id="api-content" role="tabpanel">
+                    <div class="row">
+                        <!-- 左侧API调用部分 -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="card-title mb-0">GetCallerIdentity</h5>
+                                        <button class="btn btn-primary" onclick="testGetCallerIdentity()">测试</button>
+                                    </div>
+                                    <div class="mt-3">
+                                        <pre id="apiResultArea" style="background-color: #1e1e1e; color: #00ff00; min-height: 200px;">Waiting...</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="oss-content" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">OSS Demo</h5>
+                            <div class="d-flex align-items-center mb-3">
+                                <input type="text" class="form-control" id="ossPrefix" placeholder="输入前缀进行过滤" hidden>
+                                <div id="pathNavigation" class="d-flex align-items-center w-100 justify-content-between">
+                                    <div class="current-path d-flex align-items-center">
+                                        <i class="bi bi-folder2-open text-warning me-2"></i>
+                                        <span id="currentPath" class="path-links"></span>
+                                    </div>
+                                    <button class="btn btn-link p-0" onclick="listOssObjects()">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>名称</th>
+                                            <th>大小</th>
+                                            <th>最后修改时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ossFileList">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="sls-content" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">SLS Demo</h5>
+                            </div>
+                            <div class="mt-3">
+                                <div class="d-flex">
+                                    <input type="text" class="form-control me-2" id="logContent" placeholder="请输入要写入的日志内容" onkeydown="if(event.key === 'Enter') { event.preventDefault(); submitLog(); }">
+                                    <button class="btn btn-primary" onclick="submitLog()">确定</button>
+                                </div>
+                            </div>
+                            <div class="mt-3" style="height: 600px;">
+                                <iframe id="slsFrame" style="width: 100%; height: 100%; border: none;"></iframe>
+                                <div id="slsLoading" class="text-center" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮按钮 -->
+    <button id="offcanvas-btn" class="btn btn-outline-secondary" onclick="toggleCodeExample()">
+        代码示例
+    </button>
+
+    <!-- 侧边抽屉 -->
+    <div class="side-drawer" id="codeDrawer">
+        <div class="drawer-header">
+            <h4>代码示例</h4>
+            <button class="close-btn" onclick="toggleCodeExample()">&times;</button>
+        </div>
+        <div class="mt-3 markdown-content" id="markdownContent">
+            加载中...
+        </div>
+    </div>
+
+    <script>
+        // 配置marked使用highlight.js进行代码高亮
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            }
+        });
+
+        // 页面加载完成后自动发起请求
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchMetadata();
+            
+            // 添加标签页切换事件监听
+            const tabs = document.querySelectorAll('[data-bs-toggle="tab"]');
+            tabs.forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function (event) {
+                    loadCodeExample(event.target.id);
+                });
+            });
+
+            // 初始化加载API的代码示例
+            loadCodeExample('api-tab');
+            
+            // 页面加载时就开始加载SLS控制台
+            loadSlsConsole();
+        });
+
+        // 加载代码示例
+        async function loadCodeExample(tabId) {
+            try {
+                // 根据不同的tab加载不同的markdown文件
+                let mdFile;
+                switch (tabId) {
+                    case 'api-tab':
+                        mdFile = '/workshop/code_example_sdk.md';
+                        break;
+                    case 'oss-tab':
+                        mdFile = '/workshop/code_example_oss.md';
+                        break;
+                    case 'sls-tab':
+                        mdFile = '/workshop/code_examle_sls.md';
+                        break;
+                    default:
+                        mdFile = '/workshop/code_example_sdk.md';
+                }
+
+                const response = await fetch(mdFile);
+                const markdown = await response.text();
+                const markdownContent = document.getElementById('markdownContent');
+                // 使用marked解析markdown内容
+                markdownContent.innerHTML = marked.parse(markdown);
+                // 对新添加的代码块应用高亮
+                markdownContent.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            } catch (error) {
+                console.error('加载代码示例失败:', error);
+                const markdownContent = document.getElementById('markdownContent');
+                markdownContent.textContent = '加载代码示例失败: ' + error.message;
+            }
+        }
+
+        function fetchMetadata() {
+            const url = document.getElementById('metadataUrl').value;
+            const resultArea = document.getElementById('resultArea');
+            
+            // 显示加载状态
+            resultArea.textContent = "Loading...";
+            
+            // 直接发起请求
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // 格式化显示JSON结果
+                    resultArea.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    resultArea.textContent = "Error: " + error.message;
+                });
+        }
+
+        function testGetCallerIdentity() {
+            const apiResultArea = document.getElementById('apiResultArea');
+            apiResultArea.textContent = "正在调用...";
+
+            fetch('/workshop/ak/getCallerIdentity.do', {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success === false) {
+                        // 如果调用失败，只显示success和errorMsg字段
+                        apiResultArea.textContent = JSON.stringify({
+                            success: data.success,
+                            errorMsg: data.errorMsg
+                        }, null, 2);
+                    } else {
+                        // 如果调用成功，显示data字段内容
+                        apiResultArea.textContent = JSON.stringify(data.data, null, 2);
+                    }
+                })
+                .catch(error => {
+                    apiResultArea.textContent = "Error: " + error.message;
+                });
+        }
+
+        // 切换代码示例抽屉
+        function toggleCodeExample() {
+            const drawer = document.getElementById('codeDrawer');
+            drawer.classList.toggle('show');
+        }
+
+        // 添加highlight.js初始化
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+        });
+
+        // 添加OSS相关的JavaScript函数
+        function listOssObjects() {
+            const tbody = document.getElementById('ossFileList');
+            const prefix = document.getElementById('ossPrefix').value;
+
+            // 更新路径导航
+            updatePathNavigation(prefix);
+
+            // 显示加载中状态
+            // tbody.innerHTML = '<tr><td colspan="4" class="text-center">Loding...</td></tr>';
+
+            fetch(`/workshop/ak/listOssObjects.do${prefix ? `?prefix=${prefix}` : ''}`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        let html = '';
+                        
+                        // 添加文件夹
+                        if (data.data.folders) {
+                            data.data.folders.forEach(folder => {
+                                // 获取文件夹名称（去除前缀）
+                                const folderName = prefix ? folder.slice(prefix.length) : folder;
+                                // 移除末尾的斜杠
+                                const displayName = folderName.replace(/\/$/, '');
+                                
+                                // 只有当显示名称不为空时才添加到列表中
+                                if (displayName) {
+                                    html += `
+                                        <tr class="folder-row" onclick="navigateTo('${folder}')">
+                                            <td><i class="bi bi-folder-fill text-warning"></i> ${displayName}</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
+                                    `;
+                                }
+                            });
+                        }
+
+                        // 添加文件
+                        if (data.data.files) {
+                            data.data.files.forEach(file => {
+                                // 获取文件名称（去除前缀）
+                                const fileName = prefix ? file.key.slice(prefix.length) : file.key;
+                                
+                                // 只有当文件名不为空时才添加到列表中
+                                if (fileName) {
+                                    const size = formatFileSize(file.size);
+                                    html += `
+                                        <tr>
+                                            <td><i class="bi bi-file-earmark text-primary"></i> ${fileName}</td>
+                                            <td>${size}</td>
+                                            <td>${file.lastModified}</td>
+                                            <td>
+                                                <a class="text-primary" style="cursor: pointer;" onclick="event.stopPropagation(); downloadFile('${file.key}')">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }
+                            });
+                        }
+
+                        tbody.innerHTML = html || '<tr><td colspan="4" class="text-center">-</td></tr>';
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${data.errorMsg || '加载失败'}</td></tr>`;
+                    }
+                })
+                .catch(error => {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">请求失败: ${error.message}</td></tr>`;
+                });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 在页面加载完成后自动加载OSS文件列表
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加标签页切换事件监听
+            const ossTab = document.getElementById('oss-tab');
+            ossTab.addEventListener('shown.bs.tab', function (e) {
+                listOssObjects();
+            });
+        });
+
+        function downloadFile(key) {
+            fetch(`/workshop/ak/getOssObject.do?key=${encodeURIComponent(key)}`, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('下载失败');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建一个临时的URL对象
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = key.split('/').pop(); // 使用文件名作为下载文件名
+                document.body.appendChild(link);
+                link.click();
+                
+                // 清理
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('下载文件失败:', error);
+                alert('下载文件失败: ' + error.message);
+            });
+        }
+
+
+
+        // 添加SLS相关的JavaScript函数
+        function loadSlsConsole() {
+            const frame = document.getElementById('slsFrame');
+            const loading = document.getElementById('slsLoading');
+            
+            // 显示加载状态
+            loading.style.display = 'block';
+            frame.style.display = 'none';
+
+            fetch('/workshop/ak/getSlsUrl.do', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(data.data);
+                    frame.src = data.data;
+                    frame.style.display = 'block';
+                } else {
+                    console.error('加载SLS控制台失败: ' + data.errorMsg);
+                }
+            })
+            .catch(error => {
+                console.error('加载SLS控制台失败: ' + error.message);
+            })
+            .finally(() => {
+                loading.style.display = 'none';
+            });
+        }
+
+        function submitLog() {
+            const logContent = document.getElementById('logContent').value;
+            if (!logContent) {
+                alert('请输入日志内容');
+                return;
+            }
+
+            fetch('/workshop/ak/putLog.do', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `log=${encodeURIComponent(logContent)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('logContent').value = ''; // 清空输入框
+                    // loadSlsConsole(); // 重新加载控制台以查看新日志
+                } else {
+                    alert('日志写入失败: ' + data.errorMsg);
+                }
+            })
+            .catch(error => {
+                alert('日志写入失败: ' + error.message);
+            });
+        }
+
+        // 更新路径导航
+        function updatePathNavigation(path) {
+            const pathElement = document.getElementById('currentPath');
+            if (!path || path === '/') {
+                pathElement.innerHTML = '<span class="current">root</span>';
+                return;
+            }
+
+            const parts = path.split('/').filter(p => p);
+            let html = '<span onclick="navigateTo(\'\')">root</span>';
+            let currentPath = '';
+
+            parts.forEach((part, index) => {
+                currentPath += part + '/';
+                if (index === parts.length - 1) {
+                    html += '<span class="path-separator">/</span><span class="current">' + part + '</span>';
+                } else {
+                    html += '<span class="path-separator">/</span><span onclick="navigateTo(\'' + currentPath + '\')">' + part + '</span>';
+                }
+            });
+
+            pathElement.innerHTML = html;
+        }
+
+        // 导航到指定路径
+        function navigateTo(path) {
+            document.getElementById('ossPrefix').value = path;
+            listOssObjects();
+        }
+    
+    </script>
+</body>
+</html> 

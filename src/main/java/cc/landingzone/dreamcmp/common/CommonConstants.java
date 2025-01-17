@@ -28,6 +28,8 @@ public class CommonConstants {
 
     public static final String Aliyun_TestAccount_AccessKeySecret;
 
+    public static final String Aliyun_TestAccount_SecurityToken;
+
     public static final String Aliyun_UserId;
 
     public static final String Aliyun_TestAccount_UserId;
@@ -95,6 +97,7 @@ public class CommonConstants {
         Aliyun_AccessKeySecret = properties.getProperty("dreamcmp.aliyun_accesskeysecret");
         Aliyun_TestAccount_AccessKeyId = properties.getProperty("dreamcmp.aliyun_testaccount_accesskeyid");
         Aliyun_TestAccount_AccessKeySecret = properties.getProperty("dreamcmp.aliyun_testaccount_accesskeysecret");
+        Aliyun_TestAccount_SecurityToken = properties.getProperty("dreamcmp.aliyun_testaccount_securitytoken");
         Aliyun_UserId = getCallerIdentity(CommonConstants.Aliyun_AccessKeyId, CommonConstants.Aliyun_AccessKeySecret);
         Aliyun_TestAccount_UserId = getCallerIdentity(CommonConstants.Aliyun_TestAccount_AccessKeyId, CommonConstants.Aliyun_TestAccount_AccessKeySecret);
         SCIM_KEY = properties.getProperty("dreamcmp.scim_key");

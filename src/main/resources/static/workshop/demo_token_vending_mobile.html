@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>临时凭证体验</title>
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 32px;
+            color: #333;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 32px;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step-active {
+            background-color: #4e73df;
+            color: white;
+            box-shadow: 0 4px 12px rgba(78, 115, 223, 0.2);
+        }
+
+        .step-inactive {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .step-done {
+            background-color: #28a745;
+            color: white;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+
+        .step-done::after {
+            content: "✓";
+            font-size: 1.2em;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background-color: #e9ecef;
+            margin: 0 10px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #333;
+            padding-left: 4px;
+        }
+
+        .token-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .token-table table {
+            margin-bottom: 0;
+        }
+
+        .token-table th {
+            padding: 16px;
+            font-weight: 600;
+            color: #666;
+            background-color: #f8f9fa;
+            white-space: nowrap;
+            border-bottom: 1px solid #eee;
+            width: 35%;
+        }
+
+        .token-table td {
+            padding: 16px;
+            word-break: break-all;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+            cursor: pointer;
+        }
+
+        .token-table tr:last-child th,
+        .token-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 0 4px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+
+        .btn-primary:hover {
+            background-color: #4262c7;
+            border-color: #4262c7;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 115, 223, 0.2);
+        }
+
+        .btn-outline-primary {
+            color: #4e73df;
+            border-color: #4e73df;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #4e73df;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 115, 223, 0.2);
+        }
+
+        .btn-outline-primary:disabled {
+            color: #a8b1cc;
+            border-color: #a8b1cc;
+            background-color: transparent;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-outline-primary:not(:disabled):hover {
+            background-color: #4e73df;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 115, 223, 0.2);
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .card {
+                border-radius: 12px;
+                padding: 20px;
+            }
+            
+            .token-table {
+                margin: 0 -4px 20px -4px;
+            }
+            
+            .btn {
+                padding: 12px;
+            }
+        }
+
+        .alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 90%;
+            text-align: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+        }
+
+        .alert-error {
+            background-color: #fff;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .alert-success {
+            background-color: #fff;
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        /* Popup styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .popup-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+        }
+
+        .popup-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            padding-right: 30px;
+        }
+
+        .popup-value {
+            word-break: break-all;
+            white-space: pre-wrap;
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .camera-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .camera-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-icon {
+            font-size: 48px;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+
+        .camera-text {
+            color: #6c757d;
+            font-size: 16px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .photo-container {
+            aspect-ratio: 1;
+            background-color: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-container:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-container.empty {
+            display: none;
+        }
+
+        @media (max-width: 576px) {
+            .photo-grid {
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="alert" id="alertMessage"></div>
+    
+    <!-- Add popup overlay -->
+    <div class="popup-overlay" id="popup">
+        <div class="popup-content">
+            <div class="popup-close" onclick="hidePopup()">&times;</div>
+            <div class="popup-title" id="popup-title"></div>
+            <div class="popup-value" id="popup-value"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="card">
+            <h1 class="main-title">临时凭证体验</h1>
+            
+            <!-- 步骤条 -->
+            <div class="steps-container">
+                <div class="step" id="step1">1</div>
+                <div class="step-line"></div>
+                <div class="step" id="step2">2</div>
+                <div class="step-line"></div>
+                <div class="step" id="step3">3</div>
+            </div>
+
+            <!-- 页面内容 -->
+            <div id="page1" class="page active">
+                <h2 class="subtitle text-center">1. 获取STS Token</h2>
+                <!-- Token信息表格 -->
+                <div class="token-table">
+                    <table class="table mb-0">
+                        <tbody>
+                            <tr>
+                                <th>AccessKeyId</th>
+                                <td id="accessKeyId" onclick="showPopup('AccessKeyId', this.textContent)">-</td>
+                            </tr>
+                            <tr>
+                                <th>AccessKeySecret</th>
+                                <td id="accessKeySecret" onclick="showPopup('AccessKeySecret', this.textContent)">-</td>
+                            </tr>
+                            <tr>
+                                <th>SecurityToken</th>
+                                <td id="securityToken" onclick="showPopup('SecurityToken', this.textContent)">-</td>
+                            </tr>
+                            <tr>
+                                <th>Expiration</th>
+                                <td id="expiration" onclick="showPopup('Expiration', this.textContent)">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- 按钮组 -->
+                <div class="btn-container">
+                    <button class="btn btn-primary" onclick="refreshToken()">获取STS Token</button>
+                    <button class="btn btn-outline-primary" id="nextStepBtn" onclick="nextStep()" disabled>下一步</button>
+                </div>
+            </div>
+
+            <div id="page2" class="page">
+                <h2 class="subtitle text-center">2. 使用STS Token上传现场照片</h2>
+                <!-- 相机拍照区域 -->
+                <div class="camera-container" id="cameraContainer" onclick="startCamera()">
+                    <i class="bi bi-camera camera-icon"></i>
+                    <div class="camera-text">点击拍照</div>
+                    <img id="previewImage" style="display: none;">
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" onchange="handlePhoto(event)">
+                </div>
+                <!-- 按钮组 -->
+                <div class="btn-container">
+                    <button class="btn btn-primary" id="uploadBtn" onclick="uploadPhoto()" disabled>上传照片</button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary" onclick="prevStep()">上一步</button>
+                        <button class="btn btn-outline-primary" id="nextStepBtn2" onclick="nextStep()" disabled>下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page3" class="page">
+                <h2 class="subtitle text-center">3. 使用STS Token获取现场照片</h2>
+                <!-- 照片展示区域 -->
+                <div class="photo-grid">
+                    <div class="photo-container" id="photo1"><img></div>
+                    <div class="photo-container" id="photo2"><img></div>
+                    <div class="photo-container" id="photo3"><img></div>
+                    <div class="photo-container" id="photo4"><img></div>
+                </div>
+                <!-- 按钮组 -->
+                <div class="btn-container">
+                    <button class="btn btn-primary" onclick="loadNextBatch()">换一批</button>
+                    <button class="btn btn-outline-primary" onclick="restartExperience()">再次体验</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://gosspublic.alicdn.com/aliyun-oss-sdk-6.18.1.min.js"></script>
+    <script>
+        // 存储当前token信息
+        let currentToken = null;
+        let ossClient = null;
+        let currentPhoto = null;
+        let currentPage = 1;
+        const ossBucket = 'dreamweb-workshop';
+        const ossRegion = 'oss-cn-hangzhou';
+        const authCode = new URLSearchParams(window.location.search).get('code');
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 初始化第一步的样式
+            updateSteps(1);
+        });
+
+        function showMessage(message, type = 'success') {
+            const alert = document.getElementById('alertMessage');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        async function refreshToken() {
+            setLoading(true);
+
+            try {
+                // First try to get STS token
+                const tokenResponse = await fetch(`/workshop/ak/getStsToken.do?Usage=oss&code=${authCode}`, {
+                    method: 'POST'
+                });
+                const tokenData = await tokenResponse.json();
+
+                if (tokenData.success) {
+                    currentToken = tokenData.data;
+                } else {
+                    throw new Error(tokenData.errorMsg || '获取Token失败');
+                }
+
+                // Update display
+                document.getElementById('accessKeyId').textContent = currentToken.accessKeyId || '-';
+                document.getElementById('accessKeySecret').textContent = maskSensitiveInfo(currentToken.accessKeySecret) || '-';
+                document.getElementById('securityToken').textContent = maskSensitiveInfo(currentToken.securityToken) || '-';
+                document.getElementById('expiration').textContent = currentToken.expiration || '-';
+
+                // Enable next step button
+                document.getElementById('nextStepBtn').disabled = false;
+
+                await initOSSClient();
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || '获取Token失败，请重试');
+                clearTokenInfo();
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function setLoading(isLoading) {
+            const button = document.querySelector('.btn-primary');
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 加载中...';
+            } else {
+                button.disabled = false;
+                button.innerHTML = '获取STS Token';
+            }
+        }
+
+        async function initOSSClient() {
+            if (!currentToken) {
+                throw new Error('Token not available. Please fetch token first.');
+            }
+
+            try {
+                ossClient = new OSS({
+                    region: ossRegion,
+                    accessKeyId: currentToken.accessKeyId,
+                    accessKeySecret: currentToken.accessKeySecret,
+                    stsToken: currentToken.securityToken,
+                    bucket: ossBucket
+                });
+                return ossClient;
+            } catch (error) {
+                console.error('Failed to initialize OSS client:', error);
+                throw error;
+            }
+        }
+
+        // Add masking function
+        function maskSensitiveInfo(str) {
+            if (!str) return str;
+            const start = str.slice(0, 2);
+            const end = str.slice(8, str.length); // At least show 2 chars at start and end, max 5 stars
+            return start + '*'.repeat(6) + end;
+        }
+
+        // Modify popup function to show unmasked content for authorized fields
+        function showPopup(title, content) {
+            if (content === '-') return;
+            
+            document.getElementById('popup-title').textContent = title;
+            // Show unmasked content for authorized fields
+            if (title === 'AccessKeySecret' || title === 'SecurityToken') {
+                document.getElementById('popup-value').textContent = currentToken[title.charAt(0).toLowerCase() + title.slice(1)] || content;
+            } else {
+                document.getElementById('popup-value').textContent = content;
+            }
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function hidePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Close popup when clicking outside
+        document.getElementById('popup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hidePopup();
+            }
+        });
+
+        function clearTokenInfo() {
+            currentToken = null;
+            ossClient = null;
+            ['accessKeyId', 'accessKeySecret', 'securityToken', 'expiration'].forEach(id => {
+                document.getElementById(id).textContent = '-';
+            });
+            // 禁用下一步按钮
+            document.getElementById('nextStepBtn').disabled = true;
+        }
+
+        // 页面切换函数
+        function showPage(pageNumber) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // 显示目标页面
+            document.getElementById(`page${pageNumber}`).classList.add('active');
+            
+            // 更新步骤条
+            updateSteps(pageNumber);
+            
+            currentPage = pageNumber;
+        }
+
+        // 更新步骤条状态
+        function updateSteps(currentStep) {
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step${i}`);
+                if (i < currentStep) {
+                    step.className = 'step step-done';
+                } else if (i === currentStep) {
+                    step.className = 'step step-active';
+                } else {
+                    step.className = 'step step-inactive';
+                }
+            }
+        }
+
+        // 下一步函数
+        function nextStep() {
+            if (currentPage === 1) {
+                showPage(2);
+            } else if (currentPage === 2) {
+                showPage(3);
+                // 加载第一批照片
+                loadPhotos();
+            }
+        }
+
+        // 上一步函数
+        function prevStep() {
+            if (currentPage === 2) {
+                showPage(1);
+            } else if (currentPage === 3) {
+                showPage(2);
+            }
+        }
+
+        // 相机相关函数
+        function startCamera() {
+            document.getElementById('cameraInput').click();
+        }
+
+        function handlePhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                currentPhoto = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    document.querySelector('.camera-icon').style.display = 'none';
+                    document.querySelector('.camera-text').style.display = 'none';
+                    
+                    // 启用上传按钮
+                    document.getElementById('uploadBtn').disabled = false;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function uploadPhoto() {
+            if (!currentPhoto || !ossClient) return;
+
+            const button = document.getElementById('uploadBtn');
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 上传中...';
+
+            try {
+                const fileName = `photos/${Date.now()}_${currentPhoto.name}`;
+                const result = await ossClient.put(fileName, currentPhoto);
+                
+                if (result.res.status === 200) {
+                    showMessage('照片上传成功！');
+                    // 启用下一步按钮
+                    document.getElementById('nextStepBtn2').disabled = false;
+                }
+            } catch (error) {
+                console.error('上传失败:', error);
+                showError('上传失败: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '上传照片';
+            }
+        }
+
+        // 照片相关函数
+        let currentPhotosList = [];
+        let currentBatchIndex = 0;
+
+        async function loadPhotos() {
+            if (!ossClient) {
+                showError('请先获取Token！');
+                return;
+            }
+
+            try {
+                const result = await ossClient.list({
+                    prefix: 'photos/',
+                    'max-keys': 100
+                });
+
+                if (result.objects) {
+                    currentPhotosList = result.objects
+                        .filter(obj => obj.name !== 'photos/') // 过滤掉文件夹
+                        .sort(() => Math.random() - 0.5); // 随机排序
+                    showCurrentBatch();
+                }
+            } catch (error) {
+                console.error('获取照片列表失败:', error);
+                showError('获取照片列表失败: ' + error.message);
+            }
+        }
+
+        function showCurrentBatch() {
+            // 重置所有容器
+            for (let i = 1; i <= 4; i++) {
+                const container = document.getElementById(`photo${i}`);
+                container.classList.add('empty');
+                container.querySelector('img').src = '';
+            }
+
+            // 获取当前批次的照片
+            const startIndex = currentBatchIndex * 4;
+            const currentBatchPhotos = currentPhotosList.slice(startIndex, startIndex + 4);
+
+            // 显示照片
+            currentBatchPhotos.forEach(async (photo, index) => {
+                try {
+                    const url = await ossClient.signatureUrl(photo.name);
+                    const container = document.getElementById(`photo${index + 1}`);
+                    const img = container.querySelector('img');
+                    img.src = url;
+                    container.classList.remove('empty');
+                } catch (error) {
+                    console.error('获取照片URL失败:', error);
+                }
+            });
+
+            // 调整布局
+            adjustLayout(currentBatchPhotos.length);
+        }
+
+        function adjustLayout(photoCount) {
+            console.log('photoCount:', photoCount);
+            const grid = document.querySelector('.photo-grid');
+            if (photoCount <= 2) {
+                grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            } else {
+                grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            }
+        }
+
+        function loadNextBatch() {
+            currentBatchIndex++;
+            if (currentBatchIndex * 4 >= currentPhotosList.length) {
+                currentBatchIndex = 0; // 循环到开始
+            }
+            showCurrentBatch();
+        }
+
+        function restartExperience() {
+            // 重置所有状态
+            currentToken = null;
+            ossClient = null;
+            currentPhoto = null;
+            currentPhotosList = [];
+            currentBatchIndex = 0;
+            
+            // 重置UI
+            clearTokenInfo();
+            document.getElementById('previewImage').style.display = 'none';
+            document.querySelector('.camera-icon').style.display = 'block';
+            document.querySelector('.camera-text').style.display = 'block';
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('nextStepBtn2').disabled = true;
+            
+            // 返回第一页
+            showPage(1);
+        }
+    </script>
+</body>
+</html>
