@@ -117,7 +117,7 @@
         var page = "../getTracing.do";
       } else if (monitorType == "sls") {
         iframe.setAttribute("src", "../loading_spinner.html");
-        var page = "../getSLSLogstore.do?projectName=dreamone-business-system&logStore=dreamone-customer-system&queryString=level:ERROR";
+        var page = "../getSLSLogstore.do?projectName=dreamone-business-system&logStore=dreamone-customer-system&queryString=USING_PROMOTION_FAIL";
       }
       iframe.setAttribute("src", page);
       console.log("page:" + page);
