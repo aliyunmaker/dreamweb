@@ -427,13 +427,11 @@
             };
 
             // Set loading state
-            if(updateTable) {
-                const button = document.getElementById('fetchButton');
+            const button = document.getElementById('fetchButton');
                 button.disabled = true;
                 document.querySelectorAll('.token-table td:not(th)').forEach(cell => {
                     cell.classList.add('loading');
                 });
-            }
 
             try {
                 // if authcode is null, generate new authcode
