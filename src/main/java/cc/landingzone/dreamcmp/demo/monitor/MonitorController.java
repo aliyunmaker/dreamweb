@@ -42,10 +42,8 @@ public class MonitorController extends BaseController {
     public void getSimulateErrorStatus(HttpServletRequest request, HttpServletResponse response) {
         // 调FC -> 调系统接口 获取故障状态
         WebResult result = new WebResult();
-        String data = fcService.invokeFunctionAsync(SIMULATE_ERROR_FC_FUNCTION_NAME, "{\"path\": \"/getSimulateErrorStatus\"}");
+        String data = fcService.invokeFunctionAsync(SIMULATE_ERROR_FC_FUNCTION_NAME, "getSimulateErrorStatus");
         Object error = Optional.ofNullable(JSON.parseObject(data))
-            .map(x -> x.getString("body"))
-            .map(JSON::parseObject)
             .map(x -> x.get("data"))
             .orElse(null);
         result.setData(error);
@@ -57,7 +55,7 @@ public class MonitorController extends BaseController {
     public void simulateError(HttpServletRequest request, HttpServletResponse response) {
         // 调FC -> 调系统接口 模拟故障/恢复正常
         WebResult result = new WebResult();
-        String data = fcService.invokeFunctionAsync(SIMULATE_ERROR_FC_FUNCTION_NAME, "{\"path\": \"/simulateError\"}");
+        String data = fcService.invokeFunctionAsync(SIMULATE_ERROR_FC_FUNCTION_NAME, "simulateError");
         result.setData(JSON.parseObject(data));
         System.out.println(JSON.toJSONString(result));
         outputToJSON(response, result);
