@@ -389,7 +389,7 @@
             const stsPlugin = window['web-sts-plugin'](sts_opts);
             tracker.useStsPlugin(stsPlugin);
 
-            // 要触发一下 不知道为什么
+            // fixme
             tracker.send({
                 action: 'init',
                 timestamp: new Date().toISOString(),
