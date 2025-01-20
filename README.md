@@ -71,5 +71,16 @@ dreamcmp.login_user={"admin":"admin","guest":"guest"}
 
 # kms instance id
 dreamcmp.dkms_instance_id=
+
+# workshop
+dreamcmp.workshop.ecs_instance_role=
+# oss
+dreamcmp.workshop.oss_region=
+dreamcmp.workshop.oss_bucket=
+# sls
+dreamcmp.workshop.sls_project=
+dreamcmp.workshop.sls_logstore=
+# tvm
+dreamcmp.workshop.assume_role_arn=
 ```
 
