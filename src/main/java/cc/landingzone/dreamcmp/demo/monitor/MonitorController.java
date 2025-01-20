@@ -29,9 +29,6 @@ public class MonitorController extends BaseController {
     @Value("${dreamcmp.aliyun_grafana_api_key}")
     private String GRAFANA_API_KEY;
 
-    @Value("${dreamcmp.aliyun_monitoring_simulation_fc_address}")
-    private String SIMULATE_ERROR_FC_ADDRESS;
-
     @Value("${dreamcmp.aliyun_monitoring_function_name}")
     private String SIMULATE_ERROR_FC_FUNCTION_NAME;
 
