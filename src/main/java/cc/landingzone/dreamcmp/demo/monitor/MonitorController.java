@@ -1,6 +1,8 @@
 package cc.landingzone.dreamcmp.demo.monitor;
 
+import cc.landingzone.dreamcmp.demo.workshop.service.FcService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @Controller
 public class MonitorController extends BaseController {
@@ -29,10 +32,23 @@ public class MonitorController extends BaseController {
     @Value("${dreamcmp.aliyun_monitoring_simulation_fc_address}")
     private String SIMULATE_ERROR_FC_ADDRESS;
 
+    @Value("${dreamcmp.aliyun_monitoring_function_name}")
+    private String SIMULATE_ERROR_FC_FUNCTION_NAME;
+
+    @Autowired
+    FcService fcService;
+
     @RequestMapping("/getSimulateErrorStatus.do")
     public void getSimulateErrorStatus(HttpServletRequest request, HttpServletResponse response) {
         // 调FC -> 调系统接口 获取故障状态
-        WebResult result = sendHttpRequest(SIMULATE_ERROR_FC_ADDRESS + "/getSimulateErrorStatus");
+        WebResult result = new WebResult();
+        String data = fcService.invokeFunctionAsync(SIMULATE_ERROR_FC_FUNCTION_NAME, "{\"path\": \"/getSimulateErrorStatus\"}");
+        Object error = Optional.ofNullable(JSON.parseObject(data))
+            .map(x -> x.getString("body"))
+            .map(JSON::parseObject)
+            .map(x -> x.get("data"))
+            .orElse(null);
+        result.setData(error);
         System.out.println(JSON.toJSONString(result));
         outputToJSON(response, result);
     }
@@ -40,7 +56,9 @@ public class MonitorController extends BaseController {
     @RequestMapping("/simulateError.do")
     public void simulateError(HttpServletRequest request, HttpServletResponse response) {
         // 调FC -> 调系统接口 模拟故障/恢复正常
-        WebResult result = sendHttpRequest(SIMULATE_ERROR_FC_ADDRESS + "/simulateError");
+        WebResult result = new WebResult();
+        String data = fcService.invokeFunctionAsync(SIMULATE_ERROR_FC_FUNCTION_NAME, "{\"path\": \"/simulateError\"}");
+        result.setData(JSON.parseObject(data));
         System.out.println(JSON.toJSONString(result));
         outputToJSON(response, result);
     }
@@ -113,19 +131,4 @@ public class MonitorController extends BaseController {
             CommonConstants.ADMIN_ROLE_ARN, username, "", true);
         return signToken;
     }
-
-    private WebResult sendHttpRequest(String url) {
-        WebResult result = new WebResult();
-        try {
-            JSONObject response = JSON.parseObject(HttpClientUtils.getDataAsStringFromUrl(url));
-            result.setSuccess(response.getBoolean("success"));
-            result.setData(response.get("data"));
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            result.setSuccess(false);
-            result.setErrorMsg(e.getMessage());
-        }
-        return result;
-    }
-
 }
