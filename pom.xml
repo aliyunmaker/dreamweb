@@ -355,8 +355,13 @@
 		<dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>credentials-java</artifactId>
-            <version>0.3.12</version>
+            <version>1.0.0</version>
         </dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-auth</artifactId>
+			<version>0.2.16-beta</version>
+		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>fc20230330</artifactId>

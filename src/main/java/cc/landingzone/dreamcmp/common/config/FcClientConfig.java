@@ -4,6 +4,9 @@ import cc.landingzone.dreamcmp.common.CommonConstants;
 import cc.landingzone.dreamcmp.common.EndpointEnum;
 import cc.landingzone.dreamcmp.demo.workshop.service.StsService;
 import com.aliyun.auth.credentials.Credential;
+import com.aliyun.auth.credentials.provider.DefaultCredentialProvider;
+import com.aliyun.auth.credentials.provider.EcsRamRoleCredentialProvider;
+import com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.credentials.models.CredentialModel;
 import com.aliyun.oss.common.auth.Credentials;
@@ -18,10 +21,12 @@ import com.aliyuncs.auth.StaticCredentialsProvider;
 import com.aliyuncs.profile.DefaultProfile;
 import darabonba.core.client.ClientOverrideConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.retry.support.RetryTemplate;
 
 /**
  * @author 恬裕
@@ -33,8 +38,8 @@ public class FcClientConfig {
     @Autowired(required = false)
     private com.aliyun.credentials.Client credentialClient;
 
-    @Value("${dreamcmp.workshop.assume_role_arn}")
-    private String fcAccountRoleArn;
+    @Autowired
+    RamRoleArnCredentialProvider ramRoleArnCredentialProvider;
 
     @Autowired
     StsService stsService;
@@ -78,27 +83,9 @@ public class FcClientConfig {
     @Bean
     @Profile("dev")
     com.aliyun.sdk.service.fc20230330.AsyncClient asyncFcClientTest() {
-        AssumeRoleResponse crystalRole;
-        try {
-            crystalRole = stsService.assumeRole(new AssumeRoleRequest() {{
-                setRoleArn(fcAccountRoleArn);
-                setRoleSessionName("dreamcmp");
-            }});
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        AssumeRoleResponseBody.AssumeRoleResponseBodyCredentials credentials = crystalRole.getBody().getCredentials();
-        String ak = credentials.getAccessKeyId();
-        String sk = credentials.getAccessKeySecret();
-        String token = credentials.getSecurityToken();
-        StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
-            .accessKeyId(ak)
-            .accessKeySecret(sk)
-            .securityToken(token)
-            .build());
         return com.aliyun.sdk.service.fc20230330.AsyncClient.builder()
             .region(CommonConstants.Aliyun_REGION_HANGZHOU)
-            .credentialsProvider(provider)
+            .credentialsProvider(ramRoleArnCredentialProvider)
             .overrideConfiguration(
                 ClientOverrideConfiguration.create()
                     .setEndpointOverride(EndpointEnum.FC.getEndpoint())
