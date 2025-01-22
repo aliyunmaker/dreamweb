@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://100.100.100.200 https:;" />
     <title>ECS Instance Metadata Service</title>
     <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -363,11 +362,21 @@
             // 显示加载状态
             resultArea.textContent = "Loading...";
             
-            // 直接发起请求
-            fetch(url)
-                .then(response => response.text())
+            // 使用后端接口
+            fetch('/workshop/ak/getMetadata.do', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `url=${encodeURIComponent(url)}`
+            })
+                .then(response => response.json())
                 .then(data => {
-                    resultArea.textContent = data;
+                    if (data.success) {
+                        resultArea.textContent = data.data;
+                    } else {
+                        resultArea.textContent = "Error: " + data.errorMsg;
+                    }
                 })
                 .catch(error => {
                     resultArea.textContent = "Error: " + error.message;

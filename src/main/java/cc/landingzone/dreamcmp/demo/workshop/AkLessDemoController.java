@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import cc.landingzone.dreamcmp.common.utils.AliyunAPIUtils;
+import cc.landingzone.dreamcmp.common.utils.HttpClientUtils;
 import cc.landingzone.dreamcmp.demo.workshop.service.OssService;
 import cc.landingzone.dreamcmp.demo.workshop.service.StsService;
 import cc.landingzone.dreamcmp.demo.workshop.service.SlsService;
@@ -252,6 +253,28 @@ public class AkLessDemoController extends BaseController {
                 slsService.putLog(log);
                 result.setSuccess(true);
             }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            result.setSuccess(false);
+            result.setErrorMsg(e.getMessage());
+        }
+        outputToJSON(response, result);
+    }
+
+    @PostMapping("/getMetadata.do")
+    public void getMetadata(HttpServletRequest request, HttpServletResponse response) {
+        WebResult result = new WebResult();
+        try {
+            String url = request.getParameter("url");
+            if (url == null || !url.startsWith("http://100.100.100.200/")) {
+                result.setSuccess(false);
+                result.setErrorMsg("Invalid metadata URL");
+                outputToJSON(response, result);
+                return;
+            }
+
+            String data = HttpClientUtils.getDataAsStringFromUrl(url);
+            result.setData(data);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             result.setSuccess(false);
