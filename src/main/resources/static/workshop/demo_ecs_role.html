@@ -362,12 +362,21 @@
             // 显示加载状态
             resultArea.textContent = "Loading...";
             
-            // 直接发起请求
-            fetch(url)
+            // 使用后端接口
+            fetch('/workshop/ak/getMetadata.do', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `url=${encodeURIComponent(url)}`
+            })
                 .then(response => response.json())
                 .then(data => {
-                    // 格式化显示JSON结果
-                    resultArea.textContent = JSON.stringify(data, null, 2);
+                    if (data.success) {
+                        resultArea.textContent = data.data;
+                    } else {
+                        resultArea.textContent = "Error: " + data.errorMsg;
+                    }
                 })
                 .catch(error => {
                     resultArea.textContent = "Error: " + error.message;
