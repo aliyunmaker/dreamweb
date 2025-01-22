@@ -3,30 +3,12 @@ package cc.landingzone.dreamcmp.common.config;
 import cc.landingzone.dreamcmp.common.CommonConstants;
 import cc.landingzone.dreamcmp.common.EndpointEnum;
 import cc.landingzone.dreamcmp.demo.workshop.service.StsService;
-import com.aliyun.auth.credentials.Credential;
-import com.aliyun.auth.credentials.provider.DefaultCredentialProvider;
-import com.aliyun.auth.credentials.provider.EcsRamRoleCredentialProvider;
 import com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider;
-import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
-import com.aliyun.credentials.models.CredentialModel;
-import com.aliyun.oss.common.auth.Credentials;
-import com.aliyun.oss.common.auth.CredentialsProvider;
-import com.aliyun.oss.common.auth.DefaultCredentials;
-import com.aliyun.sts20150401.models.AssumeRoleRequest;
-import com.aliyun.sts20150401.models.AssumeRoleResponse;
-import com.aliyun.sts20150401.models.AssumeRoleResponseBody;
-import com.aliyuncs.auth.BasicSessionCredentials;
-import com.aliyuncs.auth.STSAssumeRoleSessionCredentialsProvider;
-import com.aliyuncs.auth.StaticCredentialsProvider;
-import com.aliyuncs.profile.DefaultProfile;
 import darabonba.core.client.ClientOverrideConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.retry.support.RetryTemplate;
 
 /**
  * @author 恬裕
@@ -35,7 +17,7 @@ import org.springframework.retry.support.RetryTemplate;
 @Configuration
 public class FcClientConfig {
 
-    @Autowired(required = false)
+    @Autowired
     private com.aliyun.credentials.Client credentialClient;
 
     @Autowired
@@ -64,25 +46,7 @@ public class FcClientConfig {
     }
 
     @Bean
-    @Profile("!dev")
-    com.aliyun.sdk.service.fc20230330.AsyncClient asyncFcClient() {
-        StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
-            .accessKeyId(CommonConstants.Aliyun_AccessKeyId)
-            .accessKeySecret(CommonConstants.Aliyun_AccessKeySecret)
-            .build());
-        return com.aliyun.sdk.service.fc20230330.AsyncClient.builder()
-            .region(CommonConstants.Aliyun_REGION_HANGZHOU)
-            .credentialsProvider(provider)
-            .overrideConfiguration(
-                ClientOverrideConfiguration.create()
-                    .setEndpointOverride(EndpointEnum.FC.getEndpoint())
-            )
-            .build();
-    }
-
-    @Bean
-    @Profile("dev")
-    com.aliyun.sdk.service.fc20230330.AsyncClient asyncFcClientTest() {
+    com.aliyun.sdk.service.fc20230330.AsyncClient asyncFcClientTestWithoutAK() {
         return com.aliyun.sdk.service.fc20230330.AsyncClient.builder()
             .region(CommonConstants.Aliyun_REGION_HANGZHOU)
             .credentialsProvider(ramRoleArnCredentialProvider)
@@ -92,4 +56,20 @@ public class FcClientConfig {
             )
             .build();
     }
+
+    //@Bean
+    //com.aliyun.sdk.service.fc20230330.AsyncClient asyncFcClientWithAK() {
+    //    StaticCredentialProvider provider = StaticCredentialProvider.create(Credential.builder()
+    //        .accessKeyId(CommonConstants.Aliyun_AccessKeyId)
+    //        .accessKeySecret(CommonConstants.Aliyun_AccessKeySecret)
+    //        .build());
+    //    return com.aliyun.sdk.service.fc20230330.AsyncClient.builder()
+    //        .region(CommonConstants.Aliyun_REGION_HANGZHOU)
+    //        .credentialsProvider(provider)
+    //        .overrideConfiguration(
+    //            ClientOverrideConfiguration.create()
+    //                .setEndpointOverride(EndpointEnum.FC.getEndpoint())
+    //        )
+    //        .build();
+    //}
 }

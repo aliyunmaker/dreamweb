@@ -11,9 +11,7 @@ import cc.landingzone.dreamcmp.common.BaseController;
 import cc.landingzone.dreamcmp.common.CommonConstants;
 import cc.landingzone.dreamcmp.common.model.WebResult;
 import cc.landingzone.dreamcmp.common.utils.AliyunAPIUtils;
-import cc.landingzone.dreamcmp.common.utils.HttpClientUtils;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -26,8 +24,8 @@ import java.util.Optional;
 @Controller
 public class MonitorController extends BaseController {
 
-    @Value("${dreamcmp.aliyun_grafana_api_key}")
-    private String GRAFANA_API_KEY;
+    @Value("${dreamcmp.aliyun_grafana_url}")
+    private String GRAFANA_URL;
 
     @Value("${dreamcmp.aliyun_monitoring_function_name}")
     private String SIMULATE_ERROR_FC_FUNCTION_NAME;
@@ -63,7 +61,7 @@ public class MonitorController extends BaseController {
         WebResult result = new WebResult();
         try {
             long start = System.currentTimeMillis();
-            String redirectUrl = "https://grafana-rngkaxtoijlr5xxe72.grafana.aliyuncs.com/d/be7f0355-969a-419d-983e-91bf8d3f9be9/5LiA5bGP5oC76KeI5aSn55uY?from=now-15m&to=now&kiosk=1&refresh=10s&view&aliyun_api_key=" + GRAFANA_API_KEY;
+            String redirectUrl = GRAFANA_URL;
             response.sendRedirect(redirectUrl);
             logger.info("signSLSMonitor cost: " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
@@ -79,7 +77,6 @@ public class MonitorController extends BaseController {
         WebResult result = new WebResult();
         try {
             String destination = "https://trace4service.console.aliyun.com/?hideTopbar=true&hideSidebar=true#/cn-hangzhou/tracing-explorer?source=XTRACE&from=now-15m&to=now&refresh=10s&slsFilters=(serviceName%20%3A%20%22dreamone-customer-system%22%20or%20serviceName%20%3A%20%22dreamone-order-system%22%20or%20serviceName%20%3A%20%22dreamone-item-system%22%20)&filters=serviceName%20IN%20(%22dreamone-customer-system%22%20%2C%20%22dreamone-order-system%22%20%2C%20%22dreamone-item-system%22)";
-//            String destination = "https://trace4service.console.aliyun.com/#/tracing/cn-hangzhou?appId=benwhzyqus%4080e77f717b662da&tab=appTopu&source=XTRACE&xtraceType=trace&from=now%2Fd&to=now%2Fd&refresh=10s";
             String redirectUrl = getRedirectUrl(destination);
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
