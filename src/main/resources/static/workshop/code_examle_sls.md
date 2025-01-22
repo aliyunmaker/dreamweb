@@ -21,11 +21,9 @@
 @Configuration
 public class CredentialConfig {
 
-    // 初始化凭据客户端
-    // 您可以在代码中显式配置，来初始化凭据客户端
-    // 荐您使用该方式，在代码中明确指定实例角色，避免运行环境中的环境变量、配置文件等带来非预期的结果。
+    // 在代码中显式配置以ecs_ram_role的方式来初始化凭据客户端
+    // 在代码中明确指定实例角色，避免运行环境中的环境变量、配置文件等带来非预期的结果。
     @Bean
-    @Profile("!dev")
     Client credentialClient() {
        Config config = new Config()
            .setType("ecs_ram_role")
@@ -46,7 +44,7 @@ public class SlsClientConfig {
     @Autowired(required = false)
     private com.aliyun.credentials.Client credentialClient;
 
-    // 使用 AK、SK 初始化SLS客户端
+    // 不推荐方式：使用 AK、SK 初始化SLS客户端
     @Bean
     Client slsClient() {
         return new Client(
@@ -56,9 +54,8 @@ public class SlsClientConfig {
         );
     }
 
-    // 使用 Credentials 初始化SLS客户端
+    // 推荐方式：使用 CredentialClient 初始化SLS客户端
     @Bean
-    @Profile("!dev")
     Client slsClientEcsRole() {
         String endpoint = EndpointEnum.SLS.getEndpoint();
         return new Client(endpoint, () -> {
