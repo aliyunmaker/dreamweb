@@ -162,7 +162,7 @@ public class GetResourceHelper {
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
 
         java.util.Map<String, String> headers = new java.util.HashMap<>();
-        List<Project> projects = client.listProjectWithOptions("", listProjectRequest, headers, runtime).getBody().getProjects();
+        List<Project> projects = client.listProjectWithOptions(listProjectRequest, headers, runtime).getBody().getProjects();
 
         for (Project project : projects) {
             String resourceId = project.getProjectName();

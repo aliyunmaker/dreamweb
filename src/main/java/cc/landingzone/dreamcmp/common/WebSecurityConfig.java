@@ -23,6 +23,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // http.anonymous();
         http
             .authorizeRequests()
+            // 无AK扫码体验小程序放行
+            .antMatchers("/workshop/demo_token_vending_mobile.html").permitAll()
+            // TVM演示获取token放行，通过cookie中的密钥 + session policy 保证安全性
+            .antMatchers("/workshop/ak/getStsToken.do").permitAll()
             .antMatchers("/**").hasRole("ADMIN")
             .anyRequest().authenticated()
             .and()

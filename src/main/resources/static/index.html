@@ -7,7 +7,7 @@
   <link rel="shortcut icon" href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/favicon.ico"
     type="image/x-icon" />
   <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_80v0o9e1duv.css" />
+  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_fegc1r96w9a.css" />
   <style>
     main {
       overflow: hidden;
@@ -73,12 +73,6 @@
         </li>
         <hr>
         <li>
-          <a href="#" class="nav-link text-white" data-link="demo/demo_oss_sts.html">
-            <i class="iconfont icon-oss"></i>&nbsp;&nbsp;Demo-OSS
-          </a>
-        </li>
-        <hr>
-        <li>
           <a href="#" class="nav-link text-white" data-link="employee_list/employee_list.html">
             <i class="iconfont icon-user"></i>&nbsp;&nbsp;Employee List
           </a>
@@ -103,6 +97,13 @@
             <i class="iconfont icon-cost"></i>&nbsp;&nbsp;Cost Analysis
           </a>
         </li>
+        <hr>
+        <li>
+          <a href="#" class="nav-link text-white" id="workshop-btn">
+            <i class="iconfont icon-workshop"></i>&nbsp;&nbsp;Workshop
+          </a>
+        </li>
+        <hr>
       </ul>
       <hr>
       <div class="dropdown">
@@ -183,6 +184,12 @@
       // else if (event.data.destination === "login") {
       //   // window.location.href="/login.html";
       // }
+    });
+
+    // 为Workshop按钮添加特殊的点击事件处理
+    document.getElementById('workshop-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = '/workshop/index.html';
     });
 
     // Using the shorthand $.get method

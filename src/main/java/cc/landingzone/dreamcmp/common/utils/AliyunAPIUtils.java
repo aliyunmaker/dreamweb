@@ -1,5 +1,7 @@
 package cc.landingzone.dreamcmp.common.utils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,7 @@ import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 
 import cc.landingzone.dreamcmp.common.CommonConstants;
+import org.springframework.util.StringUtils;
 
 /**
  * 构建aliyun API 的client
@@ -45,6 +48,8 @@ public class AliyunAPIUtils {
         "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"oss:*\",\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
     public static final String Policy_ADMIN_FULL =
         "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"*\",\"Resource\":\"*\",\"Effect\":\"Allow\"}]}";
+    public static final String Policy_DENY =
+        "{\"Version\":\"1\",\"Statement\":[{\"Action\":\"*\",\"Resource\":\"*\",\"Effect\":\"Deny\"}]}";
 
     /**
      * 通用api call
@@ -185,6 +190,32 @@ public class AliyunAPIUtils {
         String result = HttpClientUtils.postUrlAndStringBody("https://signin.aliyun.com/federation", paramsMap);
         String signinToken = JsonUtils.getValueFormJsonString(result, "SigninToken", String.class);
         return signinToken;
+    }
+
+    public static String getSigninToken(String accessKeyID, String accessKeySecret, String securityToken) {
+        Map<String, String> paramsMap = new HashMap<>();
+        paramsMap.put("Action", "GetSigninToken");
+        paramsMap.put("AccessKeyId", accessKeyID);
+        paramsMap.put("AccessKeySecret", accessKeySecret);
+        paramsMap.put("SecurityToken", securityToken);
+        paramsMap.put("TicketType", "mini");
+
+        String result = HttpClientUtils.postUrlAndStringBody("https://signin.aliyun.com/federation", paramsMap);
+        return JsonUtils.getValueFormJsonString(result, "SigninToken", String.class);
+    }
+
+    /**
+     * 生成免密访问链接
+     *
+     * @param loginUrl 登录失效跳转的地址，一般配置为自建Web配置302跳转的URL。需要使用encodeURL对LoginUrl进行转码。
+     * @param destination 实际访问日志服务页面，支持查询页面和仪表盘页面。如果有参数，则需要使用encodeURL对参数进行转码。
+     * @param signinToken 获取的登录Token，需要使用encodeURL对Token进行转码。
+     */
+    public static String getSigninUrl(String loginUrl, String destination, String signinToken) {
+        return "https://signin.aliyun.com/federation?Action=Login&LoginUrl="
+                + URLEncoder.encode(loginUrl, StandardCharsets.UTF_8)
+                + "&Destination=" + URLEncoder.encode(destination, StandardCharsets.UTF_8)
+                + "&SigninToken=" + signinToken;
     }
     
     
