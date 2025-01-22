@@ -365,10 +365,9 @@
             
             // 直接发起请求
             fetch(url)
-                .then(response => response.json())
+                .then(response => response.text())
                 .then(data => {
-                    // 格式化显示JSON结果
-                    resultArea.textContent = JSON.stringify(data, null, 2);
+                    resultArea.textContent = data;
                 })
                 .catch(error => {
                     resultArea.textContent = "Error: " + error.message;
