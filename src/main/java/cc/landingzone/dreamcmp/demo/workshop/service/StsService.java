@@ -19,12 +19,14 @@ public class StsService {
     @Autowired
     private Client stsClient;
 
-    @Autowired(required = false)
-    private Client stsClientEcsRole;
+    // @Autowired(required = false)
+    // private Client stsClientEcsRole;
 
     private Client getClient() {
         // 如果是本地环境 使用 AK/SK 测试
-        return stsClientEcsRole == null ? stsClient : stsClientEcsRole;
+        // return stsClientEcsRole == null ? stsClient : stsClientEcsRole;
+
+        return stsClient;
     }
 
     public GetCallerIdentityResponse getCallerIdentity() throws Exception {

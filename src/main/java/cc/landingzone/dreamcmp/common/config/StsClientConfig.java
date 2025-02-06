@@ -15,18 +15,6 @@ import cc.landingzone.dreamcmp.common.CommonConstants;
 @Configuration
 public class StsClientConfig {
 
-    @Autowired(required = false)
-    private com.aliyun.credentials.Client credentialClient;
-
-    @Bean
-    @Profile("!dev")
-    com.aliyun.sts20150401.Client stsClientEcsRole() throws Exception {
-        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-            .setCredential(credentialClient)
-            .setEndpoint(EndpointEnum.STS.getEndpoint());
-        return new com.aliyun.sts20150401.Client(config);
-    }
-
     @Bean
     com.aliyun.sts20150401.Client stsClient() throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()

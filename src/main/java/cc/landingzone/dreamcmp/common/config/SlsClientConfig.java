@@ -3,6 +3,7 @@ package cc.landingzone.dreamcmp.common.config;
 
 import cc.landingzone.dreamcmp.common.EndpointEnum;
 import cc.landingzone.dreamcmp.demo.workshop.service.StsService;
+import com.aliyun.credentials.models.CredentialModel;
 import com.aliyun.openservices.log.Client;
 import com.aliyun.openservices.log.common.auth.Credentials;
 import com.aliyun.openservices.log.common.auth.DefaultCredentials;
@@ -28,25 +29,18 @@ public class SlsClientConfig {
     @Value("${dreamcmp.workshop.assume_role_arn}")
     private String slsAccountRoleArn;
 
+    @Autowired(required = false)
+    private com.aliyun.credentials.Client credentialClient;
+
     @Bean
     @Profile("!dev")
     Client slsClientEcsRole() {
         String endpoint = EndpointEnum.SLS.getEndpoint();
         return new Client(endpoint, () -> {
-            // 特殊场景（资源在crystal），需要跨账号扮演到crystal账号里
-            AssumeRoleResponse crystalRole;
-            try {
-                crystalRole = stsService.assumeRole(new AssumeRoleRequest() {{
-                    setRoleArn(slsAccountRoleArn);
-                    setRoleSessionName("dreamcmp");
-                }});
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            AssumeRoleResponseBody.AssumeRoleResponseBodyCredentials credentials = crystalRole.getBody().getCredentials();
-            String ak = credentials.getAccessKeyId();
-            String sk = credentials.getAccessKeySecret();
-            String token = credentials.getSecurityToken();
+            CredentialModel credential = credentialClient.getCredential();
+            String ak = credential.getAccessKeyId();
+            String sk = credential.getAccessKeySecret();
+            String token = credential.getSecurityToken();
 
             return new DefaultCredentials(ak, sk, token);
         });
