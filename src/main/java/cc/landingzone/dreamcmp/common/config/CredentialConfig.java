@@ -1,14 +1,13 @@
 package cc.landingzone.dreamcmp.common.config;
 
-import com.aliyun.credentials.provider.EcsRamRoleCredentialProvider;
-import com.aliyun.credentials.provider.RamRoleArnCredentialProvider;
+import cc.landingzone.dreamcmp.common.CommonConstants;
+import com.aliyun.credentials.models.CredentialModel;
+import com.aliyun.credentials.provider.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import com.aliyun.credentials.Client;
-import com.aliyun.credentials.models.Config;
 
 /**
  * @author yicheng.fyc
@@ -17,21 +16,49 @@ import com.aliyun.credentials.models.Config;
 @Configuration
 public class CredentialConfig {
 
+    @Value("${spring.profiles.active}")
+    private String env;
+
     @Value("${dreamcmp.workshop.ecs_instance_role}")
     private String ecsInstanceRole;
 
     @Value("${dreamcmp.workshop.assume_role_arn}")
     private String assumeRoleArn;
 
+    private AlibabaCloudCredentialsProvider getOriginalCredentialProvider() {
+        AlibabaCloudCredentialsProvider originalProvider;
+
+        if ("dev".equals(env)) {
+            // 1. 本地测试使用
+            CredentialModel credential = CredentialModel.builder()
+                .accessKeyId(CommonConstants.Aliyun_TestAccount_AccessKeyId)
+                .accessKeySecret(CommonConstants.Aliyun_TestAccount_AccessKeySecret)
+                .securityToken(CommonConstants.Aliyun_TestAccount_SecurityToken)
+                .build();
+            originalProvider = StaticCredentialsProvider.builder()
+                .credential(credential)
+                .build();
+        } else {
+            // 2. 线上使用ECS实例RAM角色
+            originalProvider = EcsRamRoleCredentialProvider.builder()
+                .roleName(ecsInstanceRole)
+                .disableIMDSv1(true)
+                .build();
+        }
+
+        return originalProvider;
+    }
+
+    @Bean
+    Client originalCredentialClient() {
+        AlibabaCloudCredentialsProvider originalProvider = getOriginalCredentialProvider();
+        return new Client(originalProvider);
+    }
+
     // 通过RAM Role Provider跨账号获取STS Token
-    @Bean(name = "credentialClient")
-    @Profile("!dev")
-    Client getCredentialClient() {
-        // 1. 使用ECS实例RAM角色
-        EcsRamRoleCredentialProvider originalProvider = EcsRamRoleCredentialProvider.builder()
-            .roleName(ecsInstanceRole)
-            .disableIMDSv1(true)
-            .build();
+    @Bean
+    Client crossAccountCredentialClient() {
+        AlibabaCloudCredentialsProvider originalProvider = getOriginalCredentialProvider();
 
         // 使用当前角色作为入参，初始化角色扮演的Provider，实现角色链式扮演，同时支持跨账号扮演角色
         RamRoleArnCredentialProvider provider = RamRoleArnCredentialProvider.builder()

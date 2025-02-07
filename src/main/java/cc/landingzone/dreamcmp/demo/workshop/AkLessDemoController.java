@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 import cc.landingzone.dreamcmp.common.utils.AliyunAPIUtils;
 import cc.landingzone.dreamcmp.common.utils.HttpClientUtils;
 import cc.landingzone.dreamcmp.demo.workshop.service.OssService;
-import cc.landingzone.dreamcmp.demo.workshop.service.StsService;
 import cc.landingzone.dreamcmp.demo.workshop.service.SlsService;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.model.ListObjectsV2Result;
+import com.aliyun.sts20150401.Client;
 import com.aliyun.sts20150401.models.AssumeRoleRequest;
 import com.aliyun.sts20150401.models.AssumeRoleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class AkLessDemoController extends BaseController {
     private String roleArn;
 
     @Autowired
-    private StsService stsService;
+    private Client stsClient;
 
     @Autowired
     private OssService ossService;
@@ -157,7 +157,7 @@ public class AkLessDemoController extends BaseController {
             req.setRoleSessionName("workshop");
             req.setDurationSeconds(900L);
             req.setPolicy(sessionPolicy);
-            AssumeRoleResponse resp = stsService.assumeRole(req);
+            AssumeRoleResponse resp = stsClient.assumeRole(req);
             result.setData(resp.getBody().getCredentials());
 
         } catch (Exception e) {
@@ -172,7 +172,7 @@ public class AkLessDemoController extends BaseController {
     public void getCallerIdentity(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            GetCallerIdentityResponse resp = stsService.getCallerIdentity();
+            GetCallerIdentityResponse resp = stsClient.getCallerIdentity();
             result.setData(resp);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
