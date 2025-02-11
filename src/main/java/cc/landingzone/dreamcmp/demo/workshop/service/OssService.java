@@ -22,15 +22,6 @@ public class OssService {
     @Autowired
     private OSS ossClient;
 
-    @Autowired(required = false)
-    private OSS ossClientEcsRole;
-
-
-    private OSS getOssClient() {
-        // 本地使用 AK SK
-        return ossClientEcsRole == null ? ossClient : ossClientEcsRole;
-    }
-
     /**
      * 列举文件
      * @param prefix 文件前缀(目录)
@@ -41,7 +32,7 @@ public class OssService {
         listObjectsRequest.setDelimiter("/");
         listObjectsRequest.setPrefix(prefix);
 
-        return getOssClient().listObjectsV2(listObjectsRequest);
+        return ossClient.listObjectsV2(listObjectsRequest);
     }
 
     /**
@@ -50,7 +41,7 @@ public class OssService {
      */
     public byte[] getObject(String key) throws IOException {
         GetObjectRequest request = new GetObjectRequest(bucket, key);
-        return getOssClient().getObject(request).getObjectContent().readAllBytes();
+        return ossClient.getObject(request).getObjectContent().readAllBytes();
     }
 
 }

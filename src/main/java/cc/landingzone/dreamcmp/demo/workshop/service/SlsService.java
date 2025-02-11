@@ -1,6 +1,7 @@
 package cc.landingzone.dreamcmp.demo.workshop.service;
 
 import cc.landingzone.dreamcmp.common.utils.AliyunAPIUtils;
+import com.aliyun.credentials.models.CredentialModel;
 import com.aliyun.openservices.log.Client;
 import com.aliyun.openservices.log.common.LogItem;
 import com.aliyun.openservices.log.exception.LogException;
@@ -10,9 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
-import static cc.landingzone.dreamcmp.common.CommonConstants.Aliyun_TestAccount_SecurityToken;
 
 /**
  * @author yicheng.fyc
@@ -31,11 +29,7 @@ public class SlsService {
     private Client slsClient;
 
     @Autowired
-    private Client slsClientEcsRole;
-
-    public Client getSlsClient() {
-        return slsClient == null ? slsClientEcsRole : slsClient;
-    }
+    private com.aliyun.credentials.Client crossAccountCredentialClient;
 
     public void putLog(String log) throws LogException {
         List<LogItem> logGroup = new ArrayList<>();
@@ -43,7 +37,7 @@ public class SlsService {
             PushBack("content", log);
         }};
         logGroup.add(logItem);
-        getSlsClient().PutLogs(projectName, logStoreName, "", logGroup, "dreamcmp");
+        slsClient.PutLogs(projectName, logStoreName, "", logGroup, "dreamcmp");
     }
 
     public String getSignedSlsUrl() {
@@ -54,9 +48,10 @@ public class SlsService {
             logStoreName
         );
 
-        String ak = getSlsClient().getAccessId();
-        String sk = getSlsClient().getAccessKey();
-        String token = getSlsClient().getSecurityToken();
+        CredentialModel credential = crossAccountCredentialClient.getCredential();
+        String ak = credential.getAccessKeyId();
+        String sk = credential.getAccessKeySecret();
+        String token = credential.getSecurityToken();
         String signinToken = AliyunAPIUtils.getSigninToken(ak, sk, token);
 
         return AliyunAPIUtils.getSigninUrl("https://aliyun.com", slsUrl, signinToken);

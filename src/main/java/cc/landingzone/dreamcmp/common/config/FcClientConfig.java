@@ -2,7 +2,6 @@ package cc.landingzone.dreamcmp.common.config;
 
 import cc.landingzone.dreamcmp.common.CommonConstants;
 import cc.landingzone.dreamcmp.common.EndpointEnum;
-import cc.landingzone.dreamcmp.demo.workshop.service.StsService;
 import com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider;
 import darabonba.core.client.ClientOverrideConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +16,17 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class FcClientConfig {
 
-    @Autowired(required = false)
-    private com.aliyun.credentials.Client credentialClient;
+    @Autowired
+    private com.aliyun.credentials.Client crossAccountCredentialClient;
 
     @Autowired
     RamRoleArnCredentialProvider ramRoleArnCredentialProvider;
-
-    @Autowired
-    StsService stsService;
 
     @Bean
     @Profile("!dev")
     com.aliyun.fc20230330.Client fcClientEcsRole() throws Exception {
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-            .setCredential(credentialClient)
+            .setCredential(crossAccountCredentialClient)
             .setEndpoint(EndpointEnum.FC.getEndpoint());
         return new com.aliyun.fc20230330.Client(config);
     }
