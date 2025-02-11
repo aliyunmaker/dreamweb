@@ -33,6 +33,12 @@ public enum EndpointEnum {
     OOS("oos%s.%s.aliyuncs.com"),
 
     /**
+     * fc服务接入入口，支持地域：
+     * cn-hangzhou, cn-qingdao, cn-beijing, cn-zhangjiakou, cn-huhehaote, cn-shanghai, cn-shenzhen, cn-hongkong, cn-chengdu
+     */
+    FC("fcv3.%s.aliyuncs.com"),
+
+    /**
      * 登录接口，不支持地域和vpc访问
      */
     SIGN_IN("https://signin.aliyun.com"),
@@ -66,7 +72,7 @@ public enum EndpointEnum {
             region = CommonConstants.Aliyun_REGION_HANGZHOU;
         }
 
-        if (SLS == this) {
+        if (SLS == this || FC == this) {
             if (useVpc) {
                 region += "-intranet";
             }

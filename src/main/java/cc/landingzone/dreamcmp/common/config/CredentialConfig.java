@@ -1,6 +1,8 @@
 package cc.landingzone.dreamcmp.common.config;
 
 import cc.landingzone.dreamcmp.common.CommonConstants;
+import com.aliyun.auth.credentials.Credential;
+import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.credentials.models.CredentialModel;
 import com.aliyun.credentials.provider.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.aliyun.credentials.Client;
+import org.springframework.context.annotation.Profile;
 
 /**
  * @author yicheng.fyc
@@ -69,5 +72,36 @@ public class CredentialConfig {
             .build();
 
         return new Client(provider);
+    }
+
+    @Bean
+    @Profile("!dev")
+    com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider getRamRoleArnCredentialProvider() {
+        com.aliyun.auth.credentials.provider.EcsRamRoleCredentialProvider ecsRamRoleCredentialProvider = com.aliyun.auth.credentials.provider.EcsRamRoleCredentialProvider.builder()
+            .roleName(ecsInstanceRole)
+            .build();
+        com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider provider = com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider.builder()
+            .credentialsProvider(ecsRamRoleCredentialProvider)
+            .roleArn(assumeRoleArn)
+            .roleSessionName("dreamcmp")
+            .durationSeconds(1000)
+            .build();
+        return provider;
+    }
+
+    @Bean
+    @Profile("dev")
+    com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider getDevRamRoleArnCredentialProvider() {
+        StaticCredentialProvider credentialProvider = StaticCredentialProvider.create(Credential.builder()
+            .accessKeyId(CommonConstants.Aliyun_TestAccount_AccessKeyId)
+            .accessKeySecret(CommonConstants.Aliyun_TestAccount_AccessKeySecret)
+            .build());
+        com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider provider = com.aliyun.auth.credentials.provider.RamRoleArnCredentialProvider.builder()
+            .credentialsProvider(credentialProvider)
+            .roleArn(assumeRoleArn)
+            .roleSessionName("dreamcmp")
+            .durationSeconds(1000)
+            .build();
+        return provider;
     }
 }
