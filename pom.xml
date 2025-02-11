@@ -381,7 +381,7 @@
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>tea-util</artifactId>
-			<version>0.2.24</version>
+			<version>0.2.23</version>
 		</dependency>
 		<!-- aliyun sdk end -->
 	</dependencies>
