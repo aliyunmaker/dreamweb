@@ -45,11 +45,9 @@
       align-items: center;
     }
 
-    .status-icon {
-      vertical-align: middle;
-      margin-right: 2px;
-      width: 1.25em;
-      height: 1.25em;
+    .badge {
+      padding: 0.5rem 0.6rem; /* 增加padding以提高badge的高度 */
+      border-radius: 10px;
     }
   </style>
   <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
@@ -64,17 +62,17 @@
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <button id="simulate-failure-btn" class="btn btn-sm btn-primary"
+              <button id="simulate-failure-btn" class="btn btn-sm btn-light"
                 onclick="simulateError()">模拟故障</button>
             </li>
             <li class="nav-item">
-              <button class="btn btn-sm btn-primary" onclick="changeMonitorType('dashboard')">Grafana大盘</button>
+              <button class="btn btn-sm btn-light" onclick="changeMonitorType('dashboard')">Grafana大盘</button>
             </li>
             <li class="nav-item">
-              <button class="btn btn-sm btn-primary" onclick="changeMonitorType('tracing')">Tracing链路追踪</button>
+              <button class="btn btn-sm btn-light" onclick="changeMonitorType('tracing')">Tracing链路追踪</button>
             </li>
             <li class="nav-item">
-              <button class="btn btn-sm btn-primary" onclick="changeMonitorType('sls')">SLS日志</button>
+              <button class="btn btn-sm btn-light" onclick="changeMonitorType('sls')">SLS日志</button>
             </li>
             <li class="nav-item" style="display: flex; align-items: center; justify-content: center; min-width: 80px;">
               <span id="system-status" style="margin-left: 80px; font-weight: bold;"></span>
@@ -201,18 +199,10 @@
 
       if (error) {
         systemStatus.innerHTML = `
-          <svg class="status-icon" viewBox="0 0 24 24" style="color:red;">
-            <circle cx="12" cy="12" r="10" fill="currentColor"/>
-            <path stroke="#fff" stroke-width="2" fill="none" d="M8 8 L16 16 M16 8 L8 16"/>
-          </svg>
-          系统状态：故障`;
+          <span class="badge bg-danger">故障状态</span>`;
       } else {
         systemStatus.innerHTML = `
-          <svg class="status-icon" viewBox="0 0 24 24" style="color:green;">
-            <circle cx="12" cy="12" r="10" fill="currentColor"/>
-            <path stroke="#fff" stroke-width="2" fill="none" d="M6 12 L10 16 L18 8"/>
-          </svg>
-          系统状态：运行中`;
+          <span class="badge bg-success">正常状态</span>`;
       }
     }
 
