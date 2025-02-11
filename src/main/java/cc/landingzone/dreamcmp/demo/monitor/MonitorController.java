@@ -27,6 +27,9 @@ public class MonitorController extends BaseController {
     @Value("${dreamcmp.aliyun_grafana_url}")
     private String GRAFANA_URL;
 
+    @Value("${dreamcmp.aliyun_tracing_url}")
+    private String TRACING_URL;
+
     @Value("${dreamcmp.aliyun_monitoring_function_name}")
     private String SIMULATE_ERROR_FC_FUNCTION_NAME;
 
@@ -76,7 +79,7 @@ public class MonitorController extends BaseController {
     public void getTracing(HttpServletRequest request, HttpServletResponse response) {
         WebResult result = new WebResult();
         try {
-            String destination = "https://trace4service.console.aliyun.com/?hideTopbar=true&hideSidebar=true#/cn-hangzhou/tracing-explorer?source=XTRACE&from=now-3m&to=now&refresh=10s&slsFilters=(serviceName%20%3A%20%22dreamone-customer-system%22%20or%20serviceName%20%3A%20%22dreamone-order-system%22%20or%20serviceName%20%3A%20%22dreamone-item-system%22%20)&filters=serviceName%20IN%20(%22dreamone-customer-system%22%20%2C%20%22dreamone-order-system%22%20%2C%20%22dreamone-item-system%22)";
+            String destination = TRACING_URL;
             String redirectUrl = getRedirectUrl(destination);
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
