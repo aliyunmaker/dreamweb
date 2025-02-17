@@ -168,6 +168,11 @@
 <body>
     <div class="container">
         <h1 class="text-center">ECS Instance Role</h1>
+        <!-- <h3>架构图</h3> -->
+        <div class="text-center mb-4">
+            <img src="arch/ecs_instance_role.png" alt="ECS Instance Role Architecture" class="img-fluid" style="max-width: 800px; cursor: pointer;" onclick="openImagePreview(this.src)">
+        </div>
+        
         <h3>Metadata Server</h3>
         <div class="mt-4">
             <div class="d-flex mb-3">
@@ -274,6 +279,20 @@
         </div>
     </div>
 
+    <!-- 图片预览 Modal -->
+    <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-0">
+                    <img id="previewImage" src="" alt="Preview" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 悬浮按钮 -->
     <button id="offcanvas-btn" class="btn btn-outline-secondary" onclick="toggleCodeExample()">
         代码示例
@@ -291,6 +310,17 @@
     </div>
 
     <script>
+        // 图片预览相关函数
+        let imagePreviewModal;
+        
+        function openImagePreview(imageSrc) {
+            if (!imagePreviewModal) {
+                imagePreviewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+            }
+            document.getElementById('previewImage').src = imageSrc;
+            imagePreviewModal.show();
+        }
+
         // 配置marked使用highlight.js进行代码高亮
         marked.setOptions({
             highlight: function(code, lang) {
