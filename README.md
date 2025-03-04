@@ -72,6 +72,13 @@ dreamcmp.login_user={"admin":"admin","guest":"guest"}
 # kms instance id
 dreamcmp.dkms_instance_id=
 
+# monitoring
+dreamcmp.aliyun_grafana_url=
+dreamcmp.aliyun_tracing_url=
+
+#fc
+dreamcmp.aliyun_monitoring_function_name=
+
 # workshop
 dreamcmp.workshop.ecs_instance_role=
 # oss
@@ -82,5 +89,10 @@ dreamcmp.workshop.sls_project=
 dreamcmp.workshop.sls_logstore=
 # tvm
 dreamcmp.workshop.assume_role_arn=
+# duohuo
+dreamcmp.workshop.grafana_url=
+dreamcmp.workshop.ack_hangzhou_i_id=
+dreamcmp.workshop.ack_hangzhou_j_id=
+dreamcmp.workshop.duohuo_function_name=
 ```
 

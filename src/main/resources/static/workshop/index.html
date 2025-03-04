@@ -1,159 +1,289 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="shortcut icon"
+      href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://at.alicdn.com/t/a/font_4151968_iycuh2wm5k.css"
+    />
+    <style>
+      main {
+        overflow: hidden;
+      }
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/favicon.ico"
-        type="image/x-icon" />
-  <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_iycuh2wm5k.css" />
-  <style>
-    main {
-      overflow: hidden;
-    }
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 0;
+        height: 100vh;
+      }
 
-    .b-example-vr {
-      flex-shrink: 0;
-      width: 0;
-      height: 100vh;
-    }
+      .iframe-container {
+        width: 100%;
+        height: 100vh;
+      }
 
-    .iframe-container {
-      width: 100%;
-      height: 100vh;
-    }
+      a.nav-link:hover {
+        background-color: #353a3f;
+        cursor: pointer;
+      }
 
-    a.nav-link:hover {
-      background-color: #353A3F;
-    }
-  </style>
-  <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
-  <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
-</head>
+      /* 侧边栏的展开与收起 */
+      .sidebar-wrapper {
+        position: relative;
+        transition: width 0.3s;
+        .sidebar {
+          height: 100%;
+          &.collapsed {
+            display: none !important;
+          }
+        }
+        .slide-panel-arrow-wrapper {
+          position: absolute;
+          top: 50%;
+          right: -24px;
+          z-index: 99;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 41px;
+          transform: translateY(-50%);
+          background-color: #24272b;
+          cursor: pointer;
+          .slide-panel-arrow {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid #fff;
+            border-top: 2px solid #fff;
+            transition: transform 0.2s ease-in-out, left 0.1s ease-in-out;
+            transform: rotate(-135deg) translateY(1px);
+            &.collapsed {
+              transform: rotate(45deg) translate(-1px);
+            }
+          }
+        }
+      }
 
-<body>
-<main class="d-flex flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 255px;">
-      <span class="fs-4"><i class="iconfont icon-rocket-vertical" style="font-size: 2rem;"></i>&nbsp;&nbsp;Dream
-        Workshop</span>
-    <!-- <span style="font-size: 12px; text-align: center;">cloud management platform</span> -->
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto chengchaobar">
-      <li>
-          <span class="nav-link text-white" style="cursor: default; font-weight: bold;">
-            无AK
-          </span>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white active" data-link="./demo_ecs_role.html" style="padding-left: 2rem;">
-          <i class="iconfont icon-ecs"></i>&nbsp;&nbsp;ECS Instance Role
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white" data-link="./demo_oss_sts.html" style="padding-left: 2rem;">
-          <i class="iconfont icon-oss"></i>&nbsp;&nbsp;OSS直传
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white" data-link="./demo_token_vending.html" style="padding-left: 2rem;">
-          <i class="iconfont icon-tvm"></i>&nbsp;&nbsp;Token Vending
-        </a>
-      </li>
-      <hr>
-    </ul>
-    <hr>
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-         data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/dreamone/avatar-2.png" alt="" width="32"
-             height="32" class="rounded-circle me-2">
-        <strong id="usernameDiv">charles</strong>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><a class="dropdown-item" href="#" onclick="alert('TODO')">Profile</a></li>
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-        <li><a class="dropdown-item" href="../logout">Sign out</a></li>
-      </ul>
-    </div>
-  </div>
+      /* 侧边栏内一级菜单的展开与收起 */
+      .nav-link {
+        display: flex;
+        align-items: center;
+        &:hover {
+          cursor: pointer;
+        }
+        /* 展开 */
+        .row-arrow-up {
+          width: 10px;
+          height: 10px;
+          border-right: 2px solid #fff;
+          border-top: 2px solid #fff;
+          transform: rotate(-45deg) translateY(6px);
+        }
+      }
+      /* 收起 */
+      .collapsed-li {
+        .row-arrow-up {
+          transform: rotate(-225deg) translate(-6px);
+        }
+        .content {
+          display: none;
+        }
+      }
+      .content {
+        display: block;
+        > a {
+          padding-left: 2rem;
+        }
+      }
+    </style>
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+    <script
+      type="text/javascript"
+      src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"
+    ></script>
+  </head>
 
-  <div class="b-example-divider b-example-vr"></div>
-  <div class="iframe-container">
-    <iframe id="iframe" src="./demo_ecs_role.html" width="100%" height="100%"></iframe>
-  </div>
+  <body>
+    <main class="d-flex flex-nowrap">
+      <div class="sidebar-wrapper">
+        <div
+          class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark sidebar"
+          style="width: 255px;"
+        >
+          <span class="fs-4"
+            ><i class="iconfont icon-rocket-vertical" style="font-size: 2rem;"></i>&nbsp;&nbsp;Dream
+            Workshop</span
+          >
+          <!-- <span style="font-size: 12px; text-align: center;">cloud management platform</span> -->
+          <hr />
+          <ul class="nav nav-pills flex-column mb-auto chengchaobar">
+            <li>
+              <span
+                class="nav-link text-white"
+                data-toggle="collapse"
+                style=" font-weight: bold; justify-content: space-between;"
+              >
+                无AK
+                <span class="row-arrow-up"></span>
+              </span>
+              <div class="content">
+                <a href="#" class="nav-link text-white active" data-link="./demo_ecs_role.html">
+                  <i class="iconfont icon-ecs"></i>&nbsp;&nbsp;ECS Instance Role
+                </a>
+                <a href="#" class="nav-link text-white" data-link="./demo_oss_sts.html">
+                  <i class="iconfont icon-oss"></i>&nbsp;&nbsp;OSS直传
+                </a>
+                <a href="#" class="nav-link text-white" data-link="./demo_token_vending.html">
+                  <i class="iconfont icon-tvm"></i>&nbsp;&nbsp;Token Vending
+                </a>
+              </div>
+            </li>
+            <hr />
+            <li>
+              <span
+                class="nav-link text-white"
+                data-toggle="collapse"
+                style=" font-weight: bold;justify-content: space-between;"
+              >
+                稳定性
+                <span class="row-arrow-up"></span>
+              </span>
+              <div class="content">
+                <a href="#" class="nav-link text-white" data-link="./demo_duohuo.html">
+                  <i class="iconfont icon-ack"></i>&nbsp;&nbsp;同城多活
+                </a>
+              </div>
+            </li>
+            <hr />
+          </ul>
+          <hr />
+          <div class="dropdown">
+            <a
+              href="#"
+              class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img
+                src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/dreamone/avatar-2.png"
+                alt=""
+                width="32"
+                height="32"
+                class="rounded-circle me-2"
+              />
+              <strong id="usernameDiv">charles</strong>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+              <li><a class="dropdown-item" href="#" onclick="alert('TODO')">Profile</a></li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li><a class="dropdown-item" href="../logout">Sign out</a></li>
+            </ul>
+          </div>
+        </div>
+        <span class="slide-panel-arrow-wrapper">
+          <span class="slide-panel-arrow"></span>
+        </span>
+      </div>
 
-</main>
-<script>
-  var links = document.querySelectorAll(".chengchaobar a");
-  var iframe = document.getElementById("iframe");
-
-  links.forEach(function (link) {
-    link.addEventListener("click", function (e) {
-      e.preventDefault();
-      var page = e.target.getAttribute("data-link");
-      
-      // Remove active class from all links first
-      links.forEach(function (link) {
-        link.classList.remove("active");
+      <div class="b-example-divider b-example-vr"></div>
+      <div class="iframe-container">
+        <iframe id="iframe" src="./demo_ecs_role.html" width="100%" height="100%"></iframe>
+      </div>
+    </main>
+    <script>
+      // 控制侧边栏内一级菜单的箭头展开和收起
+      document.querySelectorAll('[data-toggle="collapse"]').forEach((toggle) => {
+        toggle.addEventListener('click', (e) => {
+          const parentLi = toggle.parentElement;
+          parentLi.classList.toggle('collapsed-li');
+        });
+      });
+      // 控制侧边栏的展开和收起
+      document.querySelector('.slide-panel-arrow-wrapper').addEventListener('click', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const arrow = document.querySelector('.slide-panel-arrow');
+        sidebar.classList.toggle('collapsed');
+        arrow.classList.toggle('collapsed');
       });
 
-      // Add active class to the clicked link immediately
-      e.target.classList.add("active");
+      var links = document.querySelectorAll('.chengchaobar a');
+      var iframe = document.getElementById('iframe');
 
-      // Set iframe src after updating menu state
-      iframe.setAttribute("src", page);
-    });
-  });
+      links.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var page = e.target.getAttribute('data-link');
 
-  window.addEventListener('message', function (event) {
-    if (event.data.destination === "log_center") {
-      // Remove active class from all links
-      links.forEach(function (link) {
-        link.classList.remove("active");
+          // Remove active class from all links first
+          links.forEach(function(link) {
+            link.classList.remove('active');
+          });
+
+          // Add active class to the clicked link immediately
+          e.target.classList.add('active');
+
+          // Set iframe src after updating menu state
+          iframe.setAttribute('src', page);
+        });
       });
 
-      // Add active class to the clicked link
-      document.getElementById('log-center-btn').classList.add("active");
+      window.addEventListener('message', function(event) {
+        if (event.data.destination === 'log_center') {
+          // Remove active class from all links
+          links.forEach(function(link) {
+            link.classList.remove('active');
+          });
 
-      iframe.setAttribute("src", event.data.url);
-    } else if (event.data.destination === "monitor") {
-      // Remove active class from all links
-      links.forEach(function (link) {
-        link.classList.remove("active");
+          // Add active class to the clicked link
+          document.getElementById('log-center-btn').classList.add('active');
+
+          iframe.setAttribute('src', event.data.url);
+        } else if (event.data.destination === 'monitor') {
+          // Remove active class from all links
+          links.forEach(function(link) {
+            link.classList.remove('active');
+          });
+
+          // Add active class to the clicked link
+          document.getElementById('monitor-btn').classList.add('active');
+
+          iframe.setAttribute('src', event.data.url);
+        } else if (event.data.destination === 'ak_apply') {
+          // Remove active class from all links
+          links.forEach(function(link) {
+            link.classList.remove('active');
+          });
+
+          // Add active class to the clicked link
+          document.getElementById('ak-apply-btn').classList.add('active');
+
+          iframe.setAttribute('src', event.data.url);
+        }
+        // else if (event.data.destination === "login") {
+        //   // window.location.href="/login.html";
+        // }
       });
 
-      // Add active class to the clicked link
-      document.getElementById('monitor-btn').classList.add("active");
-
-      iframe.setAttribute("src", event.data.url);
-    } else if (event.data.destination === "ak_apply") {
-      // Remove active class from all links
-      links.forEach(function (link) {
-        link.classList.remove("active");
+      // Using the shorthand $.get method
+      $.get('../system/getLoginUserName.do', function(data) {
+        $('#usernameDiv').text(data.data);
+      }).fail(function() {
+        console.error(data);
       });
-
-      // Add active class to the clicked link
-      document.getElementById('ak-apply-btn').classList.add("active");
-
-      iframe.setAttribute("src", event.data.url);
-    }
-    // else if (event.data.destination === "login") {
-    //   // window.location.href="/login.html";
-    // }
-  });
-
-  // Using the shorthand $.get method
-  $.get('../system/getLoginUserName.do', function (data) {
-    $('#usernameDiv').text(data.data);
-  }).fail(function () {
-    console.error(data);
-  });
-
-
-</script>
-</body>
-
+    </script>
+  </body>
 </html>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Boxes with Image and Text</title>
+    <style>
+      @media (max-width: 1295px) {
+        .form-box {
+          min-width: 100% !important; /* 屏幕小于指定宽度时，子元素宽度为 100% */
+        }
+      }
+      body {
+        height: 100vh;
+        margin: 0;
+        background-color: #f7f7f7;
+        padding: 20px;
+        box-sizing: border-box;
+        /* #content { */
+        /* border: 1px #ccd7ea solid; */
+        /* background-color: #d0cece; */
+        /* } */
+      }
+      .page-wrapper {
+        width: 100%;
+        /* width: calc(100vw - 80px); */
+        height: calc(100vh - 80px);
+        box-sizing: border-box;
+      }
+      .box-wrapper {
+        width: 100%;
+        height: 100%;
+        .top {
+          display: flex;
+          justify-content: space-between;
+          /* align-items: center; */
+          align-items: flex-start;
+          height: 100%;
+          .top-child-box {
+            height: 100%;
+            /* 左侧图片wrapper */
+            &.box-left {
+              position: relative; /* 使子元素绝对定位 */
+              /* 调整高度后标记 */
+              height: 53%;
+              /* margin-right: 20px; */
+              /* width: calc(40% - 20px); */
+              display: flex;
+              flex-direction: column;
+              background-color: #fff;
+              /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+              border: 2px solid #eceeef;
+              .architecture {
+                /* max-width: 100%; */
+                max-height: 714px;
+                margin: 0 18px;
+                /* 调整高度前标记 */
+                /* height: calc(100% - 230px); */
+                /* height: calc(100% - 155px); */
+                /* height: 100%; */
+                /* 调整高度后标记 */
+                height: calc(100% - 100px);
+                &:hover {
+                  cursor: pointer;
+                }
+              }
+              .card-title {
+                position: relative;
+                margin: 18px 20px 5px 20px;
+                /* 单独写「基于MSE实现应用同城容灾」card-title样式 */
+                &.img-title {
+                  justify-content: center;
+                  align-items: center;
+                  height: 23px;
+                  font-size: 16px;
+                  border: none;
+                  margin: 0;
+                  padding: 0;
+                }
+              }
+            }
+            /* 右侧Ack及交互按钮wrapper */
+            &.box-right {
+              margin-right: 20px;
+              width: calc(60% - 20px);
+              flex: 1;
+              .all-colony-wrapper {
+                /* display: flex;
+            flex-wrap: wrap;
+            gap: 15px; */
+
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* 定义三列，等宽 */
+                gap: 10px; /* 网格间距 */
+              }
+
+              .form-box {
+                flex: 1; /* 均分宽度 */
+                min-width: calc(50% - 15px); /* 保证在同一行时宽度均分，减去一半的间距 */
+                min-height: 192px;
+                box-sizing: border-box; /* 包括内边距和边框在内的计算宽度 */
+                /* width: calc(50% - 38px);
+        height: 36%; */
+                padding: 18px 14px 0;
+                border: 2px solid #eceeef;
+                /* overflow: hidden; */
+                background-color: #fff;
+                /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+                .form-container {
+                  background-color: white;
+                  padding-bottom: 0;
+                  border-radius: 5px;
+                  .item {
+                    /* display: flex; */
+                    /* flex-wrap: wrap; */
+                    justify-content: center;
+                    align-items: center;
+                    /* height: calc(20vh - 32px); */
+                    /* height: calc(15vh - 32px); */
+                    /* 名称+地域 */
+                    .label-select-wrapper {
+                      display: flex;
+                      flex-wrap: wrap;
+                      margin: 5px 0 21px 0;
+                      .form-group {
+                        display: flex;
+                        justify-content: center;
+                        margin-right: 10px;
+                        min-width: 55px;
+                      }
+                      label,
+                      .value {
+                        color: #373737;
+                        font-size: 18px;
+                        display: inline-block;
+                        line-height: 22px;
+                        font-size: 16px;
+                        font-weight: 500;
+                      }
+
+                      select {
+                        width: 80px;
+                        padding: 5px;
+                        margin-right: 10px; /* 设置下拉选择框的右边距 */
+                        border: 1px #c0c6cd solid;
+                        &:hover {
+                          cursor: pointer;
+                        }
+                      }
+                    }
+                    .amount-label {
+                      color: #7a7a7a;
+                      margin-bottom: 25px;
+                    }
+                    .amount-and-button {
+                      display: flex;
+                      flex-wrap: wrap;
+                      justify-content: space-between;
+                      align-items: center;
+                      /* 三个按钮 */
+                      .button-wrapper {
+                        margin-bottom: 10px;
+                        /* 小屏幕下按钮高度为 120px */
+                        button {
+                          width: 65px;
+                          height: 38px;
+                          font-size: 15px;
+                          /* height: calc(15vh - 32px); */
+                          /* 以下可用，暂时注释 */
+                          /* width: 65px;
+height: 60px;
+font-size: 26px; */
+                          line-height: 20px;
+                          box-sizing: border-box;
+                          margin-right: 4px;
+                          background-color: #4e6ef2;
+                          color: #fff;
+                          border: none;
+                          border-radius: 3px;
+                          &:last-child {
+                            /* 设置最后一个按钮的右边距为 0 */
+                            margin-right: 0;
+                          }
+                          &:hover {
+                            cursor: pointer;
+                          }
+                          &.reduction {
+                            /* 缩容 */
+                            color: #000;
+                            background-color: #fff;
+                            border: 1px solid #dcdcdc;
+                            &:hover {
+                              background-color: #f7f9fa;
+                              box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16);
+                            }
+                          }
+                          &.breakdown {
+                            /* 故障 */
+                            background-color: #e0080a;
+                            border: 1px solid #e96572;
+                            &:hover {
+                              background-color: #b90000;
+                            }
+                          }
+                          &.recover {
+                            /* 修复 */
+                            background-color: #1565c8;
+                            border: 1px solid #689ddc;
+                            &:hover {
+                              background-color: #0052a4;
+                            }
+                          }
+                        }
+                      }
+                      .amount {
+                        margin-bottom: 10px;
+                        color: #4e4e4e;
+                        font-size: 30px;
+                        /* display: inline-block; */
+                        height: 22px;
+                        line-height: 22px;
+                      }
+                    }
+                  }
+                  .item:last-child {
+                    margin-bottom: 0;
+                  }
+                }
+              }
+              .bottom {
+                margin-top: 15px;
+                /* width: 100%; */
+                /* height: calc(70% - 40px); */
+                /* 调整高度前标记 */
+                /* height: calc(64% - 15px); */
+                /* 调整高度标记 */
+                height: 73%;
+                background-color: #fff;
+                /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+                border: 2px solid #eceeef;
+                iframe {
+                  width: 100%;
+                  height: 100%;
+                }
+              }
+            }
+          }
+          /* 各区域标题 */
+          .card-title {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 8px;
+            /* border-bottom: 1px solid #e3e4e6; */
+            font-size: 16px;
+            height: 34px;
+            line-height: 34px;
+            margin: 10px 20px;
+            color: #373737;
+            font-weight: 600;
+            position: relative;
+          }
+          .extra-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .QR-text {
+              font-size: 14px;
+              font-weight: 400;
+              margin-right: 10px;
+            }
+            .QR-code {
+              height: 60px;
+              max-height: none;
+            }
+          }
+        }
+      }
+
+      /* 弹窗样式 */
+      .modal {
+        display: none; /* 默认隐藏 */
+        position: fixed; /* 固定定位 */
+        z-index: 1; /* 置于顶层 */
+        left: 0;
+        top: 0;
+        width: 100%; /* 宽度100% */
+        height: 100%; /* 高度100% */
+        overflow: auto; /* 开启滚动 */
+        background-color: rgb(0, 0, 0); /* 背景颜色 */
+        background-color: rgba(0, 0, 0, 0.4); /* 背景颜色，带有透明度 */
+        /* 弹窗内容 */
+        .modal-content {
+          background-color: #fff;
+          margin: 15% auto; /* 15% 从上部和自动水平居中 */
+          padding: 20px;
+          border: 1px solid #888;
+          width: 30%; /* 宽度30% */
+          position: relative;
+          min-height: 150px;
+          color: #333;
+          .dialog-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 22px;
+            margin-top: 0;
+            .modal-close-button {
+              background-color: transparent;
+              border: none;
+              color: #565656;
+              font-size: 24px;
+              cursor: pointer;
+            }
+          }
+          .dialog-text {
+            min-height: 70px;
+            font-size: 18px;
+            .bold-text {
+              font-weight: 900;
+            }
+          }
+        }
+        /* 弹窗底部按钮区域 */
+        .modal-footer {
+          min-height: 72px;
+          float: right;
+          /* 按钮样式 */
+          .button {
+            font-size: 16px;
+            padding: 5px 10px;
+            margin-right: 10px;
+            color: #fff;
+            width: 60px;
+            border: none;
+            border-radius: 5px;
+            &#confirmBtn {
+              background-color: #1565c8;
+              color: #fff;
+              &:hover {
+                cursor: pointer;
+                background-color: #4662d9;
+              }
+            }
+            &#cancelBtn {
+              background-color: #fff;
+              color: #000;
+              border: 1px solid #cbcbcb;
+              &:hover {
+                cursor: pointer;
+                background-color: #f7f9fa;
+              }
+            }
+          }
+        }
+      }
+
+      /* 图片弹窗样式 */
+      .ImageDialog {
+        display: none; /* 隐藏模态框 */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        .ImageDialog-content {
+          position: relative;
+          margin: 3vh auto 0;
+          padding: 20px;
+          width: 90%; /* 调整宽度为90% */
+          height: 90%; /* 调整高度为90% */
+          background-color: #fff;
+          border-radius: 10px;
+          .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 22px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.4);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 30px;
+            &:hover {
+              background-color: rgba(0, 0, 0, 0.5);
+            }
+          }
+          #large-image {
+            width: 100%; /* 宽度100% */
+            height: 100%; /* 高度100% */
+            object-fit: contain; /* 保持图片比例，完整显示图片 */
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 页面展示内容 -->
+    <div id="content"></div>
+    <!-- 确认弹窗 -->
+    <div id="myModal" class="modal"></div>
+    <!-- 图片放大弹窗 -->
+    <div id="ImageDialog" class="ImageDialog">
+      <div class="ImageDialog-content">
+        <button class="close-button" onclick="closeImageDialog()">×</button>
+        <img src="image-url-placeholder" alt="Large Dynamic Image" id="large-image" />
+      </div>
+    </div>
+    <script>
+      // ack集群列表
+      const ackList = [
+        {
+          key: 'ack1',
+          value: 'ack1',
+          regionId: 'izone',
+          regionName: '可用区I',
+        },
+        {
+          key: 'ack2',
+          value: 'ack2',
+          regionId: 'jzone',
+          regionName: '可用区J',
+        },
+      ];
+
+      // 弹窗标题、内容、颜色配置
+      const dialogTextMap = {
+        reduction: {
+          title: '缩容',
+          text: '是否确认将集群当前可用容器组数量缩容至<span class="bold-text">1</span>个？',
+          color: '#FBA110',
+          successAmount: '1',
+        },
+        breakdown: {
+          title: '故障',
+          text: '是否确认将集群当前可用容器组数量减少至<span class="bold-text">0</span>个？',
+          color: '#c82727',
+          successAmount: '0',
+        },
+        recover: {
+          title: '恢复',
+          text: '是否确认将集群当前可用容器组数量恢复至<span class="bold-text">5</span>个？',
+          color: '#33C221',
+          successAmount: '5',
+        },
+      };
+      // 左侧架构图
+      const imageUrl = 'arch/duohuo_architecture.png';
+      const fullImageUrl = 'arch/duohuo_full_architecture.png';
+
+      // 使用模板字符串创建HTML内容
+      const contentHtml = `
+      <div class="page-wrapper">
+          <div class="box-wrapper">
+            <div class="top">
+              <div class="top-child-box box-right">
+                <div class="all-colony-wrapper">
+                ${ackList
+                  .map((item, index) => {
+                    const { key, value, regionId, regionName } = item;
+                    return `
+                   <div class="form-box">
+                   <div class="form-container">
+                    <div class="item">
+                   <div class="label-select-wrapper">
+                     <div class="form-group">
+                       <label for="regionSelect">集群${index === 0 ? '-A' : '-B'}</label>
+                     </div>
+                     <div class="form-group">
+                       <span class="value">(${regionName})</span>
+                     </div>
+                   </div>
+                   <div class="amount-label" >当前可用容器数量 </div>
+                  <div class="amount-and-button">
+                    <div class="amount" id='${regionId}-amount'>_ / 5 </div>
+                    <div class="button-wrapper">
+                      <button  class="reduction" type="button" onClick={clickButton('reduction','${regionId}')} >缩容</button>
+                      <button class="breakdown" type="button" onClick={clickButton('breakdown','${regionId}')}>故障</button>
+                      <button class="recover" type="button" onClick={clickButton('recover','${regionId}')} >恢复</button>
+                    </div>
+                    </div>
+                   </div>
+                   </div>
+                 </div>
+                   `;
+                  })
+                  .join('')}
+                </div>
+                <div class="bottom" id="bottom"></div>
+              </div>
+              <div class="top-child-box box-left">
+                <div class="card-title">方案架构</div>
+                <button class="view-large-button" onclick="openImageDialog()">点此查看原图</button>
+                <img src="${imageUrl}" alt="Dynamic Image" class="architecture" onclick="openImageDialog()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+          `;
+      // 获取content的DOM并插入生成的 HTML 内容
+      const contentContainer = document.getElementById('content');
+      contentContainer.innerHTML = contentHtml;
+
+      /**
+       * @name: 点击按钮
+       * @param action 点击的按钮类型
+       * @param regionId 该按钮对应的region
+       */
+      const clickButton = (action, regionId) => {
+        const title = dialogTextMap[action]?.title;
+        const text = dialogTextMap[action]?.text;
+        const dialogHtml = `
+            <div class="modal-content">
+        <p class="dialog-title">${title} <button class="modal-close-button" onClick="cancelButton()">×</button></p>
+        <div class="dialog-text">${text}</div>
+        <div class="modal-footer">
+          <button class="button" id="confirmBtn" onClick={confirmButton('${action}','${regionId}')}>确认</button>
+          <button class="button" id="cancelBtn" onClick={cancelButton()}>取消</button>
+        </div>
+      </div>
+            `;
+        // 插入iframe到页面中
+        const dialogContainer = document.getElementById('myModal');
+        dialogContainer.innerHTML = dialogHtml;
+        dialogContainer.style.display = 'block';
+      };
+
+      /**
+       * @name: 点击弹窗的确认按钮
+       * @param action 点击的按钮类型
+       * @param regionId 该按钮对应的region
+       */
+      const confirmButton = (action, regionId) => {
+        // 获取弹窗
+        var modal = document.getElementById('myModal');
+        modal.style.display = 'none';
+        const params = { action, regionId };
+        // fetch('https://oneapi.alibaba-inc.com/mock/YTAb2yqK6/ListEvaluationScoreHistory', {
+        fetch('/workshop/duohuo/processContainerGroup.do', {
+          // 替换为点击按钮需调用的 API url，入参已传
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // 根据接口要求设置正确的内容类型
+            // 其他可能需要的HTTP头
+          },
+          body: JSON.stringify(params), // 将参数转换为JSON字符串
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            handleChangeAmount(action, regionId);
+            return response.json(); // 或者response.text()，取决于响应内容
+          })
+          .then((result) => {
+            // handleChangeAmount(action, regionId);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      };
+
+      const handleChangeAmount = (action, regionId) => {
+        // // 获取amountDom
+        var amountDom = document.getElementById(`${regionId}-amount`);
+        const color = dialogTextMap[action]?.color;
+        const successAmount = dialogTextMap[action]?.successAmount || 0;
+        const amountHtml = `<span style="color: ${color};font-size:46px">${successAmount}</span> / 5`;
+        amountDom.innerHTML = amountHtml;
+      };
+
+      /**
+       * @name: 点击弹窗的取消按钮
+       * @param action 点击的按钮类型
+       * @param regionId 该按钮对应的region
+       */
+      const cancelButton = (action, regionId) => {
+        // 获取弹窗
+        var modal = document.getElementById('myModal');
+        modal.style.display = 'none';
+      };
+
+      /**
+       * @name: 获取iframe的url方法
+       */
+      const getIframeUrl = () => {
+        return fetch('/workshop/duohuo/getGrafanaUrl.do', {
+          method: 'POST',
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.success) {
+              throw new Error('Network response was not ok');
+            }
+            console.log(data);
+            return data.data; // 假设返回的是JSON，且有一个url字段
+          })
+          .then((url) => {
+            return url || 'https://www.baidu.com/'; //  默认返回百度的url，后续可删
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      };
+
+      /**
+       * @name: 插入iframe并设置其src属性
+       */
+      const insertIframeAndSetSrc = () => {
+        const iframeHtml = `
+
+                <iframe
+                    src=""
+                    frameborder="0"
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                    id="solution-iframe-id"
+                ></iframe>
+            `;
+        // 插入iframe到页面中
+        const bottomContainer = document.getElementById('bottom');
+        bottomContainer.innerHTML = iframeHtml;
+
+        // 现在iframe已经在DOM中，可以获取URL并设置src
+        getIframeUrl().then((url) => {
+          const iframe = document.getElementById('solution-iframe-id');
+          if (iframe && url) {
+            // 将获取到的URL设置给iframe
+            iframe.src = url;
+          }
+        });
+      };
+
+      /**
+       * @name: 当页面加载完成时，调用 'getIframeUrl'，插入iframe并设置src
+       */
+      document.addEventListener('DOMContentLoaded', () => {
+        confirmButton('recover', 'izone');
+        confirmButton('recover', 'jzone');
+        insertIframeAndSetSrc();
+      });
+
+      // 图片弹窗
+      const openImageDialog = () => {
+        document.getElementById('ImageDialog').style.display = 'block';
+        document.getElementById('large-image').src = fullImageUrl; // 动态设置大图的 src
+      };
+
+      const closeImageDialog = () => {
+        document.getElementById('ImageDialog').style.display = 'none';
+      };
+
+      // 点击图片弹窗以外的区域关闭模弹窗
+      window.onclick = (event) => {
+        const modal = document.getElementById('ImageDialog');
+        if (event.target === modal) {
+          closeImageDialog();
+        }
+      };
+    </script>
+  </body>
+</html>
