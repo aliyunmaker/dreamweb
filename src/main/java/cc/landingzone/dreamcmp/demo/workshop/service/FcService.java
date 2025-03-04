@@ -47,15 +47,16 @@ public class FcService {
         }
     }
 
-    public String invokeFunction(String functionName, String payload) {
+    public com.aliyun.fc20230330.models.InvokeFunctionResponse invokeFunction(String functionName, String payload)
+        throws Exception {
         try {
             InputStream payloadStream = new ByteArrayInputStream(payload.getBytes());
             com.aliyun.fc20230330.models.InvokeFunctionRequest invokeFunctionRequest = new com.aliyun.fc20230330.models.InvokeFunctionRequest()
                 .setBody(payloadStream);
-            InputStream stream = fcClient.invokeFunction(functionName, invokeFunctionRequest).getBody();
-            return IOUtils.toString(stream, StandardCharsets.UTF_8);
+            com.aliyun.fc20230330.models.InvokeFunctionResponse response = fcClient.invokeFunction(functionName, invokeFunctionRequest);
+            return response;
         } catch (Exception e) {
-            return e.getMessage();
+            throw e;
         }
     }
 }

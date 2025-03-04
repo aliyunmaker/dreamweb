@@ -39,6 +39,13 @@ public enum EndpointEnum {
     FC("fcv3.%s.aliyuncs.com"),
 
     /**
+     * ecs服务接入入口，支持地域：
+     * cn-hangzhou, cn-shanghai, cn-shenzhen, cn-heyuan, cn-qingdao, cn-beijing, cn-zhangjiakou, cn-huhehaote
+     * cn-wulanchabu, cn-chengdu, cn-hongkong, cn-guangzhou
+     */
+    ACK("cs%s.%s.aliyuncs.com"),
+
+    /**
      * 登录接口，不支持地域和vpc访问
      */
     SIGN_IN("https://signin.aliyun.com"),

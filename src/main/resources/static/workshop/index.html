@@ -41,9 +41,9 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto chengchaobar">
       <li>
-          <span class="nav-link text-white" style="cursor: default; font-weight: bold;">
-            无AK
-          </span>
+      <span class="nav-link text-white" style="cursor: default; font-weight: bold;">
+        无AK
+      </span>
       </li>
       <li>
         <a href="#" class="nav-link text-white active" data-link="./demo_ecs_role.html" style="padding-left: 2rem;">
@@ -58,6 +58,17 @@
       <li>
         <a href="#" class="nav-link text-white" data-link="./demo_token_vending.html" style="padding-left: 2rem;">
           <i class="iconfont icon-tvm"></i>&nbsp;&nbsp;Token Vending
+        </a>
+      </li>
+      <hr>
+      <li>
+    <span class="nav-link text-white" style="cursor: default; font-weight: bold;">
+      稳定性
+    </span>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white" data-link="./demo_duohuo.html" style="padding-left: 2rem;">
+          <i class="iconfont icon-ack"></i>&nbsp;&nbsp;同城多活
         </a>
       </li>
       <hr>
@@ -94,7 +105,7 @@
     link.addEventListener("click", function (e) {
       e.preventDefault();
       var page = e.target.getAttribute("data-link");
-      
+
       // Remove active class from all links first
       links.forEach(function (link) {
         link.classList.remove("active");
