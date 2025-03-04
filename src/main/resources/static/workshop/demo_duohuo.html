@@ -355,20 +355,6 @@ font-size: 26px; */
       }
 
       /* 图片弹窗样式 */
-      .view-large-button {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        padding: 8px 12px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        &:hover {
-          background-color: #0052a4;
-        }
-      }
       .ImageDialog {
         display: none; /* 隐藏模态框 */
         position: fixed;
@@ -383,10 +369,8 @@ font-size: 26px; */
           position: relative;
           margin: 3vh auto 0;
           padding: 20px;
-          /* width: 80%; */
-          width: fit-content;
-          height: 86vh;
-          /* max-width: 800px; */
+          width: 90%; /* 调整宽度为90% */
+          height: 90%; /* 调整高度为90% */
           background-color: #fff;
           border-radius: 10px;
           .close-button {
@@ -408,8 +392,9 @@ font-size: 26px; */
             }
           }
           #large-image {
-            /* width: 100%; */
-            height: 100%;
+            width: 100%; /* 宽度100% */
+            height: 100%; /* 高度100% */
+            object-fit: contain; /* 保持图片比例，完整显示图片 */
           }
         }
       }
@@ -466,9 +451,8 @@ font-size: 26px; */
         },
       };
       // 左侧架构图
-      const imageUrl =
-        'https://img.alicdn.com/imgextra/i3/O1CN0177E3hi1FgNP62LDVf_!!6000000000516-2-tps-1888-1822.png';
-      // 'https://img.alicdn.com/imgextra/i4/O1CN01fnaLTp1vCndYp6syU_!!6000000006137-0-tps-1322-1372.jpg';
+      const imageUrl = 'arch/duohuo_architecture.png';
+      const fullImageUrl = 'arch/duohuo_full_architecture.png';
 
       // 使用模板字符串创建HTML内容
       const contentHtml = `
@@ -664,7 +648,7 @@ font-size: 26px; */
       // 图片弹窗
       const openImageDialog = () => {
         document.getElementById('ImageDialog').style.display = 'block';
-        document.getElementById('large-image').src = imageUrl; // 动态设置大图的 src
+        document.getElementById('large-image').src = fullImageUrl; // 动态设置大图的 src
       };
 
       const closeImageDialog = () => {
