@@ -254,6 +254,55 @@
         }
     </style>
     <script>
+        const APP_CONFIG = {
+            dingding: {
+                logo: 'https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg',
+                title: '钉钉登录',
+                url: 'https://login.dingtalk.com/oauth2/auth?redirect_uri=https%3A%2F%2Fwww.aliyun.com%2Fa%2Fb&response_type=code&client_id=dingdb2nlhfclkatuigw&scope=openid corpid&state=state&prompt=consent'
+            },
+            feishu: {
+                logo: 'https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg',
+                title: '飞书登录',
+                url: 'https://open.feishu.cn/open-apis/authen/v1/authorize?...'
+                // url: 'https://login.dingtalk.com/oauth2/auth?redirect_uri=https%3A%2F%2Fwww.aliyun.com%2Fa%2Fb&response_type=code&client_id=dingqujcmqactd3ussyt&scope=openid corpid&state=state&prompt=consent'
+            },
+            weixin: {
+                logo: 'https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg',
+                title: '企微登录',
+                url: 'https://login.work.weixin.qq.com/wwlogin/sso/login?...'
+            }
+        };
+
+        // 在页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认选择钉钉
+            switchApp('dingding');
+        });
+
+        function switchApp(appKey) {
+            const app = document.querySelector('.app');
+            app.innerHTML = ``;
+            const config = APP_CONFIG[appKey];
+
+            // 更新二维码区域
+            changeProfileImage(
+                `https://dreamweb.oss-cn-hangzhou.aliyuncs.com/img/sso_${appKey}_workshop.png`,
+                `${config.title.replace('登录','扫码入职')}`
+            );
+
+            const appa = document.createElement('a');
+            appa.innerHTML = `
+            <a href="${config.url}"
+               target="_blank">
+                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">
+                <p>✕</p>
+                <img src="${config.logo}">
+                <span class="app-name">${config.title}</span>
+            </a>
+`
+            app.appendChild(appa);
+        }
+
         function changeProfileImage(imageSrc, username) {
             document.querySelector('.profile').src = imageSrc;
             document.querySelector('.username').textContent = username;
@@ -304,20 +353,14 @@
             <a href="#">Landing Zone ➤ Demo ➤ 企业SSO</a>
         </div>
     </div>
-<!--    <div class="dropdown">-->
-<!--        <a href="#">⌘ 企业 IM 切换</a>-->
-<!--        <div class="dropdown-content">-->
-<!--            <a href="#"-->
-<!--               onclick="changeProfileImage('https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/sso_mahou_dingding_qrcode.png','钉钉扫码入职')"><img-->
-<!--                    src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg">钉钉</a>-->
-<!--            <a href="#"-->
-<!--               onclick="changeProfileImage('https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/sso_mahou_feishu_qrcode.png','飞书扫码入职')"><img-->
-<!--                    src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg">飞书</a>-->
-<!--            <a href="#"-->
-<!--               onclick="changeProfileImage('https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/sso_mahou_weixin_qrcode.png','企业微信扫码入职')"><img-->
-<!--                    src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg">企业微信</a>-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="dropdown">
+        <a href="#">⌘ 企业 IM 切换</a>
+        <div class="dropdown-content">
+            <a onclick="switchApp('dingding')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg">钉钉</a>
+<!--            <a onclick="switchApp('feishu')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg">飞书</a>-->
+<!--            <a onclick="switchApp('weixin')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg">企微</a>-->
+        </div>
+    </div>
 </nav>
 <div class="container">
     <div class="profile-section">
@@ -329,51 +372,23 @@
             <h2>欢迎新同学</h2>
             <div class="divider"></div>
         </div>
-        <div class="employee-list">
-            <!-- <div class="employee-card">
-                <img src="https://placehold.co/200">
-                <div class="employee-name">charles</div>
-            </div>
-            <div class="employee-card">
-                <img src="https://placehold.co/200">
-                <div class="employee-name">charles</div>
-            </div> -->
-        </div>
-
+<!--        <div class="employee-list">-->
+<!--            <div class="employee-card">-->
+<!--                <img src="https://placehold.co/200">-->
+<!--                <div class="employee-name">charles</div>-->
+<!--            </div>-->
+<!--            <div class="employee-card">-->
+<!--                <img src="https://placehold.co/200">-->
+<!--                <div class="employee-name">charles</div>-->
+<!--            </div>-->
+<!--        </div>-->
         <h2>Demo</h2>
         <div class="divider"></div>
-        <div class="app">
-<!--            <a href="https://login.dingtalk.com/oauth2/auth?redirect_uri=https%3A%2F%2Fchengchao.name%2Fspringrun%2Fdingding%2Fsso_login_callback.htm%3Fsso%3Ddemo&response_type=code&client_id=dingldj1qprpp9dzuq03&scope=openid&state=state&prompt=consent"-->
-<!--               target="_blank">-->
-            <a href="https://qsqnc5cn.aliyunidaas.com" target="_blank">
-                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">
-                <p>✕</p>
-                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg">
-                <span class="app-name">钉钉登录</span>
-            </a>
-        </div>
-<!--        <div class="app">-->
-<!--            <a href="https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=cli_a6b2c0dcafbf900c&redirect_uri=https:%2F%2Fchengchao.name%2Fspringrun%2Ffeishu%2Fweb_login_callback.htm%3Fsso=demo&scope=bitable:app:readonly%20contact:contact&state=RANDOMSTATE"-->
-<!--               target="_blank">-->
-<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">-->
-<!--                <p>✕</p>-->
-<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg">-->
-<!--                <span class="app-name">飞书登录</span>-->
-<!--            </a>-->
-<!--        </div>-->
-<!--        <div class="app">-->
-<!--            <a href="https://login.work.weixin.qq.com/wwlogin/sso/login?login_type=CorpApp&appid=ww71f9cf2fe2b028ea&redirect_uri=https%3A%2F%2Fchengchao.name%2Fspringrun%2Fweixin%2Fqy_web_login_callback.htm%3Fsso%3Ddemo&state=STATE&agentid=1000008"-->
-<!--               target="_blank">-->
-<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">-->
-<!--                <p>✕</p>-->
-<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg">-->
-<!--                <span class="app-name">企微登录</span>-->
-<!--            </a>-->
-<!--        </div>-->
+        <div class="app"></div>
     </div>
 </div>
 <footer class="footer">
-    <p>© 码猴信息</p>
+    <p>© Workshop</p>
 </footer>
 </body>
 
