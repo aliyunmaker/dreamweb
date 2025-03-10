@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise SSO</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            overflow-y: hidden;
+            /* Prevent vertical scrollbar */
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            height: 50px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .nav-logo img {
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .nav-menu {
+            display: flex;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #252525;
+            font-size: 16px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #ffffff;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            min-width: 160px;
+        }
+
+        .dropdown-content a {
+            display: flex;
+            align-items: center;
+            color: #333;
+            padding: 10px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .dropdown-content a img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #c0d4f8;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: calc(100vh - 50px);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .employee-section {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .employee-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .employee-card {
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .employee-card img {
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .employee-card .employee-name {
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+
+        .profile-section {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile {
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            border: 10px solid #f3f3f3;
+            margin-bottom: 20px;
+        }
+
+        .profile:hover {
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .username {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .divider {
+            width: 80%;
+            height: 1px;
+            background-color: #ccc;
+            margin: 20px 0;
+        }
+
+        .app-section {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .app-section h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .app {
+            margin-bottom: 50px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .app a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .app img {
+            width: 50px;
+            height: 50px;
+            margin: 0 10px;
+        }
+
+        .app:hover {
+            transform: translateX(10px);
+        }
+
+        .app a:hover {
+            color: #2335d7;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #b2b2b2;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-wrap: wrap;
+                height: auto;
+            }
+
+            .nav-logo {
+                flex: 1;
+                margin: 10px 0;
+            }
+
+            .nav-menu {
+                flex: 1;
+                justify-content: flex-end;
+                margin: 10px 0;
+            }
+
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-section,
+            .app-section {
+                width: 100%;
+                text-align: center;
+            }
+
+            .app a {
+                justify-content: center;
+            }
+        }
+    </style>
+    <script>
+        function changeProfileImage(imageSrc, username) {
+            document.querySelector('.profile').src = imageSrc;
+            document.querySelector('.username').textContent = username;
+        }
+        function fetchEmployeeData() {
+            fetch('../ding/getDemoEmployeeList.htm')  // 替换为实际API地址
+                .then(response => response.json())
+                .then(json => {
+                    if (json.success) {  // 检查是否成功
+                        const data = json.data;  // 获取员工列表
+                        const employeeList = document.querySelector('.employee-list');
+                        employeeList.innerHTML = '';  // 清空当前内容
+                        if (data.length >= 1) {
+                            var welcomeTextDiv = document.getElementById("welcomeTextDiv");
+                            welcomeTextDiv.style.display = "block";
+
+                        }
+                        data.forEach(employee => {
+                            const card = document.createElement('div');
+                            card.className = 'employee-card';
+                            card.innerHTML = `
+                    <img src="${employee.avatar}" alt="${employee.name}">
+                    <div class="employee-name">${employee.name}</div>
+                `;
+                            employeeList.appendChild(card);
+                        });
+                    } else {
+                        console.error('Failed to fetch employee data:', json.errorMsg || 'Unknown error');
+                    }
+                })
+                .catch(error => console.error('Error fetching employee data:', error));
+        }
+
+        // 每10秒轮询一次API
+        setInterval(fetchEmployeeData, 5000);
+
+    </script>
+</head>
+
+<body>
+<nav class="nav">
+    <div class="nav-left">
+        <div class="nav-logo">
+<!--            <img src="https://ichengchao.oss-cn-hangzhou.aliyuncs.com/static/image/login_logo.png" alt="Logo">-->
+            <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">
+        </div>
+        <div class="nav-menu">
+            <a href="#">Landing Zone ➤ Demo ➤ 企业SSO</a>
+        </div>
+    </div>
+<!--    <div class="dropdown">-->
+<!--        <a href="#">⌘ 企业 IM 切换</a>-->
+<!--        <div class="dropdown-content">-->
+<!--            <a href="#"-->
+<!--               onclick="changeProfileImage('https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/sso_mahou_dingding_qrcode.png','钉钉扫码入职')"><img-->
+<!--                    src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg">钉钉</a>-->
+<!--            <a href="#"-->
+<!--               onclick="changeProfileImage('https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/sso_mahou_feishu_qrcode.png','飞书扫码入职')"><img-->
+<!--                    src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg">飞书</a>-->
+<!--            <a href="#"-->
+<!--               onclick="changeProfileImage('https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/sso_mahou_weixin_qrcode.png','企业微信扫码入职')"><img-->
+<!--                    src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg">企业微信</a>-->
+<!--        </div>-->
+<!--    </div>-->
+</nav>
+<div class="container">
+    <div class="profile-section">
+        <img class="profile" src="https://dreamweb.oss-cn-hangzhou.aliyuncs.com/img/sso_dingding_workshop.png">
+        <div class="username">钉钉扫码入职</div>
+    </div>
+    <div class="app-section">
+        <div id="welcomeTextDiv" style="display:none;">
+            <h2>欢迎新同学</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="employee-list">
+            <!-- <div class="employee-card">
+                <img src="https://placehold.co/200">
+                <div class="employee-name">charles</div>
+            </div>
+            <div class="employee-card">
+                <img src="https://placehold.co/200">
+                <div class="employee-name">charles</div>
+            </div> -->
+        </div>
+
+        <h2>Demo</h2>
+        <div class="divider"></div>
+        <div class="app">
+<!--            <a href="https://login.dingtalk.com/oauth2/auth?redirect_uri=https%3A%2F%2Fchengchao.name%2Fspringrun%2Fdingding%2Fsso_login_callback.htm%3Fsso%3Ddemo&response_type=code&client_id=dingldj1qprpp9dzuq03&scope=openid&state=state&prompt=consent"-->
+<!--               target="_blank">-->
+            <a href="https://qsqnc5cn.aliyunidaas.com" target="_blank">
+                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">
+                <p>✕</p>
+                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg">
+                <span class="app-name">钉钉登录</span>
+            </a>
+        </div>
+<!--        <div class="app">-->
+<!--            <a href="https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=cli_a6b2c0dcafbf900c&redirect_uri=https:%2F%2Fchengchao.name%2Fspringrun%2Ffeishu%2Fweb_login_callback.htm%3Fsso=demo&scope=bitable:app:readonly%20contact:contact&state=RANDOMSTATE"-->
+<!--               target="_blank">-->
+<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">-->
+<!--                <p>✕</p>-->
+<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg">-->
+<!--                <span class="app-name">飞书登录</span>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--        <div class="app">-->
+<!--            <a href="https://login.work.weixin.qq.com/wwlogin/sso/login?login_type=CorpApp&appid=ww71f9cf2fe2b028ea&redirect_uri=https%3A%2F%2Fchengchao.name%2Fspringrun%2Fweixin%2Fqy_web_login_callback.htm%3Fsso%3Ddemo&state=STATE&agentid=1000008"-->
+<!--               target="_blank">-->
+<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_aliyun.svg">-->
+<!--                <p>✕</p>-->
+<!--                <img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg">-->
+<!--                <span class="app-name">企微登录</span>-->
+<!--            </a>-->
+<!--        </div>-->
+    </div>
+</div>
+<footer class="footer">
+    <p>© 码猴信息</p>
+</footer>
+</body>
+
+</html>
