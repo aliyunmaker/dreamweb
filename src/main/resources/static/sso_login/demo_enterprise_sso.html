@@ -258,13 +258,17 @@
             dingding: {
                 logo: 'https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg',
                 title: '钉钉登录',
+                url: 'https://login.dingtalk.com/oauth2/auth?redirect_uri=https%3A%2F%2Fqsqnc5cn.aliyunidaas.com%2Flogin%2Fgo%2Fapp_m7erzezs3r2xwkzwcy7hb2fgfu&response_type=code&client_id=dingfydpspv6n8tjbaz0&scope=openid corpid&state=state&prompt=consent'
+            },
+            landingzone: {
+                logo: 'https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg',
+                title: 'LandingZone登录',
                 url: 'https://login.dingtalk.com/oauth2/auth?redirect_uri=https%3A%2F%2Fwww.aliyun.com%2Fa%2Fb&response_type=code&client_id=dingdb2nlhfclkatuigw&scope=openid corpid&state=state&prompt=consent'
             },
             feishu: {
                 logo: 'https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg',
                 title: '飞书登录',
-                url: 'https://open.feishu.cn/open-apis/authen/v1/authorize?...'
-                // url: 'https://login.dingtalk.com/oauth2/auth?redirect_uri=https%3A%2F%2Fwww.aliyun.com%2Fa%2Fb&response_type=code&client_id=dingqujcmqactd3ussyt&scope=openid corpid&state=state&prompt=consent'
+                url: 'https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=cli_a745676178fc100b&redirect_uri=https%3A%2F%2Fqsqnc5cn.aliyunidaas.com%2Flogin%2Fgo%2Fapp_m7erzezs3r2xwkzwcy7hb2fgfu&scope=contact:user.base:readonly%20contact:contact&state=RANDOMSTATE'
             },
             weixin: {
                 logo: 'https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg',
@@ -357,7 +361,8 @@
         <a href="#">⌘ 企业 IM 切换</a>
         <div class="dropdown-content">
             <a onclick="switchApp('dingding')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg">钉钉</a>
-<!--            <a onclick="switchApp('feishu')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg">飞书</a>-->
+<!--            <a onclick="switchApp('landingzone')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_dingding.svg">钉钉-LZ</a>-->
+            <a onclick="switchApp('feishu')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_feishu.svg">飞书</a>
 <!--            <a onclick="switchApp('weixin')"><img src="https://chengchaosite.oss-cn-hangzhou.aliyuncs.com/img/logo_weixin_work.svg">企微</a>-->
         </div>
     </div>
