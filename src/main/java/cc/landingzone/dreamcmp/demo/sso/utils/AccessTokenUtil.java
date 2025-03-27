@@ -5,43 +5,43 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 
 import cc.landingzone.dreamcmp.common.utils.JsonUtils;
 import cc.landingzone.dreamcmp.demo.employeelist.utils.OkHttpClientUtils;
 import okhttp3.FormBody;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
-
-import static cc.landingzone.dreamcmp.demo.employeelist.utils.OkHttpClientUtils.client;
 
 /**
  * @author weijieyang.wjy
  * @date 2025/3/17
  */
+@Configuration
 public class AccessTokenUtil {
+
+    @Value("${dreamcmp.workshop.sso.dingding_id}")
+    private static String sso_ding_id;
+
+    @Value("${dreamcmp.workshop.sso.dingding_secret}")
+    private static String sso_ding_secret;
+
+    @Value("${dreamcmp.workshop.sso.feishu_id}")
+    private static String sso_feishu_id;
+
+    @Value("${dreamcmp.workshop.sso.feishu_secrert}")
+    private static String sso_feishu_secret;
 
     public static final String APP_DING = "DingDing";
     public static final String APP_FEISHU = "FeiShu";
-
-    // 钉钉
-    public static final String SSO_DING_ID = "dingfydpspv6n8tjbaz0";
-    public static final String SSO_DING_SECRET = "P6m_2PymH9VdyxK8LdAgUIr9O98k5p3w3yJ8c2svq07e47T5rQL43dy4e6NA46eL";
-
-    // 飞书
-    public static final String SSO_FEISHU_ID = "cli_a745676178fc100b";
-    public static final String SSO_FEISHU_SECRET = "R5pEFk74U36AGGFLniqPxdHFcJRH8ggt";
 
     public static String getUserAccessToken(String appType, String code)
         throws Exception {
         if (appType.equals(APP_DING)) {
             return getDingAccessToken(code);
-
         } else if (appType.equals(APP_FEISHU)) {
             return getFeishuAccessToken(code);
-
         } else {
             return getAliAccessToken(code);
         }
@@ -65,8 +65,8 @@ public class AccessTokenUtil {
 
     private static String getDingAccessToken(String code) throws Exception {
         Map<String, String> map = new HashMap<>();
-        map.put("clientId", SSO_DING_ID);
-        map.put("clientSecret", SSO_DING_SECRET);
+        map.put("clientId", sso_ding_id);
+        map.put("clientSecret", sso_ding_secret);
         map.put("code", code);
         map.put("grantType", "authorization_code");
 
@@ -100,18 +100,13 @@ public class AccessTokenUtil {
     private static String getAppAccessToken() throws Exception {
         String url = "https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal";
         Map<String, String> bodyMap = new HashMap<>();
-        bodyMap.put("app_id", SSO_FEISHU_ID);
-        bodyMap.put("app_secret", SSO_FEISHU_SECRET);
+        bodyMap.put("app_id", sso_feishu_id);
+        bodyMap.put("app_secret", sso_feishu_secret);
         String result = OkHttpClientUtils.post(url, null, JsonUtils.toJsonString(bodyMap));
         JSONObject jsonResult = JSON.parseObject(result);
         if (0 != (jsonResult.getInteger("code"))) {
             throw new RuntimeException(result);
         }
         return jsonResult.getString("app_access_token");
-    }
-
-    public static void main(String[] args) throws Exception {
-        String access = AccessTokenUtil.getUserAccessToken(AccessTokenUtil.APP_FEISHU, "aFKn3yDzFFbD4HzHGJ8606E0ww0FHc4B");
-        System.out.println(access);
     }
 }
