@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/a/font_4151968_zm3z1ijgrfb.css" />
+    <link href="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/markdown_rendering.css" rel="stylesheet" />
+    <!--md格式内容转换-->
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/js/marked.min.js"></script>
+    <style>
+        .nav-item {
+            height: 31px;
+            margin-right: 10px;
+        }
+
+        /* 默认按钮样式 */
+        .nav-link {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            /* 可选：添加边框 */
+            font-size: 14px;
+            height: 100%;
+            padding: 0 8px;
+        }
+
+        /* 高亮按钮样式 */
+        .active {
+            background-color: #d4d5d6;
+            /* 灰色背景 */
+            color: #000;
+            /* 黑色文字 */
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .nav-link:hover {
+            background-color: #d4d5d6;
+        }
+
+        #offcanvas-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        #offcanvasNavbar .offcanvas-body {
+            padding-top: 0;
+        }
+
+    </style>
+    <script src="https://dream-web.oss-cn-hangzhou.aliyuncs.com/static/css/bootstrap_v5_3.bundle.min.js"></script>
+    <script type="text/javascript" src="//dream-web.oss-cn-hangzhou.aliyuncs.com/static/jslib/jquery.min.js"></script>
+</head>
+
+<body>
+<main>
+    <nav class="navbar navbar-expand bg-body-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="iconfont icon-dashboard" style="font-size: 1.3rem;"></i> Monitor</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <button id=business-monitor-btn" class="btn btn-sm btn-light nav-link active"
+                                onclick="changeMonitorType('BusinessMonitoringDashboard', this)">
+                            故障演练大盘
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="infrastructure-monitor-btn" class="btn btn-sm btn-light nav-link"
+                                onclick="changeMonitorType('InfrastructureMonitoringDashboard', this)">
+                            基础设施监控大盘
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="iframe-container">
+        <iframe id="business-monitor-iframe" src="" width="100%" height="100%" style="display: none;"></iframe>
+        <iframe id="infrastructure-monitor-iframe" src="" width="100%" height="100%" style="display: none;"></iframe>
+    </div>
+</main>
+<script>
+
+  /**
+   * @name: 点击顶部大盘按钮：当前按钮高亮，并显示对应的iframe页面
+   * @param {*} monitorType 切换类型
+   * @param {*} button 按钮本身
+   */
+  const changeMonitorType = (monitorType, button) => {
+    const businessIframe = document.getElementById('business-monitor-iframe');
+    const infrastructureIframe = document.getElementById('infrastructure-monitor-iframe');
+    if (monitorType === 'BusinessMonitoringDashboard') {
+      businessIframe.style.display = 'block';
+      infrastructureIframe.style.display = 'none';
+    } else if (monitorType === 'InfrastructureMonitoringDashboard') {
+      businessIframe.style.display = 'none';
+      infrastructureIframe.style.display = 'block';
+    }
+    if (button) {
+      // 情况1、点击了按钮进行切换
+      const buttons = document.querySelectorAll('.nav-link');
+      buttons.forEach(function (btn) {
+        // 移除所有按钮的 active 类
+        btn.classList.remove('active');
+      });
+      // 添加 active 类到当前按钮
+      button?.classList?.add('active');
+    }
+    // 情况2、未点击按钮，默认高亮首个按钮
+  }
+
+  /**
+   * @name: 获取iframe的url方法
+   * @param {*} monitorType 切换类型
+   */
+  const getIframeUrl = (monitorType) => {
+    const fetchPage = monitorType === 'BusinessMonitoringDashboard'
+      ? '/workshop/cms2/getBizGrafanaDashboard.do'
+      : '/workshop/cms2/getInfrastructureGrafanaDashboard.do';
+    return fetch(fetchPage, {
+      method: 'POST',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // 测试返回百度的url，注释if代码，取消注释return
+        if (!data.success) {
+          throw new Error('Network response was not ok');
+        }
+        console.log(data);
+        return data.data; // 假设返回的是JSON，且有一个url字段
+      })
+      .then((url) => {
+        return url || 'https://www.baidu.com/'; //  默认返回百度的url，后续可删
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
+
+
+  /**
+   * @name: 调用getIframeUrl，为iframe设置src
+   * @param {*}
+   */
+  const insertIframeAndSetSrc = () => {
+    // 创建两个 Promise，用于获取 URL
+    const businessMonitorPromise = getIframeUrl('BusinessMonitoringDashboard');
+    const infrastructureMonitorPromise = getIframeUrl('InfrastructureMonitoringDashboard');
+    // 使用 Promise.all 来并行处理这两个 Promise
+    Promise.all([businessMonitorPromise, infrastructureMonitorPromise])
+      .then(([businessUrl, infrastructureUrl]) => {
+        // 获取 iframe 元素
+        const businessIframe = document.getElementById('business-monitor-iframe');
+        const infrastructureIframe = document.getElementById('infrastructure-monitor-iframe');
+        // 设置 iframe 的 src
+        if (businessIframe && businessUrl) {
+          businessIframe.src = businessUrl;
+        }
+        if (infrastructureIframe && infrastructureUrl) {
+          infrastructureIframe.src = infrastructureUrl;
+        }
+      })
+      .catch(error => {
+        console.error('Error setting iframe sources:', error);
+      });
+  };
+
+  // 当页面加载完成时，调用getIframeUrl，为iframe设置src
+  document.addEventListener('DOMContentLoaded', () => {
+    insertIframeAndSetSrc();
+    changeMonitorType('BusinessMonitoringDashboard');
+  });
+
+  // 用于mock测试返回的iframe url，暂时留存，后续可删除
+  // const getIframeUrl = (monitorType) => {
+  //   let page =
+  //     monitorType === 'BusinessMonitoringDashboard'
+  //       ? '/workshop/cms2/getBizGrafanaDashboard.do'
+  //       : '/workshop/cms2/getInfrastructureGrafanaDashboard.do';
+  //   return fetch('https://oneapi.alibaba-inc.com/mock/YTAb2yqK6/ListEvaluationScoreHistory', {
+  //     // return fetch('/workshop/duohuo/getGrafanaUrl.do', {
+  //     method: 'POST',
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       // 测试返回百度的url，注释if代码，取消注释return
+  //       // if (!data.success) {
+  //       //   throw new Error('Network response was not ok');
+  //       // }
+  //       return monitorType === 'BusinessMonitoringDashboard'
+  //       ? 'https://www.baidu.com'
+  //       : 'https://fanyi.baidu.com/';
+  //       // return 'https://www.baidu.com';
+  //       // return 'https://blog.csdn.net/chencxiaobai/article/details/140938709';
+  //       // return 'file:///Users/admin/Documents/test/meidusha.html'
+  //       console.log(data);
+  //       // return data.data; // 假设返回的是JSON，且有一个url字段
+  //     })
+  //     .then((url) => {
+  //       return url||'https://www.baidu.com/'; //  默认返回百度的url，后续可删
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error:', error);
+  //     });
+  // };
+</script>
+</body>
+
+</html>
